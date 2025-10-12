@@ -1,4 +1,4 @@
-# VRMine 開発環境セットアップ
+# VRChat World 開発環境セットアップ
 
 ## 前提条件
 - Unity 2022.3.22f1 が `~/Unity/Hub/Editor/2022.3.22f1/Editor/Unity` にインストール済み
