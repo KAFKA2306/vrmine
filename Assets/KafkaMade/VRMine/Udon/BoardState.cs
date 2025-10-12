@@ -33,9 +33,8 @@ public class BoardState : UdonSharpBehaviour
     public bool Matches(byte[] data)
     {
         int size = cells.Length;
-        int limit = data.Length;
-        if (limit > size) limit = size;
-        for (int i = 0; i < limit; i++)
+        if (data.Length != size) return false;
+        for (int i = 0; i < size; i++)
         {
             if (cells[i] != data[i]) return false;
         }
