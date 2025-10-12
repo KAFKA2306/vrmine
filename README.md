@@ -1,176 +1,141 @@
-# vrmine — ミニマル設計仕様書 v1.0
+# vrmine — VRChat推理ゲーム
 
-## 0. 目的・範囲（縮約）
+**Unity 2022.3.22f1 / SDK3-Worlds / UdonSharp / Manual Sync**
 
-* **目的**：同一盤面に対し、参加者が**波を発射**し、公開ログ（入口→出口／最終色）から推理し、**完全一致宣言**で勝利する。
-* **範囲外**：外部サーバ・DB・ランキング・商用/版権判断。
-* **プラットフォーム**：PC、Quest 2/3/Pro（同一ワールド）。
-* **設計原則**：**単一オーナー権限／整数格子／最小同期／UI操作のみ**。
+## コンセプト
 
----
+波を発射→公開ログ（入口→出口/色）→盤面推理→完全一致宣言で勝利
 
-## 1. 技術要件（固定）
+**ルール**: 10×8盤、入口36点、波は格子直進/色セルで90°反射/黒で吸収、手番90秒
 
-* **Unity**：2022.3.22f1（VCC準拠）
-* **SDK**：VRChat SDK3–Worlds（Udon / UdonSharp）
-* **Networking**：`BehaviourSyncMode=Manual`、カスタムイベントは**最大8引数**
-* **テスト**：ClientSim（基本）＋実クライアント最終確認、CyanEmuは補助
+## 実装（エラー回避済み）
 
----
-
-## 2. ゲームコア（最小ルール）
-
-* **盤**：10×8 セル格子。
-* **入口**：外周 36 点（上10/右8/下10/左8）ID=0..35（時計回り）。
-* **ピース**：色＝赤/青/黄/白(透明)/黒、形＝Dot1/Line2/L3（回転可）、各色≤5、**総占有≤20セル**。
-* **波**：格子線を直進。色セル入射で**90°反射**。盤外で**出口確定**。**黒は吸収**（終了・出口なし）。
-* **色合成**：初期白→単色/二色(紫・橙・緑)/三原色(灰)。透明は不変、黒は吸収。
-* **公開**：毎手番の「入口→出口／最終色（吸収時“Absorb”）」
-* **勝利**：**全セル色配置**の完全一致宣言が最初に通った者。
-* **手番**：FIFOキュー。**90秒/手番**で自動スキップ。
-
----
-
-## 3. 決定論と非公開状態
-
-* **Seed**：初回Ownerが32bit乱数で `boardSeed` を生成・同期。
-* **盤面の正本**：**Owner専有の `boardState`（非公開）**。Seed再生成は行わない。
-* **移譲**：所有者交代・遅参Owner合流時は**Owner→新Owner宛イベント**で `boardState` を一括送達（≤900B目安）→新Ownerが `RequestSerialization()`。
-
-### boardState（最小表現）
-
-```
-pieceCount ≤ 20
-Piece { colorId:byte, shapeId:byte, rot:byte, x:byte, y:byte }  // 原点セル(x,y)
-boardHash:uint32  // CRC32
+### 1. 定数
+```csharp
+// NetConst.cs (static class禁止)
+using UdonSharp;
+public class NetConst : UdonSharpBehaviour {
+    public const byte GRID_W=10, GRID_H=8, RING_SIZE=20;
+}
 ```
 
----
+### 2. Mailbox
+```csharp
+// PlayerClient.cs
+using UdonSharp;
+using VRC.SDKBase;
+[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
+public class PlayerClient : UdonSharpBehaviour {
+    [UdonSynced] public int ownerPlayerId, reqSeq;
+    [UdonSynced] public byte reqType, entryId;
+    [UdonSynced] public byte[] decl = new byte[900]; // 初期化必須
+    public GameController game;
 
-## 4. 同期・イベント設計（必要最小限）
+    void Start() {
+        if (Networking.IsOwner(gameObject)) {
+            ownerPlayerId = Networking.LocalPlayer.playerId;
+            RequestSerialization();
+        }
+    }
 
-### UdonSynced（公開最小）
-
-* `byte gridW=10, gridH=8`
-* `uint boardSeed, boardHash`
-* `int turnIndex`（0..）
-* **ログ（リング）**
-
-  * `byte ringSize=20, byte logCount, byte logHead`
-  * `byte[80] logRing`（1件=4B：`entryId, exitId(0..35|255), colorId(0..7|255), flags`）
-
-### ネットワークイベント
-
-* `WaveRequest(byte entryId, int senderId)` → **Owner**
-
-  * Owner側で `senderId` が**手番者**か検証。レート制限必須。
-* `WaveResult(byte entryId, byte exitId, byte colorId, byte flags)` → **All**
-* `Declare(byte[] payload≤900)` → **Owner**（宣言内容は圧縮/簡素表現）
-* `JudgeResult(bool won, byte errors)` → **All**
-* `TransferBoard(byte[] boardState)` → **Target=NewOwner**
-
-> 状態は**Synced変数**（ログ/手番/Seed等）で再現、イベントは**要求/結果通知**のみ。
-
----
-
-## 5. シミュレーション（整数格子・決定論）
-
-* **座標**：セル整数 `(x∈[0,9], y∈[0,7])` と**方位4値**で遷移。
-* **反射**：入射方向に直交反転。**角同時衝突時**は「右手系優先」（例：+X→+Zを優先）を固定。
-* **色合成**：単色→二色（順不同）→三色、透明は不変、黒は即吸収（結果報告なし・`exitId=255, flags.Absorbed=1`）。
-
----
-
-## 6. 手番・検証・ログ
-
-* **TurnQueue**：参加者をFIFO。`turnIndex`は手番進行でOwner更新。
-* **検証**：`Declare(payload)` 受信でOwnerが `boardState` と突合→一致時 `JudgeResult(true,0)`。
-* **ログ**：`logHead` へ追記。UIは `k=0..logCount-1` を `idx=(logHead-k-1)&(ringMask)` で逆順表示。
-* **拒否**：手番外/多発は無効化（WaveRequest検証＋レート制限）。
-
----
-
-## 7. 空間配置（最小）
-
-* **座標系**：Unity（Y↑, Z前, X右），**1u=1m**
-* **ボード中心**：`(0, 0.85, 0)`、**セル**：`cell=0.12`
-* **セル中心→世界**
-
-  ```
-  worldX = (x - 4.5) * cell
-  worldY = 0.85
-  worldZ = (y - 3.5) * cell
-  ```
-* **入口36点**：盤外オフセット `0.05m`（上/右/下/左を時計回りID割当）
-
----
-
-## 8. UI/UX（最小）
-
-* **World Space Canvas**（`(0,1.35,1.20)`, 反転180°）
-
-  * 左：入口セレクタ＋**発射**（ボタン）
-  * 中：**ログ20件**（`A5→K12, Purple` / `A5→Absorb`）
-  * 右：**解答宣言**（一括入力→送信）
-* **操作**：**UIのみ**。物理トリガ/コライダ発火は**不使用**。
-* **配慮**：色は記号/ハッチ併記。
-
----
-
-## 9. エラー/運用（要点）
-
-* **所有者離脱**：`OnOwnershipTransferred` で新Ownerへ→即 `TransferBoard` 受領→`RequestSerialization()`。
-* **通信**：1手番あたりイベント概ね≤3回、宣言は**≤900B**運用。
-* **可視性**：`GameController` 子に**小型可視Quad**を置き常時視界内（同期優先度の安定化）。
-
----
-
-## 10. 受入基準（最小）
-
-* 2–4クライアントで**20ターン**連続：クラッシュ/同期崩壊なし
-* **遅参/所有者交代**後も `boardHash` 一致・ログ欠落なし
-* **波の結果**：36入口×代表盤でOwner/非Ownerの**一致率100%**
-
----
-
-## 11. マイルストーン（短期）
-
-1. **M1**：`GameController`（Manual Sync）／`TurnQueue`／`WaveSimulator`（整数格子）／ログUI
-2. **M2**：`Declare`→`Judge` 実装／`TransferBoard`／所有者交代ハンドラ
-3. **M3**：Quest軽量化（LOD/材質差し替え）／アクセシビリティ微調整
-
----
-
-## 12. 付録A：実装用ミニYAML
-
-```yaml
-Rule:
-  grid: {w: 10, h: 8, cell_m: 0.12}
-  entries: {offset_m: 0.05, ids: clockwise_0_35}
-  colors: {ids: [White,Red,Blue,Yellow,Purple,Orange,Green,Gray], oil: Absorb}
-  pieces: {shapes: [Dot1, Line2, L3], per_color_limit: 5, max_cells: 20}
-Turn:
-  seconds: 90
-Net:
-  sync: Manual
-  ring_log: {size: 20, item_bytes: 4}
-  declare_max_bytes: 900
-Authority:
-  owner: single
-  seed: owner_random
-Spatial:
-  board_origin: [0,0.85,0]
-UI:
-  canvas_main: {pos: [0,1.35,1.20], rot_deg: [0,180,0]}
-Platforms: [PC, Quest2, Quest3, QuestPro]
+    public void SubmitWave(byte id) {
+        if (!Networking.IsOwner(gameObject)) Networking.SetOwner(Networking.LocalPlayer, gameObject);
+        reqType=1; entryId=id; reqSeq++;
+        RequestSerialization();
+        game.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(GameController.OnMailboxUpdate));
+    }
+}
 ```
 
----
+### 3. GameController
+```csharp
+// GameController.cs
+using UdonSharp;
+using VRC.SDKBase;
+[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
+public class GameController : UdonSharpBehaviour {
+    [UdonSynced] public uint boardSeed, boardHash;
+    [UdonSynced] public int turnIndex;
+    [UdonSynced] public byte logCount, logHead;
+    [UdonSynced] public byte[] logRing = new byte[80]; // 20×4B、初期化必須
 
-## 13. 付録B：UdonSharp スケルトン（名称のみ）
+    public PlayerClient[] mailboxes; // インスペクタで手動割当（FindObjectsOfType禁止）
+    public WaveSimulator wave;
+    private byte[] boardState = new byte[128];
+    private int[] handledSeq = new int[32];
 
-* `GameController`（Owner権限/Sync集約/Ownership移行）
-* `WaveSimulator`（整数格子/反射/合成）
-* `TurnQueue`（手番制御/タイムアウト）
-* `Judge`（宣言突合せ）
-* `UIController`（入口選択/発射/ログ/宣言）
+    void Start() {
+        if (Networking.IsOwner(gameObject) && boardSeed==0) {
+            boardSeed = (uint)Random.Range(1, int.MaxValue);
+            RequestSerialization();
+        }
+    }
+
+    public void OnMailboxUpdate() {
+        if (!Networking.IsOwner(gameObject)) return;
+        for (int i=0; i<mailboxes.Length; i++) {
+            var mb = mailboxes[i];
+            int pid = mb.ownerPlayerId;
+            if (pid>0 && mb.reqSeq!=handledSeq[pid]) {
+                handledSeq[pid] = mb.reqSeq;
+                if (mb.reqType==1) HandleWave(mb.entryId);
+            }
+        }
+    }
+
+    void HandleWave(byte entryId) {
+        wave.Simulate(entryId, boardState);
+        int ofs = logHead*4;
+        logRing[ofs]=entryId; logRing[ofs+1]=wave.exitId; logRing[ofs+2]=wave.colorId; logRing[ofs+3]=wave.flags;
+        logHead = (byte)((logHead+1)%20);
+        if (logCount<20) logCount++;
+        turnIndex++;
+        RequestSerialization();
+    }
+}
+```
+
+### 4. WaveSimulator
+```csharp
+// WaveSimulator.cs
+using UdonSharp;
+public class WaveSimulator : UdonSharpBehaviour {
+    public byte exitId, colorId, flags;
+
+    public void Simulate(byte entryId, byte[] board) {
+        int x=0, y=0, dx=0, dz=1;
+        byte color=0;
+
+        // 入口→初期位置（整数のみ）
+        if (entryId<10) { x=entryId; y=-1; dz=1; }
+        else if (entryId<18) { x=10; y=entryId-10; dx=-1; dz=0; }
+        // 他の辺も同様
+
+        // 格子遷移（浮動小数禁止）
+        for (int step=0; step<4096; step++) {
+            x+=dx; y+=dz;
+            if (x<0||x>=10||y<0||y>=8) {
+                exitId = (byte)(y==-1?x : x==10?10+y : y==8?18+x : 28+y);
+                colorId = color;
+                return;
+            }
+            // 反射・合成ロジック（整数演算のみ）
+        }
+        flags=1; exitId=255; // Looped
+    }
+}
+```
+
+## エラー回避チェック
+
+- [x] `static class` → 通常クラス
+- [x] UdonSynced配列 → `new byte[N]`で初期化
+- [x] `FindObjectsOfType` → 手動割当
+- [x] 浮動小数 → 整数格子のみ
+- [x] `[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]` 必須
+- [x] `RequestSerialization()` 呼出
+
+## 参考
+
+- UdonSharp制限: https://udonsharp.docs.vrchat.com/
+- Manual Sync: https://creators.vrchat.com/worlds/udon/networking/variables/
