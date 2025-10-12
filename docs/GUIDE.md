@@ -11,9 +11,3 @@
 ## 遊び方イメージ
 - `PlayerClient` が波リクエストを投げ、`GameController` が盤面を更新。
 - ログリングは20件ぶん。色と出口IDをヒントに、壁や黒セルの配置を推理しよう。
-- 完全一致宣言の前に、仲間内で「出口ID読み合わせタイム」を作ると盛り上がる！
-
-## トラブルシュート
-- 波がループする場合は `WaveSimulator` の `flags` を確認し、該当セル配置を調整。
-- `RequestSerialization()` が抜けていると同期しないので、変更箇所の呼び出し漏れをチェック。
-- メタファイルのGUIDがズレたら `unity-editor -quit -batchmode -projectPath . -executeMethod VRChat.Batcher.ReimportAll` を実行。
