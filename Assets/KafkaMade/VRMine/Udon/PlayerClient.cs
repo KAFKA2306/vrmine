@@ -30,9 +30,10 @@ public class PlayerClient : UdonSharpBehaviour
     public void SubmitDeclaration(byte[] data)
     {
         int size = declaration.Length;
-        int count = data.Length;
-        if (count < size) size = count;
-        for (int i = 0; i < size; i++) declaration[i] = data[i];
+        for (int i = 0; i < size; i++) declaration[i] = 0;
+        int limit = data.Length;
+        if (limit > size) limit = size;
+        for (int i = 0; i < limit; i++) declaration[i] = data[i];
         Touch(2);
     }
 

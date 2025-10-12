@@ -4,7 +4,7 @@ using UdonSharp;
 public class LogBoard : UdonSharpBehaviour
 {
     public TextMeshProUGUI[] rows;
-    public string[] palette = new string[] { "Clear", "Red", "Blue", "Purple", "Yellow", "Orange", "Green", "Black" };
+    static readonly string[] palette = { "Clear", "Red", "Blue", "Purple", "Yellow", "Orange", "Green", "Black" };
 
     public void Render(LogStream stream)
     {
