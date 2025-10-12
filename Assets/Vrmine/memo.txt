@@ -1,0 +1,752 @@
+// =============================
+// File: Assets/Vrmine/NetConst.cs
+// =============================
+using UdonSharp;
+
+public static class NetConst
+{
+    // --- Public color IDs (for logs/results) ---
+    public const byte C_White = 0;
+    public const byte C_Red = 1;
+    public const byte C_Blue = 2;
+    public const byte C_Yellow = 3;
+    public const byte C_Purple = 4;
+    public const byte C_Orange = 5;
+    public const byte C_Green = 6;
+    public const byte C_Gray = 7;
+    public const byte C_None = 255; // Not reported (e.g., absorbed)
+
+    // --- Internal board cell codes (non-public) ---
+    public const byte CELL_TRANSPARENT = 240; // transparent piece (no color change)
+    public const byte CELL_BLACK = 241;       // absorb immediately
+    // For primary colors on board, reuse public IDs: Red(1), Blue(2), Yellow(3)
+
+    // Grid
+    public const byte GRID_W = 10;
+    public const byte GRID_H = 8;
+
+    // Log ring buffer
+    public const int RING_SIZE = 20;
+    public const int LOG_ITEM_BYTES = 4; // entry, exit, color, flags
+    public const int LOG_BYTES = RING_SIZE * LOG_ITEM_BYTES;
+
+    // Event/mailbox
+    public const byte REQ_NONE = 0;
+    public const byte REQ_WAVE = 1;
+    public const byte REQ_DECLARE = 2;
+
+    public const int MAX_PLAYERS = 32;
+
+    // Flags
+    public const byte F_Absorbed = 1 << 0; // black cell
+    public const byte F_AskedProbe = 1 << 1; // reserved
+    public const byte F_Looped = 1 << 2; // looped / safety exit
+}
+
+
+// =============================
+// File: Assets/Vrmine/CRC32
+// =============================
+using UdonSharp;
+using UnityEngine;
+
+public class CRC32 : UdonSharpBehaviour
+{
+    private uint[] table;
+    private bool inited;
+
+    public void EnsureInit()
+    {
+        if (inited) return;
+        table = new uint[256];
+        const uint poly = 0xEDB88320u; // IEEE 802.3
+        for (uint i = 0; i < 256; i++)
+        {
+            uint c = i;
+            for (int j = 0; j < 8; j++)
+            {
+                if ((c & 1u) != 0u) c = poly ^ (c >> 1);
+                else c >>= 1;
+            }
+            table[i] = c;
+        }
+        inited = true;
+    }
+
+    public uint Compute(byte[] data, int offset, int length)
+    {
+        EnsureInit();
+        uint c = 0xFFFFFFFFu;
+        int end = offset + length;
+        for (int i = offset; i < end; i++)
+        {
+            c = table[(c ^ data[i]) & 0xFF] ^ (c >> 8);
+        }
+        return c ^ 0xFFFFFFFFu;
+    }
+}
+
+
+// =============================
+// File: Assets/Vrmine/BoardGenerator.cs
+// =============================
+using UdonSharp;
+using UnityEngine;
+
+// 決定論生成：Seed -> boardState（非公開正本）
+public class BoardGenerator : UdonSharpBehaviour
+{
+    // RNG (xorshift32)
+    private uint rng;
+    public void RngSeed(uint seed)
+    {
+        rng = seed ^ 0x9E3779B9u; // mix with golden ratio
+        // throw away a few rounds to decorrelate trivial seeds
+        for (int i = 0; i < 4; i++) { RngU32(); }
+    }
+
+    private uint RngU32()
+    {
+        uint x = rng;
+        x ^= x << 13;
+        x ^= x >> 17;
+        x ^= x << 5;
+        rng = x;
+        return x;
+    }
+
+    private int RngRange(int lo, int hi)
+    {
+        uint span = (uint)(hi - lo + 1);
+        return lo + (int)(RngU32() % span);
+    }
+
+    // Shapes (local coords)
+    private static readonly sbyte[] DOT1 = new sbyte[] { 0, 0 };
+    private static readonly sbyte[] LINE2 = new sbyte[] { 0, 0, 1, 0 };
+    private static readonly sbyte[] L3   = new sbyte[] { 0, 0, 1, 0, 0, 1 };
+
+    private void Rot(ref int u, ref int v, int rot)
+    {
+        // rot times right-rotation 90 deg
+        for (int i = 0; i < rot; i++)
+        {
+            int ru = v;
+            int rv = -u;
+            u = ru; v = rv;
+        }
+    }
+
+    private bool CanPlace(int[] occ, int w, int h, int ox, int oy, int shapeId, int rot)
+    {
+        sbyte[] shp = shapeId == 0 ? DOT1 : (shapeId == 1 ? LINE2 : L3);
+        for (int i = 0; i < shp.Length; i += 2)
+        {
+            int u = shp[i];
+            int v = shp[i + 1];
+            Rot(ref u, ref v, rot);
+            int x = ox + u;
+            int y = oy + v;
+            if (x < 0 || x >= w || y < 0 || y >= h) return false;
+            if (occ[y * w + x] != 0) return false;
+        }
+        return true;
+    }
+
+    private int Place(int[] occ, int w, int h, int ox, int oy, int shapeId, int rot, byte color)
+    {
+        // mark occupancy; return occupied cell count
+        sbyte[] shp = shapeId == 0 ? DOT1 : (shapeId == 1 ? LINE2 : L3);
+        int filled = 0;
+        for (int i = 0; i < shp.Length; i += 2)
+        {
+            int u = shp[i];
+            int v = shp[i + 1];
+            Rot(ref u, ref v, rot);
+            int x = ox + u;
+            int y = oy + v;
+            int idx = y * w + x;
+            occ[idx] = color; // store color at cell level for quick validation if needed
+            filled++;
+        }
+        return filled;
+    }
+
+    // Encode: count(u8) + items*5B[color,shape,rot,x,y] + crc32(u32)
+    public int Generate(uint seed, byte[] outBuf /*>=128*/, CRC32 crc32)
+    {
+        int W = NetConst.GRID_W;
+        int H = NetConst.GRID_H;
+        int[] occ = new int[W * H]; // 0: empty, otherwise color code (board-internal)
+        int totalCap = 20; // max occupied cells
+
+        RngSeed(seed);
+
+        // Order: colors [Red, Blue, Yellow], then Transparent, Black (small counts)
+        byte[] colors = new byte[] { NetConst.C_Red, NetConst.C_Blue, NetConst.C_Yellow };
+        byte[] extras = new byte[] { NetConst.CELL_TRANSPARENT, NetConst.CELL_BLACK };
+
+        // Per color up to 5 pieces
+        int[] need = new int[colors.Length];
+        for (int i = 0; i < colors.Length; i++) need[i] = RngRange(0, 5);
+        // Extras smaller counts
+        int tCnt = RngRange(0, 1); // transparent 0..1
+        int bCnt = RngRange(0, 1); // black 0..1
+
+        // Shapes and rotation order fixed
+        int[] shapes = new int[] { 0, 1, 2 }; // Dot1, Line2, L3
+        int[] rots = new int[] { 0, 1, 2, 3 };
+
+        // Output piece list temp (max 20 pieces)
+        byte[] tmp = new byte[1 + 5 * 20];
+        int count = 0;
+        tmp[0] = 0; // will set later
+
+        // helper to try place a piece deterministically (scan y,x; rot order fixed)
+        System.Func<byte, bool> placeOne = (byte color) =>
+        {
+            // shape preference cycle by RNG but deterministic: choose start shape index, then wrap
+            int shapeStart = RngRange(0, shapes.Length - 1);
+            for (int si = 0; si < shapes.Length; si++)
+            {
+                int shapeId = shapes[(shapeStart + si) % shapes.Length];
+                int cells = (shapeId == 0 ? 1 : (shapeId == 1 ? 2 : 3));
+                if (totalCap - cells < 0) continue;
+
+                for (int ri = 0; ri < rots.Length; ri++)
+                {
+                    int rot = rots[ri];
+                    for (int y = 0; y < H; y++)
+                    {
+                        for (int x = 0; x < W; x++)
+                        {
+                            if (!CanPlace(occ, W, H, x, y, shapeId, rot)) continue;
+                            // place
+                            Place(occ, W, H, x, y, shapeId, rot, color);
+                            int ofs = 1 + count * 5;
+                            tmp[ofs + 0] = color;
+                            tmp[ofs + 1] = (byte)shapeId;
+                            tmp[ofs + 2] = (byte)rot;
+                            tmp[ofs + 3] = (byte)x;
+                            tmp[ofs + 4] = (byte)y;
+                            count++;
+                            totalCap -= cells;
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        };
+
+        // place primaries in fixed round-robin per color until each need[] satisfied or capacity exhausted
+        bool progress = true;
+        while (progress)
+        {
+            progress = false;
+            for (int i = 0; i < colors.Length; i++)
+            {
+                if (need[i] > 0 && totalCap > 0)
+                {
+                    if (placeOne(colors[i])) { need[i]--; progress = true; }
+                }
+            }
+        }
+
+        // extras
+        for (int i = 0; i < tCnt && totalCap > 0; i++) placeOne(NetConst.CELL_TRANSPARENT);
+        for (int i = 0; i < bCnt && totalCap > 0; i++) placeOne(NetConst.CELL_BLACK);
+
+        // encode
+        tmp[0] = (byte)count;
+        for (int i = 0; i < 1 + 5 * count; i++) outBuf[i] = tmp[i];
+        int len = 1 + 5 * count;
+        // append CRC32 of header+items (without CRC itself)
+        uint crc = crc32.Compute(outBuf, 0, len);
+        outBuf[len + 0] = (byte)(crc & 0xFF);
+        outBuf[len + 1] = (byte)((crc >> 8) & 0xFF);
+        outBuf[len + 2] = (byte)((crc >> 16) & 0xFF);
+        outBuf[len + 3] = (byte)((crc >> 24) & 0xFF);
+        return len + 4;
+    }
+}
+
+
+// =============================
+// File: Assets/Vrmine/WaveSimulator.cs
+// =============================
+using UdonSharp;
+using UnityEngine;
+
+public class WaveSimulator : UdonSharpBehaviour
+{
+    public byte lastExitId;
+    public byte lastColorId;
+    public byte lastFlags;
+
+    private const int MAX_STEPS = 4096;
+
+    // Helpers -----------------------------------------------------
+    private int DirToIndex(int dx, int dz)
+    {
+        // +X=0, -X=1, +Z=2, -Z=3
+        if (dx == 1 && dz == 0) return 0;
+        if (dx == -1 && dz == 0) return 1;
+        if (dx == 0 && dz == 1) return 2;
+        return 3; // (0,-1)
+    }
+
+    private void RotateRight(ref int dx, ref int dz)
+    {
+        // (dx, dz) -> right 90 deg
+        int ndx = dz;
+        int ndz = -dx;
+        dx = ndx; dz = ndz;
+    }
+
+    private byte BitsToColorId(int bits)
+    {
+        // 0..7 map to White..Gray
+        return (byte)bits; // matches NetConst IDs for results
+    }
+
+    private byte ComputeExitId(int x, int y)
+    {
+        // when outside: decide which edge
+        if (y < 0) return (byte)x;              // top 0..9
+        if (x >= NetConst.GRID_W) return (byte)(10 + y); // right 10..17
+        if (y >= NetConst.GRID_H) return (byte)(18 + x); // bottom 18..27
+        return (byte)(28 + y);                  // left 28..35
+    }
+
+    private byte CellColorAt(int cx, int cy, byte[] boardState, int boardLen)
+    {
+        int cnt = boardState[0];
+        int i = 1;
+        for (int k = 0; k < cnt; k++)
+        {
+            byte color = boardState[i + 0];
+            byte shape = boardState[i + 1];
+            byte rot   = boardState[i + 2];
+            int  ox    = boardState[i + 3];
+            int  oy    = boardState[i + 4];
+            i += 5;
+
+            // iterate shape cells
+            if (shape == 0)
+            {
+                if (ox == cx && oy == cy) return color;
+            }
+            else if (shape == 1)
+            {
+                // LINE2: (0,0),(1,0) rotated rot times
+                if (HitRot(cx, cy, ox, oy, 0, 0, rot)) return color;
+                if (HitRot(cx, cy, ox, oy, 1, 0, rot)) return color;
+            }
+            else // L3
+            {
+                if (HitRot(cx, cy, ox, oy, 0, 0, rot)) return color;
+                if (HitRot(cx, cy, ox, oy, 1, 0, rot)) return color;
+                if (HitRot(cx, cy, ox, oy, 0, 1, rot)) return color;
+            }
+        }
+        return NetConst.C_White; // empty
+    }
+
+    private bool HitRot(int cx, int cy, int ox, int oy, int u, int v, int rot)
+    {
+        for (int r = 0; r < rot; r++) { int tu = v; v = -u; u = tu; }
+        return (ox + u == cx) && (oy + v == cy);
+    }
+
+    // Main --------------------------------------------------------
+    public void Simulate(byte entryId, byte[] boardState, int boardLen)
+    {
+        // init
+        lastFlags = 0;
+        lastExitId = 255;
+        lastColorId = NetConst.C_White;
+
+        // entry -> start
+        int x, y, dx, dz;
+        // Top row 0..9
+        if (entryId <= 9)
+        {
+            x = entryId; y = -1; dx = 0; dz = 1; // +Z
+        }
+        else if (entryId <= 17)
+        {
+            x = 10; y = entryId - 10; dx = -1; dz = 0; // -X (right edge)
+        }
+        else if (entryId <= 27)
+        {
+            x = entryId - 18; y = 8; dx = 0; dz = -1; // -Z (bottom)
+        }
+        else
+        {
+            x = -1; y = entryId - 28; dx = 1; dz = 0; // +X (left edge)
+        }
+
+        // visited[10*8*4]
+        bool[] visited = new bool[NetConst.GRID_W * NetConst.GRID_H * 4];
+        int rgbBits = 0; // R=1, B=2, Y=4
+
+        for (int steps = 0; steps < MAX_STEPS; steps++)
+        {
+            // advance one cell
+            x += dx; y += dz;
+
+            // outside -> exit
+            if (x < 0 || x >= NetConst.GRID_W || y < 0 || y >= NetConst.GRID_H)
+            {
+                lastExitId = ComputeExitId(x, y);
+                lastColorId = BitsToColorId(rgbBits);
+                return;
+            }
+
+            int d4 = DirToIndex(dx, dz);
+            int visIdx = (y * NetConst.GRID_W + x) * 4 + d4;
+            if (visited[visIdx])
+            {
+                lastFlags |= NetConst.F_Looped;
+                lastExitId = 255;
+                lastColorId = BitsToColorId(rgbBits);
+                return;
+            }
+            visited[visIdx] = true;
+
+            // read board cell
+            byte c = CellColorAt(x, y, boardState, boardLen);
+            if (c == NetConst.CELL_BLACK)
+            {
+                lastFlags |= NetConst.F_Absorbed;
+                lastExitId = 255;
+                lastColorId = NetConst.C_None; // not reported
+                return;
+            }
+            if (c == NetConst.CELL_TRANSPARENT || c == NetConst.C_White)
+            {
+                // no change
+                continue;
+            }
+
+            // primary colors only (1,2,3)
+            if (c == NetConst.C_Red) rgbBits |= 0b001;
+            else if (c == NetConst.C_Blue) rgbBits |= 0b010;
+            else if (c == NetConst.C_Yellow) rgbBits |= 0b100;
+
+            // reflect 90deg to the right
+            RotateRight(ref dx, ref dz);
+        }
+
+        // safety
+        lastFlags |= NetConst.F_Looped;
+        lastExitId = 255;
+        lastColorId = BitsToColorId(rgbBits);
+    }
+}
+
+
+// =============================
+// File: Assets/Vrmine/GameController.cs
+// =============================
+using UdonSharp;
+using UnityEngine;
+using VRC.SDKBase;
+using VRC.Udon;
+
+public class GameController : UdonSharpBehaviour
+{
+    // === Synced (public) ===
+    [UdonSynced] public byte gridW = NetConst.GRID_W, gridH = NetConst.GRID_H;
+    [UdonSynced] public uint boardSeed;
+    [UdonSynced] public uint boardHash;
+
+    [UdonSynced] public int turnIndex;
+    [UdonSynced] public byte ringSize = NetConst.RING_SIZE;
+    [UdonSynced] public byte logCount;
+    [UdonSynced] public byte logHead;
+    [UdonSynced] public byte[] logRing = new byte[NetConst.LOG_BYTES];
+
+    // === Owner-only (private state) ===
+    private byte[] boardState = new byte[128];
+    private int boardLen;
+
+    // References
+    public WaveSimulator wave;
+    public TurnQueue queue;
+    public Judge judge;
+    public BoardGenerator generator;
+    public CRC32 crc32;
+
+    // Mailbox processing state
+    private int[] handledSeqByPlayerId = new int[NetConst.MAX_PLAYERS];
+
+    void Start()
+    {
+        if (Networking.IsOwner(gameObject))
+        {
+            if (boardSeed == 0u) boardSeed = (uint)Random.Range(1, int.MaxValue);
+            Owner_GenerateBoardFromSeed();
+            RequestSerialization();
+        }
+    }
+
+    private uint ReadCrcLE(byte[] buf, int ofs)
+    {
+        return (uint)(buf[ofs] | (buf[ofs + 1] << 8) | (buf[ofs + 2] << 16) | (buf[ofs + 3] << 24));
+    }
+
+    public void Owner_GenerateBoardFromSeed()
+    {
+        // Deterministic generation
+        boardLen = generator.Generate(boardSeed, boardState, crc32);
+        // Compute/verify CRC
+        uint crc = crc32.Compute(boardState, 0, boardLen - 4);
+        uint tail = ReadCrcLE(boardState, boardLen - 4);
+        if (crc != tail)
+        {
+            // Should not happen; regenerate with bumped seed (extremely rare)
+            boardSeed ^= 0xA5A5A5A5u;
+            boardLen = generator.Generate(boardSeed, boardState, crc32);
+            crc = crc32.Compute(boardState, 0, boardLen - 4);
+            tail = ReadCrcLE(boardState, boardLen - 4);
+        }
+        boardHash = crc; // publish hash of (count+items)
+    }
+
+    // === Mailbox callback (Owner only) ===
+    public void Owner_OnMailboxUpdated()
+    {
+        if (!Networking.IsOwner(gameObject)) return;
+        PlayerClient[] mbs = (PlayerClient[])FindObjectsOfType(typeof(PlayerClient));
+        int n = mbs.Length;
+        for (int i = 0; i < n; i++)
+        {
+            PlayerClient mb = mbs[i];
+            int pid = mb.ownerPlayerId;
+            if (pid <= 0 || pid >= NetConst.MAX_PLAYERS) continue;
+            if (mb.reqSeq == handledSeqByPlayerId[pid]) continue;
+            handledSeqByPlayerId[pid] = mb.reqSeq;
+
+            if (mb.reqType == NetConst.REQ_WAVE) Owner_HandleWave(pid, mb.entryId);
+            else if (mb.reqType == NetConst.REQ_DECLARE) Owner_HandleDeclare(pid, mb.decl, mb.declLen);
+        }
+    }
+
+    private void Owner_HandleWave(int senderPlayerId, byte entryId)
+    {
+        if (!queue.Owner_IsTurn(senderPlayerId)) return; // enforce turn
+
+        wave.Simulate(entryId, boardState, boardLen);
+        byte exitId  = wave.lastExitId;
+        byte colorId = wave.lastColorId;
+        byte flags   = wave.lastFlags;
+
+        // append to log ring
+        int head = logHead;
+        int ofs = head * NetConst.LOG_ITEM_BYTES;
+        logRing[ofs + 0] = entryId;
+        logRing[ofs + 1] = exitId;
+        logRing[ofs + 2] = colorId;
+        logRing[ofs + 3] = flags;
+        head = (head + 1) % NetConst.RING_SIZE;
+        if (logCount < NetConst.RING_SIZE) logCount++;
+        logHead = (byte)head;
+
+        // advance turn
+        turnIndex++;
+        queue.Owner_NextTurn();
+
+        RequestSerialization();
+        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, nameof(RPC_WaveResult_Sfx));
+    }
+
+    private void Owner_HandleDeclare(int senderPlayerId, byte[] payload, int length)
+    {
+        if (!queue.Owner_IsTurn(senderPlayerId)) return;
+        byte errors;
+        bool ok = judge.Validate(payload, length, boardState, boardLen, out errors);
+        if (ok) SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, nameof(RPC_WonSfx));
+        else SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, nameof(RPC_DeclareFailSfx));
+    }
+
+    // Visual-only RPCs
+    public void RPC_WaveResult_Sfx() { /* TODO: draw line/SE */ }
+    public void RPC_WonSfx() { /* TODO: winner FX */ }
+    public void RPC_DeclareFailSfx() { /* TODO: fail FX */ }
+}
+
+
+// =============================
+// File: Assets/Vrmine/PlayerClient.cs
+// =============================
+using UdonSharp;
+using UnityEngine;
+using VRC.SDKBase;
+using VRC.Udon;
+
+public class PlayerClient : UdonSharpBehaviour
+{
+    [UdonSynced] public int ownerPlayerId;
+    [UdonSynced] public int reqSeq;
+    [UdonSynced] public byte reqType;
+    [UdonSynced] public byte entryId;
+    [UdonSynced] public int declLen;
+    [UdonSynced] public byte[] decl = new byte[NetConst.LOG_BYTES * 5]; // 400B default; UI側で<=900Bに制限
+
+    public GameController game;
+
+    void Start()
+    {
+        if (Networking.LocalPlayer != null && Networking.IsOwner(gameObject))
+        {
+            ownerPlayerId = Networking.LocalPlayer.playerId;
+            RequestSerialization();
+        }
+    }
+
+    public void Client_SubmitWave(byte inEntryId)
+    {
+        if (!Networking.IsOwner(gameObject)) Networking.SetOwner(Networking.LocalPlayer, gameObject);
+        reqType = NetConst.REQ_WAVE;
+        entryId = inEntryId;
+        reqSeq++;
+        RequestSerialization();
+        game.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(GameController.Owner_OnMailboxUpdated));
+    }
+
+    public void Client_SubmitDeclare(byte[] payload, int length)
+    {
+        if (length > decl.Length) length = decl.Length; // local safety
+        if (!Networking.IsOwner(gameObject)) Networking.SetOwner(Networking.LocalPlayer, gameObject);
+        reqType = NetConst.REQ_DECLARE;
+        declLen = length;
+        for (int i = 0; i < length; i++) decl[i] = payload[i];
+        reqSeq++;
+        RequestSerialization();
+        game.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(GameController.Owner_OnMailboxUpdated));
+    }
+}
+
+
+// =============================
+// File: Assets/Vrmine/TurnQueue.cs
+// =============================
+using UdonSharp;
+using UnityEngine;
+using VRC.SDKBase;
+
+public class TurnQueue : UdonSharpBehaviour
+{
+    [UdonSynced] public int turnIndex;
+    [UdonSynced] public int currentPlayerId;
+
+    public int secondsPerTurn = 90;
+    private float _deadline;
+    private VRCPlayerApi[] _players = new VRCPlayerApi[NetConst.MAX_PLAYERS];
+    private int _playerCount;
+
+    public void Owner_InitQueue()
+    {
+        _playerCount = VRCPlayerApi.GetPlayerCount();
+        VRCPlayerApi.GetPlayers(_players);
+        currentPlayerId = (_playerCount > 0) ? _players[0].playerId : -1;
+        _deadline = Time.time + secondsPerTurn;
+        RequestSerialization();
+    }
+
+    public bool Owner_IsTurn(int playerId) { return playerId == currentPlayerId; }
+
+    public void Owner_NextTurn()
+    {
+        _playerCount = VRCPlayerApi.GetPlayerCount();
+        VRCPlayerApi.GetPlayers(_players);
+        if (_playerCount <= 0) { currentPlayerId = -1; turnIndex++; RequestSerialization(); return; }
+        int idx = 0;
+        for (int i = 0; i < _playerCount; i++) if (_players[i].playerId == currentPlayerId) { idx = i; break; }
+        idx = (idx + 1) % _playerCount;
+        currentPlayerId = _players[idx].playerId;
+        turnIndex++;
+        _deadline = Time.time + secondsPerTurn;
+        RequestSerialization();
+    }
+
+    public bool Owner_IsTimeout() { return Time.time >= _deadline; }
+}
+
+
+// =============================
+// File: Assets/Vrmine/Judge.cs
+// =============================
+using UdonSharp;
+using UnityEngine;
+
+public class Judge : UdonSharpBehaviour
+{
+    // payload v1: [ver(1)] [count(1)] then count*(x(1),y(1),colorId(1))
+    public bool Validate(byte[] declarePayload, int declLen, byte[] boardState, int boardLen, out byte errors)
+    {
+        errors = 0;
+        if (declLen < 2) return false;
+        int ver = declarePayload[0];
+        if (ver != 1) return false;
+        int cnt = declarePayload[1];
+        if (declLen < 2 + cnt * 3) return false;
+
+        // Build a small check: for each declared cell ensure boardState contains that color; also ensure no extra colored cells are missing (strict match)
+        // For minimal implementation we verify only declared cells match; production can extend to full-grid validation.
+        for (int i = 0; i < cnt; i++)
+        {
+            int ofs = 2 + i * 3;
+            int x = declarePayload[ofs + 0];
+            int y = declarePayload[ofs + 1];
+            int c = declarePayload[ofs + 2];
+            byte actual = CellColorAt(x, y, boardState, boardLen);
+            byte expect = (byte)c;
+            // Map internal transparent/black to visible expectations
+            if (actual == NetConst.CELL_TRANSPARENT) actual = NetConst.C_White; // transparent reported as white
+            if (actual == NetConst.CELL_BLACK) actual = NetConst.C_White;      // black is not reported as a color cell
+            if (actual != expect) errors++;
+        }
+        return errors == 0;
+    }
+
+    // Minimal duplicate of WaveSimulator.CellColorAt (to avoid hard ref). Consider refactor to shared util in production.
+    private bool HitRot(int cx, int cy, int ox, int oy, int u, int v, int rot)
+    {
+        for (int r = 0; r < rot; r++) { int tu = v; v = -u; u = tu; }
+        return (ox + u == cx) && (oy + v == cy);
+    }
+
+    private byte CellColorAt(int cx, int cy, byte[] boardState, int boardLen)
+    {
+        int cnt = boardState[0];
+        int i = 1;
+        for (int k = 0; k < cnt; k++)
+        {
+            byte color = boardState[i + 0];
+            byte shape = boardState[i + 1];
+            byte rot   = boardState[i + 2];
+            int  ox    = boardState[i + 3];
+            int  oy    = boardState[i + 4];
+            i += 5;
+            if (shape == 0)
+            {
+                if (ox == cx && oy == cy) return color;
+            }
+            else if (shape == 1)
+            {
+                if (HitRot(cx, cy, ox, oy, 0, 0, rot)) return color;
+                if (HitRot(cx, cy, ox, oy, 1, 0, rot)) return color;
+            }
+            else
+            {
+                if (HitRot(cx, cy, ox, oy, 0, 0, rot)) return color;
+                if (HitRot(cx, cy, ox, oy, 1, 0, rot)) return color;
+                if (HitRot(cx, cy, ox, oy, 0, 1, rot)) return color;
+            }
+        }
+        return NetConst.C_White;
+    }
+}
