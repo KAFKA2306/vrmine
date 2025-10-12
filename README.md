@@ -42,7 +42,7 @@ public class PlayerClient : UdonSharpBehaviour {
         if (!Networking.IsOwner(gameObject)) Networking.SetOwner(Networking.LocalPlayer, gameObject);
         reqType=1; entryId=id; reqSeq++;
         RequestSerialization();
-        game.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(GameController.OnMailboxUpdate));
+        game.SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, nameof(GameController.Pull));
     }
 }
 ```
@@ -71,7 +71,7 @@ public class GameController : UdonSharpBehaviour {
         }
     }
 
-    public void OnMailboxUpdate() {
+    public void Pull() {
         if (!Networking.IsOwner(gameObject)) return;
         for (int i=0; i<mailboxes.Length; i++) {
             var mb = mailboxes[i];
