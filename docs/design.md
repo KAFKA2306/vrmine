@@ -325,20 +325,3 @@ logRing:u8[80]  // 20×4B (entry, exit, color, flags)
 * **イベント機能拡張（8パラメータ / NetworkCallable）**：選択肢の最新仕様。([creators.vrchat.com][4])
 * **ClientSim / CyanEmu**：テスト運用の根拠。([creators.vrchat.com][5])
 * **プレイヤーAPI**（`VRCPlayerApi`, Join/Leave）：手番キュー管理の基礎。([creators.vrchat.com][10])
-
----
-
-### 次の一手
-
-* この設計に合わせて、**`WaveSimulator.Simulate` の完全実装仕様（擬似コード＋全ケース表）**と**`TransferBoard` の送受信チャンク設計**も即時に出せます。必要なら続けます。
-
-[1]: https://creators.vrchat.com/sdk/upgrade/current-unity-version/?utm_source=chatgpt.com "Current Unity Version | VRChat Creation"
-[2]: https://creators.vrchat.com/worlds/udon/udonsharp/?utm_source=chatgpt.com "UdonSharp | VRChat Creation"
-[3]: https://creators.vrchat.com/worlds/udon/networking/?utm_source=chatgpt.com "Networking | VRChat Creation"
-[4]: https://creators.vrchat.com/releases/release-3-8-1/?utm_source=chatgpt.com "Release 3.8.1 | VRChat Creation"
-[5]: https://creators.vrchat.com/worlds/clientsim/?utm_source=chatgpt.com "ClientSim | VRChat Creation"
-[6]: https://creators.vrchat.com/worlds/udon/networking/network-details/?utm_source=chatgpt.com "Networking Specs & Tricks - Udon"
-[7]: https://creators.vrchat.com/worlds/udon/networking/variables/?utm_source=chatgpt.com "Network Variables | VRChat Creation"
-[8]: https://creators.vrchat.com/platforms/android/build-test-mobile/?utm_source=chatgpt.com "Build and Test for Android Mobile | VRChat Creation"
-[9]: https://udonsharp.docs.vrchat.com/community-resources/?utm_source=chatgpt.com "Community Resources | UdonSharp - VRChat"
-[10]: https://creators.vrchat.com/worlds/udon/players/?utm_source=chatgpt.com "Player API | VRChat Creation"
