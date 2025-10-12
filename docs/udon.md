@@ -1,5 +1,4 @@
-了解、KAFKA。
-ミニマル仕様に沿った **UdonSynced 変数定義**と**安全なイベント伝達（Mailbox/Fallback）**を備えた **UdonSharp 雛形**をまとめて置きます。
+**UdonSynced 変数定義**と**安全なイベント伝達（Mailbox/Fallback）**を備えた **UdonSharp 雛形**をまとめて置きます。
 （※ VRChat の“パラメータ付きネットワークイベント”を使わない前提。全て **Owner単一権限／整数格子／UIトリガのみ** で完結）
 
 > 配置：`Assets/Vrmine/` 直下に下記ファイルを作成（ファイル名コメント参照）。
