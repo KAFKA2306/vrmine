@@ -46,3 +46,13 @@
 *assets
 sysinfo.txt
 crashlytics-build.properties
+
+# UdonSharp & VRChat generated files
+/Assets/UdonSharp/
+/Assets/SerializedUdonPrograms/
+
+# Ignore downloaded packages, but not the manifests
+/Packages/*
+!/Packages/manifest.json
+!/Packages/packages-lock.json
+!/Packages/vpm-manifest.json
