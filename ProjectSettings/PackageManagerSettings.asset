@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EnablePreReleasePackages: 0
-  m_AdvancedSettingsExpanded: 1
-  m_ScopedRegistriesSettingsExpanded: 1
+  m_AdvancedSettingsExpanded: 0
+  m_ScopedRegistriesSettingsExpanded: 0
   m_SeeAllPackageVersions: 0
   m_DismissPreviewPackagesInUse: 0
   oneTimeWarningShown: 0
