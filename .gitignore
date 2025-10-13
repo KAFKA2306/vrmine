@@ -43,8 +43,8 @@
 *.sln
 *.vsconfig
 *.meta
-!/Assets/KafkaMade/VRMine/**/*.meta
 *assets
+*lock*
 sysinfo.txt
 crashlytics-build.properties
 
@@ -52,10 +52,7 @@ crashlytics-build.properties
 /Assets/UdonSharp/
 /Assets/SerializedUdonPrograms/
 
-# Ignore downloaded packages, but not the manifests
+# Ignore downloaded packages
 /Packages/*
-!/Packages/manifest.json
 Packages/packages-lock.json
-!/Packages/vpm-manifest.json
 *.png
-!/Packages/com.vrmine.bootstrap/

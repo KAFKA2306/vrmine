@@ -25,7 +25,7 @@ public static class BootstrapScene
         var textObj = new GameObject("LogText", typeof(Text));
         textObj.transform.SetParent(panel.transform);
         var text = textObj.GetComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.text = "VRMine Log";
         text.alignment = TextAnchor.UpperLeft;
         text.resizeTextForBestFit = true;
@@ -34,7 +34,7 @@ public static class BootstrapScene
         var buttonTextObj = new GameObject("Text", typeof(Text));
         buttonTextObj.transform.SetParent(button.transform);
         var buttonText = buttonTextObj.GetComponent<Text>();
-        buttonText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        buttonText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         buttonText.text = "完全一致を宣言";
         buttonText.alignment = TextAnchor.MiddleCenter;
         buttonText.resizeTextForBestFit = true;
