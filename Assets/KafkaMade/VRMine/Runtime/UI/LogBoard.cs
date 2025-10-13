@@ -1,9 +1,9 @@
-using TMPro;
 using UdonSharp;
+using UnityEngine.UI;
 
 public class LogBoard : UdonSharpBehaviour
 {
-    public TextMeshProUGUI[] rows;
+    public Text[] rows;
     readonly string[] palette = { "Clear", "Red", "Blue", "Purple", "Yellow", "Orange", "Green", "Black" };
 
     public void Render(LogStream stream)
