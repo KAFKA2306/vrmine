@@ -54,5 +54,7 @@ crashlytics-build.properties
 # Ignore downloaded packages, but not the manifests
 /Packages/*
 !/Packages/manifest.json
-!/Packages/packages-lock.json
+Packages/packages-lock.json
 !/Packages/vpm-manifest.json
+*.png
+!/Packages/com.vrmine.bootstrap/
