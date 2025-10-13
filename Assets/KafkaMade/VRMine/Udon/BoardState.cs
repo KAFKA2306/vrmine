@@ -12,6 +12,7 @@ public class BoardState : UdonSharpBehaviour
         uint s = seed;
         if (s == 0) s = 1;
         int size = cells.Length;
+        uint sizeU = (uint)size;
         for (int i = 0; i < size; i++) cells[i] = 0;
         int blockCount = blocks.Length;
         for (int i = 0; i < blockCount; i++)
@@ -19,7 +20,7 @@ public class BoardState : UdonSharpBehaviour
             for (int t = 0; t < 160; t++)
             {
                 s = s * 1664525u + 1013904223u;
-                int index = (int)(s % size);
+                int index = (int)(s % sizeU);
                 if (cells[index] != 0) continue;
                 cells[index] = blocks[i];
                 break;
