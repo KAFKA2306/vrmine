@@ -43,6 +43,7 @@
 *.sln
 *.vsconfig
 *.meta
+!/Assets/KafkaMade/VRMine/Udon/*.cs.meta
 *assets
 sysinfo.txt
 crashlytics-build.properties
