@@ -20,7 +20,7 @@ public class BoardState : UdonSharpBehaviour
             for (int t = 0; t < 160; t++)
             {
                 s = s * 1664525u + 1013904223u;
-                int index = (int)(s % sizeU);
+                int index = (int)(s - s / sizeU * sizeU);
                 if (cells[index] != 0) continue;
                 cells[index] = blocks[i];
                 break;
