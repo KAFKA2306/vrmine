@@ -2,6 +2,7 @@
   "dependencies": {
     "com.vrchat.base": "3.9.0",
     "com.vrchat.worlds": "3.9.0",
-    "com.vrmine.bootstrap": "file:com.vrmine.bootstrap"
+    "com.vrmine.bootstrap": "file:com.vrmine.bootstrap",
+    "com.unity.modules.androidjni": "1.0.0"
   }
 }
