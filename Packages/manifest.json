@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "com.vrchat.base": "file:com.vrchat.base",
-    "com.vrchat.worlds": "file:com.vrchat.worlds",
+    "com.vrchat.base": "3.9.0",
+    "com.vrchat.worlds": "3.9.0",
     "com.vrmine.bootstrap": "file:com.vrmine.bootstrap"
   }
 }
