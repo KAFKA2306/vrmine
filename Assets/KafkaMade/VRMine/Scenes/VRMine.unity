@@ -328,6 +328,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 15}
+  - component: {fileID: 400000000}
   - component: {fileID: 16}
   m_Layer: 0
   m_Name: GameController
@@ -521,6 +522,41 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes:
+    ReferencedUnityObjects: []
+    SerializedBytesString:
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _udonSharpBackingUdonBehaviour: {fileID: 400000000}
+--- !u!114 &400000000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 14}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  interactTextPlacement: {fileID: 0}
+  interactText: Use
+  interactTextGO: {fileID: 0}
+  proximity: 2
+  SynchronizePosition: 0
+  AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
+  _syncMethod: 2
+  serializedProgramAsset: {fileID: 0}
+  programSource: {fileID: 11400000, guid: 10fd93944c4b4908b61f64ec55220d8a, type: 2}
+  serializedPublicVariablesBytesString:
+  publicVariablesUnityEngineObjects: []
+  publicVariablesSerializationDataFormat: 0
 --- !u!1 &17
 GameObject:
   m_ObjectHideFlags: 0
@@ -530,6 +566,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 18}
+  - component: {fileID: 400000001}
   - component: {fileID: 19}
   m_Layer: 0
   m_Name: PlayerClient
@@ -651,6 +688,42 @@ MonoBehaviour:
   - 0
   - 0
   controller: {fileID: 16}
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes:
+    ReferencedUnityObjects: []
+    SerializedBytesString:
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _udonSharpBackingUdonBehaviour: {fileID: 400000001}
+--- !u!114 &400000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  interactTextPlacement: {fileID: 0}
+  interactText: Use
+  interactTextGO: {fileID: 0}
+  proximity: 2
+  SynchronizePosition: 0
+  AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
+  _syncMethod: 2
+  serializedProgramAsset: {fileID: 0}
+  programSource: {fileID: 11400000, guid: fa03e5e393d84cd4956043c48ad0283f, type: 2}
+  serializedPublicVariablesBytesString:
+  publicVariablesUnityEngineObjects: []
+  publicVariablesSerializationDataFormat: 0
+
 --- !u!1 &20
 GameObject:
   m_ObjectHideFlags: 0
@@ -660,6 +733,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 21}
+  - component: {fileID: 400000002}
   - component: {fileID: 22}
   m_Layer: 0
   m_Name: BoardState
@@ -782,6 +856,42 @@ MonoBehaviour:
   - 4
   - 8
   - 8
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes:
+    ReferencedUnityObjects: []
+    SerializedBytesString:
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _udonSharpBackingUdonBehaviour: {fileID: 400000002}
+--- !u!114 &400000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 20}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  interactTextPlacement: {fileID: 0}
+  interactText: Use
+  interactTextGO: {fileID: 0}
+  proximity: 2
+  SynchronizePosition: 0
+  AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
+  _syncMethod: 2
+  serializedProgramAsset: {fileID: 0}
+  programSource: {fileID: 11400000, guid: 3433f01f40234bacab852d8e972aa0b5, type: 2}
+  serializedPublicVariablesBytesString:
+  publicVariablesUnityEngineObjects: []
+  publicVariablesSerializationDataFormat: 0
+
 --- !u!1 &23
 GameObject:
   m_ObjectHideFlags: 0
@@ -791,6 +901,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 24}
+  - component: {fileID: 400000003}
   - component: {fileID: 25}
   m_Layer: 0
   m_Name: WaveSimulator
@@ -844,6 +955,42 @@ MonoBehaviour:
   - 0
   - 1
   - 2
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes:
+    ReferencedUnityObjects: []
+    SerializedBytesString:
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _udonSharpBackingUdonBehaviour: {fileID: 400000003}
+--- !u!114 &400000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 23}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  interactTextPlacement: {fileID: 0}
+  interactText: Use
+  interactTextGO: {fileID: 0}
+  proximity: 2
+  SynchronizePosition: 0
+  AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
+  _syncMethod: 0
+  serializedProgramAsset: {fileID: 0}
+  programSource: {fileID: 11400000, guid: 1d369d944c104fce8e6aa3cbdd659459, type: 2}
+  serializedPublicVariablesBytesString:
+  publicVariablesUnityEngineObjects: []
+  publicVariablesSerializationDataFormat: 0
+
 --- !u!1 &26
 GameObject:
   m_ObjectHideFlags: 0
@@ -853,6 +1000,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 27}
+  - component: {fileID: 400000004}
   - component: {fileID: 28}
   m_Layer: 0
   m_Name: LogStream
@@ -972,6 +1120,42 @@ MonoBehaviour:
   - 0
   - 0
   view: {fileID: 31}
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes:
+    ReferencedUnityObjects: []
+    SerializedBytesString:
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _udonSharpBackingUdonBehaviour: {fileID: 400000004}
+--- !u!114 &400000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 26}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  interactTextPlacement: {fileID: 0}
+  interactText: Use
+  interactTextGO: {fileID: 0}
+  proximity: 2
+  SynchronizePosition: 0
+  AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
+  _syncMethod: 0
+  serializedProgramAsset: {fileID: 0}
+  programSource: {fileID: 11400000, guid: 1f2c149055dd46a7be4be8bd9761a80f, type: 2}
+  serializedPublicVariablesBytesString:
+  publicVariablesUnityEngineObjects: []
+  publicVariablesSerializationDataFormat: 0
+
 --- !u!1 &29
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,6 +1165,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 30}
+  - component: {fileID: 400000005}
   - component: {fileID: 31}
   m_Layer: 0
   m_Name: LogBoard
@@ -1017,3 +1202,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rows: []
+
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes:
+    ReferencedUnityObjects: []
+    SerializedBytesString:
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _udonSharpBackingUdonBehaviour: {fileID: 400000005}
+--- !u!114 &400000005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  interactTextPlacement: {fileID: 0}
+  interactText: Use
+  interactTextGO: {fileID: 0}
+  proximity: 2
+  SynchronizePosition: 0
+  AllowCollisionOwnershipTransfer: 0
+  Reliable: 0
+  _syncMethod: 0
+  serializedProgramAsset: {fileID: 0}
+  programSource: {fileID: 11400000, guid: ede00eb627e44bc3bf4173581005f5f8, type: 2}
+  serializedPublicVariablesBytesString:
+  publicVariablesUnityEngineObjects: []
+  publicVariablesSerializationDataFormat: 0
