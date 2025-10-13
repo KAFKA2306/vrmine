@@ -13,7 +13,7 @@ public class GameController : UdonSharpBehaviour
     [UdonSynced] public byte logHead;
     [UdonSynced] public byte logCount;
     [UdonSynced] public byte[] logData = new byte[NetConst.LogRingSize * LogStream.EntrySize];
-    public PlayerClient[] mailboxes;
+    public PlayerClient[] mailboxes = new PlayerClient[0];
     public WaveSimulator wave;
     public LogStream logStream;
     public BoardState board;
