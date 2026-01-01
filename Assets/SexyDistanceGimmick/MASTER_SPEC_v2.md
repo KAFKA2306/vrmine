@@ -201,6 +201,18 @@ leanAmount_Waist = 0.45f         // 腰接触時
 leanAmount_Thigh = 0.40f         // 太腿接触時
 ```
 
+### 6.5 推奨プリセット：Yobai Mode (男のロマン版)
+
+「寝込みを襲われる」シチュエーションに特化した調整値。
+
+```csharp
+triggerDistance = 2.0f       // 気配は早めに察知させる
+minDistance = 0.15f          // 限界まで近づく（吐息がかかる距離）
+moveSpeed = 0.08f            // じわじわと、焦らすように遅く
+touchCooldown = 1.5f         // 接触の余韻を長く残す
+whisperHoldDuration = 4.0f   // 囁きを長く聞かせる
+```
+
 ---
 
 ## 7. 距離侵入ロジック（最適化版）

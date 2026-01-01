@@ -86,6 +86,8 @@ public class SexyDistanceGimmickSetup : EditorWindow
     [MenuItem("Tools/SexyDistanceGimmick/Create Sample Scene")]
     static void CreateSampleScene()
     {
+        CreatePlaceholderAnimations();
+
         string scenePath = "Assets/SexyDistanceGimmick/Scenes/SampleScene.unity";
         EnsureDirectory(Path.GetDirectoryName(scenePath));
         
@@ -107,6 +109,23 @@ public class SexyDistanceGimmickSetup : EditorWindow
         UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene, scenePath);
         
         Debug.Log("Created: " + scenePath);
+    }
+
+    static void CreatePlaceholderAnimations()
+    {
+        string[] clips = { "Idle.anim", "Lean_0.anim", "Lean_50.anim", "Lean_100.anim" };
+        foreach (var name in clips)
+        {
+            string path = "Assets/SexyDistanceGimmick/Animations/" + name;
+            if (!File.Exists(path))
+            {
+                var clip = new AnimationClip();
+                AssetDatabase.CreateAsset(clip, path);
+                Debug.Log("Created placeholder clip: " + path);
+            }
+        }
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
     }
 
     static void CreateDirectories()
