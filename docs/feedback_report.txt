@@ -1,0 +1,4 @@
+Size:OK(272/36.0,6/4.0)
+Visual:3/4
+Interact:2/3
+Score:81

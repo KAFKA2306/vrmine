@@ -1,0 +1,15 @@
+{
+  "minFootprint": 36.0,
+  "minHeight": 4.0,
+  "visuals": [
+    { "center": [0.0, 2.0, 0.0], "size": [10.0, 4.0, 10.0], "enabled": true, "material": true },
+    { "center": [6.0, 3.0, 0.0], "size": [6.0, 6.0, 4.0], "enabled": true, "material": true },
+    { "center": [-5.0, 1.5, 5.0], "size": [4.0, 3.0, 4.0], "enabled": true, "material": true },
+    { "center": [0.0, 0.5, -7.0], "size": [12.0, 1.0, 6.0], "enabled": true, "material": false }
+  ],
+  "interactors": [
+    { "enabled": true, "active": true },
+    { "enabled": true, "active": true },
+    { "enabled": false, "active": true }
+  ]
+}

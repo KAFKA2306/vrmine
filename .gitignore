@@ -42,8 +42,8 @@
 *.csproj
 *.sln
 *.vsconfig
-*.meta
-*assets
+# *.meta
+# *assets
 sysinfo.txt
 crashlytics-build.properties
 

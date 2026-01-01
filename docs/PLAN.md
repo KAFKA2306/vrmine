@@ -56,3 +56,10 @@
 - `[ ]` 完全一致成功時に UI が勝利メッセージへ即反映し、失敗時にペナルティ文言が表示される。
 - `[ ]` Build & Test の Upload ログに警告/エラーが無く、2 クライアントでログ同期を確認。
 - `[ ]` `docs/` 配下に検証結果とスクリーンショットが整理され、共有可能な状態になっている。
+
+## フィードバックループ運用
+- `Assets/KafkaMade/VRMine/Runtime/Game/FeedbackRunner` を評価用 GameObject に追加し、`visuals` にワールド外形を構成する Renderer、`interactors` に操作対象 Collider を割り当てる。`minFootprint` と `minHeight` で保証したい最低サイズを設定する。
+- `Create > VRMine > FeedbackReport` で `FeedbackReport` アセットを生成し、`FeedbackRunner.report` に割り当てて実行結果をテキストとして保持する。
+- 必要に応じて `FeedbackLogger` を配置し、`report` と `screen` を指定するとランナーの集計結果が UI Text に同期される。
+- `FeedbackRunner.Run()` を手動呼び出しすることで Play Mode 中に再評価し、最新スコアと各カテゴリの達成状況を都度ログに反映できる。
+- CLI での簡易評価は `python3 tools/feedback_loop.py docs/feedback_input.json docs/feedback_report.txt` を実行し、`docs/feedback_report.txt` を確認する。
