@@ -51,6 +51,49 @@
 
 ---
 
+### 1.5 システム構造図
+
+```mermaid
+graph TD
+    Player[LocalPlayer] -->|Head Position| Controller[SexyDistanceController]
+    Player -->|Hand Position| Controller
+    Controller -->|Move| Ghost[GhostRoot]
+    Controller -->|Volume/Clip| Audio[AudioSource]
+    Controller -->|Animation| Anim[Animator]
+    Controller -->|Haptics| Player
+    
+    subgraph "SexyDistanceGimmick (Local Only)"
+        Controller
+        Ghost
+        Audio
+        Anim
+    end
+```
+
+### 1.6 状態遷移図
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Active: Distance < Trigger(1.5m)
+    
+    state Active {
+        [*] --> Approach
+        Approach --> Touch: Contact Detected
+        Touch --> Approach: Cooldown End
+        
+        state Approach {
+            [*] --> Moving
+            Moving --> Stop: Distance < Min(0.35m)
+            Stop --> Moving: Distance > Min
+        }
+    }
+    
+    Active --> Idle: Distance > Trigger
+```
+
+---
+
 ## 2. 目的（Goal）
 
 ### 唯一の目的

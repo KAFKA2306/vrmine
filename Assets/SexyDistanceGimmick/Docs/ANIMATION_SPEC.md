@@ -76,12 +76,22 @@ Thresholds:
 
 ## State Machine 構造
 
-```
-Entry → Idle
-           ↓ [Active = true]
-        Active (Blend Tree)
-           ↓ [Active = false]
-        Idle
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    
+    Idle --> Active: Active = true (0.25s)
+    Active --> Idle: Active = false (0.5s)
+    
+    state Active {
+        [*] --> BlendTree
+        note right of BlendTree
+            LeanAmount (0.0 - 1.0)
+            0.0: Upright
+            0.5: Lean 25deg
+            1.0: Lean 45deg
+        end note
+    }
 ```
 
 ### トランジション設定
