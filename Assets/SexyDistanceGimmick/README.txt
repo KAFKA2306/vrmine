@@ -4,3 +4,4 @@
 3. 位置調整後、VRChat SDK コントロールパネルからワールドをビルド・アップロードしてください。
 
 ※詳細なアバター変更手順は Docs/AVATAR_SETUP_GUIDE.md を参照してください。
+※「Yobai Mode（忍び込み）」等のパラメータ設定は MASTER_SPEC_v2.md を参照してください。
