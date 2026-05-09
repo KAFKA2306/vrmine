@@ -41,23 +41,15 @@ public static class VRMineBridge
 
     static void EnsureScene(Scene scene)
     {
-        GameObject vrMine = FindOrCreateRoot("VRMine");
-        GameObject environment = FindOrCreateRoot("Environment");
-        GameObject tableRoot = FindOrCreateRoot("TableRoot");
-        GameObject boardRoot = FindOrCreateRoot("BoardRoot");
-        GameObject uiRoot = FindOrCreateRoot("UIRoot");
+        // 1. Build visuals with textures (The "Look")
+        VisualBuilder.BuildVisuals();
+
+        // 2. Wire up the generated objects to Udon behaviors (The "Behavior")
+        GameObject boardRoot = GameObject.Find("BoardRoot");
+        GameObject uiRoot = GameObject.Find("UI");
         GameObject runtimeRoot = FindOrCreateRoot("RuntimeRoot");
-        GameObject lightingRoot = FindOrCreateRoot("LightingRoot");
-        GameObject audioRoot = FindOrCreateRoot("AudioRoot");
-        EnsureSceneDescriptor(vrMine);
-        EnsureEnvironment(environment);
-        EnsureTable(tableRoot);
+        
         EnsureRuntime(runtimeRoot, boardRoot, uiRoot);
-        EnsureUi(uiRoot);
-        EnsureLighting(lightingRoot);
-        EnsureAudio(audioRoot);
-        EnsurePrefabs();
-        EnsureRootParenting(vrMine, environment, tableRoot, boardRoot, uiRoot, runtimeRoot, lightingRoot, audioRoot);
     }
 
     static GameObject FindOrCreateRoot(string name)
@@ -198,7 +190,7 @@ public static class VRMineBridge
         boardView.controller = controllerBehaviour;
         GameObject boardQuadObject = GameObject.Find("BoardQuad");
         if (boardQuadObject != null) boardView.boardRenderer = boardQuadObject.GetComponent<Renderer>();
-        boardView.statusText = CreateBoardStatusText(boardRoot.transform);
+        boardView.statusText = FindText(uiRoot, "WorldTitle"); // Use title as status fallback
         boardView.cellMarkers = CreateCellMarkers(boardCells.transform, NetConst.GridWidth * NetConst.GridHeight, new Color(0.16f, 0.22f, 0.30f, 1f), 0.095f);
         boardView.blockMarkers = CreateCellMarkers(boardBlocks.transform, boardState.blocks.Length, new Color(0.24f, 0.28f, 0.36f, 1f), 0.11f);
         boardView.trickMarkers = CreateTrickMarkers(boardTricks.transform, 4, new Color(0.55f, 0.92f, 1f, 1f));
@@ -209,9 +201,9 @@ public static class VRMineBridge
         playerClient.controller = controllerBehaviour;
         logBoardView.board = logBoard;
         logBoardView.stream = logStream;
-        boardView.cellRoot = boardRoot.transform;
+        boardView.cellRoot = boardRoot != null ? boardRoot.transform : null;
         logBoard.rows = CreateLogRows(logBoardObject.transform, uiRoot);
-        logBoardView.titleText = FindText(uiRoot, "LogTitle");
+        logBoardView.titleText = FindText(uiRoot, "WorldTitle");
         logBoardView.footerText = FindText(uiRoot, "LogFooter");
         AttachPanels(uiRoot, boardState, controllerBehaviour, logStream);
     }
