@@ -10,6 +10,14 @@ using VRC.SDK3.Components;
 
 public static class VisualBuilder
 {
+    sealed class TextureAssets
+    {
+        public Texture2D icons;
+        public Texture2D guide;
+        public Texture2D gems;
+        public Texture2D actions;
+    }
+
     const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/MVP.unity";
     const string RootName = "VRMineVisualRoot";
     private static readonly Dictionary<string, Material> Materials = new();
@@ -163,7 +171,7 @@ public static class VisualBuilder
         CreatePrimitive(highlights.transform, PrimitiveType.Sphere, "Highlight_D", new Vector3(4.1f, 0.18f, 3.1f), new Vector3(0.12f, 0.12f, 0.12f), Quaternion.identity, palette.highlight, true, "CellHighlight");
     }
 
-    static void BuildCardRoot(Transform parent, Palette palette)
+    static void BuildCardRoot(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "CardRoot");
         Vector3[] positions =
@@ -182,7 +190,7 @@ public static class VisualBuilder
         }
     }
 
-    static void BuildBlockRoot(Transform parent, Palette palette)
+    static void BuildBlockRoot(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "BlockRoot");
         byte[] colors = { NetConst.ColorRed, NetConst.ColorBlue, NetConst.ColorYellow, 8, 8 };
@@ -231,7 +239,7 @@ public static class VisualBuilder
         for (int i = 0; i < names.Length; i++) CreateNode(root.transform, names[i]);
     }
 
-    static void BuildInteractionRoot(Transform parent, Palette palette)
+    static void BuildInteractionRoot(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "InteractionRoot");
         GameObject declare = CreatePrimitive(root.transform, PrimitiveType.Cube, "DeclareButton", new Vector3(2.6f, 0.9f, 2.4f), new Vector3(0.6f, 0.16f, 0.28f), Quaternion.Euler(0f, -20f, 0f), palette.declare, false, "DeclareButton");
