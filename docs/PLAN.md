@@ -6,21 +6,22 @@
 - 完全一致フローで使用する UI・同期データの差分を README/ガイドへ反映し、次タスクへ引き継げる状態に整える。
 
 ## 実施前提
-- 開発環境は `docs/DEV_SETUP.md` 手順で整備済みで、`unity-editor` コマンドが利用可能。
+- 開発環境は `docs/DEV_SETUP.md` 手順で整備済みで、Unity 2022.3.22f1 を直接起動できる。
 - VRChat SDK Control Panel にログイン済みでローカル Build & Test が即時実行できる。
 - Prefab と UdonSharp スクリプトが `Assets/KafkaMade/VRMine/` 配下で編集可能な状態である。
 - Git LFS で大容量アセットが取得済みで、差分管理に支障がないことを確認している。
+- `unity-vrc-udon-sharp` と `unity-vrc-world-sdk-3` の skill を使い、UdonSharp 制約と World SDK 設定を優先して確認する。
 
 ## 使用アセット
 - シーン: `Assets/KafkaMade/VRMine/Scenes/MVP.unity`
-- Prefab: `GameController`, `PlayerClient`, `WaveSimulator`, `LogBoard`（`Assets/KafkaMade/VRMine/Prefabs/`）
-- スクリプト: `GameController`, `PlayerClient`, `WaveSimulator` の UdonSharpBehaviour（`Assets/KafkaMade/VRMine/Udon/`）
+- Prefab: `BoardRoot`, `LogCanvas`, `BlockMarker`, `BoardCellMarker`, `CardView`, `KafkaMonitorPanel`, `PhasePanel`, `RuleCardView`, `ScorePanel`, `TableLight`, `WarningPanel`（`Assets/KafkaMade/VRMine/Prefabs/`）
+- スクリプト: `GameController`, `PlayerClient`, `WaveSimulator`, `BoardState`, `LogStream`, `LogBoard` の UdonSharpBehaviour（`Assets/KafkaMade/VRMine/Runtime/`）
 - UI: ログテキスト、完全一致ボタン、勝利メッセージ用プレハブ
 - 参照基準: Inspector 参照は Missing なし、`BehaviourSyncMode` は Manual を維持
 
 ## タイムライン (1 日)
 1. 09:00-09:30 セットアップ確認
-   - `unity-editor -projectPath .` でプロジェクトを開き、`docs/GUIDE.md` と照合してシーンをロード。
+   - Unity 2022.3.22f1 を起動してプロジェクトを開き、`docs/GUIDE.md` と照合してシーンをロード。
    - Prefab 配置と Inspector 参照を確認し、差分候補を `docs/` 内にメモ。
 2. 09:30-11:00 シーン整備
    - `PlayerClient` → `GameController` → `WaveSimulator` → `LogBoard` の参照を点検し、`[UdonSynced]` 配列が宣言位置で初期化されているか確認。
@@ -42,6 +43,11 @@
    - 変更差分を確認し、Prefab/Scene の参照崩れが無いことを検証。
    - `docs/testing.md` に追加で判明した確認手順を記録し、次の改善タスクを箇条書きで残す。
    - Build & Test の成果物を整理し、再検証時に使えるチェックリストを整備。
+
+## 直近修復メモ
+- `Assets/KafkaMade/VRMine/Editor/BootstrapScene.cs` で `MVP.unity` と `LogCanvas.prefab` を再構成できる。
+- `Assets/KafkaMade/VRMine/Editor/VRMineBridge.cs` で `wire_scene` と `validate_scene` を実行できる。
+- 次は Unity で `Refresh All UdonSharp Assets` を走らせて、scene/prefab の `programSource` が有効か確認する。
 
 ## 成果物
 - 更新済み `Assets/KafkaMade/VRMine/Scenes/MVP.unity`（参照安定）。

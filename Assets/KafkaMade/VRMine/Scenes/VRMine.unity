@@ -474,10 +474,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 30}
-  - component: {fileID: 400000007}
-  - component: {fileID: 400000005}
   - component: {fileID: 31}
-  - component: {fileID: 400000006}
   m_Layer: 0
   m_Name: LogBoard
   m_TagString: Untagged
@@ -521,7 +518,6 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  _udonSharpBackingUdonBehaviour: {fileID: 400000006}
   rows: []
 --- !u!114 &400000000
 MonoBehaviour:
@@ -719,7 +715,6 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  _udonSharpBackingUdonBehaviour: {fileID: 400000005}
   rows: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

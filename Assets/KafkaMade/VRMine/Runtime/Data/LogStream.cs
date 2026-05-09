@@ -3,17 +3,21 @@ using UdonSharp;
 public class LogStream : UdonSharpBehaviour
 {
     public const int EntrySize = 4;
+    public const byte KindStart = 1;
+    public const byte KindRule = 2;
+    public const byte KindPlay = 3;
+    public const byte KindTrick = 4;
+    public const byte KindScore = 5;
+    public const byte KindWarning = 6;
     public byte head;
     public byte count;
     public byte[] data = new byte[NetConst.LogRingSize * EntrySize];
-    public LogBoard view;
 
-    public void Pull(byte valueHead, byte valueCount, byte[] source)
+    public void Push(byte valueHead, byte valueCount, byte[] source)
     {
         head = valueHead;
         count = valueCount;
         data = source;
-        view.Render(this);
     }
 
     public int StartIndex()

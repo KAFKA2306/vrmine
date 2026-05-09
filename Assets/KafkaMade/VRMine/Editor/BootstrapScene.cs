@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
+using VRC.Udon;
 
 public static class BootstrapScene
 {
@@ -11,6 +12,16 @@ public static class BootstrapScene
     {
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         var root = new GameObject("BoardRoot");
+        var controller = new GameObject("GameController");
+        var client = new GameObject("PlayerClient");
+        var simulator = new GameObject("WaveSimulator");
+        var logBoard = new GameObject("LogBoard", typeof(RectTransform));
+        var boardState = controller.AddComponent<BoardState>();
+        var logStream = controller.AddComponent<LogStream>();
+        var gameController = controller.AddComponent<GameController>();
+        var playerClient = client.AddComponent<PlayerClient>();
+        var waveSimulator = simulator.AddComponent<WaveSimulator>();
+        var logBoardBehaviour = logBoard.AddComponent<LogBoard>();
         var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         quad.name = "BoardQuad";
         quad.transform.SetParent(root.transform);
@@ -23,7 +34,7 @@ public static class BootstrapScene
         var panel = new GameObject("Panel", typeof(Image));
         panel.transform.SetParent(canvas.transform);
         var textObj = new GameObject("LogText", typeof(Text));
-        textObj.transform.SetParent(panel.transform);
+        textObj.transform.SetParent(logBoard.transform);
         var text = textObj.GetComponent<Text>();
         text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.text = "VRMine Log";
@@ -55,14 +66,17 @@ public static class BootstrapScene
             MakeMarker(markers, "Left_" + labels[j], new Vector3(-halfWidth - 0.25f, y, 0));
             MakeMarker(markers, "Right_" + labels[j], new Vector3(halfWidth + 0.25f, y, 0));
         }
-        var controller = new GameObject("GameController");
-        var client = new GameObject("PlayerClient");
-        var simulator = new GameObject("WaveSimulator");
-        var logBoard = new GameObject("LogBoard");
         controller.transform.SetParent(root.transform);
         client.transform.SetParent(root.transform);
         simulator.transform.SetParent(root.transform);
         logBoard.transform.SetParent(canvas.transform);
+        gameController.board = boardState;
+        gameController.logStream = logStream;
+        gameController.wave = waveSimulator;
+        gameController.mailboxes = new[] { playerClient };
+        playerClient.controller = gameController;
+        logBoardBehaviour.rows = new[] { text };
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(button.GetComponent<Button>().onClick, () => gameController.SendCustomEvent("OnDeclare"));
         Directory.CreateDirectory("Assets/KafkaMade/VRMine/Prefabs");
         PrefabUtility.SaveAsPrefabAsset(root, "Assets/KafkaMade/VRMine/Prefabs/BoardRoot.prefab");
         PrefabUtility.SaveAsPrefabAsset(canvas, "Assets/KafkaMade/VRMine/Prefabs/LogCanvas.prefab");
