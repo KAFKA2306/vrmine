@@ -2,6 +2,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using VRC.SDK3.Components;
 
 public static class VRMineBridge
@@ -14,10 +15,7 @@ public static class VRMineBridge
         Scene scene = EditorSceneManager.GetActiveScene();
         if (scene.path != ScenePath) return;
         
-        // 1. Physical Build
-        VisualBuilder.BuildVisuals();
-
-        // 2. Logic Wiring
+        // 1. Logic Wiring
         EnsureScene(scene);
 
         EditorSceneManager.MarkSceneDirty(scene);
@@ -32,7 +30,6 @@ public static class VRMineBridge
         
         // Logic Objects
         GameObject controller = FindOrCreateObject(runtimeRoot.transform, "GameController");
-        GameObject client = FindOrCreateObject(runtimeRoot.transform, "PlayerClient");
         GameObject state = FindOrCreateObject(runtimeRoot.transform, "BoardState");
         GameObject logStream = FindOrCreateObject(runtimeRoot.transform, "LogStream");
 
@@ -40,27 +37,35 @@ public static class VRMineBridge
         BoardState boardState = EnsureComponent<BoardState>(state);
         LogStream stream = EnsureComponent<LogStream>(logStream);
         GameController ctrl = EnsureComponent<GameController>(controller);
-        PlayerClient pc = EnsureComponent<PlayerClient>(client);
         BoardView bView = EnsureComponent<BoardView>(boardRoot);
 
         // Link Visuals to Behavior
         GameObject boardQuad = GameObject.Find("BoardQuad");
         if (boardQuad != null) bView.boardRenderer = boardQuad.GetComponent<Renderer>();
 
-        // Wire
+        // Wire Controller
         ctrl.board = boardState;
-        ctrl.logStream = stream;
-        ctrl.mailboxes = new[] { pc };
-        pc.controller = ctrl;
+        ctrl.view = bView;
+
+        // Wire BoardView
         bView.state = boardState;
         bView.controller = ctrl;
-
-        // Wire Declare Button
-        GameObject buttonCap = GameObject.Find("ButtonCap");
-        if (buttonCap != null)
+        
+        // Find Cards
+        GameObject handRoot = GameObject.Find("HandRoot");
+        if (handRoot != null)
         {
-            DeclareButton declareButton = EnsureComponent<DeclareButton>(buttonCap);
-            declareButton.controller = ctrl;
+            CardView[] cards = handRoot.GetComponentsInChildren<CardView>(true);
+            bView.handCards = cards;
+            foreach (var c in cards) c.controller = ctrl;
+        }
+
+        GameObject trickRoot = GameObject.Find("TrickRoot");
+        if (trickRoot != null)
+        {
+            CardView[] cards = trickRoot.GetComponentsInChildren<CardView>(true);
+            bView.trickCards = cards;
+            foreach (var c in cards) c.controller = ctrl;
         }
 
         // Wire Physical Rule Display
@@ -70,6 +75,7 @@ public static class VRMineBridge
             RuleView ruleView = EnsureComponent<RuleView>(ruleTextObj);
             ruleView.state = boardState;
             ruleView.ruleText = ruleTextObj.GetComponent<Text>();
+            bView.ruleView = ruleView;
         }
 
         // Wire Physical Score Display
@@ -79,6 +85,7 @@ public static class VRMineBridge
             ScorePanelView scoreView = EnsureComponent<ScorePanelView>(scoreLabelObj);
             scoreView.state = boardState;
             scoreView.scoreText = scoreLabelObj.GetComponent<Text>();
+            bView.scoreView = scoreView;
         }
 
         EnsureSceneDescriptor();
