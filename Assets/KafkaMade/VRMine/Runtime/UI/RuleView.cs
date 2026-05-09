@@ -1,7 +1,9 @@
+using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class RuleView : MonoBehaviour
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+public sealed class RuleView : UdonSharpBehaviour
 {
     public BoardState state;
     public Text titleText;

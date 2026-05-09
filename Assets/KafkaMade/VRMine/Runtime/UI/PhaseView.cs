@@ -1,21 +1,12 @@
+using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class PhaseView : MonoBehaviour
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+public sealed class RuleView : UdonSharpBehaviour
 {
     public BoardState state;
-    public Text phaseText;
-    public Text playerText;
-    public Text roundText;
-    public Text trickText;
-    public Text warningText;
-    public Text bodyText;
-    public Image panelImage;
-
-    void Awake()
-    {
-        if (panelImage == null) panelImage = GetComponent<Image>();
-    }
+    public Text ruleText;
 
     void Start()
     {
@@ -27,7 +18,19 @@ public sealed class PhaseView : MonoBehaviour
         Refresh();
     }
 
-    void Update()
+    public void Refresh()
+    {
+        if (state == null) return;
+        if (ruleText != null) ruleText.text = state.RuleLabel();
+    }
+}
+
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+public sealed class PhaseView : UdonSharpBehaviour
+{
+    public BoardState state;
+    public Text phaseText;
+    public Text bodyText;
     {
         Refresh();
     }

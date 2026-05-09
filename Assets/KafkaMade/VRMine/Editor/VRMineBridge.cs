@@ -176,6 +176,8 @@ public static class VRMineBridge
         LogStream logStream = EnsureComponent<LogStream>(logStreamObject);
         LogBoard logBoard = EnsureComponent<LogBoard>(logBoardObject);
         LogBoardView logBoardView = EnsureComponent<LogBoardView>(logBoardViewObject);
+        GameObject faceObject = GameObject.Find("GuideFace");
+        if (faceObject != null) logBoardView.faceRenderer = faceObject.GetComponent<Renderer>();
         GameController controllerBehaviour = EnsureComponent<GameController>(controller);
         PlayerClient playerClient = EnsureComponent<PlayerClient>(client);
         WaveSimulator waveSimulator = EnsureComponent<WaveSimulator>(wave);

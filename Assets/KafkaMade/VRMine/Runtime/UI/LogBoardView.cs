@@ -1,13 +1,16 @@
+using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class LogBoardView : MonoBehaviour
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+public sealed class LogBoardView : UdonSharpBehaviour
 {
     public LogStream stream;
     public LogBoard board;
     public Text titleText;
     public Text footerText;
     public Image panelImage;
+    public Renderer faceRenderer;
 
     void Awake()
     {
@@ -30,7 +33,30 @@ public sealed class LogBoardView : MonoBehaviour
         if (board != null && stream != null)
         {
             board.Render(stream);
+            UpdateExpression();
         }
+    }
+
+    void UpdateExpression()
+    {
+        if (faceRenderer == null || stream == null) return;
+        // Simple expression logic based on event count or last event
+        // 0: Normal (Top-Left), 1: Joy (Top-Right), 2: Thinking (Bottom-Left), 3: Warning (Bottom-Right)
+        int expressionIndex = 0;
+        if (stream.count > 0)
+        {
+            // Just a demo logic: cycles expressions
+            expressionIndex = (stream.count / 5) % 4;
+        }
+
+        Vector2 offset = Vector2.zero;
+        if (expressionIndex == 1) offset = new Vector2(0.5f, 0.5f);
+        else if (expressionIndex == 2) offset = new Vector2(0f, 0f);
+        else if (expressionIndex == 3) offset = new Vector2(0.5f, 0f);
+        else offset = new Vector2(0f, 0.5f);
+
+        faceRenderer.material.SetTextureOffset("_MainTex", offset);
+        faceRenderer.material.SetTextureScale("_MainTex", new Vector2(0.5f, 0.5f));
     }
 
     public void Refresh()

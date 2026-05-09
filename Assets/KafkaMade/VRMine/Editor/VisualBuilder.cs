@@ -315,7 +315,7 @@ public static class VisualBuilder
         CreatePrimitive(root.transform, PrimitiveType.Sphere, "CellGlow_3", new Vector3(1.6f, 0.12f, 1.6f), new Vector3(0.14f, 0.14f, 0.14f), Quaternion.identity, palette.highlight, true, "CellHighlight");
     }
 
-    static void BuildKafkaGuide(Transform parent, Palette palette)
+    static void BuildKafkaGuide(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "KafkaGuide");
         root.transform.localPosition = new Vector3(-4f, 0f, -3f);
@@ -357,7 +357,7 @@ public static class VisualBuilder
         CreateNode(parent, "SkyboxAnchor");
     }
 
-    static void BuildUi(Transform parent, Palette palette)
+    static void BuildUi(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "UI");
         GameObject worldCanvas = new GameObject("WorldCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CanvasRenderer), typeof(Image));
@@ -538,6 +538,25 @@ public static class VisualBuilder
             if (shader == null) shader = Shader.Find("Standard");
             material = new Material(shader);
             material.color = color;
+            Materials[key] = material;
+        }
+        renderer.sharedMaterial = material;
+    }
+
+    static void ApplyTexture(GameObject go, Texture2D texture, Color tint)
+    {
+        if (texture == null) return;
+        Renderer renderer = go.GetComponent<Renderer>();
+        if (renderer == null) return;
+
+        string key = texture.name + "_" + ColorUtility.ToHtmlStringRGBA(tint);
+        if (!Materials.TryGetValue(key, out Material material))
+        {
+            Shader shader = Shader.Find("VRChat/Mobile/Unlit");
+            if (shader == null) shader = Shader.Find("Standard");
+            material = new Material(shader);
+            material.mainTexture = texture;
+            material.color = tint;
             Materials[key] = material;
         }
         renderer.sharedMaterial = material;

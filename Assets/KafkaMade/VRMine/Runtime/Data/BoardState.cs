@@ -82,4 +82,16 @@ public class BoardState : UdonSharpBehaviour
         if (syncState == 3) return "WARN";
         return "OK";
     }
+
+    public string RuleLabel()
+    {
+        if (selectedRules == null || selectedRules.Length == 0) return "NONE";
+        string label = "";
+        for (int i = 0; i < selectedRules.Length; i++)
+        {
+            if (selectedRules[i] == 0) continue;
+            label += "[" + selectedRules[i] + "]";
+        }
+        return label == "" ? "HIDDEN" : label;
+    }
 }

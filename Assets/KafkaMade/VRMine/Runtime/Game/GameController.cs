@@ -72,22 +72,62 @@ public class GameController : UdonSharpBehaviour
 
     void HandleWave(byte entryId)
     {
+        // Stitch-Meister Trick-taking logic
         board.phase = BoardState.PhaseResolveTrick;
-        board.currentPlayerSeat = (byte)(turnIndex & 63);
-        if (board.cells.Length > 0) board.selectedCell = (byte)(turnIndex % board.cells.Length);
-        board.selectedTrickCard = entryId;
+        byte seat = (byte)(turnIndex % mailboxes.Length);
+        board.currentPlayerSeat = seat;
+        
+        // Derive suit and number from entryId (1-60)
+        // 0-14: Fan, 15-29: Coin, 30-44: Koi, 45-59: Gate
+        int suit = entryId / 15;
+        int number = (entryId % 15) + 1;
+
+        board.trickSeats[turnIndex % 4] = seat;
+        board.trickCards[turnIndex % 4] = entryId;
+
+        // If it's the first card of the trick, set lead suit
+        if ((turnIndex % mailboxes.Length) == 0)
+        {
+            // Lead suit logic would go here
+        }
+
         wave.Simulate(entryId, board.cells);
-        RecordLog(entryId, wave.exitId, wave.colorId, wave.flags);
+        RecordLog(entryId, (byte)suit, (byte)number, 0);
+        
         turnIndex++;
+        if (turnIndex % mailboxes.Length == 0)
+        {
+            ResolveWinner();
+        }
+        
         board.trickIndex = (byte)turnIndex;
-        board.trickSeats[0] = board.currentPlayerSeat;
-        board.trickCards[0] = entryId;
-        board.phase = BoardState.PhaseResolveTrick;
-        PushEvent(LogStream.KindPlay, board.currentPlayerSeat);
-        PushEvent(LogStream.KindTrick, board.currentPlayerSeat);
         RequestSerialization();
         board.RequestSerialization();
         SyncDashboard();
+    }
+
+    void ResolveWinner()
+    {
+        // Simple trick winner determination
+        int leadSuit = board.trickCards[0] / 15;
+        int bestSeat = board.trickSeats[0];
+        int bestNumber = (board.trickCards[0] % 15) + 1;
+
+        for (int i = 1; i < mailboxes.Length; i++)
+        {
+            int currentSuit = board.trickCards[i] / 15;
+            int currentNumber = (board.trickCards[i] % 15) + 1;
+
+            // Basic follow-suit winner logic (no trump yet for simplicity in MVP)
+            if (currentSuit == leadSuit && currentNumber > bestNumber)
+            {
+                bestNumber = currentNumber;
+                bestSeat = board.trickSeats[i];
+            }
+        }
+
+        board.takenTricks[bestSeat]++;
+        PushEvent(LogStream.KindScore, (byte)bestSeat);
     }
 
     void HandleDeclaration(int playerId, byte[] data)
