@@ -63,7 +63,6 @@ public static class VisualBuilder
         BuildSystems(root.transform);
         BuildGameplay(root.transform, palette, textures);
         BuildVisual(root.transform, palette, textures);
-        BuildUi(root.transform, palette, textures);
         BuildAudio(root.transform);
         BuildLighting(root.transform, palette);
         BuildDebug(root.transform);
@@ -75,76 +74,19 @@ public static class VisualBuilder
         Selection.activeGameObject = root;
     }
 
-    [MenuItem("VRMine/validate_visuals")]
-    public static void ValidateVisuals()
-    {
-        Scene scene = EditorSceneManager.GetActiveScene();
-        if (scene.path != ScenePath) return;
-
-        bool ok =
-            GameObject.Find(RootName) != null &&
-            GameObject.Find("VRCWorld") != null &&
-            GameObject.Find("Gameplay") != null &&
-            GameObject.Find("Visual") != null &&
-            GameObject.Find("UI") != null &&
-            GameObject.Find("Lighting") != null;
-
-        Debug.Log("VRMine validate_visuals " + (ok ? "OK" : "NG"));
-    }
-
     static void BuildVrcWorld(Transform parent, Palette palette)
     {
         GameObject world = CreateNode(parent, "VRCWorld");
-        world.transform.localPosition = Vector3.zero;
-        world.transform.localRotation = Quaternion.identity;
-        world.transform.localScale = Vector3.one;
-
         VRCSceneDescriptor descriptor = world.GetComponent<VRCSceneDescriptor>();
         if (descriptor == null) descriptor = world.AddComponent<VRCSceneDescriptor>();
 
-        GameObject referenceCamera = CreateNode(world.transform, "ReferenceCamera");
-        referenceCamera.transform.localPosition = new Vector3(0f, 1.7f, -5.5f);
-        referenceCamera.transform.localRotation = Quaternion.identity;
-        Camera camera = referenceCamera.GetComponent<Camera>();
-        if (camera == null) camera = referenceCamera.AddComponent<Camera>();
-        camera.clearFlags = CameraClearFlags.SolidColor;
-        camera.backgroundColor = palette.floor;
-        camera.nearClipPlane = 0.03f;
-        camera.farClipPlane = 200f;
-
         GameObject spawnRoot = CreateNode(world.transform, "SpawnRoot");
-        Vector3[] spawns =
-        {
-            new Vector3(0f, 1.2f, -6f),
-            new Vector3(-2f, 1.2f, -6f),
-            new Vector3(2f, 1.2f, -6f),
-            new Vector3(0f, 1.2f, -8f)
-        };
-        for (int i = 0; i < spawns.Length; i++)
-        {
-            GameObject spawn = CreateNode(spawnRoot.transform, "Spawn_" + i);
-            spawn.transform.localPosition = spawns[i];
-            spawn.transform.localRotation = Quaternion.identity;
-        }
-
+        GameObject spawn = CreateNode(spawnRoot.transform, "Spawn_0");
+        spawn.transform.localPosition = new Vector3(0f, 1.2f, -3f);
+        
         SerializedObject so = new SerializedObject(descriptor);
-        AssignTransformArray(so, "spawns", new[]
-        {
-            spawnRoot.transform.Find("Spawn_0"),
-            spawnRoot.transform.Find("Spawn_1"),
-            spawnRoot.transform.Find("Spawn_2"),
-            spawnRoot.transform.Find("Spawn_3")
-        });
-        SetProperty(so, "spawnRadius", 0.5f);
-        SetProperty(so, "spawnOrder", 1);
-        SetProperty(so, "spawnOrientation", 0);
-        SetProperty(so, "RespawnHeightY", -25f);
-        SetProperty(so, "ObjectBehaviourAtRespawnHeight", 0);
-        SetProperty(so, "ReferenceCamera", camera);
-        SetProperty(so, "ForbidUserPortals", false);
+        AssignTransformArray(so, "spawns", new[] { spawn.transform });
         so.ApplyModifiedPropertiesWithoutUndo();
-
-        AddOptionalComponent(world, "VRC.SDK3.Components.VRCPipelineManager", "VRCPipelineManager");
     }
 
     static void BuildSystems(Transform parent)
@@ -158,20 +100,25 @@ public static class VisualBuilder
     static void BuildGameplay(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject gameplay = CreateNode(parent, "Gameplay");
-        BuildBoardRoot(gameplay.transform, palette, textures);
-        BuildCardRoot(gameplay.transform, palette, textures);
-        BuildBlockRoot(gameplay.transform, palette, textures);
-        BuildPickupRoot(gameplay.transform, palette);
-        BuildNetworkRoot(gameplay.transform);
-        BuildInteractionRoot(gameplay.transform, palette, textures);
+        BuildBoardPhysical(gameplay.transform, palette, textures);
+        BuildPhysicalInteraction(gameplay.transform, palette, textures);
     }
 
-    static void BuildBoardRoot(Transform parent, Palette palette, TextureAssets textures)
+    static void BuildBoardPhysical(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "BoardRoot");
         root.transform.localPosition = Vector3.zero;
-        GameObject board = CreatePrimitive(root.transform, PrimitiveType.Cube, "BoardQuad", new Vector3(0f, 0.025f, 0f), new Vector3(10.2f, 0.05f, 8.2f), Quaternion.identity, palette.boardBase, false, "BoardBase");
+
+        // Physical Frame (Raised edge)
+        CreatePrimitive(root.transform, PrimitiveType.Cube, "Frame_N", new Vector3(0f, 0.1f, 4.2f), new Vector3(10.6f, 0.2f, 0.4f), Quaternion.identity, palette.boardFrame, false);
+        CreatePrimitive(root.transform, PrimitiveType.Cube, "Frame_S", new Vector3(0f, 0.1f, -4.2f), new Vector3(10.6f, 0.2f, 0.4f), Quaternion.identity, palette.boardFrame, false);
+        CreatePrimitive(root.transform, PrimitiveType.Cube, "Frame_E", new Vector3(5.1f, 0.1f, 0f), new Vector3(0.4f, 0.2f, 8.8f), Quaternion.identity, palette.boardFrame, false);
+        CreatePrimitive(root.transform, PrimitiveType.Cube, "Frame_W", new Vector3(-5.1f, 0.1f, 0f), new Vector3(0.4f, 0.2f, 8.8f), Quaternion.identity, palette.boardFrame, false);
+
+        // Recessed Board Base
+        GameObject board = CreatePrimitive(root.transform, PrimitiveType.Cube, "BoardBase", new Vector3(0f, 0.04f, 0f), new Vector3(10f, 0.08f, 8f), Quaternion.identity, palette.boardBase, false);
         ApplyTexture(board, textures.board, Color.white);
+
         GameObject cells = CreateNode(root.transform, "Cells");
         float startX = -4.5f;
         float startZ = -3.5f;
@@ -180,611 +127,231 @@ public static class VisualBuilder
             for (int x = 0; x < 10; x++)
             {
                 int index = z * 10 + x;
-                Vector3 position = new Vector3(startX + x, 0.05f, startZ + z);
-                Color color = CellColor(index, x, z, palette);
-                CreatePrimitive(cells.transform, PrimitiveType.Cube, "Cell_" + index, position, new Vector3(0.9f, 0.05f, 0.9f), Quaternion.identity, color, false, CellMaterialKey(index, x, z));
+                Vector3 pos = new Vector3(startX + x, 0.09f, startZ + z);
+                GameObject cell = CreatePrimitive(cells.transform, PrimitiveType.Cube, "Cell_" + index, pos, new Vector3(0.85f, 0.02f, 0.85f), Quaternion.identity, palette.cellBase, false);
+                // Slight variation in height for "hand-made" feel
+                cell.transform.localPosition += Vector3.up * (UnityEngine.Random.value * 0.005f);
             }
         }
-        GameObject highlights = CreateNode(root.transform, "CellHighlights");
-        CreatePrimitive(highlights.transform, PrimitiveType.Sphere, "Highlight_A", new Vector3(-4.1f, 0.18f, -3.1f), new Vector3(0.12f, 0.12f, 0.12f), Quaternion.identity, palette.highlight, true, "CellHighlight");
-        CreatePrimitive(highlights.transform, PrimitiveType.Sphere, "Highlight_B", new Vector3(4.1f, 0.18f, -3.1f), new Vector3(0.12f, 0.12f, 0.12f), Quaternion.identity, palette.highlight, true, "CellHighlight");
-        CreatePrimitive(highlights.transform, PrimitiveType.Sphere, "Highlight_C", new Vector3(-4.1f, 0.18f, 3.1f), new Vector3(0.12f, 0.12f, 0.12f), Quaternion.identity, palette.highlight, true, "CellHighlight");
-        CreatePrimitive(highlights.transform, PrimitiveType.Sphere, "Highlight_D", new Vector3(4.1f, 0.18f, 3.1f), new Vector3(0.12f, 0.12f, 0.12f), Quaternion.identity, palette.highlight, true, "CellHighlight");
     }
 
-    static void BuildCardRoot(Transform parent, Palette palette, TextureAssets textures)
-    {
-        GameObject root = CreateNode(parent, "CardRoot");
-        Vector3[] positions =
-        {
-            new Vector3(-1.4f, 1.05f, 1.3f),
-            new Vector3(-0.7f, 1.08f, 1.4f),
-            new Vector3(0f, 1.1f, 1.45f),
-            new Vector3(0.7f, 1.08f, 1.4f),
-            new Vector3(1.4f, 1.05f, 1.3f)
-        };
-        for (int i = 0; i < positions.Length; i++)
-        {
-            Quaternion rotation = Quaternion.Euler(0f, -20f + i * 10f, 0f);
-            GameObject card = CreatePrimitive(root.transform, PrimitiveType.Cube, "Card_" + i, positions[i], new Vector3(0.75f, 0.04f, 1.1f), rotation, palette.card, false, "Card");
-            CreatePrimitive(card.transform, PrimitiveType.Cube, "CardStripe", new Vector3(0f, 0.02f, -0.48f), new Vector3(0.65f, 0.01f, 0.04f), Quaternion.identity, palette.cardStripe, false, "CardStripe");
-        }
-    }
-
-    static void BuildBlockRoot(Transform parent, Palette palette, TextureAssets textures)
-    {
-        GameObject root = CreateNode(parent, "BlockRoot");
-        byte[] colors = { NetConst.ColorRed, NetConst.ColorBlue, NetConst.ColorYellow, 8, 8 };
-        Vector3[] positions =
-        {
-            new Vector3(-3.2f, 0.6f, 1.8f),
-            new Vector3(-2.7f, 0.8f, 1.6f),
-            new Vector3(-2.2f, 1.0f, 1.8f),
-            new Vector3(-1.7f, 0.7f, 1.5f),
-            new Vector3(-1.2f, 0.9f, 1.7f)
-        };
-        for (int i = 0; i < positions.Length; i++)
-        {
-            Color color = ColorForBlock(colors[i], palette);
-            CreatePrimitive(root.transform, PrimitiveType.Cube, "Block_" + i, positions[i], new Vector3(0.34f, 0.34f, 0.34f), Quaternion.Euler(0f, 15f * i, 0f), color, false, "Block_" + i);
-        }
-    }
-
-    static void BuildPickupRoot(Transform parent, Palette palette)
-    {
-        GameObject root = CreateNode(parent, "PickupRoot");
-        Vector3[] positions =
-        {
-            new Vector3(-3f, 1f, 2f),
-            new Vector3(-2f, 1f, 2f),
-            new Vector3(-1f, 1f, 2f)
-        };
-        Color[] colors = { palette.pickupRed, palette.pickupBlue, palette.pickupYellow };
-        for (int i = 0; i < positions.Length; i++)
-        {
-            GameObject pickup = CreatePrimitive(root.transform, PrimitiveType.Cube, "Pickup_" + i, positions[i], new Vector3(0.32f, 0.32f, 0.32f), Quaternion.identity, colors[i], false, "Pickup_" + i);
-            Rigidbody body = AddOrGet<Rigidbody>(pickup);
-            body.useGravity = true;
-            body.isKinematic = false;
-            body.interpolation = RigidbodyInterpolation.Interpolate;
-            body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-            AddOptionalComponent(pickup, "VRC.SDK3.Components.VRCObjectSync", "VRCObjectSync");
-            AddOptionalComponent(pickup, "VRC.SDK3.Components.VRCPickup", "VRCPickup", "VRC_Pickup");
-        }
-    }
-
-    static void BuildNetworkRoot(Transform parent)
-    {
-        GameObject root = CreateNode(parent, "NetworkRoot");
-        string[] names = { "GameStateSync", "ScoreSync", "TimerSync", "OwnershipManager" };
-        for (int i = 0; i < names.Length; i++) CreateNode(root.transform, names[i]);
-    }
-
-    static void BuildInteractionRoot(Transform parent, Palette palette, TextureAssets textures)
+    static void BuildPhysicalInteraction(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "InteractionRoot");
-        GameObject declare = CreatePrimitive(root.transform, PrimitiveType.Cube, "DeclareButton", new Vector3(2.6f, 0.9f, 2.4f), new Vector3(0.6f, 0.16f, 0.28f), Quaternion.Euler(0f, -20f, 0f), palette.declare, false, "DeclareButton");
-        GameObject label = CreateBillboardText(declare.transform, "Label", "DECLARE", 22, new Vector2(300f, 64f));
-        label.transform.localPosition = new Vector3(0f, 0.16f, 0f);
+        
+        // Rule Sticky Note (on the table)
+        GameObject sticky = CreatePrimitive(root.transform, PrimitiveType.Cube, "RuleSticky", new Vector3(2.5f, 0.11f, 2.2f), new Vector3(0.6f, 0.02f, 0.6f), Quaternion.Euler(0f, 12f, 0f), palette.note, false);
+        ApplyTexture(sticky, textures.note, Color.white);
+        GameObject ruleText = CreatePhysicalText(sticky.transform, "RuleText", "CURRENT RULE\n[GATES]", 14, new Vector2(500f, 500f));
+        ruleText.transform.localPosition = new Vector3(0f, 0.6f, 0f); // Relative to flat sticky
+
+        // Score Stand (Wooden)
+        GameObject scoreStand = CreateNode(root.transform, "ScoreStand");
+        scoreStand.transform.localPosition = new Vector3(-2.8f, 0.1f, 2.5f);
+        scoreStand.transform.localRotation = Quaternion.Euler(0f, -15f, 0f);
+        CreatePrimitive(scoreStand.transform, PrimitiveType.Cube, "Base", Vector3.zero, new Vector3(1.2f, 0.1f, 0.4f), Quaternion.identity, palette.boardFrame, false);
+        GameObject scorePanel = CreatePrimitive(scoreStand.transform, PrimitiveType.Cube, "Panel", new Vector3(0f, 0.4f, 0.1f), new Vector3(1.1f, 0.7f, 0.05f), Quaternion.Euler(-20f, 0f, 0f), palette.boardBase, false);
+        CreatePhysicalText(scorePanel.transform, "ScoreLabel", "SCORE\n0 : 0", 20, new Vector2(1000f, 600f)).transform.localPosition = new Vector3(0f, 0.1f, 0.6f);
+
+        // Declare Button (Mechanical)
+        GameObject buttonCase = CreatePrimitive(root.transform, PrimitiveType.Cube, "DeclareButtonCase", new Vector3(3.5f, 0.1f, -1.5f), new Vector3(0.8f, 0.2f, 0.8f), Quaternion.identity, palette.boardFrame, false);
+        GameObject buttonCap = CreatePrimitive(buttonCase.transform, PrimitiveType.Cylinder, "ButtonCap", new Vector3(0f, 0.6f, 0f), new Vector3(0.7f, 0.15f, 0.7f), Quaternion.identity, palette.declare, false);
+        CreatePhysicalText(buttonCap.transform, "Label", "DECLARE", 12, new Vector2(400f, 400f)).transform.localPosition = new Vector3(0f, 1.1f, 0f);
     }
 
     static void BuildVisual(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "Visual");
-        BuildFloor(root.transform, palette, textures);
-        BuildWalls(root.transform, palette, textures);
-        BuildBoardFrame(root.transform, palette);
-        BuildCellHighlights(root.transform, palette);
-        BuildKafkaGuide(root.transform, palette, textures);
-        BuildSimpleDecorations(root.transform, palette, textures);
-        BuildFx(root.transform, palette);
-        BuildSkyboxAnchor(root.transform);
+        BuildEnvironmentPhysical(root.transform, palette, textures);
+        BuildKafkaGuidePhysical(root.transform, palette, textures);
     }
 
-    static void BuildFloor(Transform parent, Palette palette, TextureAssets textures)
+    static void BuildEnvironmentPhysical(Transform parent, Palette palette, TextureAssets textures)
     {
-        GameObject floor = CreatePrimitive(parent, PrimitiveType.Plane, "Floor", new Vector3(0f, 0f, 0f), new Vector3(2f, 1f, 2f), Quaternion.identity, palette.floor, false, "Floor");
+        // Floor with texture
+        GameObject floor = CreatePrimitive(parent, PrimitiveType.Plane, "Floor", Vector3.zero, new Vector3(5f, 1f, 5f), Quaternion.identity, palette.floor, false);
         ApplyTexture(floor, textures.floor, Color.white);
-    }
 
-    static void BuildWalls(Transform parent, Palette palette, TextureAssets textures)
-    {
-        string[] names = { "NorthWall", "SouthWall", "EastWall", "WestWall" };
-        Vector3[] positions = { new Vector3(0f, 2f, 10f), new Vector3(0f, 2f, -10f), new Vector3(10f, 2f, 0f), new Vector3(-10f, 2f, 0f) };
-        Quaternion[] rotations = { Quaternion.identity, Quaternion.identity, Quaternion.Euler(0f, 90f, 0f), Quaternion.Euler(0f, 90f, 0f) };
-        Vector3[] scales = { new Vector3(20f, 4f, 0.2f), new Vector3(20f, 4f, 0.2f), new Vector3(20f, 4f, 0.2f), new Vector3(20f, 4f, 0.2f) };
-
-        for (int i = 0; i < names.Length; i++)
+        // Walls (Atmospheric)
+        GameObject walls = CreateNode(parent, "Walls");
+        Vector3[] pos = { new Vector3(0, 4, 15), new Vector3(0, 4, -15), new Vector3(15, 4, 0), new Vector3(-15, 4, 0) };
+        Vector3[] scale = { new Vector3(30, 8, 1), new Vector3(30, 8, 1), new Vector3(1, 8, 30), new Vector3(1, 8, 30) };
+        for (int i = 0; i < 4; i++)
         {
-            GameObject wall = CreatePrimitive(parent, PrimitiveType.Cube, names[i], positions[i], scales[i], rotations[i], palette.wall, false, "Wall");
-            ApplyTexture(wall, textures.wall, Color.white);
+            GameObject wall = CreatePrimitive(walls.transform, PrimitiveType.Cube, "Wall_" + i, pos[i], scale[i], Quaternion.identity, palette.wall, false);
+            ApplyTexture(wall, textures.wall, new Color(0.6f, 0.6f, 0.7f, 1f));
         }
     }
 
-    static void BuildBoardFrame(Transform parent, Palette palette)
-    {
-        CreatePrimitive(parent, PrimitiveType.Cube, "BoardFrame", new Vector3(0f, 0.06f, 0f), new Vector3(10.8f, 0.08f, 8.8f), Quaternion.identity, palette.boardFrame, false, "BoardFrame");
-    }
-
-    static void BuildCellHighlights(Transform parent, Palette palette)
-    {
-        GameObject root = CreateNode(parent, "CellHighlights");
-        CreatePrimitive(root.transform, PrimitiveType.Sphere, "CellGlow_0", new Vector3(-1.6f, 0.12f, -1.6f), new Vector3(0.14f, 0.14f, 0.14f), Quaternion.identity, palette.highlight, true, "CellHighlight");
-        CreatePrimitive(root.transform, PrimitiveType.Sphere, "CellGlow_1", new Vector3(1.6f, 0.12f, -1.6f), new Vector3(0.14f, 0.14f, 0.14f), Quaternion.identity, palette.highlight, true, "CellHighlight");
-        CreatePrimitive(root.transform, PrimitiveType.Sphere, "CellGlow_2", new Vector3(-1.6f, 0.12f, 1.6f), new Vector3(0.14f, 0.14f, 0.14f), Quaternion.identity, palette.highlight, true, "CellHighlight");
-        CreatePrimitive(root.transform, PrimitiveType.Sphere, "CellGlow_3", new Vector3(1.6f, 0.12f, 1.6f), new Vector3(0.14f, 0.14f, 0.14f), Quaternion.identity, palette.highlight, true, "CellHighlight");
-    }
-
-    static void BuildKafkaGuide(Transform parent, Palette palette, TextureAssets textures)
+    static void BuildKafkaGuidePhysical(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "KafkaGuide");
-        root.transform.localPosition = new Vector3(-4f, 0f, -3f);
-        root.transform.localRotation = Quaternion.Euler(0f, 35f, 0f);
-        CreatePrimitive(root.transform, PrimitiveType.Capsule, "Body", new Vector3(0f, 0.74f, 0f), new Vector3(0.45f, 0.8f, 0.3f), Quaternion.identity, palette.guideBody, true, "GuideBody");
-        CreatePrimitive(root.transform, PrimitiveType.Sphere, "Head", new Vector3(0f, 1.38f, 0f), new Vector3(0.42f, 0.42f, 0.42f), Quaternion.identity, palette.guideHead, true, "GuideHead");
-        CreatePrimitive(root.transform, PrimitiveType.Capsule, "HairLeft", new Vector3(-0.18f, 1.42f, 0f), new Vector3(0.12f, 0.7f, 0.12f), Quaternion.Euler(0f, 0f, -14f), palette.guideHairLeft, true, "GuideHairLeft");
-        CreatePrimitive(root.transform, PrimitiveType.Capsule, "HairRight", new Vector3(0.18f, 1.42f, 0f), new Vector3(0.12f, 0.7f, 0.12f), Quaternion.Euler(0f, 0f, 14f), palette.guideHairRight, true, "GuideHairRight");
-
-        GameObject eyes = CreateNode(root.transform, "Eyes");
-        CreatePrimitive(eyes.transform, PrimitiveType.Sphere, "Eye_L", new Vector3(-0.08f, 1.37f, 0.18f), new Vector3(0.04f, 0.04f, 0.04f), Quaternion.identity, palette.guideEye, true, "GuideEye");
-        CreatePrimitive(eyes.transform, PrimitiveType.Sphere, "Eye_R", new Vector3(0.08f, 1.37f, 0.18f), new Vector3(0.04f, 0.04f, 0.04f), Quaternion.identity, palette.guideEye, true, "GuideEye");
-
-        GameObject pin = CreateNode(root.transform, "Hairpin");
-        CreatePrimitive(pin.transform, PrimitiveType.Cube, "Pin_A", new Vector3(0.18f, 1.72f, 0.08f), new Vector3(0.05f, 0.05f, 0.18f), Quaternion.Euler(0f, 10f, 28f), palette.guidePin, true, "GuidePin");
-        CreatePrimitive(pin.transform, PrimitiveType.Cube, "Pin_B", new Vector3(0.12f, 1.79f, 0.08f), new Vector3(0.05f, 0.05f, 0.18f), Quaternion.Euler(0f, -20f, -8f), palette.guidePin, true, "GuidePin");
-        CreatePrimitive(pin.transform, PrimitiveType.Cube, "Pin_C", new Vector3(0.24f, 1.79f, 0.08f), new Vector3(0.05f, 0.05f, 0.18f), Quaternion.Euler(0f, 26f, -8f), palette.guidePin, true, "GuidePin");
-    }
-
-    static void BuildSimpleDecorations(Transform parent, Palette palette, TextureAssets textures)
-    {
-        GameObject root = CreateNode(parent, "SimpleDecorations");
-        CreatePrimitive(root.transform, PrimitiveType.Cube, "DeskLampBase", new Vector3(2.8f, 0.62f, -2.3f), new Vector3(0.22f, 0.04f, 0.22f), Quaternion.identity, palette.decorAccent, false, "DecorAccent");
-        CreatePrimitive(root.transform, PrimitiveType.Cylinder, "DeskLampStem", new Vector3(2.8f, 1.02f, -2.3f), new Vector3(0.08f, 0.45f, 0.08f), Quaternion.identity, palette.decorAccent, true, "DecorAccent");
-        GameObject note = CreatePrimitive(root.transform, PrimitiveType.Cube, "StickyNote", new Vector3(3.2f, 1.22f, -2.28f), new Vector3(0.28f, 0.18f, 0.02f), Quaternion.identity, palette.note, false, "Note");
-        ApplyTexture(note, textures.note, Color.white);
-        CreatePrimitive(root.transform, PrimitiveType.Cube, "Mug", new Vector3(-1.8f, 0.68f, -2.1f), new Vector3(0.16f, 0.18f, 0.16f), Quaternion.identity, palette.mug, false, "Mug");
-    }
-
-    static void BuildFx(Transform parent, Palette palette)
-    {
-        GameObject root = CreateNode(parent, "FX");
-        CreatePrimitive(root.transform, PrimitiveType.Sphere, "GlowOrb", new Vector3(0f, 2.8f, -0.8f), new Vector3(0.18f, 0.18f, 0.18f), Quaternion.identity, palette.glow, true, "GlowOrb");
-        CreatePrimitive(root.transform, PrimitiveType.Cube, "NeonBar", new Vector3(0f, 2.1f, 2.6f), new Vector3(2.2f, 0.12f, 0.08f), Quaternion.identity, palette.neon, true, "NeonBar");
-    }
-
-    static void BuildSkyboxAnchor(Transform parent)
-    {
-        CreateNode(parent, "SkyboxAnchor");
-    }
-
-    static void BuildUi(Transform parent, Palette palette, TextureAssets textures)
-    {
-        GameObject root = CreateNode(parent, "UI");
-        GameObject worldCanvas = new GameObject("WorldCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CanvasRenderer), typeof(Image));
-        worldCanvas.transform.SetParent(root.transform, false);
-        worldCanvas.transform.localPosition = Vector3.zero;
-        worldCanvas.transform.localRotation = Quaternion.identity;
-        worldCanvas.transform.localScale = Vector3.one * 0.01f;
-        Canvas canvas = worldCanvas.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.WorldSpace;
-        canvas.sortingOrder = 5;
-        RectTransform rect = worldCanvas.GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(1200f, 300f);
-        worldCanvas.GetComponent<Image>().color = new Color(0.02f, 0.03f, 0.05f, 0.2f);
-        RemoveCollider(worldCanvas);
-        CreateText(worldCanvas.transform, "WorldTitle", "KAFKA BLUE LAB", 30, TextAnchor.MiddleCenter, new Vector2(800f, 60f), new Vector2(0f, -20f), new Color(0.78f, 0.88f, 1f, 1f));
-        BuildWorldPanel(root.transform, "RulePanel", new Vector3(4f, 1.8f, 0f), Quaternion.Euler(0f, -60f, 0f), new Vector2(2.2f, 1.2f), palette.rulePanel, "CURRENT RULE", "HIDDEN");
-        BuildLogPanel(root.transform, "LogPanel", new Vector3(-4f, 1.8f, 0f), Quaternion.Euler(0f, 60f, 0f), new Vector2(2.2f, 1.2f), palette.logPanel);
-        BuildWorldPanel(root.transform, "WarningPanel", new Vector3(0f, 1.6f, -1.8f), Quaternion.identity, new Vector2(2.0f, 0.7f), palette.warningPanel, "WARNING", "NO WARNINGS");
-        BuildWorldPanel(root.transform, "ScorePanel", new Vector3(0f, 2.6f, -1.8f), Quaternion.identity, new Vector2(2.0f, 0.8f), palette.scorePanel, "SCORE", "0 : 0");
-        BuildWorldPanel(root.transform, "TimerPanel", new Vector3(0f, 3.3f, -1.8f), Quaternion.identity, new Vector2(1.4f, 0.55f), palette.timerPanel, "TIMER", "00:00");
-    }
-
-    static void BuildWorldPanel(Transform parent, string name, Vector3 position, Quaternion rotation, Vector2 size, Color panelColor, string title, string body)
-    {
-        GameObject panel = new GameObject(name, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CanvasRenderer), typeof(Image));
-        panel.transform.SetParent(parent, false);
-        panel.transform.localPosition = position;
-        panel.transform.localRotation = rotation;
-        panel.transform.localScale = Vector3.one * 0.01f;
-
-        Canvas canvas = panel.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.WorldSpace;
-        canvas.sortingOrder = 10;
-
-        RectTransform rect = panel.GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(size.x * 100f, size.y * 100f);
-
-        Image image = panel.GetComponent<Image>();
-        image.color = panelColor;
-        RemoveCollider(panel);
-
-        CreateText(panel.transform, "Title", title, 24, TextAnchor.UpperLeft, new Vector2(size.x * 100f - 20f, 34f), new Vector2(10f, -8f), new Color(0.98f, 0.94f, 0.60f, 1f));
-        CreateText(panel.transform, "Body", body, 18, TextAnchor.UpperLeft, new Vector2(size.x * 100f - 20f, 60f), new Vector2(10f, -54f), new Color(0.90f, 0.94f, 0.98f, 1f));
-    }
-
-    static void BuildLogPanel(Transform parent, string name, Vector3 position, Quaternion rotation, Vector2 size, Color panelColor)
-    {
-        GameObject panel = new GameObject(name, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CanvasRenderer), typeof(Image));
-        panel.transform.SetParent(parent, false);
-        panel.transform.localPosition = position;
-        panel.transform.localRotation = rotation;
-        panel.transform.localScale = Vector3.one * 0.01f;
-
-        Canvas canvas = panel.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.WorldSpace;
-        canvas.sortingOrder = 10;
-
-        RectTransform rect = panel.GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(size.x * 100f, size.y * 100f);
-
-        Image image = panel.GetComponent<Image>();
-        image.color = panelColor;
-        RemoveCollider(panel);
-
-        CreateText(panel.transform, "Title", "LOG", 24, TextAnchor.UpperLeft, new Vector2(size.x * 100f - 20f, 34f), new Vector2(10f, -8f), new Color(0.55f, 0.92f, 1f, 1f));
-        string[] rows =
-        {
-            "PROGRAM asset is not valid",
-            "SanitizeProxyBehaviours",
-            "NullReferenceException",
-            "has not been fully setup",
-            "Force-enabling Fog",
-            "VRMine validate_scene OK"
-        };
-        for (int i = 0; i < rows.Length; i++)
-        {
-            CreateText(panel.transform, "Row_" + i, rows[i], 16, TextAnchor.UpperLeft, new Vector2(size.x * 100f - 20f, 22f), new Vector2(10f, -48f - (i * 20f)), i == 5 ? new Color(0.55f, 0.92f, 1f, 1f) : new Color(0.90f, 0.94f, 0.98f, 1f));
-        }
+        root.transform.localPosition = new Vector3(-3f, 1.2f, 2f);
+        
+        // Clockwork/Brass Body
+        GameObject body = CreatePrimitive(root.transform, PrimitiveType.Sphere, "Core", Vector3.zero, new Vector3(0.5f, 0.5f, 0.5f), Quaternion.identity, palette.guideBody, true);
+        GameObject ring = CreatePrimitive(body.transform, PrimitiveType.Cylinder, "BrassRing", Vector3.zero, new Vector3(1.2f, 0.05f, 1.2f), Quaternion.Euler(45f, 45f, 0f), palette.guidePin, true);
+        
+        // Floating head (soft glow)
+        GameObject head = CreatePrimitive(root.transform, PrimitiveType.Sphere, "Soul", new Vector3(0f, 0.7f, 0f), new Vector3(0.3f, 0.3f, 0.3f), Quaternion.identity, palette.guideHead, true);
+        Light glow = head.AddComponent<Light>();
+        glow.color = palette.guideHead;
+        glow.intensity = 0.5f;
+        glow.range = 2f;
     }
 
     static void BuildAudio(Transform parent)
     {
         GameObject root = CreateNode(parent, "Audio");
-        CreateAudioSource(root.transform, "BGMSource", new Vector3(0f, 1.6f, 0f), true, 0.8f);
-        CreateAudioSource(root.transform, "UISource", new Vector3(0f, 1.6f, -1f), false, 0.8f);
-        CreateAudioSource(root.transform, "AmbientSource", new Vector3(0f, 2.4f, -4f), true, 0.8f);
-        CreateAudioSource(root.transform, "PickupSource", new Vector3(0f, 1.2f, 2f), false, 0.8f);
-    }
-
-    static void CreateAudioSource(Transform parent, string name, Vector3 position, bool loop, float blend)
-    {
-        GameObject go = CreateNode(parent, name);
-        go.transform.localPosition = position;
-        AudioSource source = go.GetComponent<AudioSource>();
-        if (source == null) source = go.AddComponent<AudioSource>();
-        source.loop = loop;
-        source.playOnAwake = false;
-        source.spatialBlend = blend;
-        source.rolloffMode = AudioRolloffMode.Logarithmic;
-        source.minDistance = 1f;
-        source.maxDistance = 20f;
+        CreateAudioSource(root.transform, "Ambience", Vector3.zero, true, 0.5f);
     }
 
     static void BuildLighting(Transform parent, Palette palette)
     {
         GameObject root = CreateNode(parent, "Lighting");
-        GameObject directional = CreateNode(root.transform, "DirectionalLight");
-        Light dir = AddOrGet<Light>(directional);
-        dir.type = LightType.Directional;
-        dir.color = new Color(0.74f, 0.84f, 1f, 1f);
-        dir.intensity = 1.15f;
-        directional.transform.localRotation = Quaternion.Euler(50f, -30f, 0f);
+        
+        // Main mood light (Warm lamp)
+        GameObject lamp = CreateNode(root.transform, "TableLamp");
+        lamp.transform.localPosition = new Vector3(0f, 3.5f, 0f);
+        Light l = lamp.AddComponent<Light>();
+        l.type = LightType.Point;
+        l.color = new Color(1f, 0.85f, 0.7f);
+        l.intensity = 1.2f;
+        l.range = 10f;
+        l.shadows = LightShadows.Soft;
 
-        GameObject fill = CreateNode(root.transform, "FillLight");
-        Light fillLight = AddOrGet<Light>(fill);
-        fillLight.type = LightType.Point;
-        fillLight.color = new Color(0.56f, 0.70f, 1f, 1f);
-        fillLight.intensity = 0.45f;
-        fillLight.range = 18f;
-        fill.transform.localPosition = new Vector3(0f, 4f, -4f);
-
-        GameObject probe = CreateNode(root.transform, "ReflectionProbe");
-        ReflectionProbe reflectionProbe = AddOrGet<ReflectionProbe>(probe);
-        reflectionProbe.size = new Vector3(20f, 8f, 20f);
-        reflectionProbe.transform.localPosition = new Vector3(0f, 2f, 0f);
-        reflectionProbe.intensity = 1f;
+        // Dim ambient blue
+        GameObject ambient = CreateNode(root.transform, "AmbientBlue");
+        Light a = ambient.AddComponent<Light>();
+        a.type = LightType.Directional;
+        a.color = new Color(0.1f, 0.15f, 0.3f);
+        a.intensity = 0.2f;
+        ambient.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
     }
 
-    static void BuildDebug(Transform parent)
-    {
-        GameObject root = CreateNode(parent, "Debug");
-        GameObject clientSim = CreateNode(root.transform, "ClientSimAnchor");
-        clientSim.tag = "EditorOnly";
-        GameObject gizmoRoot = CreateNode(root.transform, "GizmoRoot");
-        gizmoRoot.tag = "EditorOnly";
-        GameObject validationRoot = CreateNode(root.transform, "ValidationRoot");
-        validationRoot.tag = "EditorOnly";
-    }
+    static void BuildDebug(Transform parent) { CreateNode(parent, "Debug"); }
+    static void BuildEditorOnly(Transform parent) { CreateNode(parent, "EditorOnly").tag = "EditorOnly"; }
 
-    static void BuildEditorOnly(Transform parent)
-    {
-        GameObject root = CreateNode(parent, "EditorOnly");
-        root.tag = "EditorOnly";
-    }
-
+    // Helpers
     static GameObject CreateNode(Transform parent, string name)
     {
-        Transform existing = parent.Find(name);
-        if (existing != null) return existing.gameObject;
+        Transform t = parent.Find(name);
+        if (t != null) return t.gameObject;
         GameObject go = new GameObject(name);
         go.transform.SetParent(parent, false);
         return go;
     }
 
-    static GameObject CreatePrimitive(Transform parent, PrimitiveType type, string name, Vector3 localPosition, Vector3 localScale, Quaternion localRotation, Color color, bool removeCollider, string materialKey = null)
+    static GameObject CreatePrimitive(Transform parent, PrimitiveType type, string name, Vector3 pos, Vector3 scale, Quaternion rot, Color color, bool removeCollider)
     {
         GameObject go = GameObject.CreatePrimitive(type);
         go.name = name;
         go.transform.SetParent(parent, false);
-        go.transform.localPosition = localPosition;
-        go.transform.localScale = localScale;
-        go.transform.localRotation = localRotation;
-        if (removeCollider || (name != "Floor" && !name.EndsWith("Wall"))) RemoveCollider(go);
-        Renderer renderer = go.GetComponent<Renderer>();
-        if (renderer != null) Tint(go, color);
+        go.transform.localPosition = pos;
+        go.transform.localScale = scale;
+        go.transform.localRotation = rot;
+        if (removeCollider)
+        {
+            Collider c = go.GetComponent<Collider>();
+            if (c != null) UnityEngine.Object.DestroyImmediate(c);
+        }
+        Tint(go, color);
         return go;
     }
 
     static void Tint(GameObject go, Color color)
     {
-        Renderer renderer = go.GetComponent<Renderer>();
-        if (renderer == null) return;
-
+        Renderer r = go.GetComponent<Renderer>();
+        if (r == null) return;
         string key = ColorUtility.ToHtmlStringRGBA(color);
-        if (!Materials.TryGetValue(key, out Material material))
+        if (!Materials.TryGetValue(key, out Material m))
         {
-            Shader shader = Shader.Find("VRChat/Mobile/Unlit");
-            if (shader == null) shader = Shader.Find("Standard");
-            material = new Material(shader);
-            material.color = color;
-            Materials[key] = material;
+            m = new Material(Shader.Find("Standard"));
+            m.color = color;
+            m.SetFloat("_Glossiness", 0.2f);
+            Materials[key] = m;
         }
-        renderer.sharedMaterial = material;
+        r.sharedMaterial = m;
     }
 
-    static void ApplyTexture(GameObject go, Texture2D texture, Color tint)
+    static void ApplyTexture(GameObject go, Texture2D tex, Color tint)
     {
-        if (texture == null) return;
-        Renderer renderer = go.GetComponent<Renderer>();
-        if (renderer == null) return;
-
-        string key = texture.name + "_" + ColorUtility.ToHtmlStringRGBA(tint);
-        if (!Materials.TryGetValue(key, out Material material))
-        {
-            Shader shader = Shader.Find("VRChat/Mobile/Unlit");
-            if (shader == null) shader = Shader.Find("Standard");
-            material = new Material(shader);
-            material.mainTexture = texture;
-            material.color = tint;
-            Materials[key] = material;
-        }
-        renderer.sharedMaterial = material;
+        if (tex == null) return;
+        Renderer r = go.GetComponent<Renderer>();
+        if (r == null) return;
+        Material m = new Material(Shader.Find("Standard"));
+        m.mainTexture = tex;
+        m.color = tint;
+        m.SetFloat("_Glossiness", 0.1f);
+        r.sharedMaterial = m;
     }
 
-    static void RemoveCollider(GameObject go)
+    static GameObject CreatePhysicalText(Transform parent, string name, string val, int size, Vector2 canvasSize)
     {
-        Collider collider = go.GetComponent<Collider>();
-        if (collider != null) UnityEngine.Object.DestroyImmediate(collider);
-    }
-
-    static Text CreateText(Transform parent, string name, string value, int size, TextAnchor anchor, Vector2 panelSize, Vector2 localPosition, Color color)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(Text));
         go.transform.SetParent(parent, false);
+        go.transform.localRotation = Quaternion.Euler(90f, 0f, 0f); // Face up
+        go.transform.localScale = Vector3.one * 0.001f;
+        
+        Canvas c = go.GetComponent<Canvas>();
+        c.renderMode = RenderMode.WorldSpace;
+        
         RectTransform rect = go.GetComponent<RectTransform>();
-        rect.anchorMin = Vector2.up;
-        rect.anchorMax = Vector2.up;
-        rect.pivot = new Vector2(0f, 1f);
-        rect.sizeDelta = panelSize;
-        rect.anchoredPosition = localPosition;
-        Text text = go.GetComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        text.text = value;
-        text.fontSize = size;
-        text.alignment = anchor;
-        text.horizontalOverflow = HorizontalWrapMode.Wrap;
-        text.verticalOverflow = VerticalWrapMode.Overflow;
-        text.color = color;
-        return text;
-    }
+        rect.sizeDelta = canvasSize;
 
-    static GameObject CreateBillboardText(Transform parent, string name, string value, int size, Vector2 panelSize)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CanvasRenderer), typeof(Text));
-        go.transform.SetParent(parent, false);
-        go.transform.localScale = Vector3.one * 0.01f;
-        Canvas canvas = go.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.WorldSpace;
-        RectTransform rect = go.GetComponent<RectTransform>();
-        rect.sizeDelta = panelSize;
-        RemoveCollider(go);
-        Text text = go.GetComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        text.text = value;
-        text.fontSize = size;
-        text.alignment = TextAnchor.MiddleCenter;
-        text.color = new Color(0.98f, 0.94f, 0.60f, 1f);
+        Text t = go.GetComponent<Text>();
+        t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        t.text = val;
+        t.fontSize = size;
+        t.alignment = TextAnchor.MiddleCenter;
+        t.color = new Color(0.1f, 0.1f, 0.12f, 1f); // Dark ink-like color
+        
         return go;
     }
 
-    static void AssignTransformArray(SerializedObject so, string propertyName, Transform[] transforms)
+    static void CreateAudioSource(Transform parent, string name, Vector3 pos, bool loop, float blend)
     {
-        SerializedProperty property = so.FindProperty(propertyName);
-        if (property == null || !property.isArray) return;
-        property.arraySize = transforms.Length;
-        for (int i = 0; i < transforms.Length; i++)
-        {
-            SerializedProperty element = property.GetArrayElementAtIndex(i);
-            if (element != null) element.objectReferenceValue = transforms[i];
-        }
-    }
-
-    static void SetProperty(SerializedObject so, string name, float value)
-    {
-        SerializedProperty property = so.FindProperty(name);
-        if (property != null) property.floatValue = value;
-    }
-
-    static void SetProperty(SerializedObject so, string name, int value)
-    {
-        SerializedProperty property = so.FindProperty(name);
-        if (property != null) property.intValue = value;
-    }
-
-    static void SetProperty(SerializedObject so, string name, bool value)
-    {
-        SerializedProperty property = so.FindProperty(name);
-        if (property != null) property.boolValue = value;
-    }
-
-    static void SetProperty(SerializedObject so, string name, UnityEngine.Object value)
-    {
-        SerializedProperty property = so.FindProperty(name);
-        if (property != null) property.objectReferenceValue = value;
-    }
-
-    static T AddOrGet<T>(GameObject go) where T : Component
-    {
-        T component = go.GetComponent<T>();
-        if (component == null) component = go.AddComponent<T>();
-        return component;
-    }
-
-    static Component AddOptionalComponent(GameObject go, params string[] typeNames)
-    {
-        Type type = FindType(typeNames);
-        if (type == null) return null;
-        Component existing = go.GetComponent(type);
-        if (existing != null) return existing;
-        return go.AddComponent(type);
-    }
-
-    static Type FindType(params string[] names)
-    {
-        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        for (int i = 0; i < names.Length; i++)
-        {
-            string name = names[i];
-            for (int j = 0; j < assemblies.Length; j++)
-            {
-                Type type = assemblies[j].GetType(name);
-                if (type != null) return type;
-            }
-        }
-        return null;
-    }
-
-    static Color CellColor(int index, int x, int z, Palette palette)
-    {
-        if (x == 5 && z == 4) return palette.cellSelected;
-        if ((x + z) % 4 == 0) return palette.cellGoal;
-        if (index == 6 || index == 18) return palette.cellBlocked;
-        return palette.cellBase;
-    }
-
-    static Color ColorForBlock(byte value, Palette palette)
-    {
-        if (value == NetConst.ColorRed) return palette.pickupRed;
-        if (value == NetConst.ColorBlue) return palette.pickupBlue;
-        if (value == NetConst.ColorYellow) return palette.pickupYellow;
-        return palette.blockNeutral;
-    }
-
-    static string CellMaterialKey(int index, int x, int z)
-    {
-        if (x == 5 && z == 4) return "CellSelected";
-        if ((x + z) % 4 == 0) return "CellGoal";
-        if (index == 6 || index == 18) return "CellBlocked";
-        return "CellBase";
+        GameObject go = CreateNode(parent, name);
+        go.transform.localPosition = pos;
+        AudioSource s = go.AddComponent<AudioSource>();
+        s.loop = loop;
+        s.spatialBlend = blend;
     }
 
     static void CleanupLights()
     {
-        Light[] lights = UnityEngine.Object.FindObjectsOfType<Light>();
-        for (int i = 0; i < lights.Length; i++)
+        foreach (var l in UnityEngine.Object.FindObjectsOfType<Light>())
         {
-            Light light = lights[i];
-            if (light == null) continue;
-            if (light.name == "DirectionalLight" || light.name == "FillLight")
-            {
-                UnityEngine.Object.DestroyImmediate(light.gameObject);
-            }
+            if (l.type == LightType.Directional && l.intensity > 0.5f) UnityEngine.Object.DestroyImmediate(l.gameObject);
         }
+    }
+
+    static void AssignTransformArray(SerializedObject so, string prop, Transform[] targets)
+    {
+        SerializedProperty p = so.FindProperty(prop);
+        p.arraySize = targets.Length;
+        for (int i = 0; i < targets.Length; i++) p.GetArrayElementAtIndex(i).objectReferenceValue = targets[i];
     }
 
     static Palette CreatePalette()
     {
         return new Palette
         {
-            floor = new Color(0.05f, 0.07f, 0.10f, 1f),
-            wall = new Color(0.04f, 0.06f, 0.09f, 1f),
-            boardBase = new Color(0.07f, 0.09f, 0.13f, 1f),
-            boardFrame = new Color(0.08f, 0.10f, 0.16f, 1f),
-            cellBase = new Color(0.16f, 0.20f, 0.24f, 1f),
-            cellSelected = new Color(0.26f, 0.64f, 0.84f, 1f),
-            cellBlocked = new Color(0.30f, 0.26f, 0.36f, 1f),
-            cellGoal = new Color(0.78f, 0.70f, 0.36f, 1f),
-            highlight = new Color(0.45f, 0.92f, 1f, 1f),
-            card = new Color(0.10f, 0.13f, 0.19f, 1f),
-            cardStripe = new Color(0.34f, 0.42f, 0.60f, 1f),
-            pickupRed = new Color(0.74f, 0.30f, 0.38f, 1f),
-            pickupBlue = new Color(0.28f, 0.52f, 0.82f, 1f),
-            pickupYellow = new Color(0.72f, 0.64f, 0.28f, 1f),
-            blockNeutral = new Color(0.20f, 0.22f, 0.28f, 1f),
-            guideBody = new Color(0.10f, 0.13f, 0.18f, 1f),
-            guideHead = new Color(0.88f, 0.82f, 0.84f, 1f),
-            guideHairLeft = new Color(0.60f, 0.78f, 1f, 1f),
-            guideHairRight = new Color(0.72f, 0.64f, 0.92f, 1f),
-            guideEye = new Color(0.22f, 0.24f, 0.46f, 1f),
-            guidePin = new Color(0.82f, 0.86f, 0.90f, 1f),
-            decorAccent = new Color(0.72f, 0.84f, 1f, 1f),
-            note = new Color(0.72f, 0.64f, 0.92f, 1f),
-            mug = new Color(0.84f, 0.80f, 0.90f, 1f),
-            glow = new Color(0.36f, 0.56f, 0.84f, 0.55f),
-            neon = new Color(0.28f, 0.36f, 0.58f, 0.72f),
-            declare = new Color(0.48f, 0.64f, 0.84f, 1f),
-            rulePanel = new Color(0.06f, 0.08f, 0.12f, 0.90f),
-            logPanel = new Color(0.07f, 0.10f, 0.15f, 0.94f),
-            warningPanel = new Color(0.17f, 0.08f, 0.13f, 0.94f),
-            scorePanel = new Color(0.10f, 0.08f, 0.16f, 0.92f),
-            timerPanel = new Color(0.08f, 0.09f, 0.14f, 0.92f)
+            floor = new Color(0.1f, 0.12f, 0.15f),
+            wall = new Color(0.08f, 0.09f, 0.12f),
+            boardBase = new Color(0.12f, 0.15f, 0.2f),
+            boardFrame = new Color(0.25f, 0.2f, 0.15f), // Wood-like
+            cellBase = new Color(0.2f, 0.25f, 0.3f),
+            note = new Color(0.9f, 0.85f, 0.6f), // Paper
+            declare = new Color(0.7f, 0.2f, 0.2f), // Red button
+            guideBody = new Color(0.4f, 0.35f, 0.2f), // Brass
+            guideHead = new Color(0.6f, 0.9f, 1f), // Ethereal blue
+            guidePin = new Color(0.5f, 0.45f, 0.3f) // Bronze
         };
     }
 
-    sealed class Palette
+    class Palette
     {
-        public Color floor;
-        public Color wall;
-        public Color boardBase;
-        public Color boardFrame;
-        public Color cellBase;
-        public Color cellSelected;
-        public Color cellBlocked;
-        public Color cellGoal;
-        public Color highlight;
-        public Color card;
-        public Color cardStripe;
-        public Color pickupRed;
-        public Color pickupBlue;
-        public Color pickupYellow;
-        public Color blockNeutral;
-        public Color guideBody;
-        public Color guideHead;
-        public Color guideHairLeft;
-        public Color guideHairRight;
-        public Color guideEye;
-        public Color guidePin;
-        public Color decorAccent;
-        public Color note;
-        public Color mug;
-        public Color glow;
-        public Color neon;
-        public Color declare;
-        public Color rulePanel;
-        public Color logPanel;
-        public Color warningPanel;
-        public Color scorePanel;
-        public Color timerPanel;
+        public Color floor, wall, boardBase, boardFrame, cellBase, note, declare, guideBody, guideHead, guidePin;
     }
 }
