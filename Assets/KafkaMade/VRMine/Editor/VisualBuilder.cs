@@ -16,6 +16,19 @@ public static class VisualBuilder
         public Texture2D guide;
         public Texture2D gems;
         public Texture2D actions;
+        public Texture2D env;
+    }
+
+    static TextureAssets GetTextures()
+    {
+        return new TextureAssets
+        {
+            icons = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/KafkaMade/VRMine/Textures/VRMine_Icons.png"),
+            guide = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/KafkaMade/VRMine/Textures/Kafka_Guide_Sheet.png"),
+            gems = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/KafkaMade/VRMine/Textures/VRMine_Gems.png"),
+            actions = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/KafkaMade/VRMine/Textures/VRMine_UI_Actions.png"),
+            env = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/KafkaMade/VRMine/Textures/VRMine_Environment.png")
+        };
     }
 
     const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/MVP.unity";
@@ -39,11 +52,12 @@ public static class VisualBuilder
         root.transform.localScale = Vector3.one;
 
         Palette palette = CreatePalette();
+        TextureAssets textures = GetTextures();
         BuildVrcWorld(root.transform, palette);
         BuildSystems(root.transform);
-        BuildGameplay(root.transform, palette);
-        BuildVisual(root.transform, palette);
-        BuildUi(root.transform, palette);
+        BuildGameplay(root.transform, palette, textures);
+        BuildVisual(root.transform, palette, textures);
+        BuildUi(root.transform, palette, textures);
         BuildAudio(root.transform);
         BuildLighting(root.transform, palette);
         BuildDebug(root.transform);
@@ -135,22 +149,23 @@ public static class VisualBuilder
         for (int i = 0; i < names.Length; i++) CreateNode(udon.transform, names[i]);
     }
 
-    static void BuildGameplay(Transform parent, Palette palette)
+    static void BuildGameplay(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject gameplay = CreateNode(parent, "Gameplay");
-        BuildBoardRoot(gameplay.transform, palette);
-        BuildCardRoot(gameplay.transform, palette);
-        BuildBlockRoot(gameplay.transform, palette);
+        BuildBoardRoot(gameplay.transform, palette, textures);
+        BuildCardRoot(gameplay.transform, palette, textures);
+        BuildBlockRoot(gameplay.transform, palette, textures);
         BuildPickupRoot(gameplay.transform, palette);
         BuildNetworkRoot(gameplay.transform);
-        BuildInteractionRoot(gameplay.transform, palette);
+        BuildInteractionRoot(gameplay.transform, palette, textures);
     }
 
-    static void BuildBoardRoot(Transform parent, Palette palette)
+    static void BuildBoardRoot(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "BoardRoot");
         root.transform.localPosition = Vector3.zero;
-        CreatePrimitive(root.transform, PrimitiveType.Cube, "Board", new Vector3(0f, 0.025f, 0f), new Vector3(10.2f, 0.05f, 8.2f), Quaternion.identity, palette.boardBase, false, "BoardBase");
+        GameObject board = CreatePrimitive(root.transform, PrimitiveType.Cube, "Board", new Vector3(0f, 0.025f, 0f), new Vector3(10.2f, 0.05f, 8.2f), Quaternion.identity, palette.boardBase, false, "BoardBase");
+        ApplyTexture(board, textures.env, Color.white);
         GameObject cells = CreateNode(root.transform, "Cells");
         float startX = -4.5f;
         float startZ = -3.5f;
@@ -247,30 +262,37 @@ public static class VisualBuilder
         label.transform.localPosition = new Vector3(0f, 0.16f, 0f);
     }
 
-    static void BuildVisual(Transform parent, Palette palette)
+    static void BuildVisual(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "Visual");
-        BuildFloor(root.transform, palette);
-        BuildWalls(root.transform, palette);
+        BuildFloor(root.transform, palette, textures);
+        BuildWalls(root.transform, palette, textures);
         BuildBoardFrame(root.transform, palette);
         BuildCellHighlights(root.transform, palette);
-        BuildKafkaGuide(root.transform, palette);
-        BuildSimpleDecorations(root.transform, palette);
+        BuildKafkaGuide(root.transform, palette, textures);
+        BuildSimpleDecorations(root.transform, palette, textures);
         BuildFx(root.transform, palette);
         BuildSkyboxAnchor(root.transform);
     }
 
-    static void BuildFloor(Transform parent, Palette palette)
+    static void BuildFloor(Transform parent, Palette palette, TextureAssets textures)
     {
-        CreatePrimitive(parent, PrimitiveType.Plane, "Floor", new Vector3(0f, 0f, 0f), new Vector3(2f, 1f, 2f), Quaternion.identity, palette.floor, false, "Floor");
+        GameObject floor = CreatePrimitive(parent, PrimitiveType.Plane, "Floor", new Vector3(0f, 0f, 0f), new Vector3(2f, 1f, 2f), Quaternion.identity, palette.floor, false, "Floor");
+        ApplyTexture(floor, textures.env, Color.white);
     }
 
-    static void BuildWalls(Transform parent, Palette palette)
+    static void BuildWalls(Transform parent, Palette palette, TextureAssets textures)
     {
-        CreatePrimitive(parent, PrimitiveType.Cube, "NorthWall", new Vector3(0f, 2f, 10f), new Vector3(20f, 4f, 0.2f), Quaternion.identity, palette.wall, false, "Wall");
-        CreatePrimitive(parent, PrimitiveType.Cube, "SouthWall", new Vector3(0f, 2f, -10f), new Vector3(20f, 4f, 0.2f), Quaternion.identity, palette.wall, false, "Wall");
-        CreatePrimitive(parent, PrimitiveType.Cube, "EastWall", new Vector3(10f, 2f, 0f), new Vector3(20f, 4f, 0.2f), Quaternion.Euler(0f, 90f, 0f), palette.wall, false, "Wall");
-        CreatePrimitive(parent, PrimitiveType.Cube, "WestWall", new Vector3(-10f, 2f, 0f), new Vector3(20f, 4f, 0.2f), Quaternion.Euler(0f, 90f, 0f), palette.wall, false, "Wall");
+        string[] names = { "NorthWall", "SouthWall", "EastWall", "WestWall" };
+        Vector3[] positions = { new Vector3(0f, 2f, 10f), new Vector3(0f, 2f, -10f), new Vector3(10f, 2f, 0f), new Vector3(-10f, 2f, 0f) };
+        Quaternion[] rotations = { Quaternion.identity, Quaternion.identity, Quaternion.Euler(0f, 90f, 0f), Quaternion.Euler(0f, 90f, 0f) };
+        Vector3[] scales = { new Vector3(20f, 4f, 0.2f), new Vector3(20f, 4f, 0.2f), new Vector3(20f, 4f, 0.2f), new Vector3(20f, 4f, 0.2f) };
+
+        for (int i = 0; i < names.Length; i++)
+        {
+            GameObject wall = CreatePrimitive(parent, PrimitiveType.Cube, names[i], positions[i], scales[i], rotations[i], palette.wall, false, "Wall");
+            ApplyTexture(wall, textures.env, Color.white);
+        }
     }
 
     static void BuildBoardFrame(Transform parent, Palette palette)
@@ -307,12 +329,13 @@ public static class VisualBuilder
         CreatePrimitive(pin.transform, PrimitiveType.Cube, "Pin_C", new Vector3(0.24f, 1.79f, 0.08f), new Vector3(0.05f, 0.05f, 0.18f), Quaternion.Euler(0f, 26f, -8f), palette.guidePin, true, "GuidePin");
     }
 
-    static void BuildSimpleDecorations(Transform parent, Palette palette)
+    static void BuildSimpleDecorations(Transform parent, Palette palette, TextureAssets textures)
     {
         GameObject root = CreateNode(parent, "SimpleDecorations");
         CreatePrimitive(root.transform, PrimitiveType.Cube, "DeskLampBase", new Vector3(2.8f, 0.62f, -2.3f), new Vector3(0.22f, 0.04f, 0.22f), Quaternion.identity, palette.decorAccent, false, "DecorAccent");
         CreatePrimitive(root.transform, PrimitiveType.Cylinder, "DeskLampStem", new Vector3(2.8f, 1.02f, -2.3f), new Vector3(0.08f, 0.45f, 0.08f), Quaternion.identity, palette.decorAccent, true, "DecorAccent");
-        CreatePrimitive(root.transform, PrimitiveType.Cube, "StickyNote", new Vector3(3.2f, 1.22f, -2.28f), new Vector3(0.28f, 0.18f, 0.02f), Quaternion.identity, palette.note, false, "Note");
+        GameObject note = CreatePrimitive(root.transform, PrimitiveType.Cube, "StickyNote", new Vector3(3.2f, 1.22f, -2.28f), new Vector3(0.28f, 0.18f, 0.02f), Quaternion.identity, palette.note, false, "Note");
+        ApplyTexture(note, textures.env, Color.white);
         CreatePrimitive(root.transform, PrimitiveType.Cube, "Mug", new Vector3(-1.8f, 0.68f, -2.1f), new Vector3(0.16f, 0.18f, 0.16f), Quaternion.identity, palette.mug, false, "Mug");
     }
 
