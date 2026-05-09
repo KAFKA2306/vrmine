@@ -18,4 +18,6 @@ public class NetConst : UdonSharpBehaviour
     public const byte ColorRed = 1;
     public const byte ColorBlue = 2;
     public const byte ColorYellow = 4;
+    public const byte FlagAbsorb = 1;
+    public const byte FlagLoop = 2;
 }

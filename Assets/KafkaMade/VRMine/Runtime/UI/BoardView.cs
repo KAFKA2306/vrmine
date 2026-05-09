@@ -14,6 +14,7 @@ public sealed class BoardView : UdonSharpBehaviour
     public RuleView ruleView;
     public ScorePanelView scoreView;
     public Text phaseLabel;
+    public Renderer boardRenderer;
 
     public void Render()
     {
@@ -30,9 +31,8 @@ public sealed class BoardView : UdonSharpBehaviour
     private void RenderHands()
     {
         if (handCards == null) return;
-        // For the MVP, assume local player is at seat 0
         int offset = 0;
-        int limit = Mathf.Min(handCards.Length, NetConst.MaxHandSize);
+        int limit = Mathf.Min(handCards.Length, 4); 
         for (int i = 0; i < limit; i++)
         {
             if (handCards[i] == null) continue;

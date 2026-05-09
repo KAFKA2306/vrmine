@@ -1,17 +1,21 @@
-# Failure Patterns: Board Game Lab
+# 失敗パターンと対策 (FAILURE PATTERNS)
 
-## Networking & Sync
-*   **Ownership Race**: Multiple players take ownership simultaneously, causing variable flickering or rollback.
-*   **Late Join Mismatch**: New players see default values because `OnDeserialization` or `FieldChangeCallback` failed to trigger visuals.
-*   **Serialization Spam**: Calling `RequestSerialization` every frame, causing network lag or dropped packets.
-*   **Prefab Instance Setup**: Initializing UdonSharpBehaviours on Scene instances instead of the Prefab Asset. 
-    *   *Warning*: `Cannot setup behaviour on prefab instance, original prefab asset needs setup`.
-    *   *Fix*: Open the Prefab Asset in Prefab Mode, verify UdonSharp setup, and click 'Apply All' to the Asset itself. Always configure the Asset before the Scene instance.
-*   **Master Migration**: Current owner leaves; new owner receives state. Logic must handle the handover.
-*   **Out-of-order Events**: `SendCustomNetworkEvent` arriving before or after variable sync.
+## 1. 同期の不整合 (Networking)
+- **現象**: 自分の手札が他のプレイヤーに見えてしまう、あるいは自分に見えているカードと他人が見ているカードが違う。
+- **原因**: `[UdonSynced]` 変数の更新後に `RequestSerialization()` を呼び忘れている、あるいは `Networking.IsOwner` によるガードが不適切。
+- **対策**: `BoardState` の更新は必ず Owner が行い、直後にシリアライズを要求する。
 
-## Interaction & Physics
-*   **Transform Drift**: Minor floating point errors causing pieces to slowly move away from their grid.
-*   **Pickup Desync**: One player holds an object while another thinks it is on the table.
-*   **Double Interact**: Two clicks registered in the same frame causing unexpected state jumps.
-*   **Collider Conflict**: Game objects blocking the raycast of the button/piece below them.
+## 2. ビジュアルの破綻 (Visuals)
+- **現象**: カードの数字が 1 ではなく 15 に見えたり、絵柄がズレたりする。
+- **原因**: UV オフセットの計算式（4x4 グリッド等）が、テクスチャの実際のレイアウトとズレている。
+- **対策**: `CardView.cs` の `SetNumberUV` 等の計算ロジックを、テクスチャシートの解像度と正確に合わせる。
+
+## 3. 配線の消失 (Wiring)
+- **現象**: ゲームを開始しても UI が更新されない、あるいは NullReferenceException が発生する。
+- **原因**: `VisualBuilder` でオブジェクトを再生成した後、`VRMineBridge > wire_scene` を実行し忘れている。
+- **対策**: シーンに変更を加えたら、必ず `wire_scene` を実行して Udon の参照を更新する。
+
+## 4. マテリアルのリーク (Editor)
+- **現象**: エディタが重くなる、あるいはシーン保存時に警告が出る。
+- **原因**: エディタ拡張で `.material` を操作し、インスタンスが大量生成されている。
+- **対策**: 必ず `.sharedMaterial` を使用し、既存のアセットを上書き・参照する形にする。

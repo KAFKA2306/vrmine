@@ -9,6 +9,20 @@ public class GameController : UdonSharpBehaviour
     public BoardState board;
     public BoardView view;
     
+    // Legacy / Internal State
+    [UdonSynced] public uint boardSeed;
+    [UdonSynced] public uint boardHash;
+    [UdonSynced] public int turnIndex;
+    [UdonSynced] public int winnerPlayerId;
+    [UdonSynced] public byte declarationResult;
+    [UdonSynced] public byte logHead;
+    [UdonSynced] public byte logCount;
+    [UdonSynced] public byte[] logData = new byte[NetConst.LogRingSize * 4]; // EntrySize assumed 4
+    public PlayerClient[] mailboxes = new PlayerClient[0];
+    public WaveSimulator wave;
+    public LogStream logStream;
+    int[] handledSequence = new int[64];
+
     [Header("Runtime State")]
     public int localPlayerSeat = 0;
 
@@ -16,6 +30,7 @@ public class GameController : UdonSharpBehaviour
     {
         if (Networking.IsOwner(gameObject))
         {
+            if (boardSeed == 0) boardSeed = (uint)Random.Range(1, int.MaxValue);
             SetupGame();
         }
         Render();
@@ -28,8 +43,11 @@ public class GameController : UdonSharpBehaviour
 
     void SetupGame()
     {
+        boardHash = board.Bake(boardSeed);
         board.phase = BoardState.PhasePlayCard;
         board.currentPlayerSeat = 0;
+        board.warningCount = 0;
+        board.syncState = 1;
         
         // Initial setup cards as requested:
         // Fan 1, Coin 6, Koi 10, Gate 15
@@ -45,15 +63,16 @@ public class GameController : UdonSharpBehaviour
             board.playerHands[i] = setup[i];
         }
         
+        SyncDashboard();
         board.RequestSerialization();
+        RequestSerialization();
     }
 
     public void OnCardClicked(int cardIndex)
     {
         if (board.phase != BoardState.PhasePlayCard) return;
-        if (board.currentPlayerSeat != localPlayerSeat) return;
+        if (board.currentPlayerSeat != (byte)localPlayerSeat) return;
         
-        // Request ownership to modify state
         if (!Networking.IsOwner(gameObject))
         {
             Networking.SetOwner(Networking.LocalPlayer, gameObject);
@@ -69,14 +88,15 @@ public class GameController : UdonSharpBehaviour
         byte card = board.playerHands[offset + handIndex];
         if (card == 0) return;
 
-        // Move to trick
         board.trickCards[playerSeat] = card;
         board.playerHands[offset + handIndex] = 0;
         
-        // Simple turn advance for MVP
-        board.currentPlayerSeat = (byte)((board.currentPlayerSeat + 1) % NetConst.MaxPlayers);
+        turnIndex++;
+        board.currentPlayerSeat = (byte)(turnIndex % NetConst.MaxPlayers);
         
+        SyncDashboard();
         board.RequestSerialization();
+        RequestSerialization();
         Render();
     }
 
@@ -84,7 +104,36 @@ public class GameController : UdonSharpBehaviour
     {
         if (view != null) view.Render();
     }
-    
-    // Legacy support for wiring
-    public void OnDeclare() { }
+
+    public void Pull()
+    {
+        if (!Networking.IsOwner(gameObject)) return;
+        for (int i = 0; i < mailboxes.Length; i++)
+        {
+            PlayerClient client = mailboxes[i];
+            int slot = client.ownerPlayerId & 63;
+            if (handledSequence[slot] == client.requestSequence) continue;
+            handledSequence[slot] = client.requestSequence;
+            // Handle client requests here
+        }
+    }
+
+    public void OnDeclare()
+    {
+        SendCustomNetworkEvent(NetworkEventTarget.Owner, nameof(Pull));
+    }
+
+    void SyncDashboard()
+    {
+        if (board == null) return;
+        board.roundIndex = (byte)(turnIndex / NetConst.MaxPlayers + 1);
+        if (board.syncState != 3) board.syncState = Networking.IsOwner(gameObject) ? (byte)1 : (byte)2;
+        
+        // Rule Sync
+        for (int i = 0; i < 4; i++)
+        {
+            if (i < board.blocks.Length) board.selectedRules[i] = board.blocks[i];
+            board.ruleHandCounts[i] = (byte)(4 - i);
+        }
+    }
 }

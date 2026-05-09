@@ -1,71 +1,18 @@
-# VRMine 最小動作計画
+# VRMine 開発計画 (Stich-Meister)
 
-## ゴール
-- Unity 2022.3.22f1 と VRChat SDK3-Worlds を使用し、`Assets/KafkaMade/VRMine/Scenes/MVP.unity` 上で波の発射からログ表示、完全一致判定、勝利演出までをホスト/リモート両方で検証する。
-- 1 営業日内に Play Mode 検証と Build & Test を完了し、検証ログとスクリーンショットを `docs/` 配下に集約する。
-- 完全一致フローで使用する UI・同期データの差分を README/ガイドへ反映し、次タスクへ引き継げる状態に整える。
+## 現在のゴール
+物理コンポーネント主体のトリックテイキングゲーム「Stich-Meister」を完成させ、VRChat 上で「ルールを奪い合う」体験を安定して提供する。
 
-## 実施前提
-- 開発環境は `docs/DEV_SETUP.md` 手順で整備済みで、Unity 2022.3.22f1 を直接起動できる。
-- VRChat SDK Control Panel にログイン済みでローカル Build & Test が即時実行できる。
-- Prefab と UdonSharp スクリプトが `Assets/KafkaMade/VRMine/` 配下で編集可能な状態である。
-- Git LFS で大容量アセットが取得済みで、差分管理に支障がないことを確認している。
-- `unity-vrc-udon-sharp` と `unity-vrc-world-sdk-3` の skill を使い、UdonSharp 制約と World SDK 設定を優先して確認する。
+## 開発優先順位
+1. **物理コンポーネントの安定化**: `VisualBuilder` によるカード、宝石、盤面の生成と、`VRMineBridge` によるロジック配線の完全自動化。
+2. **トリックテイキング・ロジックの完遂**: `GameController` によるスート/数字判定と、`BoardState` によるビットパック同期の実装。
+3. **ルール書き換え（Composition）の実装**: プレイヤーが出した「ルールカード」がゲームエンジンに反映される動的なルール適用システムの構築。
+4. **プレイアビリティの向上**: カード移動アニメーションや、宝石トークンによる得点視覚化の洗練。
 
-## 使用アセット
-- シーン: `Assets/KafkaMade/VRMine/Scenes/MVP.unity`
-- Prefab: `BoardRoot`, `LogCanvas`, `BlockMarker`, `BoardCellMarker`, `CardView`, `KafkaMonitorPanel`, `PhasePanel`, `RuleCardView`, `ScorePanel`, `TableLight`, `WarningPanel`（`Assets/KafkaMade/VRMine/Prefabs/`）
-- スクリプト: `GameController`, `PlayerClient`, `WaveSimulator`, `BoardState`, `LogStream`, `LogBoard` の UdonSharpBehaviour（`Assets/KafkaMade/VRMine/Runtime/`）
-- UI: ログテキスト、完全一致ボタン、勝利メッセージ用プレハブ
-- 参照基準: Inspector 参照は Missing なし、`BehaviourSyncMode` は Manual を維持
+## ワークフロー
+- **アセット生成**: `VRMine > build_visuals`
+- **ロジック配線**: `VRMine > wire_scene`
+- **検証**: VRChat Build & Test による複数人同期チェック。
 
-## タイムライン (1 日)
-1. 09:00-09:30 セットアップ確認
-   - Unity 2022.3.22f1 を起動してプロジェクトを開き、`docs/GUIDE.md` と照合してシーンをロード。
-   - Prefab 配置と Inspector 参照を確認し、差分候補を `docs/` 内にメモ。
-2. 09:30-11:00 シーン整備
-   - `PlayerClient` → `GameController` → `WaveSimulator` → `LogBoard` の参照を点検し、`[UdonSynced]` 配列が宣言位置で初期化されているか確認。
-   - 完全一致ボタンの UI 状態（待機/成功/失敗）を 1 Canvas 内で切り替える仕組みを実装・確認。
-   - Inspector の Owner 設定と `Networking.SetOwner` 呼び出し順を見直し、同期破綻の原因を排除。
-3. 11:00-13:00 波経路動作テスト
-   - 入口 A1/A8/B4 の経路で色と出口ログを記録し、`LogBoard` 表示とスクリーンショットを取得。
-   - ループ/吸収ケースを `WaveSimulator` のテストセルで再現し、ログ書式を揃える。
-   - 操作後に `RequestSerialization()` が必ず呼ばれることを UdonBehaviour で確認。
-4. 13:00-15:00 完全一致フロー実装
-   - ボタン押下で `GameController` が盤面を判定し、勝利テキストとペナルティ文言を切り替える挙動を確認。
-   - ログリング 20 件が循環表示するようリングバッファを更新し、Scene/Prefab 双方で参照ズレが無いことを確認。
-   - `docs/GUIDE.md` に UI 操作フローと判定仕様の変更点を追記。
-5. 15:00-16:30 ビルドと同期検証
-   - Control Panel の Build & Test を実行し、ホストとクライアント 2 枠で検証。
-   - 波の色とログの同期、完全一致フロー完遂を双方でキャプチャし、差異があれば原因と対処を記録。
-   - Upload ログの警告/エラー有無を記録し、必要であれば `docs/testing.md` に追記。
-6. 16:30-17:00 仕上げ
-   - 変更差分を確認し、Prefab/Scene の参照崩れが無いことを検証。
-   - `docs/testing.md` に追加で判明した確認手順を記録し、次の改善タスクを箇条書きで残す。
-   - Build & Test の成果物を整理し、再検証時に使えるチェックリストを整備。
-
-## 直近修復メモ
-- `Assets/KafkaMade/VRMine/Editor/BootstrapScene.cs` で `MVP.unity` と `LogCanvas.prefab` を再構成できる。
-- `Assets/KafkaMade/VRMine/Editor/VRMineBridge.cs` で `wire_scene` と `validate_scene` を実行できる。
-- 次は Unity で `Refresh All UdonSharp Assets` を走らせて、scene/prefab の `programSource` が有効か確認する。
-
-## 成果物
-- 更新済み `Assets/KafkaMade/VRMine/Scenes/MVP.unity`（参照安定）。
-- 波ログと完全一致 UI が整った Prefab/UdonSharp スクリプト。
-- `docs/testing.md` と `docs/GUIDE.md` に追記した検証記録と操作手順。
-- Build & Test のホスト/クライアントスクリーンショット。
-
-## 検証リスト
-- `[ ]` `PlayerClient` と `GameController` が Manual Sync で同一 Owner を維持。
-- `[ ]` 全 `[UdonSynced]` 配列が宣言位置で初期化済み。
-- `[ ]` 波を 20 回連続で撃ってもログ 20 件が循環表示される。
-- `[ ]` 完全一致成功時に UI が勝利メッセージへ即反映し、失敗時にペナルティ文言が表示される。
-- `[ ]` Build & Test の Upload ログに警告/エラーが無く、2 クライアントでログ同期を確認。
-- `[ ]` `docs/` 配下に検証結果とスクリーンショットが整理され、共有可能な状態になっている。
-
-## フィードバックループ運用
-- `Assets/KafkaMade/VRMine/Runtime/Game/FeedbackRunner` を評価用 GameObject に追加し、`visuals` にワールド外形を構成する Renderer、`interactors` に操作対象 Collider を割り当てる。`minFootprint` と `minHeight` で保証したい最低サイズを設定する。
-- `Create > VRMine > FeedbackReport` で `FeedbackReport` アセットを生成し、`FeedbackRunner.report` に割り当てて実行結果をテキストとして保持する。
-- 必要に応じて `FeedbackLogger` を配置し、`report` と `screen` を指定するとランナーの集計結果が UI Text に同期される。
-- `FeedbackRunner.Run()` を手動呼び出しすることで Play Mode 中に再評価し、最新スコアと各カテゴリの達成状況を都度ログに反映できる。
-- CLI での簡易評価は `python3 tools/feedback_loop.py docs/feedback_input.json docs/feedback_report.txt` を実行し、`docs/feedback_report.txt` を確認する。
+## 廃棄された旧仕様
+- 波形シミュレーション、経路検索、およびそれに付随するすべてのロジックとドキュメントは、Stich-Meister 実装に伴い完全に廃止されました。

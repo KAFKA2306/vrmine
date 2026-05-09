@@ -9,8 +9,8 @@ public static class VRMineBridge
 {
     const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/MVP.unity";
 
-    [MenuItem("VRMine/wire_scene")]
-    public static void WireScene()
+    [MenuItem("VRMine/build_visuals")]
+    public static void BuildVisuals()
     {
         Scene scene = EditorSceneManager.GetActiveScene();
         if (scene.path != ScenePath) return;
@@ -32,22 +32,24 @@ public static class VRMineBridge
         GameObject controller = FindOrCreateObject(runtimeRoot.transform, "GameController");
         GameObject state = FindOrCreateObject(runtimeRoot.transform, "BoardState");
         GameObject logStream = FindOrCreateObject(runtimeRoot.transform, "LogStream");
+        GameObject pc = FindOrCreateObject(runtimeRoot.transform, "PlayerController");
 
         // Components
         BoardState boardState = EnsureComponent<BoardState>(state);
         LogStream stream = EnsureComponent<LogStream>(logStream);
         GameController ctrl = EnsureComponent<GameController>(controller);
+        PlayerController pCtrl = EnsureComponent<PlayerController>(pc);
         BoardView bView = EnsureComponent<BoardView>(boardRoot);
 
         // Link Visuals to Behavior
         GameObject boardQuad = GameObject.Find("BoardQuad");
         if (boardQuad != null) bView.boardRenderer = boardQuad.GetComponent<Renderer>();
 
-        // Wire Controller
+        // Wire
         ctrl.board = boardState;
-        ctrl.view = bView;
-
-        // Wire BoardView
+        ctrl.logStream = stream;
+        ctrl.mailboxes = new[] { pCtrl };
+        pCtrl.controller = ctrl;
         bView.state = boardState;
         bView.controller = ctrl;
         

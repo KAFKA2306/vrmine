@@ -1,42 +1,15 @@
-# Testing Guide
+# テストガイドライン (Stich-Meister)
 
-## Scope
-This repo is validated by Unity Play Mode and VRChat Build & Test. There is no automated test suite yet, so the main goal is to verify sync, late join, and inspector wiring without breaking scene reconstruction.
+## 1. ユニットテスト (Unity Play Mode)
+- **ビルド検証**: `VRMine > build_visuals` を実行し、マテリアルのリーク警告が出ないか確認。
+- **配線検証**: `VRMine > wire_scene` を実行し、コンソールに `MissingReference` が出ないか確認。
+- **ロジック検証**: `GameController` を動かし、手札のビットデータが正しく物理カードの UV オフセット（絵柄）に変換されるか確認。
 
-## Before You Test
-1. Open the project with Unity 2022.3.22f1.
-2. Run `VRChat SDK > Udon Sharp > Refresh All UdonSharp Assets`.
-3. Open `Assets/KafkaMade/VRMine/Scenes/MVP.unity`.
-4. Check that `GameController`, `PlayerClient`, `WaveSimulator`, `BoardState`, `LogStream`, and `LogBoard` still resolve in the scene and prefab.
+## 2. 同期テスト (VRChat Build & Test)
+- **2インスタンス起動**: クライアント A が出したカードが、クライアント B の盤面上でも同じ絵柄・同じ位置に表示されるか。
+- **途中参加**: ゲーム進行中に Join したプレイヤーに、現在の盤面状態が正しく同期されるか。
+- **オーナー委譲**: マスターが退出した際、次のプレイヤーにゲーム管理権限が正常に引き継がれるか。
 
-## Level 0: Sync Button
-- Take ownership on first interact.
-- Toggle the material on both clients.
-- Confirm `RequestSerialization()` is called after the new value is set.
-- Join late and confirm the current color is visible immediately.
-
-## Level 1: Dice System
-- Roll from the proxy or manager entry point.
-- Confirm the same face is shown on host and remote.
-- Confirm the result is visible after a late join.
-- Check that the visual only reflects the synced result and does not own the roll logic.
-
-## VRMine Core Flow
-- Start a local 2-client Build & Test.
-- Trigger a wave through `PlayerClient`.
-- Confirm `GameController` updates `BoardState` and `LogStream`.
-- Confirm `LogBoard` renders the newest log at the top.
-- Declare a match and confirm the board phase and winner state update on both clients.
-
-## Common Failure Patterns
-- Missing references in scene or prefab after reload.
-- Manual sync state changing without `RequestSerialization()`.
-- Late joiner seeing default visuals instead of synced state.
-- Log ring wrapping incorrectly after repeated wave events.
-
-## Notes To Record
-- Scene used.
-- Client count.
-- Which object owned the synced state.
-- Whether the failure was host-only, remote-only, or both.
-- Any inspector field that had to be reassigned.
+## 3. ビジュアル検証
+- **Quiet UI チェック**: テクスチャが極端に引き伸ばされていないか、刺し子模様や数字が鮮明に見えるか。
+- **物理配置**: カードや宝石がテーブルから浮いていたり、めり込んでいたりしないか。

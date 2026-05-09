@@ -1,30 +1,17 @@
-# Project State: Board Game Lab
+# データと見た目の同期 (STATE)
 
-## Current Context
-- **Level**: 0 (The Collective Pulse + Bug Window)
-- **Goal**: Demonstrate sync via a shared game with visual bug reporting.
-- **Pass/Fail State**: WAITING_FOR_HUMAN
-- **Blocking Issues**: UdonSharp program assets were missing, then regenerated with Setup. Need Unity editor reopen and scene-level validation.
+## 1. 最小単位：カードデータ
+すべてのカードは **1バイト (8bit)** で管理され、ネットワーク同期されます。
 
-## Progress
-- [x] Architecture Rules (ARCHITECTURE_RULES.md) Defined
-- [x] Failure Patterns (FAILURE_PATTERNS.md) Defined
-- [x] Folder Structure Created
-- [x] Long-Term Master Roadmap (ROADMAP.md) Integrated
-- [x] Level 0 Runtime Scripts FIXED (Compile errors resolved)
-- [x] Level 0 Game Design (Collective Pulse + Bug Window) Implemented
-- [x] Level 0 Editor Automation (Diagnostic Game Setup) Updated
-- [x] Level 0 Prefab & Test Scene Generated
-- [x] Level 0 Human Test Documentation Updated
-- [x] VRChat/UdonSharp skills installed for agent workflow
+- **上位 4bit**: スート (0:扇, 1:コイン, 2:鯉, 3:門)
+- **下位 4bit**: 数字 (1 〜 15)
 
-## Files Created/Changed
-- `Assets/BoardGameLab/Runtime/Net/BGL_SyncProxy.cs`: FIXED method name mismatch.
-- `Assets/BoardGameLab/Runtime/Net/BGL_SyncManager.cs`: Score logic.
-- `Assets/BoardGameLab/Runtime/Net/BGL_SyncVisual.cs`: Pulse effect + Bug Window logic.
-- `Assets/BoardGameLab/Editor/BoardGameLabSetup.cs`: Build automated Game + Bug Scene.
-- `Assets/BoardGameLab/Runtime/Net/*.asset`: UdonSharp program assets regenerated.
-- `docs/STATE.md`: Updated state.
+## 2. 同期フロー
+ロジックからビジュアルへの変換は以下の3ステップのみです。
 
-## Next Command
-Open Unity, refresh UdonSharp, and verify scene/prefab links in the editor.
+1. **BoardState**: `byte` 配列としてデータを保持（同期の起点）。
+2. **BoardView**: データを読み取り、テーブル上の物理カード (`CardView`) に渡す。
+3. **CardView**: 受け取った `byte` をデコードし、テクスチャの **UVオフセット** を変更して見た目（絵柄と数字）を確定させる。
+
+## 3. 物理的実態
+- 盤面 (`BoardQuad`) や手札 (`PlayerCard_X`) は、すべて `VRMineBridge` によってこのロジックに自動配線されます。
