@@ -45,6 +45,16 @@ public class BoardGameAction : UdonSharpBehaviour
             return;
         }
 
+        if (action == 5)
+        {
+            if (CanReset())
+            {
+                trickGame.ConfigurePlayers(value);
+                trickGame.SetupGame();
+            }
+            return;
+        }
+
         if (!HasTrickSeat()) return;
         if (action == 0) trickGame.OnCardClicked(value);
         else if (action == 1) trickGame.SelectRule(value);
@@ -67,6 +77,16 @@ public class BoardGameAction : UdonSharpBehaviour
             return;
         }
 
+        if (action == 8)
+        {
+            if (CanReset())
+            {
+                orapaGame.ConfigurePlayers(value);
+                orapaGame.ResetGame();
+            }
+            return;
+        }
+
         // The generated scene from the previous schema did not contain Orapa seat buttons.
         // Auto-claiming the first free seat keeps that scene playable while the editor builder
         // upgrades it to the explicit-seat version.
@@ -77,7 +97,7 @@ public class BoardGameAction : UdonSharpBehaviour
         else if (action == 4) orapaGame.SelectGuessPiece(value);
         else if (action == 5) orapaGame.MoveGuess(value, 0);
         else if (action == 6) orapaGame.MoveGuess(0, value);
-        else orapaGame.RotateGuess();
+        else if (action == 7) orapaGame.RotateGuess();
     }
 
     void HandleChess()
