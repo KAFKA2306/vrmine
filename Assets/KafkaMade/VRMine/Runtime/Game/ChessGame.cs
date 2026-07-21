@@ -16,12 +16,31 @@ public class ChessGame : UdonSharpBehaviour
     [UdonSynced] public byte status;
     [UdonSynced] public int[] positionHistory = new int[100];
     [UdonSynced] public byte positionCount;
-    public int localSeat;
+    public int localSeat = -1;
     public int selectedSquare = -1;
+    public int promotionChoice = 5;
 
     void Start()
     {
         if (Networking.IsOwner(gameObject) && fullmoveNumber == 0) ResetGame();
+    }
+
+    public override void OnDeserialization()
+    {
+        if (!HasLocalSeat()) localSeat = -1;
+    }
+
+    public override void OnPlayerLeft(VRCPlayerApi player)
+    {
+        if (!Networking.IsOwner(gameObject) || player == null) return;
+        bool changed = false;
+        for (int i = 0; i < occupiedPlayerIds.Length; i++)
+        {
+            if (occupiedPlayerIds[i] != player.playerId) continue;
+            occupiedPlayerIds[i] = 0;
+            changed = true;
+        }
+        if (changed) RequestSerialization();
     }
 
     public void ResetGame()
@@ -50,26 +69,38 @@ public class ChessGame : UdonSharpBehaviour
         result = 0;
         status = 0;
         positionCount = 0;
+        selectedSquare = -1;
+        promotionChoice = 5;
         RecordPosition();
     }
 
     public void JoinGame(int seat)
     {
-        if (seat < 0 || seat > 1) return;
+        VRCPlayerApi player = Networking.LocalPlayer;
+        if (player == null || seat < 0 || seat > 1) return;
+        for (int i = 0; i < occupiedPlayerIds.Length; i++)
+            if (occupiedPlayerIds[i] == player.playerId && i != seat) return;
         Own();
-        int playerId = Networking.LocalPlayer.playerId;
-        if (occupiedPlayerIds[seat] != 0 && occupiedPlayerIds[seat] != playerId) return;
+        if (occupiedPlayerIds[seat] != 0 && occupiedPlayerIds[seat] != player.playerId) return;
         localSeat = seat;
-        occupiedPlayerIds[seat] = playerId;
+        occupiedPlayerIds[seat] = player.playerId;
         RequestSerialization();
+    }
+
+    public void SetPromotion(int type)
+    {
+        if (!HasLocalSeat()) return;
+        if (type < 2 || type > 5) return;
+        promotionChoice = type;
     }
 
     public bool TryMove(int from, int to, int promotion)
     {
-        if (result != 0 || from < 0 || from >= 64 || to < 0 || to >= 64) return false;
+        if (!HasLocalSeat() || result != 0 || from < 0 || from >= 64 || to < 0 || to >= 64) return false;
         if (localSeat != (sideToMove == 0 ? 0 : 1)) return false;
         byte piece = squares[from];
         if (piece == 0 || Color(piece) != sideToMove || !LegalMove(from, to, promotion)) return false;
+
         Own();
         byte captured = squares[to];
         int type = Type(piece);
@@ -77,11 +108,12 @@ public class ChessGame : UdonSharpBehaviour
         int enPassantCapture = pawnMove && to == enPassantSquare && captured == 0 ? to + (sideToMove == 0 ? -8 : 8) : -1;
         if (enPassantCapture >= 0) captured = squares[enPassantCapture];
         ApplyMove(from, to, promotion);
-        UpdateCastlingRights(from, to, piece, captured);
+        UpdateCastlingRights(from, to, piece);
         enPassantSquare = pawnMove && Mathf.Abs(to - from) == 16 ? (byte)((to + from) / 2) : (byte)255;
-        halfmoveClock = pawnMove || captured != 0 ? (byte)0 : (byte)(halfmoveClock + 1);
+        halfmoveClock = pawnMove || captured != 0 ? (byte)0 : (byte)Mathf.Min(255, halfmoveClock + 1);
         if (sideToMove == 8) fullmoveNumber++;
         sideToMove = sideToMove == 0 ? (byte)8 : (byte)0;
+
         bool check = InCheck(sideToMove);
         bool moves = AnyLegalMove(sideToMove);
         status = check ? (byte)1 : (byte)0;
@@ -98,23 +130,37 @@ public class ChessGame : UdonSharpBehaviour
                 result = 3;
             }
         }
-        if (result == 0 && (halfmoveClock >= 100 || InsufficientMaterial())) result = 3;
+
         RecordPosition();
-        if (result == 0 && RepetitionCount(PositionHash()) >= 3) result = 3;
+        if (result == 0 && DeadPosition()) result = 3;
+        if (result == 0 && halfmoveClock >= 150) result = 3;
+        if (result == 0 && RepetitionCount(PositionHash()) >= 5) result = 3;
         RequestSerialization();
         return true;
     }
 
+    public void ClaimDraw()
+    {
+        if (!HasLocalSeat() || result != 0) return;
+        if (halfmoveClock < 100 && RepetitionCount(PositionHash()) < 3) return;
+        Own();
+        result = 3;
+        status = 4;
+        RequestSerialization();
+    }
+
     public void Resign()
     {
-        if (result != 0 || localSeat != (sideToMove == 0 ? 0 : 1)) return;
+        if (!HasLocalSeat() || result != 0 || localSeat != (sideToMove == 0 ? 0 : 1)) return;
         Own();
         result = localSeat == 0 ? (byte)2 : (byte)1;
+        status = 5;
         RequestSerialization();
     }
 
     public void SelectSquare(int square)
     {
+        if (!HasLocalSeat() || result != 0) return;
         if (selectedSquare < 0)
         {
             if (square >= 0 && square < 64 && squares[square] != 0 && Color(squares[square]) == sideToMove) selectedSquare = square;
@@ -122,7 +168,7 @@ public class ChessGame : UdonSharpBehaviour
         }
         int from = selectedSquare;
         selectedSquare = -1;
-        int promotion = Type(squares[from]) == 1 && (square >> 3 == 0 || square >> 3 == 7) ? 5 : 0;
+        int promotion = Type(squares[from]) == 1 && (square >> 3 == 0 || square >> 3 == 7) ? promotionChoice : 0;
         TryMove(from, square, promotion);
     }
 
@@ -130,21 +176,36 @@ public class ChessGame : UdonSharpBehaviour
     {
         int failures = 0;
         InitializeBoard();
+        localSeat = 0;
+        occupiedPlayerIds[0] = 1;
         if (!LegalMove(12, 28, 0) || LegalMove(12, 36, 0) || !LegalMove(6, 21, 0)) failures++;
+
         squares[5] = 0;
         squares[6] = 0;
         if (!LegalMove(4, 6, 0)) failures++;
+
         for (int i = 0; i < 64; i++) squares[i] = 0;
         squares[63] = 14;
         squares[54] = 5;
         squares[45] = 6;
         if (!InCheck(8) || AnyLegalMove(8)) failures++;
+
         for (int i = 0; i < 64; i++) squares[i] = 0;
         squares[63] = 14;
         squares[53] = 6;
         squares[46] = 5;
         if (InCheck(8) || AnyLegalMove(8)) failures++;
+
+        for (int i = 0; i < 64; i++) squares[i] = 0;
+        squares[4] = 6;
+        squares[60] = 14;
+        squares[48] = 1;
+        sideToMove = 0;
+        if (!LegalMove(48, 56, 2) || !LegalMove(48, 56, 3) || !LegalMove(48, 56, 4) || !LegalMove(48, 56, 5)) failures++;
+
         InitializeBoard();
+        localSeat = -1;
+        occupiedPlayerIds[0] = 0;
         return failures;
     }
 
@@ -182,7 +243,7 @@ public class ChessGame : UdonSharpBehaviour
         if (from == to) return false;
         byte piece = squares[from];
         byte target = squares[to];
-        if (target != 0 && Color(target) == Color(piece)) return false;
+        if (piece == 0 || target != 0 && Color(target) == Color(piece)) return false;
         int fx = from & 7;
         int fy = from >> 3;
         int tx = to & 7;
@@ -207,8 +268,9 @@ public class ChessGame : UdonSharpBehaviour
         if (type == 3) return ax == ay && ClearPath(from, to);
         if (type == 4) return (dx == 0 || dy == 0) && ClearPath(from, to);
         if (type == 5) return (dx == 0 || dy == 0 || ax == ay) && ClearPath(from, to);
+        if (type != 6) return false;
         if (ax <= 1 && ay <= 1) return true;
-        if (type != 6 || ay != 0 || ax != 2 || InCheck(Color(piece))) return false;
+        if (ay != 0 || ax != 2 || InCheck(Color(piece))) return false;
         int right = Color(piece) == 0 ? (dx > 0 ? 1 : 2) : (dx > 0 ? 4 : 8);
         if ((castlingRights & right) == 0) return false;
         int step = dx > 0 ? 1 : -1;
@@ -255,7 +317,7 @@ public class ChessGame : UdonSharpBehaviour
     {
         int king = -1;
         for (int square = 0; square < 64; square++) if (squares[square] == (byte)(color | 6)) king = square;
-        return SquareAttacked(king, color == 0 ? 8 : 0);
+        return king < 0 || SquareAttacked(king, color == 0 ? 8 : 0);
     }
 
     bool SquareAttacked(int square, int attackerColor)
@@ -317,7 +379,7 @@ public class ChessGame : UdonSharpBehaviour
         return false;
     }
 
-    void UpdateCastlingRights(int from, int to, byte piece, byte captured)
+    void UpdateCastlingRights(int from, int to, byte piece)
     {
         if (Type(piece) == 6) castlingRights &= Color(piece) == 0 ? (byte)12 : (byte)3;
         if (from == 0 || to == 0) castlingRights &= 13;
@@ -326,16 +388,28 @@ public class ChessGame : UdonSharpBehaviour
         if (from == 63 || to == 63) castlingRights &= 11;
     }
 
-    bool InsufficientMaterial()
+    bool DeadPosition()
     {
-        int minor = 0;
+        int minorCount = 0;
+        int bishopCount = 0;
+        int bishopSquareColor = -1;
+        bool bishopsSameColor = true;
         for (int square = 0; square < 64; square++)
         {
             int type = Type(squares[square]);
+            if (type == 0 || type == 6) continue;
             if (type == 1 || type == 4 || type == 5) return false;
-            if (type == 2 || type == 3) minor++;
+            minorCount++;
+            if (type == 3)
+            {
+                bishopCount++;
+                int color = ((square & 7) + (square >> 3)) & 1;
+                if (bishopSquareColor < 0) bishopSquareColor = color;
+                else if (bishopSquareColor != color) bishopsSameColor = false;
+            }
         }
-        return minor <= 1;
+        if (minorCount <= 1) return true;
+        return bishopCount == minorCount && bishopsSameColor;
     }
 
     int PositionHash()
@@ -347,7 +421,14 @@ public class ChessGame : UdonSharpBehaviour
 
     void RecordPosition()
     {
-        if (positionCount < positionHistory.Length) positionHistory[positionCount++] = PositionHash();
+        int hash = PositionHash();
+        if (positionCount < positionHistory.Length)
+        {
+            positionHistory[positionCount++] = hash;
+            return;
+        }
+        for (int i = 1; i < positionHistory.Length; i++) positionHistory[i - 1] = positionHistory[i];
+        positionHistory[positionHistory.Length - 1] = hash;
     }
 
     int RepetitionCount(int hash)
@@ -367,8 +448,15 @@ public class ChessGame : UdonSharpBehaviour
         return piece & 8;
     }
 
+    bool HasLocalSeat()
+    {
+        VRCPlayerApi player = Networking.LocalPlayer;
+        return player != null && localSeat >= 0 && localSeat < occupiedPlayerIds.Length && occupiedPlayerIds[localSeat] == player.playerId;
+    }
+
     void Own()
     {
-        if (!Networking.IsOwner(gameObject)) Networking.SetOwner(Networking.LocalPlayer, gameObject);
+        VRCPlayerApi player = Networking.LocalPlayer;
+        if (player != null && !Networking.IsOwner(gameObject)) Networking.SetOwner(player, gameObject);
     }
 }
