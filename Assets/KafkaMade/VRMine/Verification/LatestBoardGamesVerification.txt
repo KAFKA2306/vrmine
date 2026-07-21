@@ -1,11 +1,5 @@
-﻿PASS Scene Assets/KafkaMade/VRMine/Scenes/BoardGameShowcase.unity
-PASS SceneDescriptor 1
-PASS TrickMeister 1
-PASS OrapaMine 1
-PASS Chess 1
-PASS Interactions 140
-PASS UdonPrograms 145/145
-PASS TrickCapacity 80/15/5
-PASS Spawn 1
-PASS ReferenceCamera ReferenceCamera
-Result: PASS
+STALE
+Gate: G1 Scene and Udon Structure
+Reason: the scene generator, interaction count, network probe, UI, and game code changed after this report was produced.
+Required action: open the project in Unity 2022.3.22f1 after VCC Resolve and run VRMine > Verification > Run Board Games Gate.
+Result: FAIL
