@@ -8,7 +8,8 @@
 - VRChat Worlds SDK: `3.10.4`
 - Upload scene: [`Assets/KafkaMade/VRMine/Scenes/BoardGameShowcase.unity`](Assets/KafkaMade/VRMine/Scenes/BoardGameShowcase.unity)
 - Scene generator: [`BoardGameShowcaseBuilder.cs`](Assets/KafkaMade/VRMine/Editor/BoardGameShowcaseBuilder.cs)
-- Scene post-upgrade (player counts, trick table, seat lifecycle): [`BoardGameSceneUpgrade.cs`](Assets/KafkaMade/VRMine/Editor/BoardGameSceneUpgrade.cs)
+- Idempotent scene post-upgrade: [`BoardGameSceneUpgrade.cs`](Assets/KafkaMade/VRMine/Editor/BoardGameSceneUpgrade.cs)
+- UdonSharp proxy persistence hook: [`VRMineUdonProxySaveProcessor.cs`](Assets/KafkaMade/VRMine/Editor/VRMineUdonProxySaveProcessor.cs)
 - Public in-world name upgrade: [`VRMinePublicNameUpgrade.cs`](Assets/KafkaMade/VRMine/Editor/VRMinePublicNameUpgrade.cs)
 - Upload gate: [`VRMineReleaseGate.cs`](Assets/KafkaMade/VRMine/Editor/VRMineReleaseGate.cs)
 - Landing page source: [`site/index.html`](site/index.html)
@@ -52,13 +53,13 @@
 - Static CI: [`.github/workflows/project-integrity.yml`](.github/workflows/project-integrity.yml)
 - Edit-mode scene gate: [`LatestBoardGamesVerification.txt`](Assets/KafkaMade/VRMine/Verification/LatestBoardGamesVerification.txt)
 - Play-mode rule gate: [`LatestBoardGamesRuntimeVerification.txt`](Assets/KafkaMade/VRMine/Verification/LatestBoardGamesRuntimeVerification.txt)
-- Two-client network evidence: [`LatestVRChatBuildAndTest.txt`](Assets/KafkaMade/VRMine/Verification/LatestVRChatBuildAndTest.txt)
+- Run-isolated two-client network evidence: [`LatestVRChatBuildAndTest.txt`](Assets/KafkaMade/VRMine/Verification/LatestVRChatBuildAndTest.txt)
 - Final upload gate: [`LatestUploadReadiness.txt`](Assets/KafkaMade/VRMine/Verification/LatestUploadReadiness.txt)
 - Network probe: [`NetworkVerificationProbe.cs`](Assets/KafkaMade/VRMine/Runtime/Net/NetworkVerificationProbe.cs)
 - Gate implementation: [`BoardGameVerification.cs`](Assets/KafkaMade/VRMine/Editor/BoardGameVerification.cs)
 
 ## Required PASS chain
 
-`G0 environment → G1 scene/Udon structure → G2 deterministic runtime rules → G3 two-client sync and ownership transfer → G4 upload readiness`
+`G0 environment → G1 scene/Udon structure → G2 deterministic runtime rules → G3 run-isolated two-client sync and ownership transfer → G4 upload readiness → private late-join smoke test`
 
-`Build And Test`の起動、Unityのコンパイル成功、過去のPASSファイルのいずれか単独では動作保証になりません。最終的なアップロード可否は `LatestUploadReadiness.txt` の最新実行結果のみで判定します。
+`Build And Test`の起動、Unityのコンパイル成功、過去のPASSファイルのいずれか単独では動作保証になりません。最終的なアップロード可否は `LatestUploadReadiness.txt` の最新実行結果と、private instanceの手動証跡で判定します。
