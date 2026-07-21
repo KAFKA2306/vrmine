@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public static class BoardGameSceneUpgrade
 {
     const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/BoardGameShowcase.unity";
+    const int MinimumGeneratedActions = 152;
     static bool upgradeInProgress;
 
     public static bool IsUpgradeInProgress
@@ -37,6 +38,14 @@ public static class BoardGameSceneUpgrade
             scene = SceneManager.GetSceneByPath(ScenePath);
             openedHere = !scene.IsValid() || !scene.isLoaded;
             if (openedHere) scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+
+            if (CountComponents<BoardGameAction>(scene) < MinimumGeneratedActions)
+            {
+                if (openedHere && scene.IsValid() && scene.isLoaded) EditorSceneManager.CloseScene(scene, true);
+                BoardGameShowcaseBuilder.Build();
+                scene = SceneManager.GetSceneByPath(ScenePath);
+                openedHere = false;
+            }
 
             GameController trick = FindComponent<GameController>(scene);
             OrapaMineGame orapa = FindComponent<OrapaMineGame>(scene);
@@ -251,6 +260,14 @@ public static class BoardGameSceneUpgrade
         if (current == null || current.Length != desired.Length) return false;
         for (int i = 0; i < desired.Length; i++) if (current[i] != desired[i]) return false;
         return true;
+    }
+
+    static int CountComponents<T>(Scene scene) where T : Component
+    {
+        int count = 0;
+        GameObject[] roots = scene.GetRootGameObjects();
+        for (int i = 0; i < roots.Length; i++) count += roots[i].GetComponentsInChildren<T>(true).Length;
+        return count;
     }
 
     static T FindComponent<T>(Scene scene) where T : Component
