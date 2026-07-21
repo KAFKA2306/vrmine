@@ -1,14 +1,14 @@
 # VRMine
 
-VRChat向けの3ゲーム統合ワールドです。Unityでプロジェクトを開くと、生成シーン `BoardGameShowcase.unity` が現行スキーマへ自動更新されます。
+VRChat向けの3ゲーム統合ワールドです。Unityでプロジェクトを開くと、生成シーン `BoardGameShowcase.unity` に人数選択、中央場札、退室復旧、公開タイトルが自動反映されます。
 
 ## 収録ゲーム
 
-| ゲーム | 人数 | ルール | 実装 | 検証 |
+| 公開タイトル | 人数 | ルール | 実装 | 検証 |
 |---|---:|---|---|---|
-| トリックマイスター系ルール可変トリックテイキング | 3–5 | [docs/games/trick-meister.md](docs/games/trick-meister.md) | [`GameController.cs`](Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs) | G1/G2 + G3ログ検証 |
-| オラパ・マイン自動問題バリアント | 2–5 | [docs/games/orapa-mine.md](docs/games/orapa-mine.md) | [`OrapaMineGame.cs`](Assets/KafkaMade/VRMine/Runtime/Game/OrapaMineGame.cs) | G1/G2 + G3ログ検証 |
-| チェス | 2 | [docs/games/chess.md](docs/games/chess.md) | [`ChessGame.cs`](Assets/KafkaMade/VRMine/Runtime/Game/ChessGame.cs) | G1/G2 + G3ログ検証 |
+| RULEFORGE | 3–5 | [docs/games/trick-meister.md](docs/games/trick-meister.md) | [`GameController.cs`](Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs) | G1/G2 + G3ログ検証 |
+| ECHO MINE | 2–5 | [docs/games/orapa-mine.md](docs/games/orapa-mine.md) | [`OrapaMineGame.cs`](Assets/KafkaMade/VRMine/Runtime/Game/OrapaMineGame.cs) | G1/G2 + G3ログ検証 |
+| CHESS | 2 | [docs/games/chess.md](docs/games/chess.md) | [`ChessGame.cs`](Assets/KafkaMade/VRMine/Runtime/Game/ChessGame.cs) | G1/G2 + G3ログ検証 |
 
 全リンク、シーン、検証コマンド、証跡の正本は **[PROJECT.md](PROJECT.md)** に集約しています。
 
@@ -24,7 +24,7 @@ VRChat向けの3ゲーム統合ワールドです。Unityでプロジェクト�
 
 ## 動作保証の扱い
 
-このリポジトリは、単なる「Build & Test起動成功」を動作保証として扱いません。アップロード可能状態は、構造検査、規則テスト、2クライアント同期、遅延復元、所有権移管、3ゲームの再同期がすべて証跡付きでPASSした時だけ成立します。最新結果は [`LatestUploadReadiness.txt`](Assets/KafkaMade/VRMine/Verification/LatestUploadReadiness.txt) を正とします。
+このリポジトリは、単なる「Build & Test起動成功」を動作保証として扱いません。アップロード可能状態は、構造検査、規則テスト、中央場札と人数UI、2クライアント同期、遅延復元、所有権移管、3ゲームの再同期がすべて証跡付きでPASSした時だけ成立します。最新結果は [`LatestUploadReadiness.txt`](Assets/KafkaMade/VRMine/Verification/LatestUploadReadiness.txt) を正とします。
 
 履歴上のPASSはコード変更後の保証にはなりません。対象PCでG0–G4を再実行してください。
 
@@ -36,4 +36,4 @@ GitHub Pages: <https://kafka2306.github.io/vrmine/>
 
 ## 権利と位置づけ
 
-本プロジェクトは非公式の技術検証・ファン実装です。原作のロゴ、製品アート、ルールカード画像、説明書本文は収録しません。オラパ・マイン実装は公式製品と異なる自動生成問題バリアントです。各製品・名称の権利は各権利者に帰属します。
+本プロジェクトは非公式の技術検証・ファン実装です。原作のロゴ、製品アート、ルールカード画像、説明書本文は収録しません。ワールド内では独自タイトル `RULEFORGE` と `ECHO MINE` を使用します。参照した製品・競技規則との差分は各ルール文書に明示し、各製品・名称の権利は各権利者に帰属します。
