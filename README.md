@@ -1,28 +1,39 @@
-# VRMine: Stich-Meister
+# VRMine
 
-「ルールを奪い合う、手仕事感あふれるトリックテイキング・ボードゲーム」
+VRChat向けの3ゲーム統合ワールドです。Unityでプロジェクトを開くと、生成シーン `BoardGameShowcase.unity` が現行スキーマへ自動更新されます。
 
-## プロジェクト概要
-本作は、ボードゲーム「Stich-Meister（スティッヒマイスター）」を VRChat 上で再現した、物理コンポーネント主体の VR ボードゲーム空間です。
-プレイヤーは毎ラウンド、カードを出すことで「切り札」「トリックルール」「得点ルール」を物理的に書き換え、目まぐるしく変化するゲーム展開を読み合います。
+## 収録ゲーム
 
-## 技術スタック
-- **VRChat SDK3**: UdonSharp 1.1.x
-- **UdonSharp**: 物理演算と同期ロジック
-- **Handcrafted AI Assets**: 手描き風の質感を持つ SF 静寂（Quiet UI）デザイン
+| ゲーム | 人数 | ルール | 実装 | 検証 |
+|---|---:|---|---|---|
+| トリックマイスター系ルール可変トリックテイキング | 3–5 | [docs/games/trick-meister.md](docs/games/trick-meister.md) | [`GameController.cs`](Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs) | G1/G2 + G3ログ検証 |
+| オラパ・マイン自動問題バリアント | 2–5 | [docs/games/orapa-mine.md](docs/games/orapa-mine.md) | [`OrapaMineGame.cs`](Assets/KafkaMade/VRMine/Runtime/Game/OrapaMineGame.cs) | G1/G2 + G3ログ検証 |
+| チェス | 2 | [docs/games/chess.md](docs/games/chess.md) | [`ChessGame.cs`](Assets/KafkaMade/VRMine/Runtime/Game/ChessGame.cs) | G1/G2 + G3ログ検証 |
 
-## アーキテクチャ
-本プロジェクトは、ビジュアルとロジックを分離・統合する独自のパイプラインを採用しています。
-1. **VisualBuilder.cs**: 盤面、カード、宝石、ポスター等の物理環境を動的に構築。
-2. **VRMineBridge.cs**: 生成された物理オブジェクトを UdonSharp コンポーネントへ自動配線。
-3. **BoardState / GameController**: ビットパックされたデータによる高効率なネットワーク同期。
+全リンク、シーン、検証コマンド、証跡の正本は **[PROJECT.md](PROJECT.md)** に集約しています。
 
-## 開発フロー
-Unity メニューの以下を実行することで、即座に最新の環境が整います。
-- **VRMine > build_visuals**: 物理アセットの再生成。
-- **VRMine > wire_scene**: アセット生成とロジック配線の実行。
+## 開始手順
 
-## ドキュメント
-- [Rulebook](docs/Rulebook.md): ゲームルールの詳細。
-- [STATE](docs/STATE.md): データ同期構造の定義。
-- [ARCHITECTURE_RULES](docs/ARCHITECTURE_RULES.md): 設計ガイドライン。
+1. VRChat Creator Companionで本プロジェクトを開く。
+2. VCCで依存関係をResolveし、Worlds SDK `3.10.4` を取得する。
+3. Unity `2022.3.22f1` のコンパイル完了を待つ。生成シーンは自動更新される。
+4. `VRMine > Verification > Run Board Games Gate` を実行する。
+5. `VRMine > Verification > Run Board Games Runtime Gate` を実行する。
+6. `VRMine > Verification > Build And Test Two Clients` を実行し、2クライアント終了後に `Finalize Two Client Logs` を実行する。
+7. `VRMine > Release > Validate Upload Readiness` が `Result: PASS` の場合のみアップロードする。
+
+## 動作保証の扱い
+
+このリポジトリは、単なる「Build & Test起動成功」を動作保証として扱いません。アップロード可能状態は、構造検査、規則テスト、2クライアント同期、遅延復元、所有権移管、3ゲームの再同期がすべて証跡付きでPASSした時だけ成立します。最新結果は [`LatestUploadReadiness.txt`](Assets/KafkaMade/VRMine/Verification/LatestUploadReadiness.txt) を正とします。
+
+履歴上のPASSはコード変更後の保証にはなりません。対象PCでG0–G4を再実行してください。
+
+## 公開ページ
+
+GitHub Pages: <https://kafka2306.github.io/vrmine/>
+
+公開元は [`site/`](site/) です。Pages workflowが成功するまでURLの配信完了とは扱いません。
+
+## 権利と位置づけ
+
+本プロジェクトは非公式の技術検証・ファン実装です。原作のロゴ、製品アート、ルールカード画像、説明書本文は収録しません。オラパ・マイン実装は公式製品と異なる自動生成問題バリアントです。各製品・名称の権利は各権利者に帰属します。
