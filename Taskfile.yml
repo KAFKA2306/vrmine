@@ -101,6 +101,14 @@ tasks:
     cmds:
       - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Build And Test Two Clients"}'
 
+  verify:vrc:finalize:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Finalize Two Client Logs"}'
+
+  release:validate:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Release/Validate Upload Readiness"}'
+
   vrc:panel:
     cmds:
       - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRChat SDK/Show Control Panel"}'
