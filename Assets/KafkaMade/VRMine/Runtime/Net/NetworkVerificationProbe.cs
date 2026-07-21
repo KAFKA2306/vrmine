@@ -9,6 +9,7 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
     public OrapaMineGame orapaGame;
     public ChessGame chessGame;
 
+    [UdonSynced] public int runToken;
     [UdonSynced] public int sequence;
     [UdonSynced] public byte phase;
     [UdonSynced] public int firstPlayerId;
@@ -21,7 +22,6 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
     {
         EnsureReferences();
         SendCustomEventDelayedSeconds(nameof(BeginProbe), 2f);
-        if (phase > 0) LogMarker("RESTORE_OR_LATE_JOIN");
         LogMarker("READY");
     }
 
@@ -33,7 +33,7 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
     public void BeginProbe()
     {
         EnsureReferences();
-        if (!Networking.IsOwner(gameObject) || phase != 0) return;
+        if (!Networking.IsOwner(gameObject) || phase != 0 || runToken <= 0) return;
         int playerCount = VRCPlayerApi.GetPlayerCount();
         if (playerCount < 2)
         {
@@ -90,9 +90,10 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
     public override void OnDeserialization()
     {
         EnsureReferences();
-        LogMarker(phase == 1 ? "OBSERVE_BASELINE" : "OBSERVE_REPUBLISH");
+        if (phase == 1) LogMarker("OBSERVE_BASELINE");
+        else if (phase >= 2) LogMarker("OBSERVE_REPUBLISH");
         VRCPlayerApi local = Networking.LocalPlayer;
-        if (local != null && local.playerId == secondPlayerId && phase >= 1) LogMarker("RESTORE_OR_LATE_JOIN");
+        if (local != null && local.playerId == secondPlayerId && phase >= 1) LogMarker("SECOND_CLIENT_SYNC_OBSERVED");
         checkCount = 0;
         SendCustomEventDelayedSeconds(nameof(CheckGameState), 0.5f);
     }
@@ -208,7 +209,11 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
     {
         VRCPlayerApi local = Networking.LocalPlayer;
         int localId = local == null ? 0 : local.playerId;
-        Debug.Log("[VRMINE_G3_GAME] game=" + gameName + " local=" + localId + " phase=" + phase + " value=" + value);
+        Debug.Log("[VRMINE_G3_GAME] run=" + runToken
+            + " game=" + gameName
+            + " local=" + localId
+            + " phase=" + phase
+            + " value=" + value);
     }
 
     void LogMarker(string marker)
@@ -217,7 +222,8 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
         VRCPlayerApi owner = Networking.GetOwner(gameObject);
         int localId = local == null ? 0 : local.playerId;
         int ownerId = owner == null ? 0 : owner.playerId;
-        Debug.Log("[VRMINE_G3] marker=" + marker
+        Debug.Log("[VRMINE_G3] run=" + runToken
+            + " marker=" + marker
             + " local=" + localId
             + " owner=" + ownerId
             + " sequence=" + sequence
