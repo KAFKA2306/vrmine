@@ -22,7 +22,7 @@ Official references:
 4. Wait until compilation and UdonSharp compilation finish.
 5. Confirm zero Console errors.
 
-The generated showcase scene is schema-controlled. If the current scene is absent or old, `BoardGameShowcaseBuilder` recreates it automatically. Manual rebuild is available at:
+The showcase scene is generated and then repaired by an idempotent upgrade. Missing controls, central Trick displays, lifecycle behaviour, and public titles are added; an unchanged scene is not saved again. Manual rebuild is available at:
 
 `VRMine > Build Board Game Showcase`
 
@@ -57,10 +57,13 @@ Result: PASS
 ## 5. Run G3
 
 1. Select `VRMine > Verification > Build And Test Two Clients`.
-2. Confirm two desktop clients join the same local test instance.
-3. Leave both clients open until the automatic probe completes and restores all games.
-4. Close both clients.
-5. Select `VRMine > Verification > Finalize Two Client Logs`.
+2. Confirm the report records a positive `RunToken` and `StartedUtc`.
+3. Confirm two desktop clients join the same local test instance.
+4. Leave both clients open until the automatic probe completes and restores all games.
+5. Close both clients.
+6. Select `VRMine > Verification > Finalize Two Client Logs`.
+
+The finalizer accepts only log lines whose `run=<RunToken>` matches the current launch report and whose log file was updated after the recorded start time.
 
 Required result:
 
@@ -72,7 +75,7 @@ must end with:
 Result: PASS
 ```
 
-A report ending in `RUNNING`, `LAUNCHED`, or `FAIL` is not acceptable.
+A report ending in `RUNNING`, `LAUNCHED`, or `FAIL` is not acceptable. This automated two-client run does not prove late join because both clients are launched together.
 
 ## 6. Run G4
 
@@ -88,7 +91,7 @@ must end with:
 Result: PASS
 ```
 
-This gate is fail-closed. It checks the project version, build target, SDK version, descriptor, and the latest G1–G3 evidence.
+This gate is fail-closed. It checks the project version, build target, SDK version, descriptor, generated controls, public titles, and the latest G1–G3 evidence.
 
 ## 7. Upload
 
@@ -100,9 +103,10 @@ This gate is fail-closed. It checks the project version, build target, SDK versi
 6. After upload, create a private instance and repeat a manual smoke test with at least two accounts:
    - join every game;
    - complete one legal action in every game;
-   - reconnect a second client;
+   - start play with account A, then join later with account B and verify restored board, turn, score, and seat availability;
    - transfer or change ownership through normal play;
-   - reset each game.
+   - reset each game;
+   - test every player-count mode intended for release.
 
 ## 8. Post-upload evidence
 
@@ -113,7 +117,7 @@ Record in the release PR or release issue:
 - world blueprint ID or public world URL, where disclosure is acceptable;
 - G1–G4 report contents;
 - uploader account and date;
-- two-client manual smoke-test outcome;
+- two-account manual smoke-test and late-join outcome;
 - known limitations from `docs/game-inventory.md`.
 
 ## Prohibited release claims
@@ -124,6 +128,6 @@ Do not state any of the following unless supported by the latest reports and man
 - “official rules fully reproduced”;
 - “upload and immediately works”;
 - “late join and ownership transfer verified”;
-- “all 60 Trick rules fully tested.”
+- “all 60 rules fully tested.”
 
-Use the narrower claim: “The specified G0–G4 gates passed for the cited commit, environment, and test evidence.”
+Use the narrower claim: “The specified G0–G4 gates passed for the cited commit, environment, and test evidence; the recorded private-instance smoke test also passed.”
