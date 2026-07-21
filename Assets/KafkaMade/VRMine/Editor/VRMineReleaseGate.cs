@@ -18,6 +18,8 @@ public static class VRMineReleaseGate
     {
         if (!File.Exists(ScenePath)) BoardGameShowcaseBuilder.Build();
         EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        BoardGameSceneUpgrade.EnsurePlayerControls();
+        EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
         BoardGameVerification.RunGate();
 
         StringBuilder report = new StringBuilder();
@@ -29,6 +31,13 @@ public static class VRMineReleaseGate
         failures += Check(report, "WindowsBuildTarget", EditorUserBuildSettings.activeBuildTarget == BuildTarget.StandaloneWindows64, EditorUserBuildSettings.activeBuildTarget.ToString());
         failures += Check(report, "WorldSdk3104", File.ReadAllText("Packages/manifest.json").Contains("\"com.vrchat.worlds\": \"3.10.4\""), "Packages/manifest.json");
         failures += Check(report, "SceneDescriptor", Object.FindObjectOfType<VRCSceneDescriptor>(true) != null, ScenePath);
+        failures += Check(report, "TrickManager", Object.FindObjectsOfType<GameController>(true).Length == 1, Object.FindObjectsOfType<GameController>(true).Length.ToString());
+        failures += Check(report, "OrapaManager", Object.FindObjectsOfType<OrapaMineGame>(true).Length == 1, Object.FindObjectsOfType<OrapaMineGame>(true).Length.ToString());
+        failures += Check(report, "ChessManager", Object.FindObjectsOfType<ChessGame>(true).Length == 1, Object.FindObjectsOfType<ChessGame>(true).Length.ToString());
+        failures += Check(report, "NetworkProbe", Object.FindObjectsOfType<NetworkVerificationProbe>(true).Length == 1, Object.FindObjectsOfType<NetworkVerificationProbe>(true).Length.ToString());
+        failures += Check(report, "TrickSeatLifecycle", Object.FindObjectsOfType<TrickSeatLifecycle>(true).Length == 1, Object.FindObjectsOfType<TrickSeatLifecycle>(true).Length.ToString());
+        failures += Check(report, "TrickPlayerCountControls", HasObjects("TrickPlayerCount_3", "TrickPlayerCount_4", "TrickPlayerCount_5"), "3P/4P/5P");
+        failures += Check(report, "OrapaPlayerCountControls", HasObjects("OrapaPlayerCount_2", "OrapaPlayerCount_3", "OrapaPlayerCount_4", "OrapaPlayerCount_5"), "2P/3P/4P/5P");
         failures += CheckReport(report, "G1Structure", StructureReport);
         failures += CheckReport(report, "G2RuntimeRules", RuntimeReport);
         failures += CheckReport(report, "G3TwoClientNetwork", NetworkReport);
@@ -39,6 +48,12 @@ public static class VRMineReleaseGate
         File.WriteAllText(ReleaseReport, report.ToString(), Encoding.UTF8);
         AssetDatabase.Refresh();
         Debug.Log(report.ToString());
+    }
+
+    static bool HasObjects(params string[] names)
+    {
+        for (int i = 0; i < names.Length; i++) if (GameObject.Find(names[i]) == null) return false;
+        return true;
     }
 
     static int CheckReport(StringBuilder report, string name, string path)
