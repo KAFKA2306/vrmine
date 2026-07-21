@@ -3,8 +3,8 @@ using UdonSharp;
 public class NetConst : UdonSharpBehaviour
 {
     // Board Game Constants (Stich-Meister)
-    public const int MaxPlayers = 4;
-    public const int MaxHandSize = 15;
+    public const int MaxPlayers = 5;
+    public const int MaxHandSize = 16;
     public const int SuitFan = 0;
     public const int SuitCoin = 1;
     public const int SuitKoi = 2;

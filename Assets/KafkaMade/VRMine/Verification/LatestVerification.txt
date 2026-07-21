@@ -1,0 +1,16 @@
+﻿VRMine Verification Gate
+Scene: Assets/trickstar.unity
+Editor: 2022.3.22f1
+PASS SceneDescriptor count=1
+PASS SpawnPoints count=1
+PASS ReferenceCamera ReferenceCamera
+PASS BoardState count=1
+PASS GameController count=1
+PASS ControllerBoardReference BoardState
+PASS BoardBakeHash 2090637961 / 2090637961
+PASS BoardBakeCells length=80
+PASS PhysicalTokens count=5
+PASS MovableCards count=5
+PASS CardColliders count=5
+PASS UdonPrograms count=15/15
+Result: PASS

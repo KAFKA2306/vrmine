@@ -1,19 +1,34 @@
+using System.IO;
+using UdonSharp;
+using UdonSharpEditor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using VRC.SDK3.Components;
+using VRC.Udon;
 
 public static class VRMineBridge
 {
-    const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/MVP.unity";
+    const string ScenePath = "Assets/trickstar.unity";
 
-    [MenuItem("VRMine/build_visuals")]
+    [MenuItem("VRMine/wire_scene")]
     public static void BuildVisuals()
     {
         Scene scene = EditorSceneManager.GetActiveScene();
         if (scene.path != ScenePath) return;
+        EnsureProgramAsset<BoardState>();
+        EnsureProgramAsset<LogStream>();
+        EnsureProgramAsset<GameController>();
+        EnsureProgramAsset<PlayerClient>();
+        EnsureProgramAsset<BoardView>();
+        EnsureProgramAsset<CardView>();
+        EnsureProgramAsset<PhysicalToken>();
+        EnsureProgramAsset<RuleView>();
+        EnsureProgramAsset<ScorePanelView>();
+        UdonSharpProgramAsset.UdonSharpCheckAbsent();
+        UdonSharpProgramAsset.CompileAllCsPrograms(true);
         
         // 1. Logic Wiring
         EnsureScene(scene);
@@ -32,13 +47,13 @@ public static class VRMineBridge
         GameObject controller = FindOrCreateObject(runtimeRoot.transform, "GameController");
         GameObject state = FindOrCreateObject(runtimeRoot.transform, "BoardState");
         GameObject logStream = FindOrCreateObject(runtimeRoot.transform, "LogStream");
-        GameObject pc = FindOrCreateObject(runtimeRoot.transform, "PlayerController");
+        GameObject pc = FindOrCreateObject(runtimeRoot.transform, "PlayerClient");
 
         // Components
         BoardState boardState = EnsureComponent<BoardState>(state);
         LogStream stream = EnsureComponent<LogStream>(logStream);
         GameController ctrl = EnsureComponent<GameController>(controller);
-        PlayerController pCtrl = EnsureComponent<PlayerController>(pc);
+        PlayerClient pClient = EnsureComponent<PlayerClient>(pc);
         BoardView bView = EnsureComponent<BoardView>(boardRoot);
 
         // Link Visuals to Behavior
@@ -48,10 +63,29 @@ public static class VRMineBridge
         // Wire
         ctrl.board = boardState;
         ctrl.logStream = stream;
-        ctrl.mailboxes = new[] { pCtrl };
-        pCtrl.controller = ctrl;
+        ctrl.mailboxes = new[] { pClient };
+        pClient.controller = ctrl;
         bView.state = boardState;
         bView.controller = ctrl;
+
+        CardView[] physicalCards = new CardView[5];
+        for (int i = 0; i < physicalCards.Length; i++)
+        {
+            GameObject card = GameObject.Find("Card_" + i);
+            EnsureComponent<BoxCollider>(card).size = new Vector3(0.2f, 0.2f, 0.2f);
+            Rigidbody body = EnsureComponent<Rigidbody>(card);
+            body.useGravity = false;
+            body.isKinematic = true;
+            EnsureComponent<VRCPickup>(card);
+            EnsureComponent<VRCObjectSync>(card);
+            CardView cardView = EnsureComponent<CardView>(card);
+            cardView.controller = ctrl;
+            cardView.cardIndex = i;
+            PhysicalToken token = EnsureComponent<PhysicalToken>(card);
+            token.controller = ctrl;
+            physicalCards[i] = cardView;
+        }
+        bView.handCards = physicalCards;
         
         // Find Cards
         GameObject handRoot = GameObject.Find("HandRoot");
@@ -59,7 +93,7 @@ public static class VRMineBridge
         {
             CardView[] cards = handRoot.GetComponentsInChildren<CardView>(true);
             bView.handCards = cards;
-            foreach (var c in cards) c.controller = ctrl;
+            // CardView no longer needs controller reference
         }
 
         GameObject trickRoot = GameObject.Find("TrickRoot");
@@ -67,7 +101,7 @@ public static class VRMineBridge
         {
             CardView[] cards = trickRoot.GetComponentsInChildren<CardView>(true);
             bView.trickCards = cards;
-            foreach (var c in cards) c.controller = ctrl;
+            // CardView no longer needs controller reference
         }
 
         // Wire Physical Rule Display
@@ -76,7 +110,7 @@ public static class VRMineBridge
         {
             RuleView ruleView = EnsureComponent<RuleView>(ruleTextObj);
             ruleView.state = boardState;
-            ruleView.ruleText = ruleTextObj.GetComponent<Text>();
+            ruleView.bodyText = ruleTextObj.GetComponent<Text>();
             bView.ruleView = ruleView;
         }
 
@@ -111,7 +145,47 @@ public static class VRMineBridge
     static T EnsureComponent<T>(GameObject go) where T : Component
     {
         T comp = go.GetComponent<T>();
-        return comp ?? go.AddComponent<T>();
+        if (comp != null && comp is UdonSharpBehaviour proxy)
+        {
+            UdonBehaviour backing = UdonSharpEditorUtility.GetBackingUdonBehaviour(proxy);
+            if (backing == null || backing.programSource == null)
+            {
+                if (backing != null) Object.DestroyImmediate(backing);
+                Object.DestroyImmediate(comp);
+                comp = null;
+            }
+        }
+        if (typeof(UdonSharpBehaviour).IsAssignableFrom(typeof(T)))
+        {
+            UdonBehaviour[] behaviours = go.GetComponents<UdonBehaviour>();
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                if (behaviours[i].programSource == null) Object.DestroyImmediate(behaviours[i]);
+            }
+        }
+        if (comp == null)
+        {
+            if (typeof(UdonSharpBehaviour).IsAssignableFrom(typeof(T))) comp = (T)(Component)go.AddUdonSharpComponent(typeof(T));
+            else comp = go.AddComponent<T>();
+        }
+        return comp;
+    }
+
+    static void EnsureProgramAsset<T>() where T : UdonSharpBehaviour
+    {
+        string[] scripts = AssetDatabase.FindAssets(typeof(T).Name + " t:MonoScript");
+        MonoScript script = null;
+        for (int i = 0; i < scripts.Length; i++)
+        {
+            MonoScript candidate = AssetDatabase.LoadAssetAtPath<MonoScript>(AssetDatabase.GUIDToAssetPath(scripts[i]));
+            if (candidate.GetClass() == typeof(T)) script = candidate;
+        }
+        string scriptPath = AssetDatabase.GetAssetPath(script);
+        string assetPath = Path.ChangeExtension(scriptPath, ".asset");
+        if (AssetDatabase.LoadAssetAtPath<UdonSharpProgramAsset>(assetPath) != null) return;
+        UdonSharpProgramAsset program = ScriptableObject.CreateInstance<UdonSharpProgramAsset>();
+        program.sourceCsScript = script;
+        AssetDatabase.CreateAsset(program, assetPath);
     }
 
     static void EnsureSceneDescriptor()
@@ -121,5 +195,12 @@ public static class VRMineBridge
         GameObject spawn = GameObject.Find("SpawnPoint") ?? new GameObject("SpawnPoint");
         spawn.transform.position = new Vector3(0, 1.1f, -2f);
         desc.spawns = new[] { spawn.transform };
+        GameObject referenceCamera = GameObject.Find("ReferenceCamera") ?? new GameObject("ReferenceCamera");
+        referenceCamera.transform.position = new Vector3(0, 1.6f, -2f);
+        referenceCamera.transform.rotation = Quaternion.Euler(20f, 0, 0);
+        Camera camera = EnsureComponent<Camera>(referenceCamera);
+        camera.fieldOfView = 40f;
+        camera.enabled = false;
+        desc.ReferenceCamera = referenceCamera;
     }
 }

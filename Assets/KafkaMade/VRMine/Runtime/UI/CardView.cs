@@ -13,8 +13,18 @@ public sealed class CardView : UdonSharpBehaviour
     public Renderer numberRenderer;
     public Renderer backRenderer;
 
+    public GameController controller;
     public int cardIndex; // Index in hand
     public bool isPlayed;
+    public bool isFaceDown;
+
+    public override void Interact()
+    {
+        if (controller != null && !isPlayed)
+        {
+            controller.OnCardClicked(cardIndex);
+        }
+    }
 
     public void Refresh(byte packed)
     {
@@ -26,6 +36,18 @@ public sealed class CardView : UdonSharpBehaviour
 
         gameObject.SetActive(true);
         
+        if (isFaceDown)
+        {
+            if (label != null) label.text = "";
+            if (subLabel != null) subLabel.text = "";
+            if (suitRenderer != null) suitRenderer.gameObject.SetActive(false);
+            if (numberRenderer != null) numberRenderer.gameObject.SetActive(false);
+            return;
+        }
+
+        if (suitRenderer != null) suitRenderer.gameObject.SetActive(true);
+        if (numberRenderer != null) numberRenderer.gameObject.SetActive(true);
+
         // Bit-packed: Suit (Upper 4 bits), Rank (Lower 4 bits)
         int suitIdx = packed >> 4;
         int rank = packed & 0x0F;

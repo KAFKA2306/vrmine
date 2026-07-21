@@ -6,6 +6,8 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/.agents/
+/.gemini/
 /[Mm]emoryCaptures/
 /[Aa]ssets/AssetStoreTools*
 /[Aa]ssets/AddressableAssetsData/*/*.bin*

@@ -1,0 +1,12 @@
+﻿VRMine Runtime Verification
+Scene: Assets/trickstar.unity
+Editor: 2022.3.22f1
+PASS PhysicsStable10Seconds count=5/5
+Card_0 (-0.30, 0.84, -0.35) -> (-0.30, 0.84, -0.35) velocity=(0.00, 0.00, 0.00)
+Card_1 (-0.15, 0.84, -0.35) -> (-0.15, 0.84, -0.35) velocity=(0.00, 0.00, 0.00)
+Card_2 (0.00, 0.84, -0.35) -> (0.00, 0.84, -0.35) velocity=(0.00, 0.00, 0.00)
+Card_3 (0.15, 0.84, -0.35) -> (0.15, 0.84, -0.35) velocity=(0.00, 0.00, 0.00)
+Card_4 (0.30, 0.84, -0.35) -> (0.30, 0.84, -0.35) velocity=(0.00, 0.00, 0.00)
+PASS CardMovement (-0.15, 0.84, -0.35) -> (-0.05, 0.86, -0.25)
+PASS CardSnap (-0.05, 0.86, -0.25)
+Result: PASS

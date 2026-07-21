@@ -1,0 +1,21 @@
+﻿VRMine Inventory Verification
+Editor: 2022.3.22f1
+PASS Assets/trickstar.unity
+  SceneDescriptor=1 Spawns=1 MissingScripts=0
+  UdonPrograms=15/15 Pickups=5 InvalidPickups=0
+PASS Assets/KafkaMade/VRMine/Scenes/BoardGameLab.unity
+  SceneDescriptor=1 Spawns=1 MissingScripts=0
+  UdonPrograms=5/5 Pickups=0 InvalidPickups=0
+PASS Assets/KafkaMade/VRMine/Scenes/MVP.unity
+  SceneDescriptor=1 Spawns=1 MissingScripts=0
+  UdonPrograms=5/5 Pickups=0 InvalidPickups=0
+FAIL Assets/KafkaMade/VRMine/Scenes/VRMine.unity
+  SceneDescriptor=0 Spawns=0 MissingScripts=0
+  UdonPrograms=5/5 Pickups=0 InvalidPickups=0
+PASS Assets/Vowgan/Deck of Cards/Demo/Deck Demo.unity
+  SceneDescriptor=1 Spawns=1 MissingScripts=0
+  UdonPrograms=424/424 Pickups=208 InvalidPickups=0
+PASS Assets/Vowgan/Snappable Chess Set/Chess Set.unity
+  SceneDescriptor=1 Spawns=1 MissingScripts=0
+  UdonPrograms=33/33 Pickups=32 InvalidPickups=0
+Result: FAIL failures=1/6

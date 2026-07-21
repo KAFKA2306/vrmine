@@ -1,0 +1,122 @@
+version: '3'
+
+env:
+  UV_CACHE_DIR: '{{.ROOT_DIR}}/Library/uv-cache'
+
+tasks:
+  skills:init:
+    cmds:
+      - uvx agr init
+
+  skills:add:
+    cmds:
+      - uvx agr add ./skills/unity-vrc-verification
+
+  skills:sync:
+    cmds:
+      - uvx agr sync
+
+  skills:validate:
+    cmds:
+      - uv run --with pyyaml python C:/Users/front/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/unity-vrc-verification
+
+  mcp:start:
+    cmds:
+      - powershell -NoProfile -Command "New-Item -ItemType Directory -Force Library/MCPForUnity/Logs"
+      - powershell -NoProfile -Command "Start-Process -FilePath uvx -ArgumentList '--from','mcpforunityserver==10.1.0','mcp-for-unity','--transport','http','--http-url','http://127.0.0.1:8080' -WindowStyle Hidden -RedirectStandardOutput Library/MCPForUnity/Logs/server-8080.out.log -RedirectStandardError Library/MCPForUnity/Logs/server-8080.err.log"
+
+  mcp:status:
+    cmds:
+      - powershell -NoProfile -Command "Test-NetConnection 127.0.0.1 -Port 8080"
+
+  mcp:connect:
+    cmds:
+      - powershell -NoProfile -Command "Set-Content -Path Library/VRMineVerification.request -Value 'mcp-connect' -NoNewline"
+
+  mcp:refresh:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 refresh_unity '{"mode":"force","scope":"all","compile":"request","wait_for_ready":false}'
+
+  mcp:console:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 read_console '{"action":"get","types":["error","warning"],"count":50,"format":"detailed"}'
+
+  mcp:console:clear:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 read_console '{"action":"clear"}'
+
+  mcp:wire:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/wire_scene"}'
+
+  mcp:editor-state:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_code '{"action":"execute","code":"return \"isPlaying=\" + UnityEditor.EditorApplication.isPlaying + \", phase=\" + UnityEditor.SessionState.GetString(\"VRMine.RuntimePhase\", \"\");"}'
+
+  mcp:gate:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Run Gate"}'
+
+  verify:gate:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Run Gate"}'
+
+  verify:runtime:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Run Runtime Gate"}'
+
+  verify:inventory:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Run Inventory Gate"}'
+
+  verify:chess:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Run Chess Runtime Gate"}'
+
+  prepare:chess:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Prepare Chess Scene"}'
+
+  verify:deck:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Run Deck Runtime Gate"}'
+
+  prepare:deck:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Prepare Deck Scene"}'
+
+  prepare:showcase:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Build Board Game Showcase"}'
+
+  verify:games:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Run Board Games Gate"}'
+
+  verify:games:runtime:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Run Board Games Runtime Gate"}'
+
+  verify:vrc:two-client:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRMine/Verification/Build And Test Two Clients"}'
+
+  vrc:panel:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_menu_item '{"menu_path":"VRChat SDK/Show Control Panel"}'
+
+  verify:screenshot:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 manage_camera '{"action":"screenshot","camera":"ReferenceCamera","output_folder":"Assets/KafkaMade/VRMine/Verification","include_image":false,"max_resolution":1280}'
+
+  unity:close:
+    cmds:
+      - powershell -NoProfile -Command '$instance = Get-Content Library/EditorInstance.json | ConvertFrom-Json; (Get-Process -Id $instance.process_id).CloseMainWindow()'
+
+  unity:start:
+    cmds:
+      - powershell -NoProfile -Command '$version = (Get-Content ProjectSettings/ProjectVersion.txt).Split(":")[1].Trim(); $editor = "C:\Program Files\Unity\Hub\Editor\$version\Editor\Unity.exe"; Start-Process -FilePath $editor -ArgumentList "-projectPath","{{.ROOT_DIR}}","-accept-apiupdate","-disable-assembly-updater"'
+
+  unity:stop-play:
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_code '{"action":"execute","code":"UnityEditor.SessionState.SetString(\"VRMine.RuntimePhase\", \"\"); UnityEditor.EditorApplication.isPlaying = false; return \"stopping\";"}'

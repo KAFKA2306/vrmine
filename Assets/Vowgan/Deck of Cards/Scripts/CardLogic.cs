@@ -39,7 +39,9 @@ namespace Vowgan.DeckOfCards
         {
             if (!initialized) Init();
             if (Grabbed) return;
+            Networking.SetOwner(Networking.LocalPlayer, gameObject);
             Grabbed = true;
+            RequestSerialization();
             toBeReturned = false;
             sync.SetKinematic(!UseGravity);
             DeckManager.SendCustomNetworkEvent(NetworkEventTarget.Owner, nameof(DeckManager.NextCard));
@@ -73,6 +75,7 @@ namespace Vowgan.DeckOfCards
             if (toBeReturned)
             {
                 Grabbed = false;
+                RequestSerialization();
                 DeckManager._ReturnCard(pickup.gameObject);
             }
         }

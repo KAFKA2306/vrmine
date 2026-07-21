@@ -49,7 +49,6 @@ public sealed class RuleView : UdonSharpBehaviour
             if (i > 0) body += "\n";
             byte value = state.selectedRules[i];
             body += value == 0 ? "HIDDEN" : "RULE " + (i + 1) + " / " + value;
-            body += " x" + state.ruleHandCounts[i];
         }
         return body;
     }

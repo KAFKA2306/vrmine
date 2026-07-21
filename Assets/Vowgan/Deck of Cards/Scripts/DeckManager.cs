@@ -45,6 +45,12 @@ namespace Vowgan.DeckOfCards
         
         private void Start()
         {
+            Initialize();
+            if (Networking.IsOwner(gameObject)) SendCustomEventDelayedSeconds(nameof(_ResetDeck), 1);
+        }
+
+        public void Initialize()
+        {
             playerLocal = Networking.LocalPlayer;
             Pool = GetComponent<VRCObjectPool>();
             
@@ -54,8 +60,6 @@ namespace Vowgan.DeckOfCards
                 cards[i] = Pool.Pool[i].GetComponentInChildren<CardLogic>();
                 cards[i].UseGravity = UseGravity;
             }
-            
-            if (Networking.IsOwner(gameObject)) SendCustomEventDelayedSeconds(nameof(_ResetDeck), 1);
         }
         
         public void NextCard()
@@ -106,6 +110,7 @@ namespace Vowgan.DeckOfCards
             CardCurrent -= 1;
             Pool.Return(card);
             SetCurrentCardToTop();
+            RequestSerialization();
         }
 
         private void SetCurrentCardToTop()

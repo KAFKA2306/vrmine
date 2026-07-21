@@ -1,0 +1,6 @@
+﻿Chess Runtime Verification
+Scene: Assets/Vowgan/Snappable Chess Set/Chess Set.unity
+PASS Pieces count=32
+PASS GridSnap
+PASS Reset count=32/32
+Result: PASS

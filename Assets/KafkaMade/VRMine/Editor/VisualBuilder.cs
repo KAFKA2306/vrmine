@@ -168,9 +168,8 @@ public static class VisualBuilder
         suit.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -60);
 
         CardView view = card.AddComponent<CardView>();
-        view.rankText = rt;
-        view.suitText = st;
-        view.background = bg.GetComponent<Image>();
+        view.label = rt;
+        view.subLabel = st;
         
         return card;
     }
@@ -266,6 +265,12 @@ public static class VisualBuilder
     static Palette CreatePalette()
     {
         return new Palette { floor = new Color(0.1f, 0.1f, 0.1f), wall = new Color(0.05f, 0.05f, 0.05f), boardBase = new Color(0.15f, 0.15f, 0.15f), boardFrame = new Color(0.3f, 0.2f, 0.1f), note = new Color(0.9f, 0.9f, 0.7f) };
+    }
+
+    static void CleanupLights()
+    {
+        Light[] lights = UnityEngine.Object.FindObjectsOfType<Light>();
+        foreach (Light l in lights) UnityEngine.Object.DestroyImmediate(l.gameObject);
     }
 
     class Palette { public Color floor, wall, boardBase, boardFrame, note; }

@@ -12,6 +12,7 @@ public class BoardState : UdonSharpBehaviour
     // Current Trick: Packed values for the cards currently on the table.
     [UdonSynced] public byte[] trickCards = new byte[NetConst.MaxPlayers];
     [UdonSynced] public byte[] trickSeats = new byte[NetConst.MaxPlayers]; // Which seat played which card
+    [UdonSynced] public int[] occupiedPlayerIds = new int[NetConst.MaxPlayers]; // Which player occupies which seat
     
     // Rules: Indices into the rule card list
     [UdonSynced] public byte trumpRule;
@@ -20,7 +21,13 @@ public class BoardState : UdonSharpBehaviour
     
     // Legacy / Extended Fields for Rules
     [UdonSynced] public byte[] selectedRules = new byte[4];
-    [UdonSynced] public byte[] ruleHandCounts = new byte[4];
+    [UdonSynced] public byte[] ruleHands = new byte[NetConst.MaxPlayers * 3];
+    [UdonSynced] public byte[] selectedRuleBySeat = new byte[NetConst.MaxPlayers];
+    [UdonSynced] public byte[] markedCards = new byte[NetConst.MaxPlayers * NetConst.MaxHandSize];
+    [UdonSynced] public byte[] reservedCards = new byte[NetConst.MaxPlayers];
+    [UdonSynced] public byte[] faceUpCards = new byte[60];
+    [UdonSynced] public byte[] cardOwners = new byte[60];
+    [UdonSynced] public byte[] cardTricks = new byte[60];
     
     // Game Metadata
     [UdonSynced] public byte phase;
@@ -28,8 +35,15 @@ public class BoardState : UdonSharpBehaviour
     [UdonSynced] public byte currentPlayerSeat;
     [UdonSynced] public byte dealerSeat;
     [UdonSynced] public byte trickIndex;
-    [UdonSynced] public byte[] scores = new byte[NetConst.MaxPlayers];
-    [UdonSynced] public byte[] takenTricks = new byte[4];
+    [UdonSynced] public int[] scores = new int[NetConst.MaxPlayers];
+    [UdonSynced] public byte[] takenTricks = new byte[NetConst.MaxPlayers];
+    [UdonSynced] public byte playerCount = 3;
+    [UdonSynced] public byte trickCardCount;
+    [UdonSynced] public byte confirmedMask;
+    [UdonSynced] public byte ruleDeckCursor;
+    [UdonSynced] public byte ruleDiscardCursor;
+    [UdonSynced] public byte prepareStep;
+    [UdonSynced] public byte[] ruleDeck = new byte[60];
     [UdonSynced] public byte warningCount;
     [UdonSynced] public byte syncState;
     [UdonSynced] public byte selectedCell;
@@ -43,7 +57,9 @@ public class BoardState : UdonSharpBehaviour
     public const byte PhasePlayCard = 2;
     public const byte PhaseResolveTrick = 3;
     public const byte PhaseScore = 4;
+    public const byte PhasePrepare = 5;
     public const byte PhaseWarning = 6;
+    public const byte PhaseComplete = 7;
 
     public string PhaseLabel()
     {
@@ -53,7 +69,9 @@ public class BoardState : UdonSharpBehaviour
             case PhasePlayCard: return "TRICK TAKING";
             case PhaseResolveTrick: return "RESOLVING";
             case PhaseScore: return "SCORING";
+            case PhasePrepare: return "PREPARING";
             case PhaseWarning: return "WARNING";
+            case PhaseComplete: return "COMPLETE";
             default: return "WAITING";
         }
     }

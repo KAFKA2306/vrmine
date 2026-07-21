@@ -11,14 +11,32 @@ namespace Vowgan
     public class ResetChessGame : UdonSharpBehaviour
     {
         public VRCObjectSync[] Pieces;
+        private Vector3[] positions;
+        private Quaternion[] rotations;
 
+        private void Start()
+        {
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            positions = new Vector3[Pieces.Length];
+            rotations = new Quaternion[Pieces.Length];
+            for (int i = 0; i < Pieces.Length; i++)
+            {
+                positions[i] = Pieces[i].transform.position;
+                rotations[i] = Pieces[i].transform.rotation;
+            }
+        }
 
         public override void Interact()
         {
             for (int i = 0; i < Pieces.Length; i++)
             {
                 Networking.SetOwner(Networking.LocalPlayer, Pieces[i].gameObject);
-                Pieces[i].Respawn();
+                Pieces[i].transform.SetPositionAndRotation(positions[i], rotations[i]);
+                Pieces[i].FlagDiscontinuity();
             }
         }
     }

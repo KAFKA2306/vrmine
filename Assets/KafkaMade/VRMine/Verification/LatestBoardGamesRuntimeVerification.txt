@@ -1,0 +1,5 @@
+﻿Board Games Runtime Verification
+PASS TrickMeisterRules failures=0
+PASS OrapaReflection failures=0
+PASS ChessRules failures=0
+Result: PASS

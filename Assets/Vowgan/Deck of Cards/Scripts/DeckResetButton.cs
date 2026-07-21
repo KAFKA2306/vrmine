@@ -3,6 +3,7 @@ using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
+using VRC.Udon.Common.Interfaces;
 
 namespace Vowgan.DeckOfCards
 {
@@ -24,7 +25,7 @@ namespace Vowgan.DeckOfCards
 
         public override void Interact()
         {
-            DeckOfCards._ResetDeck();
+            DeckOfCards.SendCustomNetworkEvent(NetworkEventTarget.Owner, nameof(DeckManager._ResetDeck));
             anim.SetTrigger(hashTrigger);
         }
     }
