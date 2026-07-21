@@ -1,4 +1,5 @@
-﻿FAIL
-Gate: G3 VRChat Build & Test
-Client: C:\Program Files (x86)\Steam\steamapps\common\VRChat\VRChat.exe
-Reason: configured VRChat client executable does not exist
+BLOCKED
+Gate: G3 VRChat Two-Client Evidence
+Reason: no post-change two-client logs have been finalized. The previous test used SDK 3.9.0 and failed before client launch.
+Required action: VCC Resolve to SDK 3.10.4, run Build And Test Two Clients, then Finalize Two Client Logs.
+Result: FAIL
