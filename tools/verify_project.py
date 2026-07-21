@@ -105,6 +105,37 @@ def check_rule_matrix() -> None:
         fail("rule 26 must remain explicitly marked unimplemented until code and tests exist")
 
 
+def check_player_controls() -> None:
+    action = read("Assets/KafkaMade/VRMine/Runtime/UI/BoardGameAction.cs")
+    scene_upgrade = read("Assets/KafkaMade/VRMine/Editor/BoardGameSceneUpgrade.cs")
+    orapa = read("Assets/KafkaMade/VRMine/Runtime/Game/OrapaMineGame.cs")
+    lifecycle = read("Assets/KafkaMade/VRMine/Runtime/Game/TrickSeatLifecycle.cs")
+
+    for fragment in ("action == 5", "ConfigurePlayers(value)", "OwnTrickState"):
+        if fragment not in action:
+            fail(f"Trick player-count action is missing: {fragment}")
+    for fragment in ("action == 8", "orapaGame.ConfigurePlayers(value)"):
+        if fragment not in action:
+            fail(f"Orapa player-count action is missing: {fragment}")
+    for control in (
+        "TrickPlayerCount_3",
+        "TrickPlayerCount_4",
+        "TrickPlayerCount_5",
+        "OrapaPlayerCount_2",
+        "OrapaPlayerCount_3",
+        "OrapaPlayerCount_4",
+        "OrapaPlayerCount_5",
+    ):
+        if control not in scene_upgrade:
+            fail(f"generated scene upgrade is missing control: {control}")
+    for fragment in ("NextActiveSeat", "OnPlayerLeft", "attempts[seat] < 2"):
+        if fragment not in orapa:
+            fail(f"Orapa active-seat lifecycle is missing: {fragment}")
+    for fragment in ("OnPlayerLeft", "occupiedPlayerIds[seat] = 0", "local.isMaster"):
+        if fragment not in lifecycle:
+            fail(f"Trick seat lifecycle is missing: {fragment}")
+
+
 def check_verification_fail_closed() -> None:
     verification = read("Assets/KafkaMade/VRMine/Editor/BoardGameVerification.cs")
     required_fragments = (
@@ -126,6 +157,9 @@ def check_verification_fail_closed() -> None:
     for report_name in ("G1Structure", "G2RuntimeRules", "G3TwoClientNetwork"):
         if report_name not in release_gate:
             fail(f"upload readiness gate is missing {report_name}")
+    for release_requirement in ("TrickSeatLifecycle", "TrickPlayerCountControls", "OrapaPlayerCountControls"):
+        if release_requirement not in release_gate:
+            fail(f"upload readiness gate is missing {release_requirement}")
 
     g1 = read("Assets/KafkaMade/VRMine/Verification/LatestBoardGamesVerification.txt")
     g2 = read("Assets/KafkaMade/VRMine/Verification/LatestBoardGamesRuntimeVerification.txt")
@@ -142,8 +176,11 @@ def check_project_index() -> None:
         "docs/games/orapa-mine.md",
         "docs/games/chess.md",
         "BoardGameShowcase.unity",
+        "BoardGameSceneUpgrade.cs",
+        "TrickSeatLifecycle.cs",
         "LatestUploadReadiness.txt",
         "site/index.html",
+        ".github/workflows/pages.yml",
     )
     for item in required:
         if item not in project:
@@ -156,7 +193,9 @@ def check_required_files() -> None:
         "Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs",
         "Assets/KafkaMade/VRMine/Runtime/Game/OrapaMineGame.cs",
         "Assets/KafkaMade/VRMine/Runtime/Game/ChessGame.cs",
+        "Assets/KafkaMade/VRMine/Runtime/Game/TrickSeatLifecycle.cs",
         "Assets/KafkaMade/VRMine/Runtime/Net/NetworkVerificationProbe.cs",
+        "Assets/KafkaMade/VRMine/Editor/BoardGameSceneUpgrade.cs",
         "Assets/KafkaMade/VRMine/Editor/BoardGameShowcaseBuilder.cs",
         "Assets/KafkaMade/VRMine/Editor/BoardGameVerification.cs",
         "Assets/KafkaMade/VRMine/Editor/VRMineReleaseGate.cs",
@@ -173,6 +212,7 @@ def main() -> int:
     check_versions()
     check_markdown_links()
     check_rule_matrix()
+    check_player_controls()
     check_verification_fail_closed()
     check_project_index()
 
