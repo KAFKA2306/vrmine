@@ -1,0 +1,27 @@
+name: Project integrity
+
+on:
+  push:
+    branches: [main, agent/vrchat-release-readiness]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Verify repository links, versions, rules, and fail-closed gates
+        run: python3 tools/verify_project.py
+
+      - name: Build public evidence status
+        run: python3 tools/build_site_status.py
+
+      - name: Validate public status JSON
+        run: python3 -m json.tool site/status.json >/dev/null
