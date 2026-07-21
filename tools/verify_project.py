@@ -101,8 +101,11 @@ def check_rule_matrix() -> None:
         fail(f"rule matrix is missing numbers: {missing}")
     if extra:
         fail(f"rule matrix contains unexpected numbers: {extra}")
-    if "26 | **未実装" not in text:
-        fail("rule 26 must remain explicitly marked unimplemented until code and tests exist")
+    rule_26 = re.search(r"^\|\s*26\s*\|([^|]+)\|", text, re.MULTILINE)
+    if rule_26 is None or "伏せ" not in rule_26.group(1) or "公開" not in rule_26.group(1):
+        fail("rule 26 must document face-down play followed by reveal")
+    if rule_26 is not None and "未実装" in rule_26.group(1):
+        fail("rule 26 is implemented and must not be marked unimplemented")
 
 
 def check_player_controls() -> None:
@@ -139,6 +142,36 @@ def check_player_controls() -> None:
             fail(f"Trick seat lifecycle is missing: {fragment}")
 
 
+def check_trick_table_and_rule_26() -> None:
+    controller = read("Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs")
+    board_view = read("Assets/KafkaMade/VRMine/Runtime/UI/BoardView.cs")
+    showcase = read("Assets/KafkaMade/VRMine/Runtime/UI/BoardGameShowcaseView.cs")
+    scene_upgrade = read("Assets/KafkaMade/VRMine/Editor/BoardGameSceneUpgrade.cs")
+    public_names = read("Assets/KafkaMade/VRMine/Editor/VRMinePublicNameUpgrade.cs")
+
+    for fragment in (
+        "ShouldHideTrickCard",
+        "board.phase = BoardState.PhaseResolveTrick",
+        "ResolvePendingTrick",
+        "SendCustomEventDelayedSeconds(nameof(ResolvePendingTrick)",
+        "HasRule(26) ? 2.25f : 0.55f",
+        "AllSeatsOccupied()",
+    ):
+        if fragment not in controller:
+            fail(f"Trick rule-26 or waiting-room flow is missing: {fragment}")
+    if "controller.ShouldHideTrickCard(i)" not in board_view:
+        fail("BoardView does not hide rule-26 trick cards")
+    for fragment in ("trickTableCards", '"FACE\\nDOWN"', "OccupiedSeats"):
+        if fragment not in showcase:
+            fail(f"showcase trick table is missing: {fragment}")
+    for fragment in ('"TrickTableCard_" + slot', "view.trickTableCards[slot] = AddDisplay"):
+        if fragment not in scene_upgrade:
+            fail(f"scene upgrade does not wire Trick table display: {fragment}")
+    for public_name in ('label.text = "RULEFORGE"', 'label.text = "ECHO MINE"'):
+        if public_name not in public_names:
+            fail(f"public game-name replacement is missing: {public_name}")
+
+
 def check_verification_fail_closed() -> None:
     verification = read("Assets/KafkaMade/VRMine/Editor/BoardGameVerification.cs")
     required_fragments = (
@@ -160,7 +193,14 @@ def check_verification_fail_closed() -> None:
     for report_name in ("G1Structure", "G2RuntimeRules", "G3TwoClientNetwork"):
         if report_name not in release_gate:
             fail(f"upload readiness gate is missing {report_name}")
-    for release_requirement in ("TrickSeatLifecycle", "TrickPlayerCountControls", "OrapaPlayerCountControls"):
+    for release_requirement in (
+        "TrickSeatLifecycle",
+        "TrickPlayerCountControls",
+        "OrapaPlayerCountControls",
+        "TrickTableObjects",
+        "TrickTableWiring",
+        "PublicGameNames",
+    ):
         if release_requirement not in release_gate:
             fail(f"upload readiness gate is missing {release_requirement}")
 
@@ -180,6 +220,7 @@ def check_project_index() -> None:
         "docs/games/chess.md",
         "BoardGameShowcase.unity",
         "BoardGameSceneUpgrade.cs",
+        "VRMinePublicNameUpgrade.cs",
         "TrickSeatLifecycle.cs",
         "LatestUploadReadiness.txt",
         "site/index.html",
@@ -198,7 +239,10 @@ def check_required_files() -> None:
         "Assets/KafkaMade/VRMine/Runtime/Game/ChessGame.cs",
         "Assets/KafkaMade/VRMine/Runtime/Game/TrickSeatLifecycle.cs",
         "Assets/KafkaMade/VRMine/Runtime/Net/NetworkVerificationProbe.cs",
+        "Assets/KafkaMade/VRMine/Runtime/UI/BoardView.cs",
+        "Assets/KafkaMade/VRMine/Runtime/UI/BoardGameShowcaseView.cs",
         "Assets/KafkaMade/VRMine/Editor/BoardGameSceneUpgrade.cs",
+        "Assets/KafkaMade/VRMine/Editor/VRMinePublicNameUpgrade.cs",
         "Assets/KafkaMade/VRMine/Editor/BoardGameShowcaseBuilder.cs",
         "Assets/KafkaMade/VRMine/Editor/BoardGameVerification.cs",
         "Assets/KafkaMade/VRMine/Editor/VRMineReleaseGate.cs",
@@ -216,6 +260,7 @@ def main() -> int:
     check_markdown_links()
     check_rule_matrix()
     check_player_controls()
+    check_trick_table_and_rule_26()
     check_verification_fail_closed()
     check_project_index()
 
