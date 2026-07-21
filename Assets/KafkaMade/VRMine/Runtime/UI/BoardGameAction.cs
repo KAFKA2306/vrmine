@@ -19,42 +19,41 @@ public class BoardGameAction : UdonSharpBehaviour
             HandleTrick();
             return;
         }
-
         if (game == 1)
         {
             HandleOrapa();
             return;
         }
-
         HandleChess();
     }
 
     void HandleTrick()
     {
         if (trickGame == null) return;
-
         if (action == 3)
         {
             JoinTrickSeat(value);
             return;
         }
-
         if (action == 4)
         {
-            if (CanReset()) trickGame.SetupGame();
+            if (CanReset())
+            {
+                OwnTrickState();
+                trickGame.SetupGame();
+            }
             return;
         }
-
         if (action == 5)
         {
             if (CanReset())
             {
+                OwnTrickState();
                 trickGame.ConfigurePlayers(value);
                 trickGame.SetupGame();
             }
             return;
         }
-
         if (!HasTrickSeat()) return;
         if (action == 0) trickGame.OnCardClicked(value);
         else if (action == 1) trickGame.SelectRule(value);
@@ -64,19 +63,16 @@ public class BoardGameAction : UdonSharpBehaviour
     void HandleOrapa()
     {
         if (orapaGame == null) return;
-
         if (action == 1)
         {
             JoinOrapaSeat(value);
             return;
         }
-
         if (action == 2)
         {
             if (CanReset()) orapaGame.ResetGame();
             return;
         }
-
         if (action == 8)
         {
             if (CanReset())
@@ -91,7 +87,6 @@ public class BoardGameAction : UdonSharpBehaviour
         // Auto-claiming the first free seat keeps that scene playable while the editor builder
         // upgrades it to the explicit-seat version.
         if (!EnsureOrapaSeat()) return;
-
         if (action == 0) orapaGame.QueryWave(value);
         else if (action == 3) orapaGame.SubmitGuess();
         else if (action == 4) orapaGame.SelectGuessPiece(value);
@@ -103,19 +98,16 @@ public class BoardGameAction : UdonSharpBehaviour
     void HandleChess()
     {
         if (chessGame == null) return;
-
         if (action == 1)
         {
             JoinChessSeat(value);
             return;
         }
-
         if (action == 2)
         {
             if (CanReset()) chessGame.ResetGame();
             return;
         }
-
         if (!HasChessSeat()) return;
         if (action == 0) chessGame.SelectSquare(value);
         else if (action == 3) chessGame.Resign();
@@ -195,5 +187,13 @@ public class BoardGameAction : UdonSharpBehaviour
     {
         VRCPlayerApi player = Networking.LocalPlayer;
         return player != null && player.isMaster;
+    }
+
+    void OwnTrickState()
+    {
+        VRCPlayerApi player = Networking.LocalPlayer;
+        if (player == null) return;
+        if (!Networking.IsOwner(trickGame.gameObject)) Networking.SetOwner(player, trickGame.gameObject);
+        if (trickGame.board != null && !Networking.IsOwner(trickGame.board.gameObject)) Networking.SetOwner(player, trickGame.board.gameObject);
     }
 }
