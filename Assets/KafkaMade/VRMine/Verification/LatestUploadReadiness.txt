@@ -1,0 +1,6 @@
+VRMine Upload Readiness
+Status: BLOCKED
+Reason: G1, G2, and G3 must be rerun after the SDK, scene generator, game logic, and verification changes.
+Required environment: Unity 2022.3.22f1 / VRChat Worlds SDK 3.10.4 / Windows 64-bit
+Required action: follow docs/release.md and run VRMine > Release > Validate Upload Readiness.
+Result: BLOCKED
