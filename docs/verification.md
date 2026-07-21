@@ -38,7 +38,7 @@ Unityメニュー:
 検査項目:
 
 - Trick: 3人配札、フォロー、低数字優先、複合切り札
-- Orapa: 代表的な反射・吸収
+- Orapa: 代表的な反射・吸収、未参加席スキップ、誤答上限席スキップ
 - Chess: 基本移動、キャスリング、メイト、ステイルメイト、4種昇格
 - Play Mode終了とEdit Mode復帰
 
@@ -84,12 +84,17 @@ Unityメニュー:
 
 `VRMine > Release > Validate Upload Readiness`
 
-G4は次をすべて再確認する。
+G4はシーンpost-upgradeを実行して保存した後、次をすべて再確認する。
 
 - Unity 2022.3.22f1
 - Windows 64-bit target
 - Worlds SDK 3.10.4
 - descriptor存在
+- Trick/Orapa/Chess managerが各1個
+- `NetworkVerificationProbe`が1個
+- `TrickSeatLifecycle`が1個
+- Trick人数ボタン `3P/4P/5P`
+- Orapa人数ボタン `2P/3P/4P/5P`
 - G1 `Result: PASS`
 - G2 `Result: PASS`
 - G3 `Result: PASS`
@@ -98,8 +103,23 @@ G4は次をすべて再確認する。
 
 `Result: BLOCKED`の場合はアップロードしない。
 
+## Static CI
+
+GitHub Actionsの`Project integrity`は、以下のリポジトリ整合性を検査する。
+
+- Unity/SDKバージョン宣言
+- PROJECTとMarkdownのローカルリンク
+- Trickルール番号1–60の文書化とルール26の未実装表示
+- 人数変更アクションと生成シーン上の7ボタン
+- Orapaの有効席スキップと退室処理
+- Trickの退室席解放
+- G3/G4のfail-closed条件
+- Pages用status JSON生成
+
+このCIのPASSはUnityコンパイル、UdonSharpコンパイル、VRChat実クライアント動作を証明しない。G0–G4の代替ではない。
+
 ## 現在の証拠状態
 
 2026-07-20に旧コードでG1/G2はPASSしたが、その結果は本ブランチのコード変更後の保証ではない。旧G3はVRChatクライアントの実行ファイルパスで失敗し、しかも旧実装は起動後に無条件PASSを書ける欠陥があった。
 
-本ブランチではSDKを3.10.4へ更新し、G3をログ証跡方式へ置換した。対象Windows PC上でG0–G4を再実行していないため、リポジトリ内の過去レポートを現在のPASSとして流用しない。
+本ブランチではSDKを3.10.4へ更新し、G3をログ証跡方式へ置換し、人数変更と退室復旧を追加した。対象Windows PC上でG0–G4を再実行していないため、リポジトリ内の過去レポートを現在のPASSとして流用しない。
