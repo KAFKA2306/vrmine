@@ -1,0 +1,23 @@
+{
+  "generated_at": null,
+  "commit": "seed status; overwritten by GitHub Pages workflow",
+  "release_status": "BLOCKED",
+  "gates": {
+    "g1": {
+      "status": "FAIL",
+      "summary": "Reason: post-change Unity verification has not been run."
+    },
+    "g2": {
+      "status": "FAIL",
+      "summary": "Reason: post-change runtime rule verification has not been run."
+    },
+    "g3": {
+      "status": "BLOCKED",
+      "summary": "Reason: post-change two-client evidence has not been finalized."
+    },
+    "g4": {
+      "status": "BLOCKED",
+      "summary": "Status: BLOCKED until G1, G2, and G3 pass."
+    }
+  }
+}
