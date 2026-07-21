@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="VRMine — VRChatで遊ぶ、3つの卓上ゲームを統合した検証駆動ワールド。">
   <meta name="theme-color" content="#08111f">
-  <title>VRMine — Three Games, One Verified World</title>
+  <title>VRMine — Three Games, One Release-Gated World</title>
   <link rel="stylesheet" href="styles.css">
   <script defer src="app.js"></script>
 </head>
@@ -35,13 +35,13 @@
       <div class="hero-grid" aria-hidden="true"></div>
       <div class="hero-copy">
         <p class="eyebrow">VRCHAT TABLETOP WORLD</p>
-        <h1>Three games.<br><span>One verified world.</span></h1>
-        <p class="lead">ルール可変トリックテイキング、超音波推理、チェス。異なる思考ゲームを、1つのVRChatワールドと検証パイプラインへ統合しました。</p>
+        <h1>Three games.<br><span>One release-gated world.</span></h1>
+        <p class="lead">RULEFORGE、ECHO MINE、チェス。異なる思考ゲームを、1つのVRChatワールドと検証パイプラインへ統合しました。</p>
         <div class="hero-actions">
           <a class="button button-primary" href="#games">ゲームを見る</a>
           <a class="button button-secondary" href="https://github.com/KAFKA2306/vrmine/blob/main/PROJECT.md">PROJECT.md</a>
         </div>
-        <p class="hero-note">非公式の技術検証・ファン実装です。原作アートや説明書本文は収録していません。</p>
+        <p class="hero-note">非公式の技術検証・独立実装です。第三者製品のロゴ、アート、説明書本文は収録していません。</p>
       </div>
       <div class="hero-console" aria-label="現在のリリース状態">
         <div class="console-topline">
@@ -74,7 +74,7 @@
             <span>F</span><span>C</span><span>K</span><span>G</span>
           </div>
           <p class="game-type">3–5 PLAYERS · TRICK TAKING</p>
-          <h3>Trick Meister Variant</h3>
+          <h3>RULEFORGE</h3>
           <p>毎ラウンド、プレイヤーが選んだルールカードによって、切り札、フォロー、勝者、得点そのものが変化します。</p>
           <ul>
             <li>60枚のプレイカード</li>
@@ -93,15 +93,15 @@
             <span></span><span></span><span></span><span></span><span></span>
           </div>
           <p class="game-type">2–5 PLAYERS · DEDUCTION</p>
-          <h3>Orapa Mine Auto Puzzle</h3>
-          <p>盤外から超音波を発射し、出口、色の混合、吸収を読み解いて、見えない5個の宝石を特定します。</p>
+          <h3>ECHO MINE</h3>
+          <p>盤外から信号を発射し、出口、色の混合、吸収を読み解いて、見えない5個の宝石を特定します。</p>
           <ul>
             <li>10×8の推理盤</li>
             <li>36方向の入射</li>
             <li>同期seedによる自動問題</li>
           </ul>
           <div class="card-links">
-            <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/games/orapa-mine.md">ルールと製品差分</a>
+            <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/games/orapa-mine.md">ルールと設計範囲</a>
           </div>
         </article>
 
@@ -152,7 +152,7 @@
         </li>
         <li>
           <span class="gate-number">G3</span>
-          <div><h3>Two-Client Network</h3><p>2つのplayer ID、3ゲームの同期、late join復元、ownership handoff後の再同期。</p></div>
+          <div><h3>Two-Client Network</h3><p>試験固有トークンで分離した2クライアント初期同期と、ownership handoff後の再同期。</p></div>
           <span class="gate-status" id="gate-row-g3">—</span>
         </li>
         <li>
@@ -164,7 +164,7 @@
 
       <div class="verification-callout">
         <strong>Fail closed.</strong>
-        <p>証跡がない、古い、途中である、環境が違う。その場合の結論は「たぶん動く」ではなく、明示的な <span>BLOCKED</span> です。</p>
+        <p>証跡がない、古い、途中である、環境が違う。その場合の結論は「たぶん動く」ではなく、明示的な <span>BLOCKED</span> です。遅延参加はprivate upload後の手動試験項目です。</p>
         <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/verification.md">検証仕様を読む →</a>
       </div>
     </section>
@@ -178,7 +178,7 @@
         <article>
           <span class="technical-label">SCENE</span>
           <h3>Schema-generated</h3>
-          <p>統合シーンはEditor builderが現行スキーマから再生成します。座席、ルールパネル、操作ボタン、検証probeを同じ定義から構築します。</p>
+          <p>統合シーンはEditor builderとidempotent upgradeが生成します。座席、ルールパネル、操作ボタン、検証probeを同じ定義から構築します。</p>
         </article>
         <article>
           <span class="technical-label">NETWORK</span>
@@ -187,8 +187,8 @@
         </article>
         <article>
           <span class="technical-label">EVIDENCE</span>
-          <h3>Log-derived status</h3>
-          <p>G3はVRChatログのmarker、local player ID、ゲーム別同期値を解析し、条件を満たした時だけPASSを書き込みます。</p>
+          <h3>Run-isolated logs</h3>
+          <p>G3はRunToken、開始時刻、local player ID、ゲーム別同期値を解析し、同一試験の条件を満たした時だけPASSを書き込みます。</p>
         </article>
         <article>
           <span class="technical-label">RELEASE</span>
@@ -202,7 +202,7 @@
       <div class="limitations-copy">
         <p class="eyebrow">KNOWN LIMITS</p>
         <h2>保証範囲も、明示する。</h2>
-        <p>全ゲームの主要フローは実装されていますが、「原作完全再現」「全状態網羅」「改造クライアントへの秘密情報保護」は未保証です。現状と不足はリポジトリで追跡します。</p>
+        <p>全ゲームの主要フローは実装されていますが、「全状態網羅」「改造クライアントへの秘密情報保護」「自動化された遅延参加検証」は未保証です。現状と不足はリポジトリで追跡します。</p>
       </div>
       <div class="limitations-links">
         <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/game-inventory.md"><span>Current inventory</span><strong>実装済み・未検証・未実装</strong></a>
