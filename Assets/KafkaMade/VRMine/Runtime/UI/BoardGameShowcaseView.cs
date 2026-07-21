@@ -11,6 +11,7 @@ public class BoardGameShowcaseView : UdonSharpBehaviour
     public ChessGame chessGame;
     public Text trickStatus;
     public Text[] trickCards = new Text[16];
+    public Text[] trickTableCards = new Text[5];
     public Text[] ruleCards = new Text[3];
     public Text orapaStatus;
     public Text chessStatus;
@@ -28,19 +29,35 @@ public class BoardGameShowcaseView : UdonSharpBehaviour
         if (trickGame == null || trickGame.board == null || trickStatus == null) return;
         BoardState state = trickGame.board;
         bool seated = HasSeat(state.occupiedPlayerIds, trickGame.localPlayerSeat);
+        int occupied = OccupiedSeats(state.occupiedPlayerIds, state.playerCount);
+        string instruction = state.phase == BoardState.PhaseSetup
+            ? "\nWAITING " + occupied + "/" + state.playerCount + " - FILL ALL SEATS"
+            : seated ? "\nSEAT " + (trickGame.localPlayerSeat + 1) : "\nSELECT A SEAT TO PLAY";
         trickStatus.text = "ROUND " + (state.roundIndex + 1) + "/" + state.playerCount + "  " + state.PhaseLabel()
             + "\nTURN " + (state.currentPlayerSeat + 1) + "  RULES " + state.RuleLabel()
             + "\nSCORES " + Scores(state.scores, state.playerCount)
-            + (seated ? "\nSEAT " + (trickGame.localPlayerSeat + 1) : "\nSELECT A SEAT TO PLAY");
+            + instruction;
 
         int offset = seated ? trickGame.localPlayerSeat * NetConst.MaxHandSize : -1;
         for (int i = 0; i < trickCards.Length; i++)
             if (trickCards[i] != null) trickCards[i].text = seated ? CardLabel(state.playerHands[offset + i]) : "";
+
         for (int i = 0; i < ruleCards.Length; i++)
         {
             if (ruleCards[i] == null) continue;
             byte rule = seated ? state.ruleHands[trickGame.localPlayerSeat * 3 + i] : (byte)0;
             ruleCards[i].text = rule == 0 ? "" : "RULE\n" + rule;
+        }
+
+        for (int i = 0; i < trickTableCards.Length; i++)
+        {
+            if (trickTableCards[i] == null) continue;
+            if (i >= state.playerCount || i >= state.trickCardCount || state.trickCards[i] == 0)
+            {
+                trickTableCards[i].text = "";
+                continue;
+            }
+            trickTableCards[i].text = trickGame.ShouldHideTrickCard(i) ? "FACE\nDOWN" : CardLabel(state.trickCards[i]);
         }
     }
 
@@ -70,6 +87,13 @@ public class BoardGameShowcaseView : UdonSharpBehaviour
         chessStatus.text = state + "  MOVE " + chessGame.fullmoveNumber + "  STATUS " + chessGame.status
             + "\nPROMOTION " + promotion
             + (seated ? "  SEAT " + (chessGame.localSeat == 0 ? "WHITE" : "BLACK") : "  SELECT WHITE OR BLACK");
+    }
+
+    int OccupiedSeats(int[] seats, int count)
+    {
+        int occupied = 0;
+        for (int i = 0; i < count; i++) if (seats[i] != 0) occupied++;
+        return occupied;
     }
 
     bool HasSeat(int[] seats, int seat)
