@@ -5,16 +5,22 @@ using VRC.SDKBase;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class NetworkVerificationProbe : UdonSharpBehaviour
 {
+    public GameController trickGame;
+    public OrapaMineGame orapaGame;
+    public ChessGame chessGame;
+
     [UdonSynced] public int sequence;
     [UdonSynced] public byte phase;
     [UdonSynced] public int firstPlayerId;
     [UdonSynced] public int secondPlayerId;
     [UdonSynced] public int publishedOwnerId;
     bool transferRequested;
+    int checkCount;
 
     void Start()
     {
         SendCustomEventDelayedSeconds(nameof(BeginProbe), 2f);
+        if (phase > 0) LogMarker("RESTORE_OR_LATE_JOIN");
         LogMarker("READY");
     }
 
@@ -56,9 +62,12 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
         sequence++;
         phase = 1;
         publishedOwnerId = firstPlayerId;
+        PublishGameSentinels(700);
         RequestSerialization();
         LogMarker("PUBLISH_BASELINE");
-        SendCustomEventDelayedSeconds(nameof(TransferProbeOwnership), 4f);
+        checkCount = 0;
+        SendCustomEventDelayedSeconds(nameof(CheckGameState), 1f);
+        SendCustomEventDelayedSeconds(nameof(TransferProbeOwnership), 5f);
     }
 
     public void TransferProbeOwnership()
@@ -71,6 +80,7 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
             return;
         }
         transferRequested = true;
+        TransferGameOwnership(nextOwner);
         LogMarker("TRANSFER_REQUEST");
         Networking.SetOwner(nextOwner, gameObject);
     }
@@ -80,6 +90,8 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
         LogMarker(phase == 1 ? "OBSERVE_BASELINE" : "OBSERVE_REPUBLISH");
         VRCPlayerApi local = Networking.LocalPlayer;
         if (local != null && local.playerId == secondPlayerId && phase >= 1) LogMarker("RESTORE_OR_LATE_JOIN");
+        checkCount = 0;
+        SendCustomEventDelayedSeconds(nameof(CheckGameState), 0.5f);
     }
 
     public override void OnOwnershipTransferred(VRCPlayerApi player)
@@ -89,8 +101,88 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
         sequence++;
         phase = 2;
         publishedOwnerId = player.playerId;
+        PublishGameSentinels(710);
         RequestSerialization();
         LogMarker("REPUBLISH_BY_NEW_OWNER");
+        checkCount = 0;
+        SendCustomEventDelayedSeconds(nameof(CheckGameState), 1f);
+        SendCustomEventDelayedSeconds(nameof(RestoreGames), 5f);
+    }
+
+    public void CheckGameState()
+    {
+        int expectedBase = phase == 1 ? 700 : phase == 2 ? 710 : -1;
+        if (expectedBase < 0) return;
+        if (trickGame != null && trickGame.turnIndex == expectedBase + 1 && trickGame.board != null && trickGame.board.phase == 1)
+            LogGameMarker("TRICK", expectedBase + 1);
+        if (orapaGame != null && orapaGame.puzzleSeed == (uint)(expectedBase + 2) && orapaGame.currentSeat == 1)
+            LogGameMarker("ORAPA", expectedBase + 2);
+        if (chessGame != null && chessGame.fullmoveNumber == expectedBase + 3 && chessGame.sideToMove == 8)
+            LogGameMarker("CHESS", expectedBase + 3);
+        checkCount++;
+        if (checkCount < 8) SendCustomEventDelayedSeconds(nameof(CheckGameState), 0.75f);
+    }
+
+    public void RestoreGames()
+    {
+        if (!Networking.IsOwner(gameObject) || phase != 2) return;
+        if (trickGame != null) trickGame.SetupGame();
+        if (orapaGame != null) orapaGame.ResetGame();
+        if (chessGame != null) chessGame.ResetGame();
+        phase = 3;
+        sequence++;
+        RequestSerialization();
+        LogMarker("RESTORED_AFTER_TEST");
+    }
+
+    void PublishGameSentinels(int baseValue)
+    {
+        VRCPlayerApi local = Networking.LocalPlayer;
+        if (local == null) return;
+        if (trickGame != null)
+        {
+            Networking.SetOwner(local, trickGame.gameObject);
+            if (trickGame.board != null) Networking.SetOwner(local, trickGame.board.gameObject);
+            trickGame.turnIndex = baseValue + 1;
+            trickGame.RequestSerialization();
+            if (trickGame.board != null)
+            {
+                trickGame.board.phase = 1;
+                trickGame.board.RequestSerialization();
+            }
+        }
+        if (orapaGame != null)
+        {
+            Networking.SetOwner(local, orapaGame.gameObject);
+            orapaGame.puzzleSeed = (uint)(baseValue + 2);
+            orapaGame.currentSeat = 1;
+            orapaGame.RequestSerialization();
+        }
+        if (chessGame != null)
+        {
+            Networking.SetOwner(local, chessGame.gameObject);
+            chessGame.fullmoveNumber = (ushort)(baseValue + 3);
+            chessGame.sideToMove = 8;
+            chessGame.RequestSerialization();
+        }
+    }
+
+    void TransferGameOwnership(VRCPlayerApi player)
+    {
+        if (trickGame != null)
+        {
+            Networking.SetOwner(player, trickGame.gameObject);
+            if (trickGame.board != null) Networking.SetOwner(player, trickGame.board.gameObject);
+        }
+        if (orapaGame != null) Networking.SetOwner(player, orapaGame.gameObject);
+        if (chessGame != null) Networking.SetOwner(player, chessGame.gameObject);
+    }
+
+    void LogGameMarker(string gameName, int value)
+    {
+        VRCPlayerApi local = Networking.LocalPlayer;
+        int localId = local == null ? 0 : local.playerId;
+        Debug.Log("[VRMINE_G3_GAME] game=" + gameName + " local=" + localId + " phase=" + phase + " value=" + value);
     }
 
     void LogMarker(string marker)
