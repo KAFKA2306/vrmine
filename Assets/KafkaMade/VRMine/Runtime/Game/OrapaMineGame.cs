@@ -29,7 +29,7 @@ public class OrapaMineGame : UdonSharpBehaviour
     public byte resultExit;
     public byte resultColor;
     public byte resultFlags;
-    public int localSeat;
+    public int localSeat = -1;
     public int selectedGuessPiece;
 
     void Start()
@@ -40,11 +40,33 @@ public class OrapaMineGame : UdonSharpBehaviour
     public override void OnDeserialization()
     {
         BuildPuzzle();
+        if (!HasLocalSeat()) localSeat = -1;
+    }
+
+    public override void OnPlayerLeft(VRCPlayerApi player)
+    {
+        if (!Networking.IsOwner(gameObject) || player == null) return;
+        bool changed = false;
+        bool currentLeft = false;
+        for (int i = 0; i < occupiedPlayerIds.Length; i++)
+        {
+            if (occupiedPlayerIds[i] != player.playerId) continue;
+            occupiedPlayerIds[i] = 0;
+            currentLeft |= i == currentSeat;
+            changed = true;
+        }
+        if (!changed) return;
+        if (currentLeft) currentSeat = (byte)NextActiveSeat(currentSeat);
+        RequestSerialization();
     }
 
     public void ConfigurePlayers(int count)
     {
+        Own();
         playerCount = (byte)Mathf.Clamp(count, 2, 5);
+        for (int i = playerCount; i < occupiedPlayerIds.Length; i++) occupiedPlayerIds[i] = 0;
+        if (currentSeat >= playerCount || occupiedPlayerIds[currentSeat] == 0) currentSeat = (byte)FirstActiveSeat();
+        RequestSerialization();
     }
 
     public void ResetGame()
@@ -52,27 +74,38 @@ public class OrapaMineGame : UdonSharpBehaviour
         Own();
         puzzleSeed = (uint)Random.Range(1, int.MaxValue);
         winnerPlayerId = 0;
-        currentSeat = 0;
+        currentSeat = (byte)FirstActiveSeat();
         logCount = 0;
+        selectedGuessPiece = 0;
         for (int i = 0; i < attempts.Length; i++) attempts[i] = 0;
+        for (int i = 0; i < PieceCount; i++)
+        {
+            guessX[i] = 0;
+            guessY[i] = 0;
+            guessRotation[i] = 0;
+        }
         BuildPuzzle();
         RequestSerialization();
     }
 
     public void JoinGame(int seat)
     {
-        if (seat < 0 || seat >= playerCount) return;
+        VRCPlayerApi player = Networking.LocalPlayer;
+        if (player == null || seat < 0 || seat >= playerCount) return;
+        for (int i = 0; i < occupiedPlayerIds.Length; i++)
+            if (occupiedPlayerIds[i] == player.playerId && i != seat) return;
         Own();
-        int playerId = Networking.LocalPlayer.playerId;
-        if (occupiedPlayerIds[seat] != 0 && occupiedPlayerIds[seat] != playerId) return;
+        if (occupiedPlayerIds[seat] != 0 && occupiedPlayerIds[seat] != player.playerId) return;
+        bool noPlayers = OccupiedCount() == 0;
         localSeat = seat;
-        occupiedPlayerIds[seat] = playerId;
+        occupiedPlayerIds[seat] = player.playerId;
+        if (noPlayers || occupiedPlayerIds[currentSeat] == 0 || attempts[currentSeat] >= 2) currentSeat = (byte)seat;
         RequestSerialization();
     }
 
     public void QueryWave(int entry)
     {
-        if (winnerPlayerId != 0 || localSeat != currentSeat || attempts[localSeat] >= 2) return;
+        if (!CanAct() || entry < 0 || entry >= 36) return;
         Own();
         Simulate((byte)entry);
         int slot = logCount < 20 ? logCount : 19;
@@ -96,11 +129,21 @@ public class OrapaMineGame : UdonSharpBehaviour
 
     public byte QueryCell(int x, int y)
     {
-        if (winnerPlayerId != 0 || localSeat != currentSeat || attempts[localSeat] >= 2) return 0;
+        if (!CanAct() || x < 0 || x >= Width || y < 0 || y >= Height) return 0;
         Own();
         byte color = ColorAt(x + 0.5f, y + 0.5f);
         int slot = logCount < 20 ? logCount : 19;
-        if (logCount < 20) logCount++;
+        if (logCount >= 20)
+        {
+            for (int i = 1; i < 20; i++)
+            {
+                logEntries[i - 1] = logEntries[i];
+                logExits[i - 1] = logExits[i];
+                logColors[i - 1] = logColors[i];
+                logFlags[i - 1] = logFlags[i];
+            }
+        }
+        else logCount++;
         logEntries[slot] = (byte)(36 + y * Width + x);
         logExits[slot] = 255;
         logColors[slot] = color;
@@ -111,32 +154,39 @@ public class OrapaMineGame : UdonSharpBehaviour
 
     public bool SubmitGuess()
     {
-        if (winnerPlayerId != 0 || attempts[localSeat] >= 2) return false;
+        if (!CanAct()) return false;
         Own();
         bool match = true;
         for (int i = 0; i < PieceCount; i++)
             if (guessX[i] != pieceX[i] || guessY[i] != pieceY[i] || (guessRotation[i] & 3) != pieceRotation[i]) match = false;
         if (match) winnerPlayerId = occupiedPlayerIds[localSeat];
-        else attempts[localSeat]++;
+        else
+        {
+            attempts[localSeat]++;
+            AdvanceTurn(false);
+        }
         RequestSerialization();
         return match;
     }
 
     public void SelectGuessPiece(int piece)
     {
+        if (!HasLocalSeat()) return;
         selectedGuessPiece = Mathf.Clamp(piece, 0, PieceCount - 1);
     }
 
     public void MoveGuess(int dx, int dy)
     {
-        int x = Mathf.Clamp(guessX[selectedGuessPiece] + dx, 0, Width);
-        int y = Mathf.Clamp(guessY[selectedGuessPiece] + dy, 0, Height);
+        if (!HasLocalSeat()) return;
+        int x = Mathf.Clamp(guessX[selectedGuessPiece] + dx, 0, Width - 1);
+        int y = Mathf.Clamp(guessY[selectedGuessPiece] + dy, 0, Height - 1);
         guessX[selectedGuessPiece] = (byte)x;
         guessY[selectedGuessPiece] = (byte)y;
     }
 
     public void RotateGuess()
     {
+        if (!HasLocalSeat()) return;
         guessRotation[selectedGuessPiece] = (byte)((guessRotation[selectedGuessPiece] + 1) & 3);
     }
 
@@ -236,6 +286,29 @@ public class OrapaMineGame : UdonSharpBehaviour
         pieceTypes[0] = 2;
         Simulate(5);
         if (resultColor != 4 || resultFlags != 0 || resultExit == 23) failures++;
+
+        byte savedCount = playerCount;
+        int[] savedPlayers = new int[occupiedPlayerIds.Length];
+        byte[] savedAttempts = new byte[attempts.Length];
+        for (int i = 0; i < occupiedPlayerIds.Length; i++)
+        {
+            savedPlayers[i] = occupiedPlayerIds[i];
+            savedAttempts[i] = attempts[i];
+            occupiedPlayerIds[i] = 0;
+            attempts[i] = 0;
+        }
+        playerCount = 5;
+        occupiedPlayerIds[0] = 10;
+        occupiedPlayerIds[3] = 30;
+        if (NextActiveSeat(0) != 3 || NextActiveSeat(3) != 0) failures++;
+        attempts[3] = 2;
+        if (NextActiveSeat(0) != 0) failures++;
+        playerCount = savedCount;
+        for (int i = 0; i < occupiedPlayerIds.Length; i++)
+        {
+            occupiedPlayerIds[i] = savedPlayers[i];
+            attempts[i] = savedAttempts[i];
+        }
         BuildPuzzle();
         return failures;
     }
@@ -394,14 +467,54 @@ public class OrapaMineGame : UdonSharpBehaviour
         return 0;
     }
 
+    bool CanAct()
+    {
+        return winnerPlayerId == 0 && HasLocalSeat() && localSeat == currentSeat && attempts[localSeat] < 2;
+    }
+
+    bool HasLocalSeat()
+    {
+        VRCPlayerApi player = Networking.LocalPlayer;
+        return player != null && localSeat >= 0 && localSeat < playerCount && occupiedPlayerIds[localSeat] == player.playerId;
+    }
+
+    int OccupiedCount()
+    {
+        int count = 0;
+        for (int i = 0; i < playerCount; i++) if (occupiedPlayerIds[i] != 0) count++;
+        return count;
+    }
+
+    int FirstActiveSeat()
+    {
+        for (int i = 0; i < playerCount; i++) if (occupiedPlayerIds[i] != 0 && attempts[i] < 2) return i;
+        return 0;
+    }
+
+    int NextActiveSeat(int from)
+    {
+        for (int offset = 1; offset <= playerCount; offset++)
+        {
+            int seat = (from + offset) % playerCount;
+            if (occupiedPlayerIds[seat] != 0 && attempts[seat] < 2) return seat;
+        }
+        return from < playerCount ? from : 0;
+    }
+
     void AdvanceTurn()
     {
-        currentSeat = (byte)((currentSeat + 1) % playerCount);
-        RequestSerialization();
+        AdvanceTurn(true);
+    }
+
+    void AdvanceTurn(bool serialize)
+    {
+        currentSeat = (byte)NextActiveSeat(currentSeat);
+        if (serialize) RequestSerialization();
     }
 
     void Own()
     {
-        if (!Networking.IsOwner(gameObject)) Networking.SetOwner(Networking.LocalPlayer, gameObject);
+        VRCPlayerApi player = Networking.LocalPlayer;
+        if (player != null && !Networking.IsOwner(gameObject)) Networking.SetOwner(player, gameObject);
     }
 }
