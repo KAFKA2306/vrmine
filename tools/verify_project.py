@@ -111,9 +111,9 @@ def check_verification_fail_closed() -> None:
         "Build And Test Two Clients",
         "Finalize Two Client Logs",
         "DistinctClients",
-        "TRICKBaselineReplication",
-        "ORAPABaselineReplication",
-        "CHESSBaselineReplication",
+        'CheckGameEvidence(report, "TRICK"',
+        'CheckGameEvidence(report, "ORAPA"',
+        'CheckGameEvidence(report, "CHESS"',
         "RESTORED_AFTER_TEST",
     )
     for fragment in required_fragments:
