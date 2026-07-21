@@ -1,5 +1,5 @@
-﻿Board Games Runtime Verification
-PASS TrickMeisterRules failures=0
-PASS OrapaReflection failures=0
-PASS ChessRules failures=0
-Result: PASS
+STALE
+Gate: G2 Deterministic Runtime Rules
+Reason: chess rules, interaction guards, and generated scene code changed after this report was produced.
+Required action: run VRMine > Verification > Run Board Games Runtime Gate in the resolved Unity project.
+Result: FAIL
