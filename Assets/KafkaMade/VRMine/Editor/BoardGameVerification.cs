@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -32,18 +33,19 @@ public static class BoardGameVerification
     [MenuItem("VRMine/Verification/Run Board Games Gate")]
     public static void RunGate()
     {
-        EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        PrepareReleaseScene();
         StringBuilder report = new StringBuilder();
         int failures = 0;
         failures += Check(report, "Scene", SceneManager.GetActiveScene().path == ScenePath, SceneManager.GetActiveScene().path);
         failures += Check(report, "SceneDescriptor", Object.FindObjectsOfType<VRCSceneDescriptor>(true).Length == 1, Object.FindObjectsOfType<VRCSceneDescriptor>(true).Length.ToString());
-        failures += Check(report, "TrickMeister", Object.FindObjectsOfType<GameController>(true).Length == 1, Object.FindObjectsOfType<GameController>(true).Length.ToString());
-        failures += Check(report, "OrapaMine", Object.FindObjectsOfType<OrapaMineGame>(true).Length == 1, Object.FindObjectsOfType<OrapaMineGame>(true).Length.ToString());
+        failures += Check(report, "RuleForge", Object.FindObjectsOfType<GameController>(true).Length == 1, Object.FindObjectsOfType<GameController>(true).Length.ToString());
+        failures += Check(report, "EchoMine", Object.FindObjectsOfType<OrapaMineGame>(true).Length == 1, Object.FindObjectsOfType<OrapaMineGame>(true).Length.ToString());
         failures += Check(report, "Chess", Object.FindObjectsOfType<ChessGame>(true).Length == 1, Object.FindObjectsOfType<ChessGame>(true).Length.ToString());
         failures += Check(report, "NetworkProbe", Object.FindObjectsOfType<NetworkVerificationProbe>(true).Length == 1, Object.FindObjectsOfType<NetworkVerificationProbe>(true).Length.ToString());
+        failures += Check(report, "TrickSeatLifecycle", Object.FindObjectsOfType<TrickSeatLifecycle>(true).Length == 1, Object.FindObjectsOfType<TrickSeatLifecycle>(true).Length.ToString());
 
         BoardGameAction[] actions = Object.FindObjectsOfType<BoardGameAction>(true);
-        failures += Check(report, "Interactions", actions.Length >= 145, actions.Length.ToString());
+        failures += Check(report, "Interactions", actions.Length >= 152, actions.Length.ToString());
         UdonSharpBehaviour[] behaviours = Object.FindObjectsOfType<UdonSharpBehaviour>(true);
         int valid = 0;
         for (int i = 0; i < behaviours.Length; i++)
@@ -59,6 +61,12 @@ public static class BoardGameVerification
         VRCSceneDescriptor descriptor = Object.FindObjectOfType<VRCSceneDescriptor>(true);
         failures += Check(report, "Spawn", descriptor != null && descriptor.spawns != null && descriptor.spawns.Length > 0, descriptor == null || descriptor.spawns == null ? "0" : descriptor.spawns.Length.ToString());
         failures += Check(report, "ReferenceCamera", descriptor != null && descriptor.ReferenceCamera != null, descriptor == null || descriptor.ReferenceCamera == null ? "null" : descriptor.ReferenceCamera.name);
+        failures += Check(report, "PlayerCountControls", HasObjects(
+            "TrickPlayerCount_3", "TrickPlayerCount_4", "TrickPlayerCount_5",
+            "OrapaPlayerCount_2", "OrapaPlayerCount_3", "OrapaPlayerCount_4", "OrapaPlayerCount_5"), "7 controls");
+        failures += Check(report, "TrickTableObjects", HasObjects(
+            "TrickTableCard_0", "TrickTableCard_1", "TrickTableCard_2", "TrickTableCard_3", "TrickTableCard_4"), "5 displays");
+        failures += Check(report, "PublicGameNames", HasLabel("RULEFORGE") && HasLabel("ECHO MINE"), "RULEFORGE / ECHO MINE");
         report.AppendLine("Result: " + (failures == 0 ? "PASS" : "FAIL"));
         WriteReport(EditReportPath, report.ToString());
     }
@@ -66,7 +74,7 @@ public static class BoardGameVerification
     [MenuItem("VRMine/Verification/Run Board Games Runtime Gate")]
     public static void StartRuntimeGate()
     {
-        EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        PrepareReleaseScene();
         SessionState.SetString("VRMine.BoardGamesRuntime", "enter");
         EditorApplication.isPlaying = true;
     }
@@ -74,15 +82,32 @@ public static class BoardGameVerification
     [MenuItem("VRMine/Verification/Build And Test Two Clients")]
     public static async void BuildAndTestTwoClients()
     {
-        EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-        EditorSceneManager.SaveOpenScenes();
+        PrepareReleaseScene();
         SetVrcSetting("NumClients", 2);
         SetVrcSetting("ForceNoVR", true);
+
+        NetworkVerificationProbe probe = Object.FindObjectOfType<NetworkVerificationProbe>(true);
+        if (probe == null)
+        {
+            WriteReport(VrcReportPath, "FAIL\nGate: G3 VRChat Build & Test\nReason: NetworkVerificationProbe is missing");
+            return;
+        }
+        int runToken = GenerateRunToken();
+        probe.runToken = runToken;
+        probe.sequence = 0;
+        probe.phase = 0;
+        probe.firstPlayerId = 0;
+        probe.secondPlayerId = 0;
+        probe.publishedOwnerId = 0;
+        EditorUtility.SetDirty(probe);
+        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        EditorSceneManager.SaveOpenScenes();
 
         string clientPath = ResolveVrChatClientPath(GetConfiguredClientPath());
         if (string.IsNullOrEmpty(clientPath) || !File.Exists(clientPath))
         {
-            WriteReport(VrcReportPath, "FAIL\nGate: G3 VRChat Build & Test\nReason: VRChat client executable was not found\nChecked configured path and Steam library locations");
+            WriteReport(VrcReportPath, "FAIL\nGate: G3 VRChat Build & Test\nRunToken: " + runToken
+                + "\nReason: VRChat client executable was not found\nChecked configured path and Steam library locations");
             return;
         }
         SetConfiguredClientPath(clientPath);
@@ -90,13 +115,13 @@ public static class BoardGameVerification
         IVRCSdkWorldBuilderApi builder;
         if (!VRCSdkControlPanel.TryGetBuilder(out builder))
         {
-            WriteReport(VrcReportPath, "FAIL\nGate: G3 VRChat Build & Test\nReason: world builder unavailable");
+            WriteReport(VrcReportPath, "FAIL\nGate: G3 VRChat Build & Test\nRunToken: " + runToken + "\nReason: world builder unavailable");
             return;
         }
         string validation;
         if (!builder.IsValidBuilder(out validation))
         {
-            WriteReport(VrcReportPath, "FAIL\nGate: G3 VRChat Build & Test\nReason: " + validation);
+            WriteReport(VrcReportPath, "FAIL\nGate: G3 VRChat Build & Test\nRunToken: " + runToken + "\nReason: " + validation);
             return;
         }
 
@@ -105,49 +130,64 @@ public static class BoardGameVerification
         WriteReport(VrcReportPath,
             "RUNNING\nGate: G3 VRChat Build & Test\nScene: " + ScenePath
             + "\nClients: 2\nDesktop: true\nClient: " + clientPath
+            + "\nRunToken: " + runToken
             + "\nStartedUtc: " + started.ToString("O")
-            + "\nPASS is not granted until client logs are finalized.");
+            + "\nPASS is not granted until matching client logs are finalized.");
         try
         {
             await builder.BuildAndTest();
             WriteReport(VrcReportPath,
                 "LAUNCHED\nGate: G3 VRChat Build & Test\nScene: " + ScenePath
                 + "\nClients: 2\nClient: " + clientPath
+                + "\nRunToken: " + runToken
                 + "\nStartedUtc: " + started.ToString("O")
                 + "\nNext: VRMine/Verification/Finalize Two Client Logs");
         }
         catch (Exception exception)
         {
-            WriteReport(VrcReportPath, "FAIL\nGate: G3 VRChat Build & Test\nException: " + exception);
+            WriteReport(VrcReportPath, "FAIL\nGate: G3 VRChat Build & Test\nRunToken: " + runToken + "\nException: " + exception);
         }
     }
 
     [MenuItem("VRMine/Verification/Finalize Two Client Logs")]
     public static void FinalizeTwoClientLogs()
     {
+        string launchReport = File.Exists(VrcReportPath) ? File.ReadAllText(VrcReportPath) : "";
+        int expectedRunToken;
+        DateTime startedUtc;
+        if (!TryReadIntField(launchReport, "RunToken", out expectedRunToken) || expectedRunToken <= 0
+            || !TryReadUtcField(launchReport, "StartedUtc", out startedUtc))
+        {
+            WriteReport(VrcReportPath,
+                "FAIL\nGate: G3 VRChat Two-Client Evidence\nReason: current launch report has no valid RunToken and StartedUtc; run Build And Test Two Clients again\nResult: FAIL");
+            return;
+        }
+
         string logDirectory = VrChatLogDirectory();
         StringBuilder report = new StringBuilder();
         report.AppendLine("G3 VRChat Two-Client Evidence");
+        report.AppendLine("RunToken: " + expectedRunToken);
+        report.AppendLine("StartedUtc: " + startedUtc.ToString("O"));
         report.AppendLine("LogDirectory: " + logDirectory);
         if (!Directory.Exists(logDirectory))
         {
-            report.AppendLine("Result: FAIL");
             report.AppendLine("Reason: VRChat log directory does not exist");
+            report.AppendLine("Result: FAIL");
             WriteReport(VrcReportPath, report.ToString());
             return;
         }
 
-        DateTime cutoff = DateTime.UtcNow.AddMinutes(-60);
+        DateTime cutoff = startedUtc.AddMinutes(-1);
         string[] files = Directory.GetFiles(logDirectory, "output_log_*.txt")
             .Where(path => File.GetLastWriteTimeUtc(path) >= cutoff)
             .OrderByDescending(File.GetLastWriteTimeUtc)
             .Take(10)
             .ToArray();
-        report.AppendLine("RecentLogs: " + files.Length);
+        report.AppendLine("CandidateLogs: " + files.Length);
         for (int i = 0; i < files.Length; i++) report.AppendLine("- " + Path.GetFileName(files[i]));
 
-        Regex markerRegex = new Regex(@"\[VRMINE_G3\] marker=(\S+) local=(\d+)");
-        Regex gameRegex = new Regex(@"\[VRMINE_G3_GAME\] game=(\S+) local=(\d+) phase=(\d+) value=(\d+)");
+        Regex markerRegex = new Regex(@"\[VRMINE_G3\] run=(\d+) marker=(\S+) local=(\d+)");
+        Regex gameRegex = new Regex(@"\[VRMINE_G3_GAME\] run=(\d+) game=(\S+) local=(\d+) phase=(\d+) value=(\d+)");
         HashSet<int> localPlayers = new HashSet<int>();
         HashSet<string> markers = new HashSet<string>();
         Dictionary<string, HashSet<int>> baseline = NewGameEvidence();
@@ -163,16 +203,23 @@ public static class BoardGameVerification
                 Match marker = markerRegex.Match(lines[lineIndex]);
                 if (marker.Success)
                 {
-                    markers.Add(marker.Groups[1].Value);
+                    int token;
                     int localId;
-                    if (int.TryParse(marker.Groups[2].Value, out localId) && localId > 0) localPlayers.Add(localId);
+                    if (!int.TryParse(marker.Groups[1].Value, out token) || token != expectedRunToken) continue;
+                    markers.Add(marker.Groups[2].Value);
+                    if (int.TryParse(marker.Groups[3].Value, out localId) && localId > 0) localPlayers.Add(localId);
                 }
+
                 Match game = gameRegex.Match(lines[lineIndex]);
                 if (!game.Success) continue;
-                string gameName = game.Groups[1].Value;
+                int gameToken;
                 int localIdValue;
                 int phaseValue;
-                if (!int.TryParse(game.Groups[2].Value, out localIdValue) || !int.TryParse(game.Groups[3].Value, out phaseValue) || localIdValue <= 0) continue;
+                if (!int.TryParse(game.Groups[1].Value, out gameToken) || gameToken != expectedRunToken
+                    || !int.TryParse(game.Groups[3].Value, out localIdValue)
+                    || !int.TryParse(game.Groups[4].Value, out phaseValue)
+                    || localIdValue <= 0) continue;
+                string gameName = game.Groups[2].Value;
                 localPlayers.Add(localIdValue);
                 Dictionary<string, HashSet<int>> target = phaseValue == 1 ? baseline : phaseValue == 2 ? handoff : null;
                 if (target != null && target.ContainsKey(gameName)) target[gameName].Add(localIdValue);
@@ -183,14 +230,15 @@ public static class BoardGameVerification
         failures += Check(report, "DistinctClients", localPlayers.Count >= 2, string.Join(",", localPlayers));
         failures += CheckMarker(report, markers, "PUBLISH_BASELINE");
         failures += CheckMarker(report, markers, "OBSERVE_BASELINE");
+        failures += CheckMarker(report, markers, "SECOND_CLIENT_SYNC_OBSERVED");
         failures += CheckMarker(report, markers, "OWNERSHIP_TRANSFERRED");
         failures += CheckMarker(report, markers, "REPUBLISH_BY_NEW_OWNER");
         failures += CheckMarker(report, markers, "OBSERVE_REPUBLISH");
-        failures += CheckMarker(report, markers, "RESTORE_OR_LATE_JOIN");
         failures += CheckMarker(report, markers, "RESTORED_AFTER_TEST");
         failures += CheckGameEvidence(report, "TRICK", baseline, handoff);
         failures += CheckGameEvidence(report, "ORAPA", baseline, handoff);
         failures += CheckGameEvidence(report, "CHESS", baseline, handoff);
+        report.AppendLine("LateJoin: NOT_AUTOMATED; verify manually after private upload");
         report.AppendLine("Result: " + (failures == 0 ? "PASS" : "FAIL"));
         WriteReport(VrcReportPath, report.ToString());
     }
@@ -213,14 +261,56 @@ public static class BoardGameVerification
         int chessFailures = chess == null ? 1 : chess.VerifyRules();
         StringBuilder report = new StringBuilder();
         report.AppendLine("Board Games Runtime Verification");
-        report.AppendLine((trickFailures == 0 ? "PASS " : "FAIL ") + "TrickMeisterRules failures=" + trickFailures);
-        report.AppendLine((orapaFailures == 0 ? "PASS " : "FAIL ") + "OrapaReflection failures=" + orapaFailures);
+        report.AppendLine((trickFailures == 0 ? "PASS " : "FAIL ") + "RuleForgeRules failures=" + trickFailures);
+        report.AppendLine((orapaFailures == 0 ? "PASS " : "FAIL ") + "EchoMineSimulation failures=" + orapaFailures);
         report.AppendLine((chessFailures == 0 ? "PASS " : "FAIL ") + "ChessRules failures=" + chessFailures);
         bool passed = trickFailures == 0 && orapaFailures == 0 && chessFailures == 0;
         report.AppendLine("Result: " + (passed ? "PASS" : "FAIL"));
         WriteReport(RuntimeReportPath, report.ToString());
         SessionState.SetString("VRMine.BoardGamesRuntime", "");
         EditorApplication.isPlaying = false;
+    }
+
+    static void PrepareReleaseScene()
+    {
+        if (!File.Exists(ScenePath)) BoardGameShowcaseBuilder.Build();
+        EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        BoardGameSceneUpgrade.EnsurePlayerControls();
+        VRMinePublicNameUpgrade.Apply();
+        EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+    }
+
+    static bool HasObjects(params string[] names)
+    {
+        for (int i = 0; i < names.Length; i++) if (GameObject.Find(names[i]) == null) return false;
+        return true;
+    }
+
+    static bool HasLabel(string expected)
+    {
+        UnityEngine.UI.Text[] labels = Object.FindObjectsOfType<UnityEngine.UI.Text>(true);
+        for (int i = 0; i < labels.Length; i++) if (labels[i].text == expected) return true;
+        return false;
+    }
+
+    static int GenerateRunToken()
+    {
+        long mixed = DateTime.UtcNow.Ticks ^ Environment.TickCount;
+        int token = (int)(mixed & 0x7fffffff);
+        return token == 0 ? 1 : token;
+    }
+
+    static bool TryReadIntField(string text, string field, out int value)
+    {
+        Match match = Regex.Match(text, "^" + Regex.Escape(field) + @":\s*(\d+)\s*$", RegexOptions.Multiline);
+        return match.Success && int.TryParse(match.Groups[1].Value, out value);
+    }
+
+    static bool TryReadUtcField(string text, string field, out DateTime value)
+    {
+        Match match = Regex.Match(text, "^" + Regex.Escape(field) + @":\s*(\S+)\s*$", RegexOptions.Multiline);
+        return match.Success && DateTime.TryParse(match.Groups[1].Value, CultureInfo.InvariantCulture,
+            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out value);
     }
 
     static Dictionary<string, HashSet<int>> NewGameEvidence()
@@ -313,7 +403,8 @@ public static class BoardGameVerification
     static string VrChatLogDirectory()
     {
         string local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        string profile = Directory.GetParent(local).FullName;
+        DirectoryInfo parent = Directory.GetParent(local);
+        string profile = parent == null ? local : parent.FullName;
         return Path.Combine(profile, "LocalLow", "VRChat", "VRChat");
     }
 
