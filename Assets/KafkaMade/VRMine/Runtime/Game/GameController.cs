@@ -10,7 +10,7 @@ public class GameController : UdonSharpBehaviour
     public PlayerClient[] mailboxes = new PlayerClient[0];
     public WaveSimulator wave;
     public LogStream logStream;
-    public int localPlayerSeat;
+    public int localPlayerSeat = -1;
     public byte[] specialTrumpKinds = new byte[] { 2, 1, 3, 5, 6, 4 };
     [UdonSynced] public uint boardSeed;
     [UdonSynced] public uint boardHash;
@@ -31,17 +31,37 @@ public class GameController : UdonSharpBehaviour
 
     public override void OnDeserialization()
     {
+        if (!HasLocalSeat()) localPlayerSeat = -1;
+        SchedulePendingResolution();
         Render();
+    }
+
+    public override void OnOwnershipTransferred(VRCPlayerApi player)
+    {
+        if (player != null && player.isLocal) SchedulePendingResolution();
     }
 
     public void ConfigurePlayers(int count)
     {
+        OwnState();
         board.playerCount = (byte)Mathf.Clamp(count, 3, NetConst.MaxPlayers);
+        localPlayerSeat = -1;
+        for (int i = 0; i < board.occupiedPlayerIds.Length; i++) board.occupiedPlayerIds[i] = 0;
+        ClearForWaitingRoom();
+        Sync();
     }
 
     public void SetupGame()
     {
-        if (boardSeed == 0) boardSeed = (uint)Random.Range(1, int.MaxValue);
+        OwnState();
+        if (!AllSeatsOccupied())
+        {
+            ClearForWaitingRoom();
+            Sync();
+            return;
+        }
+
+        boardSeed = (uint)Random.Range(1, int.MaxValue);
         randomState = boardSeed;
         turnIndex = 0;
         winnerPlayerId = 0;
@@ -60,7 +80,7 @@ public class GameController : UdonSharpBehaviour
     {
         if (board.phase != BoardState.PhaseRuleSelect) return;
         int seat = localPlayerSeat;
-        if (seat >= board.playerCount || handIndex < 0 || handIndex >= 3) return;
+        if (seat < 0 || seat >= board.playerCount || handIndex < 0 || handIndex >= 3) return;
         if (board.playerCount == 5 && seat == (board.dealerSeat + 1) % board.playerCount) return;
         byte rule = board.ruleHands[seat * 3 + handIndex];
         if (rule == 0 || board.selectedRuleBySeat[seat] != 0) return;
@@ -73,6 +93,7 @@ public class GameController : UdonSharpBehaviour
 
     public void OnCardClicked(int handIndex)
     {
+        if (!HasLocalSeat()) return;
         if (board.phase == BoardState.PhasePrepare)
         {
             ToggleMarkedCard(handIndex);
@@ -85,7 +106,7 @@ public class GameController : UdonSharpBehaviour
 
     public void ConfirmMarkedCards()
     {
-        if (board.phase != BoardState.PhasePrepare) return;
+        if (!HasLocalSeat() || board.phase != BoardState.PhasePrepare) return;
         int required = board.prepareStep == 3 ? 1 : 3;
         int count = 0;
         int offset = localPlayerSeat * NetConst.MaxHandSize;
@@ -108,10 +129,39 @@ public class GameController : UdonSharpBehaviour
         board.trickSeats[slot] = (byte)playerSeat;
         board.trickCardCount++;
         board.playerHands[offset + handIndex] = 0;
-        if (board.trickCardCount == board.playerCount) ResolveTrick();
-        else board.currentPlayerSeat = (byte)NextSeat(playerSeat, CurrentDirection());
         turnIndex++;
+
+        if (board.trickCardCount == board.playerCount)
+        {
+            board.phase = BoardState.PhaseResolveTrick;
+            Sync();
+            SendCustomEventDelayedSeconds(nameof(ResolvePendingTrick), HasRule(26) ? 2.25f : 0.55f);
+            return;
+        }
+
+        board.currentPlayerSeat = (byte)NextSeat(playerSeat, CurrentDirection());
         Sync();
+    }
+
+    public void ResolvePendingTrick()
+    {
+        if (!Networking.IsOwner(gameObject)) return;
+        if (board.phase != BoardState.PhaseResolveTrick || board.trickCardCount != board.playerCount) return;
+        ResolveTrick();
+        Sync();
+    }
+
+    public bool ShouldHideTrickCard(int slot)
+    {
+        return HasRule(26)
+            && board.phase == BoardState.PhasePlayCard
+            && slot > 0
+            && slot < board.trickCardCount;
+    }
+
+    public bool RuleActive(int rule)
+    {
+        return HasRule(rule);
     }
 
     public void OnDeclare()
@@ -133,13 +183,17 @@ public class GameController : UdonSharpBehaviour
 
     public void JoinGame(int seat)
     {
-        if (seat < 0 || seat >= board.playerCount) return;
+        VRCPlayerApi player = Networking.LocalPlayer;
+        if (player == null || seat < 0 || seat >= board.playerCount) return;
+        for (int i = 0; i < board.playerCount; i++)
+            if (board.occupiedPlayerIds[i] == player.playerId && i != seat) return;
+        if (board.occupiedPlayerIds[seat] != 0 && board.occupiedPlayerIds[seat] != player.playerId) return;
+
         OwnState();
-        int playerId = Networking.LocalPlayer.playerId;
-        if (board.occupiedPlayerIds[seat] != 0 && board.occupiedPlayerIds[seat] != playerId) return;
         localPlayerSeat = seat;
-        board.occupiedPlayerIds[seat] = playerId;
-        Sync();
+        board.occupiedPlayerIds[seat] = player.playerId;
+        if (board.phase == BoardState.PhaseSetup && AllSeatsOccupied()) SetupGame();
+        else Sync();
     }
 
     public void Render()
@@ -177,6 +231,13 @@ public class GameController : UdonSharpBehaviour
         if (!Beats(4, 8, 2)) failures++;
         board.selectedRules[0] = 5;
         if (!Beats(38, 15, 15)) failures++;
+
+        board.selectedRules[0] = 26;
+        board.phase = BoardState.PhasePlayCard;
+        board.trickCardCount = 2;
+        if (ShouldHideTrickCard(0) || !ShouldHideTrickCard(1)) failures++;
+        board.phase = BoardState.PhaseResolveTrick;
+        if (ShouldHideTrickCard(1)) failures++;
         return failures;
     }
 
@@ -258,7 +319,7 @@ public class GameController : UdonSharpBehaviour
 
     void ToggleMarkedCard(int handIndex)
     {
-        if (handIndex < 0 || handIndex >= NetConst.MaxHandSize) return;
+        if (localPlayerSeat < 0 || handIndex < 0 || handIndex >= NetConst.MaxHandSize) return;
         int index = localPlayerSeat * NetConst.MaxHandSize + handIndex;
         if (board.playerHands[index] == 0) return;
         OwnState();
@@ -306,7 +367,7 @@ public class GameController : UdonSharpBehaviour
         for (int i = 0; i < board.markedCards.Length; i++)
         {
             byte card = board.playerHands[i];
-            if (board.markedCards[i] != 0) board.faceUpCards[CardId(card)] = 1;
+            if (card != 0 && board.markedCards[i] != 0) board.faceUpCards[CardId(card)] = 1;
         }
     }
 
@@ -379,6 +440,7 @@ public class GameController : UdonSharpBehaviour
         }
         int leader = HasRule(36) ? NextSeat(winner, -1) : winner;
         board.currentPlayerSeat = (byte)leader;
+        board.phase = BoardState.PhasePlayCard;
     }
 
     int SecondHighestSlot()
@@ -605,6 +667,11 @@ public class GameController : UdonSharpBehaviour
 
     byte DrawRule()
     {
+        if (board.ruleDeckCursor >= board.ruleDeck.Length)
+        {
+            board.ruleDeckCursor = 0;
+            Shuffle(board.ruleDeck, board.ruleDeck.Length);
+        }
         return board.ruleDeck[board.ruleDeckCursor++];
     }
 
@@ -644,6 +711,7 @@ public class GameController : UdonSharpBehaviour
 
     void AddCard(int seat, byte card)
     {
+        if (card == 0) return;
         int offset = seat * NetConst.MaxHandSize;
         for (int i = 0; i < NetConst.MaxHandSize; i++)
             if (board.playerHands[offset + i] == 0)
@@ -667,6 +735,54 @@ public class GameController : UdonSharpBehaviour
     {
         for (int i = 0; i < board.selectedRules.Length; i++) if (board.selectedRules[i] == rule) return true;
         return false;
+    }
+
+    bool AllSeatsOccupied()
+    {
+        for (int seat = 0; seat < board.playerCount; seat++) if (board.occupiedPlayerIds[seat] == 0) return false;
+        return true;
+    }
+
+    bool HasLocalSeat()
+    {
+        VRCPlayerApi player = Networking.LocalPlayer;
+        return player != null
+            && localPlayerSeat >= 0
+            && localPlayerSeat < board.playerCount
+            && board.occupiedPlayerIds[localPlayerSeat] == player.playerId;
+    }
+
+    void ClearForWaitingRoom()
+    {
+        winnerPlayerId = 0;
+        turnIndex = 0;
+        board.phase = BoardState.PhaseSetup;
+        board.roundIndex = 0;
+        board.currentPlayerSeat = 0;
+        board.trickIndex = 0;
+        board.trickCardCount = 0;
+        board.confirmedMask = 0;
+        board.prepareStep = 0;
+        for (int i = 0; i < board.playerHands.Length; i++) board.playerHands[i] = 0;
+        for (int i = 0; i < board.ruleHands.Length; i++) board.ruleHands[i] = 0;
+        for (int i = 0; i < board.selectedRules.Length; i++) board.selectedRules[i] = 0;
+        for (int i = 0; i < board.selectedRuleBySeat.Length; i++) board.selectedRuleBySeat[i] = 0;
+        for (int i = 0; i < board.trickCards.Length; i++)
+        {
+            board.trickCards[i] = 0;
+            board.trickSeats[i] = 0;
+        }
+        for (int i = 0; i < board.markedCards.Length; i++) board.markedCards[i] = 0;
+        for (int i = 0; i < board.reservedCards.Length; i++) board.reservedCards[i] = 0;
+        for (int i = 0; i < board.takenTricks.Length; i++) board.takenTricks[i] = 0;
+        for (int i = 0; i < board.scores.Length; i++) board.scores[i] = 0;
+    }
+
+    void SchedulePendingResolution()
+    {
+        if (!Networking.IsOwner(gameObject)) return;
+        if (board.phase != BoardState.PhaseResolveTrick || board.trickCardCount != board.playerCount) return;
+        SendCustomEventDelayedSeconds(nameof(ResolvePendingTrick), HasRule(26) ? 2.25f : 0.55f);
     }
 
     int CardId(byte card)
@@ -697,8 +813,10 @@ public class GameController : UdonSharpBehaviour
 
     void OwnState()
     {
-        if (!Networking.IsOwner(gameObject)) Networking.SetOwner(Networking.LocalPlayer, gameObject);
-        if (!Networking.IsOwner(board.gameObject)) Networking.SetOwner(Networking.LocalPlayer, board.gameObject);
+        VRCPlayerApi player = Networking.LocalPlayer;
+        if (player == null) return;
+        if (!Networking.IsOwner(gameObject)) Networking.SetOwner(player, gameObject);
+        if (!Networking.IsOwner(board.gameObject)) Networking.SetOwner(player, board.gameObject);
     }
 
     void Sync()
