@@ -38,6 +38,9 @@ public static class VRMineReleaseGate
         failures += Check(report, "TrickSeatLifecycle", Object.FindObjectsOfType<TrickSeatLifecycle>(true).Length == 1, Object.FindObjectsOfType<TrickSeatLifecycle>(true).Length.ToString());
         failures += Check(report, "TrickPlayerCountControls", HasObjects("TrickPlayerCount_3", "TrickPlayerCount_4", "TrickPlayerCount_5"), "3P/4P/5P");
         failures += Check(report, "OrapaPlayerCountControls", HasObjects("OrapaPlayerCount_2", "OrapaPlayerCount_3", "OrapaPlayerCount_4", "OrapaPlayerCount_5"), "2P/3P/4P/5P");
+        failures += Check(report, "TrickTableObjects", HasObjects("TrickTableCard_0", "TrickTableCard_1", "TrickTableCard_2", "TrickTableCard_3", "TrickTableCard_4"), "five synchronized card displays");
+        BoardGameShowcaseView showcase = Object.FindObjectOfType<BoardGameShowcaseView>(true);
+        failures += Check(report, "TrickTableWiring", HasTrickTableWiring(showcase), showcase == null ? "missing view" : "view array");
         failures += CheckReport(report, "G1Structure", StructureReport);
         failures += CheckReport(report, "G2RuntimeRules", RuntimeReport);
         failures += CheckReport(report, "G3TwoClientNetwork", NetworkReport);
@@ -48,6 +51,13 @@ public static class VRMineReleaseGate
         File.WriteAllText(ReleaseReport, report.ToString(), Encoding.UTF8);
         AssetDatabase.Refresh();
         Debug.Log(report.ToString());
+    }
+
+    static bool HasTrickTableWiring(BoardGameShowcaseView view)
+    {
+        if (view == null || view.trickTableCards == null || view.trickTableCards.Length != NetConst.MaxPlayers) return false;
+        for (int i = 0; i < view.trickTableCards.Length; i++) if (view.trickTableCards[i] == null) return false;
+        return true;
     }
 
     static bool HasObjects(params string[] names)
