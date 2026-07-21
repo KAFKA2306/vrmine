@@ -19,6 +19,7 @@ public static class VRMineReleaseGate
         if (!File.Exists(ScenePath)) BoardGameShowcaseBuilder.Build();
         EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
         BoardGameSceneUpgrade.EnsurePlayerControls();
+        VRMinePublicNameUpgrade.Apply();
         EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
         BoardGameVerification.RunGate();
 
@@ -41,6 +42,7 @@ public static class VRMineReleaseGate
         failures += Check(report, "TrickTableObjects", HasObjects("TrickTableCard_0", "TrickTableCard_1", "TrickTableCard_2", "TrickTableCard_3", "TrickTableCard_4"), "five synchronized card displays");
         BoardGameShowcaseView showcase = Object.FindObjectOfType<BoardGameShowcaseView>(true);
         failures += Check(report, "TrickTableWiring", HasTrickTableWiring(showcase), showcase == null ? "missing view" : "view array");
+        failures += Check(report, "PublicGameNames", HasLabel("RULEFORGE") && HasLabel("ECHO MINE"), "RULEFORGE / ECHO MINE");
         failures += CheckReport(report, "G1Structure", StructureReport);
         failures += CheckReport(report, "G2RuntimeRules", RuntimeReport);
         failures += CheckReport(report, "G3TwoClientNetwork", NetworkReport);
@@ -51,6 +53,13 @@ public static class VRMineReleaseGate
         File.WriteAllText(ReleaseReport, report.ToString(), Encoding.UTF8);
         AssetDatabase.Refresh();
         Debug.Log(report.ToString());
+    }
+
+    static bool HasLabel(string expected)
+    {
+        UnityEngine.UI.Text[] labels = Object.FindObjectsOfType<UnityEngine.UI.Text>(true);
+        for (int i = 0; i < labels.Length; i++) if (labels[i].text == expected) return true;
+        return false;
     }
 
     static bool HasTrickTableWiring(BoardGameShowcaseView view)
