@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Static integrity checks for VRMine.
 
-This intentionally does not claim Unity or VRChat runtime verification. It checks
-that the repository is internally coherent before the platform-specific gates run.
+These checks validate repository coherence. They do not replace Unity, UdonSharp,
+or VRChat client execution in G0-G4.
 """
 from __future__ import annotations
 
@@ -33,8 +33,7 @@ def read(path: str) -> str:
 
 
 def check_versions() -> None:
-    project_version = read("ProjectSettings/ProjectVersion.txt")
-    if "m_EditorVersion: 2022.3.22f1" not in project_version:
+    if "m_EditorVersion: 2022.3.22f1" not in read("ProjectSettings/ProjectVersion.txt"):
         fail("Unity version must be 2022.3.22f1")
 
     for manifest_path in ("Packages/manifest.json", "Packages/vpm-manifest.json"):
@@ -116,12 +115,12 @@ def check_player_controls() -> None:
 
     for fragment in ("action == 5", "ConfigurePlayers(value)", "OwnTrickState"):
         if fragment not in action:
-            fail(f"Trick player-count action is missing: {fragment}")
+            fail(f"RULEFORGE player-count action is missing: {fragment}")
     for fragment in ("action == 8", "orapaGame.ConfigurePlayers(value)"):
         if fragment not in action:
-            fail(f"Orapa player-count action is missing: {fragment}")
+            fail(f"ECHO MINE player-count action is missing: {fragment}")
 
-    generated_control_requirements = (
+    for fragment in (
         'for (int count = 3; count <= 5; count++)',
         '"TrickPlayerCount_" + count',
         '0, 5, count, trick, null, count + "P"',
@@ -129,17 +128,33 @@ def check_player_controls() -> None:
         '"OrapaPlayerCount_" + count',
         '1, 8, count, null, orapa, count + "P"',
         'new GameObject("TrickSeatLifecycle")',
-    )
-    for fragment in generated_control_requirements:
+    ):
         if fragment not in scene_upgrade:
             fail(f"generated scene player-control logic is missing: {fragment}")
 
     for fragment in ("NextActiveSeat", "OnPlayerLeft", "attempts[seat] < 2"):
         if fragment not in orapa:
-            fail(f"Orapa active-seat lifecycle is missing: {fragment}")
+            fail(f"ECHO MINE active-seat lifecycle is missing: {fragment}")
     for fragment in ("OnPlayerLeft", "occupiedPlayerIds[seat] = 0", "local.isMaster"):
         if fragment not in lifecycle:
-            fail(f"Trick seat lifecycle is missing: {fragment}")
+            fail(f"RULEFORGE seat lifecycle is missing: {fragment}")
+
+
+def check_scene_upgrade_idempotence() -> None:
+    scene_upgrade = read("Assets/KafkaMade/VRMine/Editor/BoardGameSceneUpgrade.cs")
+    for fragment in (
+        "static bool upgradeInProgress",
+        "IsUpgradeInProgress",
+        "if (!changed) return;",
+        "ReferencesMatch",
+        "MinimumGeneratedActions = 152",
+        "CountComponents<BoardGameAction>(scene) < MinimumGeneratedActions",
+        "BoardGameShowcaseBuilder.Build();",
+        "AssetDatabase.CreateAsset(material, path)",
+        "if (BoardGameSceneUpgrade.IsUpgradeInProgress) return;",
+    ):
+        if fragment not in scene_upgrade:
+            fail(f"idempotent scene upgrade is missing: {fragment}")
 
 
 def check_trick_table_and_rule_26() -> None:
@@ -158,13 +173,13 @@ def check_trick_table_and_rule_26() -> None:
         "AllSeatsOccupied()",
     ):
         if fragment not in controller:
-            fail(f"Trick rule-26 or waiting-room flow is missing: {fragment}")
+            fail(f"RULEFORGE rule-26 or waiting-room flow is missing: {fragment}")
     if "controller.ShouldHideTrickCard(i)" not in board_view:
         fail("BoardView does not hide rule-26 trick cards")
     for fragment in ("trickTableCards", '"FACE\\nDOWN"', "OccupiedSeats"):
         if fragment not in showcase:
             fail(f"showcase trick table is missing: {fragment}")
-    for fragment in ('"TrickTableCard_" + slot', "view.trickTableCards[slot] = AddDisplay"):
+    for fragment in ('"TrickTableCard_" + slot', "desiredTableCards[slot] = EnsureDisplay"):
         if fragment not in scene_upgrade:
             fail(f"scene upgrade does not wire Trick table display: {fragment}")
     for public_name in ('label.text = "RULEFORGE"', 'label.text = "ECHO MINE"'):
@@ -172,28 +187,47 @@ def check_trick_table_and_rule_26() -> None:
             fail(f"public game-name replacement is missing: {public_name}")
 
 
-def check_verification_fail_closed() -> None:
+def check_g3_run_isolation() -> None:
     verification = read("Assets/KafkaMade/VRMine/Editor/BoardGameVerification.cs")
-    required_fragments = (
+    probe = read("Assets/KafkaMade/VRMine/Runtime/Net/NetworkVerificationProbe.cs")
+
+    for fragment in (
         "Build And Test Two Clients",
         "Finalize Two Client Logs",
-        "DistinctClients",
+        "RunToken: ",
+        "StartedUtc: ",
+        "expectedRunToken",
+        "TryReadUtcField",
+        "SECOND_CLIENT_SYNC_OBSERVED",
+        "LateJoin: NOT_AUTOMATED",
         'CheckGameEvidence(report, "TRICK"',
         'CheckGameEvidence(report, "ORAPA"',
         'CheckGameEvidence(report, "CHESS"',
         "RESTORED_AFTER_TEST",
-    )
-    for fragment in required_fragments:
+    ):
         if fragment not in verification:
-            fail(f"two-client verification is missing: {fragment}")
+            fail(f"run-isolated G3 verification is missing: {fragment}")
     if 'await builder.BuildAndTest();\n            WriteReport(VrcReportPath, "PASS' in verification:
         fail("BuildAndTest must not write PASS without parsing client evidence")
 
+    for fragment in (
+        "[UdonSynced] public int runToken",
+        '"[VRMINE_G3] run=" + runToken',
+        '"[VRMINE_G3_GAME] run=" + runToken',
+        'LogMarker("SECOND_CLIENT_SYNC_OBSERVED")',
+    ):
+        if fragment not in probe:
+            fail(f"network probe run isolation is missing: {fragment}")
+    if "RESTORE_OR_LATE_JOIN" in verification or "RESTORE_OR_LATE_JOIN" in probe:
+        fail("simultaneous two-client G3 must not claim late-join evidence")
+
+
+def check_release_gate() -> None:
     release_gate = read("Assets/KafkaMade/VRMine/Editor/VRMineReleaseGate.cs")
     for report_name in ("G1Structure", "G2RuntimeRules", "G3TwoClientNetwork"):
         if report_name not in release_gate:
             fail(f"upload readiness gate is missing {report_name}")
-    for release_requirement in (
+    for requirement in (
         "TrickSeatLifecycle",
         "TrickPlayerCountControls",
         "OrapaPlayerCountControls",
@@ -201,8 +235,8 @@ def check_verification_fail_closed() -> None:
         "TrickTableWiring",
         "PublicGameNames",
     ):
-        if release_requirement not in release_gate:
-            fail(f"upload readiness gate is missing {release_requirement}")
+        if requirement not in release_gate:
+            fail(f"upload readiness gate is missing {requirement}")
 
     g1 = read("Assets/KafkaMade/VRMine/Verification/LatestBoardGamesVerification.txt")
     g2 = read("Assets/KafkaMade/VRMine/Verification/LatestBoardGamesRuntimeVerification.txt")
@@ -212,9 +246,27 @@ def check_verification_fail_closed() -> None:
         fail("G4 says PASS while one or more prerequisite reports are not PASS")
 
 
+def check_public_site_and_claims() -> None:
+    site = read("site/index.html")
+    readme = read("README.md")
+    verification_doc = read("docs/verification.md")
+
+    for fragment in ("<h3>RULEFORGE</h3>", "<h3>ECHO MINE</h3>", "One release-gated world"):
+        if fragment not in site:
+            fail(f"landing page is missing truthful public copy: {fragment}")
+    for forbidden in ("Trick Meister Variant", "Orapa Mine Auto Puzzle", "late join復元", "One verified world"):
+        if forbidden in site:
+            fail(f"landing page contains stale or overstated copy: {forbidden}")
+    if "遅延復元" in readme:
+        fail("README must not claim automated late-join restoration")
+    for fragment in ("RunToken", "SECOND_CLIENT_SYNC_OBSERVED", "遅延参加を自動証明しない"):
+        if fragment not in verification_doc:
+            fail(f"verification documentation is missing: {fragment}")
+
+
 def check_project_index() -> None:
     project = read("PROJECT.md")
-    required = (
+    for item in (
         "docs/games/trick-meister.md",
         "docs/games/orapa-mine.md",
         "docs/games/chess.md",
@@ -225,8 +277,7 @@ def check_project_index() -> None:
         "LatestUploadReadiness.txt",
         "site/index.html",
         ".github/workflows/pages.yml",
-    )
-    for item in required:
+    ):
         if item not in project:
             fail(f"PROJECT.md is missing explicit link: {item}")
 
@@ -260,8 +311,11 @@ def main() -> int:
     check_markdown_links()
     check_rule_matrix()
     check_player_controls()
+    check_scene_upgrade_idempotence()
     check_trick_table_and_rule_26()
-    check_verification_fail_closed()
+    check_g3_run_isolation()
+    check_release_gate()
+    check_public_site_and_claims()
     check_project_index()
 
     if ERRORS:
