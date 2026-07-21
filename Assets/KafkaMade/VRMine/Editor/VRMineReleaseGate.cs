@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 using UnityEditor;
@@ -23,11 +24,13 @@ public static class VRMineReleaseGate
         EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
         BoardGameVerification.RunGate();
 
+        DateTime sourceCutoffUtc = LatestRelevantSourceWriteUtc();
         StringBuilder report = new StringBuilder();
         int failures = 0;
         report.AppendLine("VRMine Upload Readiness");
         report.AppendLine("Unity: " + Application.unityVersion);
         report.AppendLine("BuildTarget: " + EditorUserBuildSettings.activeBuildTarget);
+        report.AppendLine("EvidenceSourceCutoffUtc: " + sourceCutoffUtc.ToString("O"));
         failures += Check(report, "UnityVersion", Application.unityVersion == "2022.3.22f1", Application.unityVersion);
         failures += Check(report, "WindowsBuildTarget", EditorUserBuildSettings.activeBuildTarget == BuildTarget.StandaloneWindows64, EditorUserBuildSettings.activeBuildTarget.ToString());
         failures += Check(report, "WorldSdk3104", File.ReadAllText("Packages/manifest.json").Contains("\"com.vrchat.worlds\": \"3.10.4\""), "Packages/manifest.json");
@@ -43,16 +46,42 @@ public static class VRMineReleaseGate
         BoardGameShowcaseView showcase = Object.FindObjectOfType<BoardGameShowcaseView>(true);
         failures += Check(report, "TrickTableWiring", HasTrickTableWiring(showcase), showcase == null ? "missing view" : "view array");
         failures += Check(report, "PublicGameNames", HasLabel("RULEFORGE") && HasLabel("ECHO MINE"), "RULEFORGE / ECHO MINE");
-        failures += CheckReport(report, "G1Structure", StructureReport);
-        failures += CheckReport(report, "G2RuntimeRules", RuntimeReport);
-        failures += CheckReport(report, "G3TwoClientNetwork", NetworkReport);
+        failures += CheckReport(report, "G1Structure", StructureReport, sourceCutoffUtc, false);
+        failures += CheckReport(report, "G2RuntimeRules", RuntimeReport, sourceCutoffUtc, false);
+        failures += CheckReport(report, "G3TwoClientNetwork", NetworkReport, sourceCutoffUtc, true);
         report.AppendLine("Result: " + (failures == 0 ? "PASS" : "BLOCKED"));
         report.AppendLine(failures == 0
-            ? "The checked project state is eligible for VRChat SDK upload. Keep this report with the uploaded build."
-            : "Upload is blocked. Run the missing gates; never interpret LAUNCHED or historical reports as PASS.");
+            ? "The checked project state is eligible for private VRChat SDK upload. Complete the recorded private-instance smoke test before any public release claim."
+            : "Upload is blocked. Run the missing or stale gates; never interpret LAUNCHED or historical reports as PASS.");
         File.WriteAllText(ReleaseReport, report.ToString(), Encoding.UTF8);
         AssetDatabase.Refresh();
         Debug.Log(report.ToString());
+    }
+
+    static DateTime LatestRelevantSourceWriteUtc()
+    {
+        DateTime latest = DateTime.MinValue;
+        UpdateLatest(ref latest, "Packages/manifest.json");
+        UpdateLatest(ref latest, "Packages/vpm-manifest.json");
+        UpdateLatest(ref latest, "ProjectSettings/ProjectVersion.txt");
+        UpdateLatest(ref latest, ScenePath);
+        UpdateLatestInDirectory(ref latest, "Assets/KafkaMade/VRMine/Runtime", "*.cs");
+        UpdateLatestInDirectory(ref latest, "Assets/KafkaMade/VRMine/Editor", "*.cs");
+        return latest;
+    }
+
+    static void UpdateLatestInDirectory(ref DateTime latest, string directory, string pattern)
+    {
+        if (!Directory.Exists(directory)) return;
+        string[] files = Directory.GetFiles(directory, pattern, SearchOption.AllDirectories);
+        for (int i = 0; i < files.Length; i++) UpdateLatest(ref latest, files[i]);
+    }
+
+    static void UpdateLatest(ref DateTime latest, string path)
+    {
+        if (!File.Exists(path)) return;
+        DateTime value = File.GetLastWriteTimeUtc(path);
+        if (value > latest) latest = value;
     }
 
     static bool HasLabel(string expected)
@@ -75,12 +104,19 @@ public static class VRMineReleaseGate
         return true;
     }
 
-    static int CheckReport(StringBuilder report, string name, string path)
+    static int CheckReport(StringBuilder report, string name, string path, DateTime sourceCutoffUtc, bool requireNetworkFields)
     {
         if (!File.Exists(path)) return Check(report, name, false, "missing " + path);
         string content = File.ReadAllText(path);
+        DateTime reportWriteUtc = File.GetLastWriteTimeUtc(path);
         bool passed = content.Contains("Result: PASS");
-        return Check(report, name, passed, passed ? path : "not PASS: " + path);
+        bool fresh = reportWriteUtc >= sourceCutoffUtc.AddSeconds(-2);
+        bool fields = !requireNetworkFields || content.Contains("RunToken: ")
+            && content.Contains("StartedUtc: ")
+            && content.Contains("LateJoin: NOT_AUTOMATED");
+        string detail = path + " write=" + reportWriteUtc.ToString("O")
+            + " pass=" + passed + " fresh=" + fresh + " fields=" + fields;
+        return Check(report, name, passed && fresh && fields, detail);
     }
 
     static int Check(StringBuilder report, string name, bool passed, string detail)
