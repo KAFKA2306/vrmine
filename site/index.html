@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="VRMine — VRChatで遊ぶ、3つの卓上ゲームを統合した検証駆動ワールド。">
+  <meta name="theme-color" content="#08111f">
+  <title>VRMine — Three Games, One Verified World</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ移動</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="VRMine トップ">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" role="img">
+          <path d="M8 11h32v26H8z"></path>
+          <path d="M16 18h16M16 24h16M16 30h10"></path>
+          <circle cx="36" cy="31" r="5"></circle>
+        </svg>
+      </span>
+      <span>VRMine</span>
+    </a>
+    <nav aria-label="メインナビゲーション">
+      <a href="#games">Games</a>
+      <a href="#verification">Verification</a>
+      <a href="#technical">Technical</a>
+      <a href="https://github.com/KAFKA2306/vrmine">GitHub</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-copy">
+        <p class="eyebrow">VRCHAT TABLETOP WORLD</p>
+        <h1>Three games.<br><span>One verified world.</span></h1>
+        <p class="lead">ルール可変トリックテイキング、超音波推理、チェス。異なる思考ゲームを、1つのVRChatワールドと検証パイプラインへ統合しました。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#games">ゲームを見る</a>
+          <a class="button button-secondary" href="https://github.com/KAFKA2306/vrmine/blob/main/PROJECT.md">PROJECT.md</a>
+        </div>
+        <p class="hero-note">非公式の技術検証・ファン実装です。原作アートや説明書本文は収録していません。</p>
+      </div>
+      <div class="hero-console" aria-label="現在のリリース状態">
+        <div class="console-topline">
+          <span>RELEASE GATE</span>
+          <span class="live-dot" aria-hidden="true"></span>
+        </div>
+        <div class="release-state" id="release-state" data-state="loading">LOADING</div>
+        <p id="release-summary">検証証跡を読み込んでいます。</p>
+        <dl class="gate-mini-grid">
+          <div><dt>G1</dt><dd id="gate-g1">—</dd></div>
+          <div><dt>G2</dt><dd id="gate-g2">—</dd></div>
+          <div><dt>G3</dt><dd id="gate-g3">—</dd></div>
+          <div><dt>G4</dt><dd id="gate-g4">—</dd></div>
+        </dl>
+        <p class="timestamp" id="status-time">Evidence status: loading</p>
+      </div>
+    </section>
+
+    <section class="section" id="games">
+      <div class="section-heading">
+        <p class="eyebrow">GAME COLLECTION</p>
+        <h2>三つの異なる推理構造</h2>
+        <p>各ゲームは独立した状態機械を持ち、同一の生成シーン、操作層、ネットワーク検証層で動作します。</p>
+      </div>
+
+      <div class="game-grid">
+        <article class="game-card trick-card">
+          <div class="card-index">01</div>
+          <div class="game-symbol" aria-hidden="true">
+            <span>F</span><span>C</span><span>K</span><span>G</span>
+          </div>
+          <p class="game-type">3–5 PLAYERS · TRICK TAKING</p>
+          <h3>Trick Meister Variant</h3>
+          <p>毎ラウンド、プレイヤーが選んだルールカードによって、切り札、フォロー、勝者、得点そのものが変化します。</p>
+          <ul>
+            <li>60枚のプレイカード</li>
+            <li>60番号のルール実装表</li>
+            <li>複数ラウンドの同期状態</li>
+          </ul>
+          <div class="card-links">
+            <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/games/trick-meister.md">ルール</a>
+            <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/games/trick-meister-rules.md">60ルール表</a>
+          </div>
+        </article>
+
+        <article class="game-card orapa-card">
+          <div class="card-index">02</div>
+          <div class="wave-visual" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <p class="game-type">2–5 PLAYERS · DEDUCTION</p>
+          <h3>Orapa Mine Auto Puzzle</h3>
+          <p>盤外から超音波を発射し、出口、色の混合、吸収を読み解いて、見えない5個の宝石を特定します。</p>
+          <ul>
+            <li>10×8の推理盤</li>
+            <li>36方向の入射</li>
+            <li>同期seedによる自動問題</li>
+          </ul>
+          <div class="card-links">
+            <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/games/orapa-mine.md">ルールと製品差分</a>
+          </div>
+        </article>
+
+        <article class="game-card chess-card">
+          <div class="card-index">03</div>
+          <div class="chess-visual" aria-hidden="true">
+            <span>♜</span><span>♞</span><span>♝</span><span>♛</span>
+          </div>
+          <p class="game-type">2 PLAYERS · CLASSIC STRATEGY</p>
+          <h3>Chess</h3>
+          <p>特殊手、昇格、終局、申告引き分けを含む、対面VR向けのチェスエンジンです。</p>
+          <ul>
+            <li>キャスリングとアンパッサン</li>
+            <li>4種類の昇格</li>
+            <li>3/5回同一局面・50/75手</li>
+          </ul>
+          <div class="card-links">
+            <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/games/chess.md">規則と実装範囲</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section verification-section" id="verification">
+      <div class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">EVIDENCE, NOT ASSUMPTION</p>
+          <h2>「起動した」を<br>「動作した」にしない。</h2>
+        </div>
+        <p>VRMineは、Unityのコンパイル成功やVRChat Build & Testの起動だけではPASSにしません。構造、規則、2クライアント同期、所有権移管を別々のゲートで検査します。</p>
+      </div>
+
+      <ol class="gate-list">
+        <li>
+          <span class="gate-number">G0</span>
+          <div><h3>Environment</h3><p>Unity 2022.3.22f1、Worlds SDK 3.10.4、Windows 64-bit、Console error 0。</p></div>
+          <span class="gate-status neutral">MANUAL</span>
+        </li>
+        <li>
+          <span class="gate-number">G1</span>
+          <div><h3>Scene & Udon</h3><p>Descriptor、spawn、camera、3ゲームmanager、操作対象、全Udon program asset。</p></div>
+          <span class="gate-status" id="gate-row-g1">—</span>
+        </li>
+        <li>
+          <span class="gate-number">G2</span>
+          <div><h3>Deterministic Rules</h3><p>固定入力による配札、反射、合法手、特殊手、終局のPlay Modeテスト。</p></div>
+          <span class="gate-status" id="gate-row-g2">—</span>
+        </li>
+        <li>
+          <span class="gate-number">G3</span>
+          <div><h3>Two-Client Network</h3><p>2つのplayer ID、3ゲームの同期、late join復元、ownership handoff後の再同期。</p></div>
+          <span class="gate-status" id="gate-row-g3">—</span>
+        </li>
+        <li>
+          <span class="gate-number">G4</span>
+          <div><h3>Upload Readiness</h3><p>G1–G3の最新証跡がすべてPASSした場合だけ、アップロード可能と判定。</p></div>
+          <span class="gate-status" id="gate-row-g4">—</span>
+        </li>
+      </ol>
+
+      <div class="verification-callout">
+        <strong>Fail closed.</strong>
+        <p>証跡がない、古い、途中である、環境が違う。その場合の結論は「たぶん動く」ではなく、明示的な <span>BLOCKED</span> です。</p>
+        <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/verification.md">検証仕様を読む →</a>
+      </div>
+    </section>
+
+    <section class="section" id="technical">
+      <div class="section-heading">
+        <p class="eyebrow">TECHNICAL SYSTEM</p>
+        <h2>生成・同期・検証を一つの系へ</h2>
+      </div>
+      <div class="technical-grid">
+        <article>
+          <span class="technical-label">SCENE</span>
+          <h3>Schema-generated</h3>
+          <p>統合シーンはEditor builderが現行スキーマから再生成します。座席、ルールパネル、操作ボタン、検証probeを同じ定義から構築します。</p>
+        </article>
+        <article>
+          <span class="technical-label">NETWORK</span>
+          <h3>Manual Udon sync</h3>
+          <p>各ゲームはUdonSynced状態と明示的serializationを使い、ownership変更を含む実クライアント試験の対象になります。</p>
+        </article>
+        <article>
+          <span class="technical-label">EVIDENCE</span>
+          <h3>Log-derived status</h3>
+          <p>G3はVRChatログのmarker、local player ID、ゲーム別同期値を解析し、条件を満たした時だけPASSを書き込みます。</p>
+        </article>
+        <article>
+          <span class="technical-label">RELEASE</span>
+          <h3>Upload gate</h3>
+          <p>Unity、SDK、build target、G1–G3を再確認する最終ゲートを通過しない限り、リリース状態はBLOCKEDのままです。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section limitations-section">
+      <div class="limitations-copy">
+        <p class="eyebrow">KNOWN LIMITS</p>
+        <h2>保証範囲も、明示する。</h2>
+        <p>全ゲームの主要フローは実装されていますが、「原作完全再現」「全状態網羅」「改造クライアントへの秘密情報保護」は未保証です。現状と不足はリポジトリで追跡します。</p>
+      </div>
+      <div class="limitations-links">
+        <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/game-inventory.md"><span>Current inventory</span><strong>実装済み・未検証・未実装</strong></a>
+        <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/release.md"><span>Release procedure</span><strong>G0–G4からアップロードまで</strong></a>
+        <a href="https://github.com/KAFKA2306/vrmine"><span>Source repository</span><strong>コードと最新証跡</strong></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>
+      <strong>VRMine</strong>
+      <p>Three games, one evidence-driven VRChat world.</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/KAFKA2306/vrmine/blob/main/PROJECT.md">Project</a>
+      <a href="https://github.com/KAFKA2306/vrmine/blob/main/docs/verification.md">Verification</a>
+      <a href="https://github.com/KAFKA2306/vrmine">GitHub</a>
+    </div>
+  </footer>
+</body>
+</html>
