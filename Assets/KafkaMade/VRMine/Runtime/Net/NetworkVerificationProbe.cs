@@ -19,6 +19,7 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
 
     void Start()
     {
+        EnsureReferences();
         SendCustomEventDelayedSeconds(nameof(BeginProbe), 2f);
         if (phase > 0) LogMarker("RESTORE_OR_LATE_JOIN");
         LogMarker("READY");
@@ -31,6 +32,7 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
 
     public void BeginProbe()
     {
+        EnsureReferences();
         if (!Networking.IsOwner(gameObject) || phase != 0) return;
         int playerCount = VRCPlayerApi.GetPlayerCount();
         if (playerCount < 2)
@@ -87,6 +89,7 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
 
     public override void OnDeserialization()
     {
+        EnsureReferences();
         LogMarker(phase == 1 ? "OBSERVE_BASELINE" : "OBSERVE_REPUBLISH");
         VRCPlayerApi local = Networking.LocalPlayer;
         if (local != null && local.playerId == secondPlayerId && phase >= 1) LogMarker("RESTORE_OR_LATE_JOIN");
@@ -96,6 +99,7 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
 
     public override void OnOwnershipTransferred(VRCPlayerApi player)
     {
+        EnsureReferences();
         LogMarker("OWNERSHIP_TRANSFERRED");
         if (player == null || !player.isLocal || phase != 1) return;
         sequence++;
@@ -111,6 +115,7 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
 
     public void CheckGameState()
     {
+        EnsureReferences();
         int expectedBase = phase == 1 ? 700 : phase == 2 ? 710 : -1;
         if (expectedBase < 0) return;
         if (trickGame != null && trickGame.turnIndex == expectedBase + 1 && trickGame.board != null && trickGame.board.phase == 1)
@@ -125,6 +130,7 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
 
     public void RestoreGames()
     {
+        EnsureReferences();
         if (!Networking.IsOwner(gameObject) || phase != 2) return;
         if (trickGame != null) trickGame.SetupGame();
         if (orapaGame != null) orapaGame.ResetGame();
@@ -133,6 +139,26 @@ public class NetworkVerificationProbe : UdonSharpBehaviour
         sequence++;
         RequestSerialization();
         LogMarker("RESTORED_AFTER_TEST");
+    }
+
+    void EnsureReferences()
+    {
+        GameObject target;
+        if (trickGame == null)
+        {
+            target = GameObject.Find("TrickMeisterGame");
+            if (target != null) trickGame = target.GetComponent<GameController>();
+        }
+        if (orapaGame == null)
+        {
+            target = GameObject.Find("OrapaMineGame");
+            if (target != null) orapaGame = target.GetComponent<OrapaMineGame>();
+        }
+        if (chessGame == null)
+        {
+            target = GameObject.Find("ChessGame");
+            if (target != null) chessGame = target.GetComponent<ChessGame>();
+        }
     }
 
     void PublishGameSentinels(int baseValue)
