@@ -8,24 +8,26 @@
 - VRChat Worlds SDK: `3.10.4`
 - Upload scene: [`Assets/KafkaMade/VRMine/Scenes/BoardGameShowcase.unity`](Assets/KafkaMade/VRMine/Scenes/BoardGameShowcase.unity)
 - Scene generator: [`BoardGameShowcaseBuilder.cs`](Assets/KafkaMade/VRMine/Editor/BoardGameShowcaseBuilder.cs)
-- Scene post-upgrade (player counts and seat lifecycle): [`BoardGameSceneUpgrade.cs`](Assets/KafkaMade/VRMine/Editor/BoardGameSceneUpgrade.cs)
+- Scene post-upgrade (player counts, trick table, seat lifecycle): [`BoardGameSceneUpgrade.cs`](Assets/KafkaMade/VRMine/Editor/BoardGameSceneUpgrade.cs)
+- Public in-world name upgrade: [`VRMinePublicNameUpgrade.cs`](Assets/KafkaMade/VRMine/Editor/VRMinePublicNameUpgrade.cs)
 - Upload gate: [`VRMineReleaseGate.cs`](Assets/KafkaMade/VRMine/Editor/VRMineReleaseGate.cs)
 - Landing page source: [`site/index.html`](site/index.html)
 - Pages deployment: [`.github/workflows/pages.yml`](.github/workflows/pages.yml)
 - Expected public URL after merge and successful deployment: <https://kafka2306.github.io/vrmine/>
 
-## Game 1: Trick Meister variant
+## Game 1: RULEFORGE
 
-- Rules: [`docs/games/trick-meister.md`](docs/games/trick-meister.md)
+- Rules and compatibility target: [`docs/games/trick-meister.md`](docs/games/trick-meister.md)
 - Rule-card implementation matrix: [`docs/games/trick-meister-rules.md`](docs/games/trick-meister-rules.md)
-- Controller: [`GameController.cs`](Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs)
+- Controller and rule 26 reveal flow: [`GameController.cs`](Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs)
 - State: [`BoardState.cs`](Assets/KafkaMade/VRMine/Runtime/Data/BoardState.cs)
 - Seat departure recovery: [`TrickSeatLifecycle.cs`](Assets/KafkaMade/VRMine/Runtime/Game/TrickSeatLifecycle.cs)
-- View/actions: [`BoardGameShowcaseView.cs`](Assets/KafkaMade/VRMine/Runtime/UI/BoardGameShowcaseView.cs), [`BoardGameAction.cs`](Assets/KafkaMade/VRMine/Runtime/UI/BoardGameAction.cs)
+- Views: [`BoardView.cs`](Assets/KafkaMade/VRMine/Runtime/UI/BoardView.cs), [`BoardGameShowcaseView.cs`](Assets/KafkaMade/VRMine/Runtime/UI/BoardGameShowcaseView.cs)
+- Actions: [`BoardGameAction.cs`](Assets/KafkaMade/VRMine/Runtime/UI/BoardGameAction.cs)
 - Runtime test entry: `GameController.VerifyRules()`
 - Verification report: [`LatestBoardGamesRuntimeVerification.txt`](Assets/KafkaMade/VRMine/Verification/LatestBoardGamesRuntimeVerification.txt)
 
-## Game 2: Orapa Mine automated-puzzle variant
+## Game 2: ECHO MINE
 
 - Rules and differences from the physical product: [`docs/games/orapa-mine.md`](docs/games/orapa-mine.md)
 - Controller/simulator and active-seat turn logic: [`OrapaMineGame.cs`](Assets/KafkaMade/VRMine/Runtime/Game/OrapaMineGame.cs)
