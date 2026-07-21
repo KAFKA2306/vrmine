@@ -33,6 +33,16 @@ jobs:
           grep -F 'ApplyProxyModifications' "$file"
           grep -F 'BoardGameShowcase.unity' "$file"
 
+      - name: Verify G4 evidence freshness enforcement
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=Assets/KafkaMade/VRMine/Editor/VRMineReleaseGate.cs
+          grep -F 'EvidenceSourceCutoffUtc' "$file"
+          grep -F 'LatestRelevantSourceWriteUtc' "$file"
+          grep -F 'reportWriteUtc >= sourceCutoffUtc.AddSeconds(-2)' "$file"
+          grep -F 'LateJoin: NOT_AUTOMATED' "$file"
+
       - name: Upload integrity report
         if: always()
         uses: actions/upload-artifact@v4
