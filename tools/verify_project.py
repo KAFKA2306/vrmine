@@ -117,17 +117,20 @@ def check_player_controls() -> None:
     for fragment in ("action == 8", "orapaGame.ConfigurePlayers(value)"):
         if fragment not in action:
             fail(f"Orapa player-count action is missing: {fragment}")
-    for control in (
-        "TrickPlayerCount_3",
-        "TrickPlayerCount_4",
-        "TrickPlayerCount_5",
-        "OrapaPlayerCount_2",
-        "OrapaPlayerCount_3",
-        "OrapaPlayerCount_4",
-        "OrapaPlayerCount_5",
-    ):
-        if control not in scene_upgrade:
-            fail(f"generated scene upgrade is missing control: {control}")
+
+    generated_control_requirements = (
+        'for (int count = 3; count <= 5; count++)',
+        '"TrickPlayerCount_" + count',
+        '0, 5, count, trick, null, count + "P"',
+        'for (int count = 2; count <= 5; count++)',
+        '"OrapaPlayerCount_" + count',
+        '1, 8, count, null, orapa, count + "P"',
+        'new GameObject("TrickSeatLifecycle")',
+    )
+    for fragment in generated_control_requirements:
+        if fragment not in scene_upgrade:
+            fail(f"generated scene player-control logic is missing: {fragment}")
+
     for fragment in ("NextActiveSeat", "OnPlayerLeft", "attempts[seat] < 2"):
         if fragment not in orapa:
             fail(f"Orapa active-seat lifecycle is missing: {fragment}")
