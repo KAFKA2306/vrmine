@@ -1,0 +1,75 @@
+name: Audit live VRMine Pages
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/live-pages-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: read
+
+jobs:
+  live-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Pages configuration
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          configured=false
+          for attempt in $(seq 1 36); do
+            status="$(curl --silent --show-error -o pages-config.json -w '%{http_code}' \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages")"
+            if [ "$status" = "200" ]; then
+              configured=true
+              break
+            fi
+            echo "Pages is not configured yet (attempt ${attempt}, HTTP ${status})."
+            sleep 10
+          done
+          test "$configured" = true
+          jq '{html_url, status, build_type, source, public}' pages-config.json
+
+      - name: Verify the real public landing page
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://kafka2306.github.io/vrmine"
+          tmp="$(mktemp -d)"
+
+          matched=false
+          for attempt in $(seq 1 42); do
+            status="$(curl --silent --show-error --location -o "$tmp/index.html" -w '%{http_code}' "$base/?smoke=${GITHUB_SHA}-${attempt}")"
+            if [ "$status" = "200" ] && grep -Fq '2026-07-23-pastel-watercolor-1' "$tmp/index.html"; then
+              matched=true
+              break
+            fi
+            echo "Live site has not propagated yet (attempt ${attempt}, HTTP ${status})."
+            sleep 10
+          done
+          test "$matched" = true
+
+          curl --fail --silent --show-error --location "$base/styles.css?smoke=${GITHUB_SHA}" -o "$tmp/styles.css"
+          curl --fail --silent --show-error --location "$base/app.js?smoke=${GITHUB_SHA}" -o "$tmp/app.js"
+
+          grep -F 'data-component="current-world"' "$tmp/index.html"
+          grep -F 'data-component="system-flow"' "$tmp/index.html"
+          grep -F 'Stich-' "$tmp/index.html"
+          grep -F 'VRMine &gt; build_visuals' "$tmp/index.html"
+          grep -F 'VRMine &gt; wire_scene' "$tmp/index.html"
+          grep -F 'docs/Rulebook.md' "$tmp/index.html"
+          grep -F 'docs/STATE.md' "$tmp/index.html"
+          grep -F 'docs/ARCHITECTURE_RULES.md' "$tmp/index.html"
+          grep -F -- '--lavender:' "$tmp/styles.css"
+          grep -F -- '--rose:' "$tmp/styles.css"
+          grep -F -- '--mint:' "$tmp/styles.css"
+          grep -F '.boundary-box' "$tmp/styles.css"
+          grep -F 'IntersectionObserver' "$tmp/app.js"
+
+          echo "Live VRMine Pages audit passed: $base/"
