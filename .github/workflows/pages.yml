@@ -24,6 +24,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      pages_enabled: ${{ steps.pages.outputs.enabled }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,8 +55,8 @@ jobs:
           cp pages/index.html _site/404.html
           touch _site/.nojekyll
 
-      - name: Enable Actions-based GitHub Pages when missing
-        if: github.event_name != 'pull_request'
+      - name: Detect GitHub Pages configuration
+        id: pages
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -64,34 +66,31 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages")"
-          if [ "$status" = "404" ]; then
-            create_status="$(curl --silent --show-error -o pages-create.json -w '%{http_code}' \
-              -X POST \
-              -H "Authorization: Bearer ${GH_TOKEN}" \
-              -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              -H "Content-Type: application/json" \
-              "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages" \
-              -d '{"build_type":"workflow"}')"
-            cat pages-create.json
-            test "$create_status" = "201"
-          else
-            test "$status" = "200"
+          if [ "$status" = "200" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
             jq '{html_url, build_type, source, public}' pages-config.json
+          elif [ "$status" = "404" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "### GitHub Pages requires one-time repository enablement" >> "$GITHUB_STEP_SUMMARY"
+            echo "The site artifact is valid, but Pages is not configured for this repository." >> "$GITHUB_STEP_SUMMARY"
+            echo "Open Settings → Pages and select GitHub Actions as the source, then run this workflow again." >> "$GITHUB_STEP_SUMMARY"
+          else
+            cat pages-config.json
+            exit 1
           fi
 
       - name: Configure Pages
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.pages.outputs.enabled == 'true'
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.pages.outputs.enabled == 'true'
         uses: actions/upload-pages-artifact@v4
         with:
           path: _site
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && needs.build.outputs.pages_enabled == 'true'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
