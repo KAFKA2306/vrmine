@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fbfaf7">
+  <meta name="app-build" content="2026-07-23-pastel-watercolor-1">
+  <meta name="description" content="VRMine — VRChat上で手仕事感のあるボードゲーム体験を構築するプロジェクト。Stich-Meisterのルール、構造、検証境界を公開します。">
+  <title>VRMine — Virtual Board Game Lab</title>
+  <link rel="stylesheet" href="./styles.css?v=20260723-pastel-watercolor-1">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ移動</a>
+
+  <header class="topbar" data-component="topbar">
+    <a class="brand" href="#top" aria-label="VRMine トップへ">
+      <span class="brand-mark" aria-hidden="true">V</span>
+      <span>VRMine <small>/ BOARD GAME LAB</small></span>
+    </a>
+    <nav aria-label="ページ内ナビゲーション">
+      <a href="#experience">体験</a>
+      <a href="#system">構造</a>
+      <a href="#evidence">資料</a>
+      <a href="#boundary">検証境界</a>
+    </nav>
+    <a class="repo-link" href="https://github.com/KAFKA2306/vrmine" target="_blank" rel="noreferrer">GitHub ↗</a>
+  </header>
+
+  <main id="main" class="page">
+    <section id="top" class="hero" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot"></span>VRCHAT · PHYSICAL BOARD GAME WORLD</p>
+        <h1 id="page-title">ルールを奪い合う、<br><em>手仕事のVRボードゲーム。</em></h1>
+        <p class="hero-lede">VRMineは、物理コンポーネントとネットワーク同期を組み合わせ、VRChat上に触って理解できるボードゲーム空間を構築するプロジェクトです。現在の公開リポジトリは「Stich-Meister」を中心に、ルール・状態・実装構造を記録しています。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#experience">ゲームを見る <span>↓</span></a>
+          <a class="button button-quiet" href="https://github.com/KAFKA2306/vrmine/blob/main/docs/Rulebook.md" target="_blank" rel="noreferrer">ルールブック <span>↗</span></a>
+        </div>
+      </div>
+
+      <aside class="hero-card" data-component="current-world" aria-label="現在の公開対象">
+        <p class="card-label">CURRENT WORLD</p>
+        <strong>Stich-<br>Meister</strong>
+        <p>トリックごとに、切り札・勝敗条件・得点ルールが変化するVRボードゲーム。</p>
+        <div class="card-rule"></div>
+        <span>公開情報：README、Rulebook、STATE、Architecture Rules</span>
+      </aside>
+    </section>
+
+    <section class="signal-strip" aria-label="技術概要">
+      <article><span>RUNTIME</span><strong>VRChat SDK3</strong><p>UdonSharp 1.1.x</p></article>
+      <article><span>INTERACTION</span><strong>Physical Components</strong><p>カード・盤面・宝石</p></article>
+      <article><span>SYNC</span><strong>Bit-packed State</strong><p>BoardState / Controller</p></article>
+      <article><span>BUILD</span><strong>Editor Pipeline</strong><p>生成 → 配線</p></article>
+    </section>
+
+    <section id="experience" class="section-block" aria-labelledby="experience-title">
+      <div class="section-heading">
+        <div>
+          <p class="section-number">01 / EXPERIENCE</p>
+          <h2 id="experience-title">毎ラウンド、<em>ゲームそのものが変わる。</em></h2>
+        </div>
+        <p>Stich-Meisterでは、カードを出す行為が単なる手札消費ではなく、テーブル上の規則を書き換える操作になります。</p>
+      </div>
+
+      <div class="rule-grid">
+        <article class="rule-card">
+          <span class="step">01</span>
+          <h3>切り札を変える</h3>
+          <p>現在のトリックで強いスートや優先条件がカードによって変化します。</p>
+        </article>
+        <article class="rule-card">
+          <span class="step">02</span>
+          <h3>勝敗条件を変える</h3>
+          <p>通常の強弱だけではなく、その場のトリックルールを読み直して判断します。</p>
+        </article>
+        <article class="rule-card">
+          <span class="step">03</span>
+          <h3>得点方法を変える</h3>
+          <p>取ったトリックが常に利益になるとは限らず、得点ルールまで物理的に更新されます。</p>
+        </article>
+        <article class="rule-card">
+          <span class="step">04</span>
+          <h3>盤面から理解する</h3>
+          <p>変更された規則をUIだけに閉じ込めず、カード・盤面・表示物の状態として見せます。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="system" class="section-block" aria-labelledby="system-title">
+      <div class="section-heading">
+        <div>
+          <p class="section-number">02 / SYSTEM PATH</p>
+          <h2 id="system-title">見た目とロジックを、<em>生成して接続する。</em></h2>
+        </div>
+        <p>READMEで公開されている3つの責務を、制作順に並べています。</p>
+      </div>
+
+      <div class="system-flow" data-component="system-flow">
+        <article>
+          <b>01</b>
+          <span>VISUAL</span>
+          <h3>VisualBuilder.cs</h3>
+          <p>盤面、カード、宝石、ポスターなどの物理環境を動的に構築します。</p>
+        </article>
+        <i aria-hidden="true">→</i>
+        <article>
+          <b>02</b>
+          <span>WIRING</span>
+          <h3>VRMineBridge.cs</h3>
+          <p>生成済みオブジェクトをUdonSharpコンポーネントへ自動配線します。</p>
+        </article>
+        <i aria-hidden="true">→</i>
+        <article>
+          <b>03</b>
+          <span>STATE</span>
+          <h3>BoardState / GameController</h3>
+          <p>ビットパックされた状態を使い、ゲーム進行とネットワーク同期を管理します。</p>
+        </article>
+      </div>
+
+      <div class="command-panel" aria-label="Unity Editor メニュー">
+        <div><span>EDITOR MENU</span><strong>VRMine &gt; build_visuals</strong><p>物理アセットを再生成</p></div>
+        <div><span>EDITOR MENU</span><strong>VRMine &gt; wire_scene</strong><p>生成とロジック配線を実行</p></div>
+      </div>
+    </section>
+
+    <section id="evidence" class="section-block" aria-labelledby="evidence-title">
+      <div class="section-heading">
+        <div>
+          <p class="section-number">03 / EVIDENCE</p>
+          <h2 id="evidence-title">遊び方と実装を、<em>同じ入口から読む。</em></h2>
+        </div>
+        <p>説明と実装の境界を曖昧にせず、目的別の一次資料へ直接移動できます。</p>
+      </div>
+
+      <div class="evidence-grid">
+        <a class="evidence-card" href="https://github.com/KAFKA2306/vrmine/blob/main/docs/Rulebook.md" target="_blank" rel="noreferrer">
+          <span>PLAY</span><strong>Rulebook</strong><p>ゲームの目的、進行、カードと得点の扱い。</p><b>読む ↗</b>
+        </a>
+        <a class="evidence-card" href="https://github.com/KAFKA2306/vrmine/blob/main/docs/STATE.md" target="_blank" rel="noreferrer">
+          <span>SYNC</span><strong>STATE</strong><p>ゲーム状態とネットワーク同期構造の定義。</p><b>読む ↗</b>
+        </a>
+        <a class="evidence-card" href="https://github.com/KAFKA2306/vrmine/blob/main/docs/ARCHITECTURE_RULES.md" target="_blank" rel="noreferrer">
+          <span>BUILD</span><strong>Architecture Rules</strong><p>ビジュアル生成とロジック配線の設計原則。</p><b>読む ↗</b>
+        </a>
+        <a class="evidence-card" href="https://github.com/KAFKA2306/vrmine" target="_blank" rel="noreferrer">
+          <span>SOURCE</span><strong>Repository</strong><p>Unityプロジェクト、コード、履歴、検証資料。</p><b>開く ↗</b>
+        </a>
+      </div>
+    </section>
+
+    <section id="boundary" class="section-block boundary" aria-labelledby="boundary-title">
+      <div class="boundary-box">
+        <div>
+          <p class="section-number">04 / VERIFICATION BOUNDARY</p>
+          <h2 id="boundary-title">公開済みと、<em>未確認を分ける。</em></h2>
+        </div>
+        <p>このページが確認するのは、リポジトリに記載されたゲーム概要・技術構成・資料リンクと、GitHub Pagesの公開状態です。VRChatへの最新アップロード、複数クライアント同期、途中参加、全ゲームの通しプレイについては、このページだけでは動作保証しません。</p>
+      </div>
+      <div class="boundary-grid">
+        <article><span>CONFIRMED HERE</span><strong>Pages / Docs / Links</strong><p>公開サイト、資料導線、表示構造を検証。</p></article>
+        <article><span>REQUIRES UNITY EVIDENCE</span><strong>World Runtime</strong><p>Build & Test、ClientSim、複数クライアントの証跡が必要。</p></article>
+        <article><span>NEXT GATE</span><strong>Playable Verification</strong><p>ルール開始から終了までの決定論的テスト。</p></article>
+      </div>
+    </section>
+
+    <footer>
+      <span>VRMine · Virtual Board Game Lab</span>
+      <span>Repository evidence only · VRChat runtime is verified separately</span>
+    </footer>
+  </main>
+
+  <script src="./app.js?v=20260723-pastel-watercolor-1" defer></script>
+</body>
+</html>
