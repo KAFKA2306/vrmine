@@ -1,28 +1,78 @@
-# VRMine: Stich-Meister
+# VRMine Game Hub / VRChat Board Game Lab
 
-「ルールを奪い合う、手仕事感あふれるトリックテイキング・ボードゲーム」
+複数のボードゲーム・会話ゲームを、同じGitHub Pages基盤とVRChat開発リポジトリで管理するプロジェクトです。
 
-## プロジェクト概要
-本作は、ボードゲーム「Stich-Meister（スティッヒマイスター）」を VRChat 上で再現した、物理コンポーネント主体の VR ボードゲーム空間です。
-プレイヤーは毎ラウンド、カードを出すことで「切り札」「トリックルール」「得点ルール」を物理的に書き換え、目まぐるしく変化するゲーム展開を読み合います。
+## 公開ページ
 
-## 技術スタック
-- **VRChat SDK3**: UdonSharp 1.1.x
-- **UdonSharp**: 物理演算と同期ロジック
-- **Handcrafted AI Assets**: 手描き風の質感を持つ SF 静寂（Quiet UI）デザイン
+- Game Hub: https://kafka2306.github.io/vrmine/
+- Answer Impostor: https://kafka2306.github.io/vrmine/games/answer-impostor/
+- 深淵侵蝕: https://kafka2306.github.io/vrmine/games/abyss-invasion/
+- Stich-Meister: https://kafka2306.github.io/vrmine/games/stich-meister/
 
-## アーキテクチャ
-本プロジェクトは、ビジュアルとロジックを分離・統合する独自のパイプラインを採用しています。
-1. **VisualBuilder.cs**: 盤面、カード、宝石、ポスター等の物理環境を動的に構築。
-2. **VRMineBridge.cs**: 生成された物理オブジェクトを UdonSharp コンポーネントへ自動配線。
-3. **BoardState / GameController**: ビットパックされたデータによる高効率なネットワーク同期。
+## Pagesでプレイ可能なゲーム
 
-## 開発フロー
-Unity メニューの以下を実行することで、即座に最新の環境が整います。
-- **VRMine > build_visuals**: 物理アセットの再生成。
-- **VRMine > wire_scene**: アセット生成とロジック配線の実行。
+### Answer Impostor 〜フレンド擬態クイズ〜
 
-## ドキュメント
-- [Rulebook](docs/Rulebook.md): ゲームルールの詳細。
-- [STATE](docs/STATE.md): データ同期構造の定義。
-- [ARCHITECTURE_RULES](docs/ARCHITECTURE_RULES.md): 設計ガイドライン。
+4〜8人・1端末のパス＆プレイです。
+
+- 擬態者と擬態対象のランダム選出
+- 個別の秘密役割確認
+- 3候補からの質問投票
+- 個別回答入力と匿名シャッフル
+- 議論タイマー
+- 個別の予測投票
+- 通常プレイヤー、擬態者、対象者ボーナスの自動得点
+- 3〜8ラウンドの累計ランキング
+- LocalStorage自動保存、JSONエクスポート／インポート
+
+### 深淵侵蝕
+
+4人・最大7ラウンドの物理盤面／VRChat盤面用進行補助です。
+
+- 支配区域と最大連続領域群の記録
+- 侵蝕／潜伏／抗争／儀式の行動ログ
+- 抗争用1D6対決
+- 最終順位の自動計算
+
+## VRChatゲーム: Stich-Meister
+
+「ルールを奪い合う、手仕事感あふれるトリックテイキング・ボードゲーム」。VRChat SDK3 / UdonSharp 1.1.xを使用します。
+
+1. `VisualBuilder.cs`: 盤面、カード、宝石、ポスター等の物理環境を生成
+2. `VRMineBridge.cs`: 生成オブジェクトをUdonSharpコンポーネントへ自動配線
+3. `BoardState / GameController`: ビットパック状態でゲーム進行とネットワーク同期を管理
+
+Unityメニュー:
+
+- `VRMine > build_visuals`
+- `VRMine > wire_scene`
+
+資料:
+
+- [Rulebook](docs/Rulebook.md)
+- [STATE](docs/STATE.md)
+- [ARCHITECTURE_RULES](docs/ARCHITECTURE_RULES.md)
+
+## Pagesゲーム基盤
+
+```text
+pages/
+├── index.html                  # ゲームポータル
+├── games/registry.js           # ゲーム登録
+├── assets/
+│   ├── styles.css              # 共通デザインシステム
+│   └── platform.js             # 保存・入出力・通知
+├── games/<game-id>/            # 独立ゲームモジュール
+└── service-worker.js           # PWAキャッシュ
+```
+
+新しいゲームは `pages/games/<game-id>/` に追加し、`pages/games/registry.js` にメタデータを登録します。ゲーム状態は `vrmine.games.<game-id>.state` の名前空間で分離します。
+
+## ローカル検証
+
+```bash
+node --test pages/games/answer-impostor/engine.test.mjs
+python3 -m http.server 8000 --directory pages
+```
+
+GitHub Actionsはロジック試験、静的リンク整合性、JavaScript構文を確認し、Pages配信後に3ゲームの実URLを再取得して検証します。
