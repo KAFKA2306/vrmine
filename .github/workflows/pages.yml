@@ -28,30 +28,44 @@ jobs:
       pages_enabled: ${{ steps.pages.outputs.enabled }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-      - name: Validate landing page
+      - name: Test game logic
+        run: node --test pages/games/answer-impostor/engine.test.mjs
+
+      - name: Validate static game hub
         run: |
           set -euo pipefail
-          test -s pages/index.html
-          test -s pages/styles.css
-          test -s pages/app.js
-          node --check pages/app.js
-          grep -F '2026-07-23-pastel-watercolor-1' pages/index.html
-          grep -F 'data-component="current-world"' pages/index.html
-          grep -F 'data-component="system-flow"' pages/index.html
-          grep -F 'docs/Rulebook.md' pages/index.html
-          grep -F 'docs/STATE.md' pages/index.html
-          grep -F 'docs/ARCHITECTURE_RULES.md' pages/index.html
-          grep -F -- '--lavender:' pages/styles.css
-          grep -F -- '--rose:' pages/styles.css
-          grep -F -- '--mint:' pages/styles.css
+          required=(
+            pages/index.html
+            pages/assets/styles.css
+            pages/assets/app.js
+            pages/assets/platform.js
+            pages/games/registry.js
+            pages/games/answer-impostor/index.html
+            pages/games/answer-impostor/game.js
+            pages/games/answer-impostor/engine.mjs
+            pages/games/abyss-invasion/index.html
+            pages/games/abyss-invasion/tracker.js
+            pages/games/stich-meister/index.html
+            pages/service-worker.js
+          )
+          for file in "${required[@]}"; do test -s "$file"; done
+          find pages -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -n1 node --check
+          grep -F 'vrmine-game-hub-2026-07-26-1' pages/index.html
+          grep -F 'Answer Impostor' pages/games/answer-impostor/index.html
+          grep -F '深淵侵蝕' pages/games/abyss-invasion/index.html
+          grep -F 'Stich-Meister' pages/games/stich-meister/index.html
+          grep -F "href: './games/answer-impostor/'" pages/games/registry.js
+          grep -F "href: './games/abyss-invasion/'" pages/games/registry.js
 
       - name: Assemble Pages artifact
         run: |
           set -euo pipefail
           rm -rf _site
-          mkdir -p _site
-          cp pages/index.html pages/styles.css pages/app.js _site/
+          cp -R pages _site
           cp pages/index.html _site/404.html
           touch _site/.nojekyll
 
@@ -72,7 +86,6 @@ jobs:
           elif [ "$status" = "404" ]; then
             echo "enabled=false" >> "$GITHUB_OUTPUT"
             echo "### GitHub Pages requires one-time repository enablement" >> "$GITHUB_STEP_SUMMARY"
-            echo "The site artifact is valid, but Pages is not configured for this repository." >> "$GITHUB_STEP_SUMMARY"
             echo "Open Settings → Pages and select GitHub Actions as the source, then run this workflow again." >> "$GITHUB_STEP_SUMMARY"
           else
             cat pages-config.json
@@ -101,40 +114,30 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Verify the real public landing page
+      - name: Verify public game hub
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
-          test -n "$PAGE_URL"
           base="${PAGE_URL%/}"
           tmp="$(mktemp -d)"
           matched=false
           for attempt in $(seq 1 36); do
-            curl --fail --silent --show-error --location \
-              "$base/?smoke=${EXPECTED_SHA}-${attempt}" -o "$tmp/index.html"
-            if grep -Fq '2026-07-23-pastel-watercolor-1' "$tmp/index.html"; then
+            curl --fail --silent --show-error --location "$base/?smoke=${EXPECTED_SHA}-${attempt}" -o "$tmp/index.html"
+            if grep -Fq 'vrmine-game-hub-2026-07-26-1' "$tmp/index.html"; then
               matched=true
               break
             fi
             sleep 10
           done
           test "$matched" = true
-
-          curl --fail --silent --show-error --location "$base/styles.css?smoke=${EXPECTED_SHA}" -o "$tmp/styles.css"
-          curl --fail --silent --show-error --location "$base/app.js?smoke=${EXPECTED_SHA}" -o "$tmp/app.js"
-
-          grep -F 'data-component="current-world"' "$tmp/index.html"
-          grep -F 'data-component="system-flow"' "$tmp/index.html"
-          grep -F 'VRMine &gt; build_visuals' "$tmp/index.html"
-          grep -F 'VRMine &gt; wire_scene' "$tmp/index.html"
-          grep -F 'docs/Rulebook.md' "$tmp/index.html"
-          grep -F 'docs/STATE.md' "$tmp/index.html"
-          grep -F 'docs/ARCHITECTURE_RULES.md' "$tmp/index.html"
-          grep -F -- '--lavender:' "$tmp/styles.css"
-          grep -F -- '--rose:' "$tmp/styles.css"
-          grep -F -- '--mint:' "$tmp/styles.css"
-          grep -F 'IntersectionObserver' "$tmp/app.js"
-
-          echo "Live VRMine Pages verification passed: $base/"
+          curl --fail --silent --show-error --location "$base/games/answer-impostor/?smoke=${EXPECTED_SHA}" -o "$tmp/answer.html"
+          curl --fail --silent --show-error --location "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
+          curl --fail --silent --show-error --location "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
+          curl --fail --silent --show-error --location "$base/games/answer-impostor/engine.mjs?smoke=${EXPECTED_SHA}" -o "$tmp/engine.mjs"
+          grep -F 'Answer Impostor' "$tmp/answer.html"
+          grep -F '深淵侵蝕' "$tmp/abyss.html"
+          grep -F 'Stich-Meister' "$tmp/stich.html"
+          grep -F 'scoreRound' "$tmp/engine.mjs"
+          echo "Live VRMine game hub verification passed: $base/"

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f5f0">
+  <meta name="description" content="4人用短時間領域支配ゲーム『深淵侵蝕』のラウンド・得点・抗争ダイス進行補助。">
+  <title>深淵侵蝕 | VRMine Game Hub</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body class="game-page">
+  <a class="skip-link" href="#main">本文へ移動</a>
+  <header class="site-header">
+    <a class="brand" href="../../"><span class="brand-mark" aria-hidden="true">◇</span><span>VRMine Game Hub</span></a>
+    <div class="header-actions"><button class="btn btn-small btn-danger" type="button" data-reset><span>進行を初期化</span>↺</button></div>
+  </header>
+
+  <main class="shell" id="main">
+    <section class="game-hero">
+      <div>
+        <p class="eyebrow">Area control · Draft · 4 players</p>
+        <h1>深淵侵蝕</h1>
+        <p class="lead">侵蝕・潜伏・抗争・儀式を選び、最大7ラウンドで支配区域を競う短時間の領域支配ゲーム。</p>
+        <div class="game-meta"><span class="badge">4人</span><span class="badge">約15分</span><span class="badge">最大7ラウンド</span><span class="badge">進行補助版</span></div>
+      </div>
+      <a class="btn" href="#rules">ルール概要</a>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading"><div><p class="eyebrow">Turn console</p><h2 data-title>プレイヤー設定</h2></div><div class="status-line" data-status>未開始</div></div>
+      <div data-root></div>
+    </section>
+
+    <section class="panel" id="rules">
+      <div class="panel-heading"><div><p class="eyebrow">Current design</p><h2>ルール概要</h2></div></div>
+      <div class="rules-content">
+        <section><h3>勝利条件</h3><p>最大7ラウンド終了時、支配区域1つにつき1点。支配区域数が最も多いプレイヤーが勝利します。同点時は最大の連続領域群が大きい側を上位とします。</p></section>
+        <section><h3>手番の行動</h3><ul><li><strong>隣接侵蝕：</strong>自領域に隣接する区域を侵蝕。条件を満たせば最大2区域まで連鎖。</li><li><strong>遠隔潜伏：</strong>非隣接区域1つへ潜伏。</li><li><strong>教団抗争：</strong>隣接する敵領域へ1D6対決。同値は防御側勝利。</li><li><strong>儀式：</strong>ドラフトした固有能力を使用。</li></ul></section>
+        <section><h3>ゲーム構造</h3><p>40区域、四隅開始、中央は支配不能。各ラウンドは4人が1手番ずつ行い、合計最大28手番です。能力カードは侵蝕・潜伏・抗争・儀式の4系統から構成します。</p></section>
+        <div class="callout">このページは盤面そのものではなく、物理盤面・VRChat盤面と併用するラウンド、得点、抗争ダイスの進行補助です。</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><a href="../../">ゲーム一覧へ戻る</a></footer>
+  <script type="module" src="./tracker.js"></script>
+</body>
+</html>
