@@ -31,7 +31,7 @@ export const games = [
     href: './games/abyss-invasion/',
     players: '4人',
     duration: '15分',
-    status: '進行補助版',
+    status: 'IPルーム対応',
     tone: 'abyss',
     tags: ['領域支配', 'ドラフト', '戦略']
   }

@@ -1,4 +1,4 @@
-const CACHE = 'vrmine-game-hub-v1';
+const CACHE = 'vrmine-game-hub-v2';
 const scope = self.registration.scope;
 const assets = [
   './',

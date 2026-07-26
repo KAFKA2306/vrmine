@@ -49,17 +49,21 @@ jobs:
             pages/games/answer-impostor/engine.mjs
             pages/games/abyss-invasion/index.html
             pages/games/abyss-invasion/tracker.js
+            server/abyss-server.mjs
             pages/games/stich-meister/index.html
             pages/service-worker.js
           )
           for file in "${required[@]}"; do test -s "$file"; done
           find pages -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -n1 node --check
+          node --check server/abyss-server.mjs
           grep -F 'vrmine-game-hub-2026-07-26-1' pages/index.html
           grep -F 'Answer Impostor' pages/games/answer-impostor/index.html
           grep -F '深淵侵蝕' pages/games/abyss-invasion/index.html
           grep -F 'Stich-Meister' pages/games/stich-meister/index.html
           grep -F "href: './games/answer-impostor/'" pages/games/registry.js
           grep -F "href: './games/abyss-invasion/'" pages/games/registry.js
+          grep -F 'new WebSocket(server)' pages/games/abyss-invasion/tracker.js
+          grep -F 'vrmine-game-hub-v2' pages/service-worker.js
 
       - name: Assemble Pages artifact
         run: |
@@ -136,8 +140,10 @@ jobs:
           curl --fail --silent --show-error --location "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
           curl --fail --silent --show-error --location "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
           curl --fail --silent --show-error --location "$base/games/answer-impostor/engine.mjs?smoke=${EXPECTED_SHA}" -o "$tmp/engine.mjs"
+          curl --fail --silent --show-error --location "$base/games/abyss-invasion/tracker.js?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.js"
           grep -F 'Answer Impostor' "$tmp/answer.html"
           grep -F '深淵侵蝕' "$tmp/abyss.html"
           grep -F 'Stich-Meister' "$tmp/stich.html"
           grep -F 'scoreRound' "$tmp/engine.mjs"
+          grep -F 'new WebSocket(server)' "$tmp/abyss.js"
           echo "Live VRMine game hub verification passed: $base/"

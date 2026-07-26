@@ -120,3 +120,12 @@ tasks:
   unity:stop-play:
     cmds:
       - powershell -NoProfile -ExecutionPolicy Bypass -File src/io/mcp.ps1 execute_code '{"action":"execute","code":"UnityEditor.SessionState.SetString(\"VRMine.RuntimePhase\", \"\"); UnityEditor.EditorApplication.isPlaying = false; return \"stopping\";"}'
+
+  pages:test:
+    cmds:
+      - node --test pages/games/answer-impostor/engine.test.mjs
+      - powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-pages.ps1
+
+  abyss:server:
+    cmds:
+      - bun server/abyss-server.mjs
