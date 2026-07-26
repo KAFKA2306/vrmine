@@ -1,0 +1,10 @@
+{
+  "name": "VRMine Game Hub",
+  "short_name": "VRMine",
+  "description": "複数のローカル・マルチプレイヤーゲームを遊べる静的ゲームハブ",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8f5f0",
+  "theme_color": "#f8f5f0",
+  "icons": []
+}
