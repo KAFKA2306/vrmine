@@ -16,7 +16,7 @@ jobs:
       - name: Verify live pages
         run: |
           set -euo pipefail
-          echo "audit rerun: 2026-07-26T09:02:00+09:00"
+          echo "audit rerun: 2026-07-26T09:03:00+09:00"
           base="https://kafka2306.github.io/vrmine"
           tmp="$(mktemp -d)"
           matched=false
