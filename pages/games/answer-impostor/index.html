@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f5f0">
+  <meta name="description" content="4〜8人で遊ぶフレンド擬態クイズ。1台の端末を順番に回して、質問投票・回答・推理投票・累計得点まで進行できます。">
+  <title>Answer Impostor 〜フレンド擬態クイズ〜 | VRMine</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body class="game-page">
+  <a class="skip-link" href="#main">本文へ移動</a>
+  <header class="site-header">
+    <a class="brand" href="../../"><span class="brand-mark" aria-hidden="true">◇</span><span>VRMine Game Hub</span></a>
+    <div class="header-actions">
+      <button class="btn btn-small" type="button" data-export><span>保存データを書き出す</span>↓</button>
+      <label class="btn btn-small" for="import-file"><span>読み込む</span>↑</label>
+      <input class="hidden" id="import-file" data-import type="file" accept="application/json">
+      <button class="btn btn-small btn-danger" type="button" data-reset><span>最初から</span>↺</button>
+    </div>
+  </header>
+
+  <main class="shell" id="main">
+    <section class="game-hero">
+      <div>
+        <p class="eyebrow">Social deduction · Pass & play</p>
+        <h1>Answer Impostor</h1>
+        <p class="lead">フレンドの回答を真似した擬態者を、匿名回答の癖から見破る会話型推理ゲーム。</p>
+        <div class="game-meta"><span class="badge">4〜8人</span><span class="badge">15〜25分</span><span class="badge">1端末</span><span class="badge">自動保存</span></div>
+      </div>
+      <a class="btn" href="#rules">ルール</a>
+    </section>
+
+    <section class="panel" aria-live="polite">
+      <div class="panel-heading">
+        <div><p class="eyebrow">Game console</p><h2 data-screen-title>ゲーム設定</h2></div>
+        <div class="status-line" data-status>未開始</div>
+      </div>
+      <div class="progress-rail" aria-hidden="true" data-progress>
+        <span class="progress-step"></span><span class="progress-step"></span><span class="progress-step"></span>
+        <span class="progress-step"></span><span class="progress-step"></span><span class="progress-step"></span>
+      </div>
+      <div data-game-root></div>
+    </section>
+
+    <section class="panel" id="rules">
+      <div class="panel-heading"><div><p class="eyebrow">Rulebook</p><h2>標準ルール</h2></div></div>
+      <div class="rules-layout">
+        <div class="rules-content">
+          <section id="overview"><h3>目的</h3><p>各ラウンドで1人がランダムに擬態者となり、指定された別プレイヤーになりきって回答します。他のプレイヤーは匿名回答から擬態者の回答を推理します。規定ラウンド終了時の累計得点が最も高いプレイヤーの勝利です。</p></section>
+          <section id="flow"><h3>進行</h3><ol><li>擬態者と擬態対象を秘密裏に決定</li><li>3つの候補から全員で質問投票</li><li>端末を順番に回して回答入力</li><li>匿名回答を公開して議論</li><li>擬態者の回答だと思うものへ投票</li><li>正体公開と得点加算</li></ol></section>
+          <section id="score"><h3>得点</h3><ul><li>通常プレイヤーが擬態者の回答を当てる：2点</li><li>擬態者の回答が単独最多票を回避：擬態者3点</li><li>擬態者の回答が最多同率：擬態者1点</li><li>擬態者の回答が単独最多票：擬態者0点</li><li>本物の擬態対象の回答が擬態者より多く疑われる：擬態対象に1点</li></ul></section>
+          <section id="privacy"><h3>端末の回し方</h3><p>役割確認・質問投票・回答・予測投票は1人ずつ行います。画面を次の人に渡す前に、必ず「画面を隠す」を押してください。ゲームの回答はこのブラウザ内にだけ保存され、外部サーバーには送信されません。</p></section>
+          <div class="callout"><strong>推奨設定：</strong>4〜6人、5ラウンド、議論60秒。全員が互いの好みをある程度知っているグループほど推理が成立します。</div>
+        </div>
+        <nav class="rules-nav" aria-label="ルール内ナビゲーション"><a href="#overview">目的</a><a href="#flow">進行</a><a href="#score">得点</a><a href="#privacy">端末の回し方</a></nav>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><a href="../../">ゲーム一覧へ戻る</a></footer>
+  <script type="module" src="./game.js"></script>
+</body>
+</html>
