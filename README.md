@@ -9,6 +9,21 @@
 - 深淵侵蝕: https://kafka2306.github.io/vrmine/games/abyss-invasion/
 - Stich-Meister: https://kafka2306.github.io/vrmine/games/stich-meister/
 
+## Project ontology
+
+[`ontology/project.yaml`](ontology/project.yaml) は、各ゲームをルール・状態・観測・証拠・判定へ分解します。
+
+```text
+MultiGameRuntimePlatform
+  -> player actions and state-transition processes
+  -> inputs, timers, dice, network and runtime observations
+  -> legality, score, synchronization and completion claims
+  -> transition traces and runtime-specific evidence
+  -> accept / reject / complete / release pass or fail
+```
+
+ブラウザ、WebSocket、Unity、UdonSharp、VRChatクライアントは別の検証対象です。ブラウザ単体テストだけでVRChat実動作を証明したことにはせず、秘密情報境界、権限、決定論的遷移、同期状態、公開ビルドを個別に監査します。
+
 ## Pagesでプレイ可能なゲーム
 
 ### Answer Impostor 〜フレンド擬態クイズ〜
