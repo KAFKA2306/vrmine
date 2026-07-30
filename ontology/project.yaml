@@ -1,0 +1,86 @@
+project:
+  id: kafka:vrmine
+  name: VRMine Game Hub / VRChat Board Game Lab
+  repository: https://github.com/KAFKA2306/vrmine
+  pages: https://kafka2306.github.io/vrmine/
+  version: 0.1.0
+  updated: 2026-07-30
+  core_ontology: https://raw.githubusercontent.com/KAFKA2306/know/main/ontology/causal-evidence-core.yaml
+  schema: https://raw.githubusercontent.com/KAFKA2306/know/main/ontology/project.schema.json
+
+purpose:
+  problem: Specify, implement, synchronize, test, and publish multiple board and conversation games across browser and VRChat environments without conflating rules, runtime state, UI state, and network state.
+  intended_decisions: [valid_move, invalid_move, state_accepted, state_rejected, game_complete, release_pass, release_fail]
+  success_conditions:
+    - Rules and state transitions are deterministic and versioned per game.
+    - Private and public information boundaries are preserved.
+    - Browser, local persistence, network rooms, and VRChat synchronization retain equivalent game semantics.
+    - Published games pass logic, syntax, link, and live endpoint checks.
+  falsification_conditions:
+    - An illegal transition is accepted or legal play becomes unreachable.
+    - Hidden role or private answer data is exposed to unauthorized players.
+    - Clients diverge on turn, score, board, or game-completion state.
+    - A Pages or VRChat artifact does not correspond to the tested rule version.
+
+scope:
+  included: [game definitions, roles, actions, state machines, scoring, local persistence, JSON import/export, WebSocket rooms, UdonSharp synchronization, Pages publication]
+  excluded: [central user accounts, authoritative matchmaking service, untested rule variants, claims that browser tests alone prove VRChat runtime behavior]
+  temporal: Game version, round, turn, event sequence, save version, build commit, and runtime session are explicit.
+  abstraction_level: Multi-game rules engine, state synchronization, and release-validation platform.
+
+competency_questions:
+  - What is the authoritative state for each game and runtime mode?
+  - Which role or player is permitted to observe or perform each action?
+  - Which rule and prior state justify a transition and score change?
+  - Can clients reconstruct the same state from the event or synchronized representation?
+  - Which evidence proves browser logic, network synchronization, and VRChat runtime separately?
+
+domain_mapping:
+  System: MultiGameRuntimePlatform
+  State: [game state, player state, hidden-information state, turn state, score state, network state, publication state]
+  Action: [join game, assign role, vote, answer, play move, resolve conflict, synchronize state, save, load, release]
+  Process: [rule evaluation, state transition, scoring, serialization, network synchronization, Udon synchronization, static publication]
+  Observation: [player input, die result, vote, timer expiry, network message, Unity or Udon log, live endpoint response]
+  Model: [game state machine, scoring model, bit-packed board state, event log, registry model]
+  Requirement: [rule validity, authorization, hidden-information isolation, deterministic transition, synchronization, persistence compatibility, live availability]
+  Claim: [move legality, score correctness, synchronized state, game completion, release readiness]
+  Evidence: [unit test, transition trace, state snapshot, network log, Unity log, runtime screenshot, live URL check]
+  Decision: [valid_move, invalid_move, state_accepted, state_rejected, game_complete, release_pass, release_fail]
+
+claims_and_evidence:
+  assertion_types: [ObservedFact, CalculatedValue, ModelEstimate, RequirementAssertion, DecisionAssertion]
+  required_evidence:
+    MoveLegality: [prior state, actor, action, applicable rule, resulting state]
+    ScoreCorrectness: [event sequence, scoring rule version, intermediate calculation]
+    SynchronizedState: [authoritative state ID, client state IDs, message or Udon trace]
+    ReleaseReadiness: [logic tests, syntax checks, link checks, build artifact, live endpoint verification]
+  unknown_policy: Browser-only evidence cannot establish VRChat runtime correctness; missing runtime or synchronization evidence remains unverified.
+
+decision_rules:
+  - id: transition-acceptance
+    when: Actor authorization, preconditions, rule version, and deterministic next-state calculation pass.
+    result: state_accepted
+  - id: transition-rejection
+    when: Authorization, preconditions, invariant, or serialization validation fails.
+    result: state_rejected
+  - id: game-completion
+    when: The versioned terminal condition is satisfied and final scoring is reproducible from the event history.
+    result: game_complete
+  - id: release-gate
+    when: Required logic, static, synchronization, build, and live checks for the target runtime pass.
+    result: release_pass
+  - id: release-failure
+    when: Any mandatory target-runtime requirement is failed or unverified.
+    result: release_fail
+
+provenance:
+  sources: [game rule documents, registry metadata, source code, serialized state, network and Unity logs]
+  generated_artifacts: [Pages games, state exports, test reports, Unity scenes, UdonSharp components, deployment records]
+  agents: [players, browser runtime, WebSocket server, Unity, UdonSharp, test runners, GitHub Actions]
+  lineage: Game ID and rule version connect actions, transition traces, state snapshots, tests, builds, and published endpoints.
+
+validation:
+  structural: Registry, state schema, serialization, JavaScript syntax, internal links, and Unity component wiring.
+  semantic: Role permissions, legal transitions, scoring, terminal conditions, information boundaries, and cross-runtime equivalence.
+  evidence: Unit tests, event traces, synchronized state records, runtime-specific logs, and human runtime checks where required.
+  publication: GitHub Pages build, three live game URLs, deployed commit identity, and VRChat-specific release evidence.
