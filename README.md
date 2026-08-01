@@ -1,71 +1,60 @@
-# VRMine Game Hub / VRChat Board Game Lab
+# VRMine — VRChat・ブラウザ向けゲーム開発基盤
 
-複数のボードゲーム・会話ゲームを、同じGitHub Pages基盤とVRChat開発リポジトリで管理するプロジェクトです。
+**公開ゲームハブ:** https://kafka2306.github.io/vrmine/
 
-## 公開ページ
+VRMineは、複数のボードゲーム・会話ゲームを、GitHub Pagesのブラウザ版とVRChat向けUnity実装で管理するプロジェクトです。
 
-- Game Hub: https://kafka2306.github.io/vrmine/
-- Answer Impostor: https://kafka2306.github.io/vrmine/games/answer-impostor/
-- 深淵侵蝕: https://kafka2306.github.io/vrmine/games/abyss-invasion/
-- Stich-Meister: https://kafka2306.github.io/vrmine/games/stich-meister/
+ゲームごとの状態、得点、同期、保存、検証を共通基盤へまとめながら、ブラウザで動いたこととVRChatで動いたことを別の証拠として扱います。
 
-## Project ontology
+## 公開中のゲーム
 
-[`ontology/project.yaml`](ontology/project.yaml) は、各ゲームをルール・状態・観測・証拠・判定へ分解します。
+- [Answer Impostor](https://kafka2306.github.io/vrmine/games/answer-impostor/) — 4〜8人、1端末の擬態クイズ
+- [深淵侵蝕](https://kafka2306.github.io/vrmine/games/abyss-invasion/) — 4人用の領域支配・進行補助
+- [Stich-Meister](https://kafka2306.github.io/vrmine/games/stich-meister/) — ルールを奪い合うトリックテイキング
 
-```text
-MultiGameRuntimePlatform
-  -> player actions and state-transition processes
-  -> inputs, timers, dice, network and runtime observations
-  -> legality, score, synchronization and completion claims
-  -> transition traces and runtime-specific evidence
-  -> accept / reject / complete / release pass or fail
-```
+## Answer Impostor
 
-ブラウザ、WebSocket、Unity、UdonSharp、VRChatクライアントは別の検証対象です。ブラウザ単体テストだけでVRChat実動作を証明したことにはせず、秘密情報境界、権限、決定論的遷移、同期状態、公開ビルドを個別に監査します。
-
-## Pagesでプレイ可能なゲーム
-
-### Answer Impostor 〜フレンド擬態クイズ〜
-
-4〜8人・1端末のパス＆プレイです。
+主な機能:
 
 - 擬態者と擬態対象のランダム選出
 - 個別の秘密役割確認
-- 3候補からの質問投票
-- 個別回答入力と匿名シャッフル
+- 質問候補への投票
+- 回答の匿名シャッフル
 - 議論タイマー
-- 個別の予測投票
-- 通常プレイヤー、擬態者、対象者ボーナスの自動得点
-- 3〜8ラウンドの累計ランキング
-- LocalStorage自動保存、JSONエクスポート／インポート
+- 個別予測投票
+- 自動得点と累計ランキング
+- `localStorage`への保存
+- JSONのエクスポート・インポート
 
-### 深淵侵蝕
+## 深淵侵蝕
 
-4人・最大7ラウンドの物理盤面／VRChat盤面用進行補助です。ローカル進行に加え、WebSocketサーバーのIPルームへ4端末で接続できます。
+物理盤面またはVRChat盤面の進行を補助します。
 
-- 支配区域と最大連続領域群の記録
-- 侵蝕／潜伏／抗争／儀式の行動ログ
-- 抗争用1D6対決
+- 支配区域と連続領域の記録
+- 侵蝕・潜伏・抗争・儀式の行動ログ
+- 1D6による抗争処理
 - 最終順位の自動計算
-- IPルームのホスト開始と手番同期
+- WebSocketを使った4端末同期
 
-IPルームの起動方法は[深淵侵蝕ネットワーク手順](docs/abyss-invasion-network.md)を参照してください。
+ネットワーク手順は[docs/abyss-invasion-network.md](docs/abyss-invasion-network.md)を参照してください。
 
-## VRChatゲーム: Stich-Meister
+## VRChat版 Stich-Meister
 
-「ルールを奪い合う、手仕事感あふれるトリックテイキング・ボードゲーム」。VRChat SDK3 / UdonSharp 1.1.xを使用します。
+VRChat SDK3 / UdonSharpを使用し、盤面生成、オブジェクト配線、ゲーム状態同期を分離しています。
 
-1. `VisualBuilder.cs`: 盤面、カード、宝石、ポスター等の物理環境を生成
-2. `VRMineBridge.cs`: 生成オブジェクトをUdonSharpコンポーネントへ自動配線
-3. `BoardState / GameController`: ビットパック状態でゲーム進行とネットワーク同期を管理
+- `VisualBuilder.cs` — 盤面、カード、宝石、ポスターなどを生成
+- `VRMineBridge.cs` — 生成物をUdonSharpコンポーネントへ配線
+- `BoardState` / `GameController` — ゲーム進行とネットワーク同期
 
 Unityメニュー:
 
-- `VRMine > build_visuals`
-- `VRMine > wire_scene`
+```text
+VRMine > build_visuals
+VRMine > wire_scene
+VRMine > Verification > Run Gate
+```
 
-資料:
+関連資料:
 
 - [Rulebook](docs/Rulebook.md)
 - [STATE](docs/STATE.md)
@@ -77,14 +66,13 @@ Unityメニュー:
 pages/
 ├── index.html                  # ゲームポータル
 ├── games/registry.js           # ゲーム登録
-├── assets/
-│   ├── styles.css              # 共通デザインシステム
-│   └── platform.js             # 保存・入出力・通知
-├── games/<game-id>/            # 独立ゲームモジュール
+├── assets/styles.css           # 共通デザイン
+├── assets/platform.js          # 保存・入出力・通知
+├── games/<game-id>/            # 各ゲーム
 └── service-worker.js           # PWAキャッシュ
 ```
 
-新しいゲームは `pages/games/<game-id>/` に追加し、`pages/games/registry.js` にメタデータを登録します。ゲーム状態は `vrmine.games.<game-id>.state` の名前空間で分離します。
+新しいゲームは`pages/games/<game-id>/`へ追加し、`pages/games/registry.js`へ登録します。保存領域は`vrmine.games.<game-id>.state`でゲームごとに分離します。
 
 ## ローカル検証
 
@@ -93,4 +81,18 @@ node --test pages/games/answer-impostor/engine.test.mjs
 python3 -m http.server 8000 --directory pages
 ```
 
-GitHub Actionsはロジック試験、静的リンク整合性、JavaScript構文を確認し、Pages配信後に3ゲームの実URLを再取得して検証します。
+GitHub Actionsでは、ゲームロジック、静的リンク、JavaScript構文、Pages公開後の実URLを検証します。
+
+## 検証の原則
+
+```text
+入力・操作
+  → 状態遷移
+  → 得点・合法手・同期結果
+  → 実行環境ごとの証拠
+  → release pass / fail
+```
+
+ブラウザ単体試験だけで、Unity、UdonSharp、VRChatクライアント上の動作を証明したことにはしません。機械可読な定義は[`ontology/project.yaml`](ontology/project.yaml)にあります。
+
+**README最終監査:** 2026-08-01
