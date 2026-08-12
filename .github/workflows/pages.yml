@@ -5,10 +5,14 @@ on:
     branches: [main]
     paths:
       - "pages/**"
+      - "scripts/verify-repository-ratchet.mjs"
+      - "README.md"
       - ".github/workflows/pages.yml"
   pull_request:
     paths:
       - "pages/**"
+      - "scripts/verify-repository-ratchet.mjs"
+      - "README.md"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -31,6 +35,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Verify canonical repository flow
+        run: node scripts/verify-repository-ratchet.mjs
 
       - name: Test game logic
         run: node --test pages/games/answer-impostor/engine.test.mjs
