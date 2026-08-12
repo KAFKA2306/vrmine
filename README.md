@@ -8,6 +8,38 @@
 
 ゲームごとの状態、得点、同期、保存、検証を共通基盤へまとめながら、ブラウザで動いたこととVRChatで動いたことを別の証拠として扱います。
 
+## 正準ユーザーフロー
+
+VRMineで維持する主要フローは次の1本です。
+
+```text
+ゲームを選ぶ
+  → ゲーム固有の入力・操作
+  → 共通/固有ロジックで状態遷移
+  → 実行環境ごとの検証
+  → 公開可能な成果だけをPagesまたはVRChatへ出す
+```
+
+- **ブラウザ入口:** `pages/index.html` → `pages/games/registry.js` → `pages/games/<game-id>/`
+- **ブラウザ状態:** ゲーム固有stateを `vrmine.games.<game-id>.state` に分離し、同じ状態を別形式で二重正準化しない
+- **VRChat入口:** Unity 2022.3系プロジェクトの `Assets/` と、`VRMine > Verification > Run Gate`
+- **公開判定:** ブラウザのNode/静的検証と、Unity/UdonSharp/VRChat実機証拠を別gateとして扱う
+
+### 非目標
+
+- 実験機能や調査workflowをこのrepoの恒常的な主要フローにしない
+- ブラウザtestの成功をVRChat実機成功へ読み替えない
+- 使われていないadapter・別正準store・生成途中artifactを履歴保存のためだけに残さない
+- 新しい抽象化は、少なくとも2つの実利用経路で必要になるまで追加しない
+
+### Ratchet KPI
+
+主要KPIは3つに限定します。
+
+1. **主要フロー検証成功率** — CI/実機gateの成功・失敗をそのまま記録する
+2. **手動操作数** — build / wire / verify / publishで人手が必要な操作を減らす
+3. **再現可能成果数** — 同じ入力・commit・実行環境から再検証できるゲーム成果のみ数える
+
 ## 公開中のゲーム
 
 - [Answer Impostor](https://kafka2306.github.io/vrmine/games/answer-impostor/) — 4〜8人、1端末の擬態クイズ
@@ -80,10 +112,11 @@ pages/
 
 ```bash
 node --test pages/games/answer-impostor/engine.test.mjs
+node scripts/verify-repository-ratchet.mjs
 python3 -m http.server 8000 --directory pages
 ```
 
-GitHub Actionsでは、ゲームロジック、静的リンク、JavaScript構文、Pages公開後の実URLを検証します。
+GitHub Actionsでは、ゲームロジック、正準構造、静的リンク、JavaScript構文、Pages公開後の実URLを検証します。
 
 ## 検証の原則
 
@@ -97,4 +130,4 @@ GitHub Actionsでは、ゲームロジック、静的リンク、JavaScript構�
 
 ブラウザ単体試験だけで、Unity、UdonSharp、VRChatクライアント上の動作を証明したことにはしません。機械可読な定義は[`ontology/project.yaml`](ontology/project.yaml)にあります。
 
-**README最終監査:** 2026-08-01
+**README最終監査:** 2026-08-12
