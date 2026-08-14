@@ -1,7 +1,0 @@
-﻿Deck Runtime Verification
-Scene: Assets/Vowgan/Deck of Cards/Demo/Deck Demo.unity
-PASS Deck of Cards initial=51 drawn=50 reset=51
-PASS Deck of Cards (3) initial=51 drawn=50 reset=51
-PASS Deck of Cards (1) initial=51 drawn=50 reset=51
-PASS Deck of Cards (2) initial=51 drawn=50 reset=51
-Result: PASS decks=4/4
