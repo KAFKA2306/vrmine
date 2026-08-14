@@ -1,0 +1,17 @@
+{
+  "unityVersion": "2022.3.22f1",
+  "vrchatSdkVersion": "3.9.0",
+  "vrcGet": {
+    "version": "1.9.2",
+    "assets": {
+      "linux-x64": {
+        "name": "x86_64-unknown-linux-musl-vrc-get",
+        "sha256": "ed3ebff3f896fee05ab971877fe4431279ae5321409473212ed19ad5f836a652"
+      },
+      "win32-x64": {
+        "name": "x86_64-pc-windows-msvc-vrc-get.exe",
+        "sha256": "7fe9c87d0bb8a7264b63f6ddf922c93c444271561131eb5445fa6f0139755da6"
+      }
+    }
+  }
+}

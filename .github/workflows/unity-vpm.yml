@@ -1,0 +1,61 @@
+name: Unity U1 VPM verification
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Packages/**"
+      - "ProjectSettings/ProjectVersion.txt"
+      - "config/vrchat-toolchain.json"
+      - "scripts/install-vrc-get.mjs"
+      - "scripts/verify-vpm.mjs"
+      - "Taskfile.yml"
+      - ".github/workflows/unity-vpm.yml"
+  pull_request:
+    paths:
+      - "Packages/**"
+      - "ProjectSettings/ProjectVersion.txt"
+      - "config/vrchat-toolchain.json"
+      - "scripts/install-vrc-get.mjs"
+      - "scripts/verify-vpm.mjs"
+      - "Taskfile.yml"
+      - ".github/workflows/unity-vpm.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vrmine-u1-vpm-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vpm:
+    name: U1 VPM resolve and drift
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      - name: Install pinned vrc-get
+        run: node scripts/install-vrc-get.mjs
+
+      - name: Verify VPM package graph
+        run: node scripts/verify-vpm.mjs
+
+      - name: Publish U1 evidence summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f .artifacts/vpm-u1.json ]; then
+            {
+              echo '## VRMine U1 VPM evidence'
+              echo '```json'
+              cat .artifacts/vpm-u1.json
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi

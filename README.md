@@ -104,9 +104,19 @@ U4  Windows + actual VRChat multi-client
 U5  private-world smoke
 ```
 
-実装workstream:
+### U1 — 実装済み
 
-- [#48](https://github.com/KAFKA2306/vrmine/issues/48) — `vrc-get` headless VPM resolve
+U1はUnity Editorを起動せず、VPM package graphの再現性とversion driftを検証します。
+
+- `config/vrchat-toolchain.json` — exact Unity / VRChat SDK target / `vrc-get` version・release asset SHA-256
+- `node scripts/install-vrc-get.mjs` — Linux x64 / Windows x64へchecksum検証済みbinaryを配置
+- `node scripts/verify-vpm.mjs` — manifest整合、`vrc-get resolve`、canonical manifest非変異、`vrc-get outdated`を検証
+- `.github/workflows/unity-vpm.yml` — `ubuntu-24.04`でU1を実行し、machine-readable evidenceをJob Summaryへ保存
+
+現在のproject targetはUnity `2022.3.22f1` / VRChat SDK `3.9.0`です。`outdated` が新しいSDKを検出してもU1では自動upgradeしません。SDK migrationはexact Unity compile/runtime evidenceと同じ変更で行います。
+
+後続workstream:
+
 - [#49](https://github.com/KAFKA2306/vrmine/issues/49) — Ubuntu + official Unity CLI PoC
 - [#50](https://github.com/KAFKA2306/vrmine/issues/50) — EditMode/NUnit化
 - [#51](https://github.com/KAFKA2306/vrmine/issues/51) — PlayMode + ClientSim
@@ -131,13 +141,25 @@ pages/
 
 ## ローカル検証
 
+正準入口は次の2コマンドです。
+
+```bash
+task setup
+task check
+```
+
+`task setup` はrepo-local verification toolをexact version/checksumで準備します。`task check` は現在GUI無しで再現できるrepository ratchet、ブラウザunit test、U1 VPM resolve/driftを実行します。U1だけを再実行する場合は `task vpm:check` を使います。
+
+個別コマンド:
+
 ```bash
 node --test pages/games/answer-impostor/engine.test.mjs
 node scripts/verify-repository-ratchet.mjs
+node scripts/verify-vpm.mjs
 python3 -m http.server 8000 --directory pages
 ```
 
-GitHub Actionsでは、ゲームロジック、正準構造、静的リンク、JavaScript構文、Pages公開後の実URLを検証します。Unity/VRChat側はU1–U4への移行中で、移行完了後はユーザーのUnity手動起動を通常経路にしません。
+GitHub Actionsでは、ゲームロジック、正準構造、静的リンク、JavaScript構文、Pages公開後の実URLに加えてU1 VPM package graphを検証します。Unity/VRChat側のU2–U4は移行中で、完了後はユーザーのUnity手動起動を通常経路にしません。
 
 ## 検証の原則
 
@@ -151,4 +173,4 @@ GitHub Actionsでは、ゲームロジック、正準構造、静的リンク、
 
 ブラウザ単体試験だけで、Unity、UdonSharp、VRChatクライアント上の動作を証明したことにはしません。機械可読な定義は[`ontology/project.yaml`](ontology/project.yaml)にあります。
 
-**README最終監査:** 2026-08-14
+**README最終監査:** 2026-08-15
