@@ -1,4 +1,0 @@
-﻿FAIL
-Gate: G3 VRChat Build & Test
-Client: C:\Program Files (x86)\Steam\steamapps\common\VRChat\VRChat.exe
-Reason: configured VRChat client executable does not exist

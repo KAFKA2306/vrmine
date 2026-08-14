@@ -22,8 +22,8 @@ VRMineで維持する主要フローは次の1本です。
 
 - **ブラウザ入口:** `pages/index.html` → `pages/games/registry.js` → `pages/games/<game-id>/`
 - **ブラウザ状態:** ゲーム固有stateを `vrmine.games.<game-id>.state` に分離し、同じ状態を別形式で二重正準化しない
-- **VRChat入口:** Unity 2022.3系プロジェクトの `Assets/` と、`VRMine > Verification > Run Gate`
-- **公開判定:** ブラウザのNode/静的検証と、Unity/UdonSharp/VRChat実機証拠を別gateとして扱う
+- **VRChat入口:** Unityプロジェクトの `Assets/`。Unity versionは `ProjectSettings/ProjectVersion.txt` を正準とする
+- **公開判定:** ブラウザのNode/静的検証と、Unity/UdonSharp/VRChat実行証拠を別gateとして扱う
 
 ### 非目標
 
@@ -80,19 +80,40 @@ VRChat SDK3 / UdonSharpを使用し、盤面生成、オブジェクト配線、
 - `VRMineBridge.cs` — 生成物をUdonSharpコンポーネントへ配線
 - `BoardState` / `GameController` — ゲーム進行とネットワーク同期
 
-Unityメニュー:
-
-```text
-VRMine > build_visuals
-VRMine > wire_scene
-VRMine > Verification > Run Gate
-```
+旧Unity MenuItem verificationはローカルfallbackとしてのみ残し、新しい自動化をそこへ追加しません。正準化中のverification architectureは [#54](https://github.com/KAFKA2306/vrmine/issues/54) を参照してください。
 
 関連資料:
 
 - [Rulebook](docs/Rulebook.md)
 - [STATE](docs/STATE.md)
 - [ARCHITECTURE_RULES](docs/ARCHITECTURE_RULES.md)
+
+## Unity / VRChat verification
+
+検証を証拠レベルに分離します。
+
+```text
+U1  VPM/package resolve
+ ↓
+U2  exact Unity compile + EditMode
+ ↓
+U3  PlayMode + ClientSim-supported semantics
+ ↓ 必要な変更だけ
+U4  Windows + actual VRChat multi-client
+ ↓ release時のみ
+U5  private-world smoke
+```
+
+実装workstream:
+
+- [#48](https://github.com/KAFKA2306/vrmine/issues/48) — `vrc-get` headless VPM resolve
+- [#49](https://github.com/KAFKA2306/vrmine/issues/49) — Ubuntu + official Unity CLI PoC
+- [#50](https://github.com/KAFKA2306/vrmine/issues/50) — EditMode/NUnit化
+- [#51](https://github.com/KAFKA2306/vrmine/issues/51) — PlayMode + ClientSim
+- [#52](https://github.com/KAFKA2306/vrmine/issues/52) — PR merge gate / artifacts
+- [#53](https://github.com/KAFKA2306/vrmine/issues/53) — real VRChat 2-client machine gate
+
+ClientSimの成功をreal VRChat networkingの成功として扱いません。生成された `Latest*.txt` やdated screenshotはGitへ保存せず、CI/target-machine artifactとして保持します。
 
 ## Pagesゲーム基盤
 
@@ -116,7 +137,7 @@ node scripts/verify-repository-ratchet.mjs
 python3 -m http.server 8000 --directory pages
 ```
 
-GitHub Actionsでは、ゲームロジック、正準構造、静的リンク、JavaScript構文、Pages公開後の実URLを検証します。
+GitHub Actionsでは、ゲームロジック、正準構造、静的リンク、JavaScript構文、Pages公開後の実URLを検証します。Unity/VRChat側はU1–U4への移行中で、移行完了後はユーザーのUnity手動起動を通常経路にしません。
 
 ## 検証の原則
 
@@ -130,4 +151,4 @@ GitHub Actionsでは、ゲームロジック、正準構造、静的リンク、
 
 ブラウザ単体試験だけで、Unity、UdonSharp、VRChatクライアント上の動作を証明したことにはしません。機械可読な定義は[`ontology/project.yaml`](ontology/project.yaml)にあります。
 
-**README最終監査:** 2026-08-12
+**README最終監査:** 2026-08-14

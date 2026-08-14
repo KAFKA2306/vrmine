@@ -53,6 +53,12 @@ crashlytics-build.properties
 /Assets/UdonSharp/
 /Assets/SerializedUdonPrograms/
 
+# Runtime verification evidence belongs in CI artifacts, not Git
+/Assets/KafkaMade/VRMine/Verification/Latest*.txt
+/Assets/KafkaMade/VRMine/Verification/Latest*.txt.meta
+/Assets/KafkaMade/VRMine/Verification/screenshot-*.png
+/Assets/KafkaMade/VRMine/Verification/screenshot-*.png.meta
+
 # Ignore downloaded packages, but not the manifests
 /Packages/*
 !/Packages/manifest.json
