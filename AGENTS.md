@@ -1,19 +1,42 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
-Project assets live under `Assets/`, with UdonSharp scripts and prefabs organized in `Assets/KafkaMade/VRMine/`. Keep inspector-assigned references stable to avoid breaking serialized scenes. Use `docs/` for gameplay notes, network diagrams, and troubleshooting checklists; add concise README files per subdirectory when introducing new systems.
+## Project Structure
+Unity/VRChat assets live under `Assets/`, with VRMine-owned code under `Assets/KafkaMade/VRMine/`. Browser games live under `pages/`. VPM and Unity package declarations live under `Packages/`; Unity version is fixed by `ProjectSettings/ProjectVersion.txt`. Do not add generated verification reports, screenshots, `Library/`, downloaded packages, or local machine state to Git.
 
-## Build, Test, and Development Commands
-Open the project with Unity 2022.3.22f1 (`unity-editor -projectPath .`) to edit scenes and run Play Mode smoke checks. For creator testing, export the world via the VRChat SDK Control Panel and push a local build to VRChat for multi-user validation. Regenerate meta files with `unity-editor -quit -batchmode -projectPath . -executeMethod VRChat.Batcher.ReimportAll` when asset GUID drift is suspected.
+## Verification Contract
+Browser success and VRChat success are separate evidence classes. The target verification architecture is tracked by #54:
 
-## Coding Style & Naming Conventions
-We write UdonSharp C# with four-space indentation and UTF-8 files. Mirror existing class names: `PascalCase` for behaviours, `camelCase` for fields and locals, `ALL_CAPS` for constants (see `NetConst`). Avoid `static` classes; prefer `UdonSharpBehaviour` components with serialized fields. Keep networking annotations explicit—`[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]` on sync-heavy behaviours—and initialize `[UdonSynced]` arrays in place. No comments. Minimal codes. Alaways Reduce codes. No error-handling.No try-catch. Find Root cause and fix codes in minimal.
+- U1: VPM/package resolution (`vrc-get`)
+- U2: exact Unity compile + EditMode tests
+- U3: PlayMode + ClientSim-supported local semantics
+- U4: Windows + actual VRChat Build & Test / multi-client
+- U5: private-world release smoke
 
-## Testing Guidelines
-There is no automated test suite yet; rely on Unity Play Mode for fast iteration and VRChat client builds for authority/synchronization checks. Name new manual test scenes `Tests_<feature>` and store them under `Assets/Vrmine/Tests/`. Document edge cases (loop detection, mailbox contention) in `docs/testing.md` so future work can script them. Target parity across host and remote clients before merging.
+Do not claim a higher evidence level from a lower one. ClientSim does not certify real VRChat networking, ownership transfer, late join, PC/Quest parity, or uploaded-world behavior.
 
-## Commit & Pull Request Guidelines
-Match the short, imperative commit style already in history (e.g., "Compress docs", "Fix UdonSharp errors"). Scope each commit to one gameplay mechanic or tooling change. Pull requests should describe the player-facing impact, list touched prefabs or scripts, and call out required inspector reassignments. Attach screenshots or GIFs for UI or VFX tweaks, and link VRChat build IDs when asking for validation.
+Legacy Unity MenuItem verification remains only as a temporary local fallback while #48–#53 replace it. Do not add new automation through the removed local MCP PowerShell/request-file path. New verification work belongs in the U1–U4 pipeline and must emit machine-readable evidence.
 
-## VRChat & Networking Notes
-When adding synced data, track `RequestSerialization()` calls and guard owner-only code with `Networking.IsOwner`. Prefer inspector-assigned references over runtime discovery, and keep serialized array sizes capped (≤900 bytes) to satisfy Udon limits. Document new network events in `docs/networking.md` before shipping.
+## Build and Test
+Browser checks currently available in-repo:
+
+```text
+node --test pages/games/answer-impostor/engine.test.mjs
+node scripts/verify-repository-ratchet.mjs
+```
+
+Unity automation must use the exact version from `ProjectSettings/ProjectVersion.txt`. VPM dependencies must be reproducible from the canonical manifests. Runtime evidence belongs in CI/workflow artifacts, not committed `Latest*.txt` or dated screenshots.
+
+## Coding Style
+Use four-space indentation and UTF-8 for C#/UdonSharp. Preserve serialized inspector references and GUIDs. Prefer the smallest implementation that fixes the root cause. Keep networking behavior explicit: ownership, serialization, synced state, and late-join behavior must be testable rather than implied.
+
+## Change Rules
+- One canonical implementation per responsibility; delete superseded adapters and temporary shims after replacement.
+- Do not preserve dead structures for history; Git history is the archive.
+- Do not introduce machine-specific absolute paths into canonical tasks or docs.
+- Do not commit generated verification output.
+- Do not make third-party Unity MCP transport a required CI or release dependency.
+- Do not attach credential-bearing Windows execution directly to public-repository pull-request code.
+- Changes affecting Unity/VRChat behavior must identify the minimum required evidence level (U1–U5).
+
+## Pull Requests
+Describe player/developer impact, changed scenes/prefabs/scripts, required evidence level, and produced evidence. A PR is not complete merely because browser/static CI passes when the changed surface requires Unity or VRChat execution.
