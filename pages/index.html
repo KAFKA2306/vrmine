@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f5f0">
-  <meta name="app-build" content="vrmine-game-hub-2026-07-26-1">
-  <meta name="description" content="深淵侵蝕、Answer Impostor、Stich-Meisterを同じ入口から扱うVRMineゲームハブ。">
+  <meta name="app-build" content="vrmine-game-hub-2026-08-15-1">
+  <meta name="description" content="深淵侵蝕、Answer Impostor、Stich-Meisterに加え、VRChat向けの実装・検証途中の成果も状態付きで確認できるVRMineゲームハブ。">
   <title>VRMine Game Hub</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./assets/styles.css">
@@ -16,6 +16,7 @@
     <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">◇</span><span>VRMine Game Hub</span></a>
     <nav class="header-actions" aria-label="主要ナビゲーション">
       <a class="btn btn-small" href="#games"><span>ゲーム一覧</span></a>
+      <a class="btn btn-small" href="#development"><span>VR開発状況</span></a>
       <a class="btn btn-small" href="https://github.com/KAFKA2306/vrmine">GitHub</a>
     </nav>
   </header>
@@ -24,10 +25,10 @@
     <section class="hero">
       <p class="eyebrow">Local-first tabletop platform</p>
       <h1>ひとつの場所で、<br>何度でも遊ぶ。</h1>
-      <p class="lead">深淵侵蝕を起点に、複数のボードゲームや会話ゲームを同じ設計で追加できる静的ゲーム基盤です。インストール不要、アカウント不要。ゲーム状態はこのブラウザに保存されます。</p>
+      <p class="lead">深淵侵蝕を起点に、複数のボードゲームや会話ゲームを同じ設計で追加できる静的ゲーム基盤です。インストール不要、アカウント不要。ゲーム状態はこのブラウザに保存されます。VRChat向けの実装途中の成果も、完成済みと混同しない状態表示付きで公開します。</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="./games/answer-impostor/">Answer Impostorを遊ぶ</a>
-        <a class="btn" href="#platform">基盤を見る</a>
+        <a class="btn" href="#development">VR開発状況を見る</a>
       </div>
     </section>
 
@@ -37,6 +38,33 @@
         <p>各ゲームは独立したモジュールです。共通のデザイン、保存方式、公開経路を使いながら、ゲーム固有の進行ロジックを分離しています。</p>
       </div>
       <div class="game-grid" data-game-grid></div>
+    </section>
+
+    <section class="section" id="development">
+      <div class="section-head">
+        <div><p class="eyebrow">VR development</p><h2>実装途中も、成果として見える</h2></div>
+        <p>ここでは「プレイ可能」と「開発・検証中」を分けて表示します。途中成果を隠さず、どの証拠レベルまで到達しているかを確認できます。</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div class="badges"><span class="badge">開発中</span><span class="badge">VRChat</span></div>
+          <h3>Stich-Meister VRChat版</h3>
+          <p>盤面生成、UdonSharp配線、ゲーム状態同期を分離して実装中。Pagesでは設計資料を公開し、VRChat実行証拠は別gateとして扱います。</p>
+          <p><a class="btn" href="./games/stich-meister/">現在の成果を見る</a></p>
+        </article>
+        <article class="feature-card">
+          <div class="badges"><span class="badge">U1 実装済み</span><span class="badge">U2–U4 移行中</span></div>
+          <h3>Unity / VRChat 自動検証</h3>
+          <p>VPM解決からUnity compile、ClientSim、実VRChat 2-client検証までを証拠レベル別に自動化するworkstreamです。</p>
+          <p><a class="btn" href="https://github.com/KAFKA2306/vrmine/issues/54">Issue #54 を見る</a></p>
+        </article>
+        <article class="feature-card">
+          <div class="badges"><span class="badge">設計・実装中</span><span class="badge">Blender → Unity</span></div>
+          <h3>VRChatアセット変換パイプライン</h3>
+          <p>Blender headlessからFBX export、Unity import、VRChat evidenceまでを再現可能にし、GUI手作業を通常経路から外すための実装です。</p>
+          <p><a class="btn" href="https://github.com/KAFKA2306/vrmine/issues/58">Issue #58 を見る</a></p>
+        </article>
+      </div>
     </section>
 
     <section class="section" id="platform">
