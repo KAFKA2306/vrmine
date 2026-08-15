@@ -63,7 +63,7 @@ jobs:
           for file in "${required[@]}"; do test -s "$file"; done
           find pages -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -n1 node --check
           node --check server/abyss-server.mjs
-          grep -F 'vrmine-game-hub-2026-07-26-1' pages/index.html
+          grep -F 'vrmine-game-hub-2026-08-15-1' pages/index.html
           grep -F 'Answer Impostor' pages/games/answer-impostor/index.html
           grep -F '深淵侵蝕' pages/games/abyss-invasion/index.html
           grep -F 'Stich-Meister' pages/games/stich-meister/index.html
@@ -136,7 +136,7 @@ jobs:
           matched=false
           for attempt in $(seq 1 36); do
             curl --fail --silent --show-error --location "$base/?smoke=${EXPECTED_SHA}-${attempt}" -o "$tmp/index.html"
-            if grep -Fq 'vrmine-game-hub-2026-07-26-1' "$tmp/index.html"; then
+            if grep -Fq 'vrmine-game-hub-2026-08-15-1' "$tmp/index.html"; then
               matched=true
               break
             fi
