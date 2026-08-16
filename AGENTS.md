@@ -28,6 +28,18 @@ For non-trivial work define before editing:
 
 The Contract is both the minimum required result and the maximum allowed scope. Do not broaden a browser-game change into Unity work or a package-resolution change into VRChat runtime work unless the acceptance criteria require it.
 
+## Complexity Ratchet
+For the same user-visible capability, UX, and required evidence level, prefer the implementation with fewer production responsibilities, files, lines, settings, dependencies, adapters, and execution paths.
+
+- Reuse an existing canonical component before adding a new abstraction.
+- A new production file or dependency must own a responsibility that cannot be cleanly absorbed by an existing canonical path.
+- Replacing a path means deleting the superseded path in the same workline; Git history is the archive.
+- Do not reduce tests, observability, fail-fast behavior, or U1–U5 evidence merely to reduce LOC.
+- Keep retry/recovery policy in the execution/workflow layer when possible; domain logic should fail visibly instead of converting invalid state into plausible defaults.
+- Use the existing `Taskfile.yml` interface rather than adding parallel shell/PowerShell/npm command surfaces for the same intent.
+- Before/after reports for non-trivial refactors must include production file/line delta and user-visible capability/evidence delta. A larger implementation requires an explicit reason.
+- Net-new framework code with no new verified player/developer outcome is a regression.
+
 ## Goal-Driven Execution Loop
 For work that cannot be completed in one edit, keep one Goal active and iterate:
 
@@ -172,6 +184,7 @@ Report verified state rather than activity. Include as applicable:
 - exact tests/CI/runtime evidence;
 - merge/release result when in scope;
 - cleanup result;
+- production file/line delta and user-visible capability/evidence delta for non-trivial refactors;
 - blocker and exact next action when unfinished.
 
 Never claim a Unity/VRChat behavior at a stronger evidence level than was actually executed.
