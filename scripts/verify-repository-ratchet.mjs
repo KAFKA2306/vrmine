@@ -6,6 +6,7 @@ const requiredPaths = [
   'pages/assets/platform.js',
   'Assets',
   'ontology/project.yaml',
+  'Taskfile.yml',
 ];
 
 for (const path of requiredPaths) {
@@ -21,6 +22,18 @@ for (const phrase of [
 ]) {
   if (!readme.includes(phrase)) {
     throw new Error(`README canonical contract missing: ${phrase}`);
+  }
+}
+
+const agents = await readFile('AGENTS.md', 'utf8');
+for (const phrase of [
+  '## Complexity Ratchet',
+  'Reuse an existing canonical component before adding a new abstraction.',
+  'Do not reduce tests, observability, fail-fast behavior, or U1–U5 evidence merely to reduce LOC.',
+  'Use the existing `Taskfile.yml` interface rather than adding parallel shell/PowerShell/npm command surfaces for the same intent.',
+]) {
+  if (!agents.includes(phrase)) {
+    throw new Error(`AGENTS complexity contract missing: ${phrase}`);
   }
 }
 
