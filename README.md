@@ -1,48 +1,27 @@
 # VRMine — VRChat・ブラウザ向けゲーム開発基盤
 
 [![Build and deploy VRMine Pages](https://github.com/KAFKA2306/vrmine/actions/workflows/pages.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/pages.yml)
-[![Project integrity](https://github.com/KAFKA2306/vrmine/actions/workflows/project-integrity.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/project-integrity.yml)
-[![Unity U1 VPM verification](https://github.com/KAFKA2306/vrmine/actions/workflows/unity-vpm.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/unity-vpm.yml)
+[![Unity VPM verification](https://github.com/KAFKA2306/vrmine/actions/workflows/unity-vpm.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/unity-vpm.yml)
 
-**ブラウザでゲームが動いた。それでも、VRChatで動く証拠にはならない。**
-
-同じゲームでも、状態遷移、同期、保存、入力、実行環境が変われば、壊れ方も変わります。VRMineはその差を潰さず、ブラウザ版とVRChat版を別々に検証しながら、複数のボードゲーム・会話ゲームを共通基盤で育てるプロジェクトです。
+VRMineは、ブラウザ版とVRChat版を別々に検証しながら、複数のゲームを共通基盤で開発するrepositoryです。ブラウザで動いたことをUnity/UdonSharp/VRChat上の動作証拠として扱いません。
 
 **公開ゲームハブ:** https://kafka2306.github.io/vrmine/
 
-ゲームごとの状態、得点、同期、保存、検証を共通基盤へまとめながら、ブラウザで動いたこととVRChatで動いたことを別の証拠として扱います。
-
-## 正準ユーザーフロー
-
-VRMineで維持する主要フローは次の1本です。
+## 主な入口
 
 ```text
 ゲームを選ぶ
   → ゲーム固有の入力・操作
-  → 共通/固有ロジックで状態遷移
+  → 状態遷移
   → 実行環境ごとの検証
-  → 公開可能な成果だけをPagesまたはVRChatへ出す
+  → PagesまたはVRChatへ公開
 ```
 
-- **ブラウザ入口:** `pages/index.html` → `pages/games/registry.js` → `pages/games/<game-id>/`
-- **ブラウザ状態:** ゲーム固有stateを `vrmine.games.<game-id>.state` に分離し、同じ状態を別形式で二重正準化しない
-- **VRChat入口:** Unityプロジェクトの `Assets/`。Unity versionは `ProjectSettings/ProjectVersion.txt` を正準とする
-- **公開判定:** ブラウザのNode/静的検証と、Unity/UdonSharp/VRChat実行証拠を別gateとして扱う
-
-### 非目標
-
-- 実験機能や調査workflowをこのrepoの恒常的な主要フローにしない
-- ブラウザtestの成功をVRChat実機成功へ読み替えない
-- 使われていないadapter・別正準store・生成途中artifactを履歴保存のためだけに残さない
-- 新しい抽象化は、少なくとも2つの実利用経路で必要になるまで追加しない
-
-### Ratchet KPI
-
-主要KPIは3つに限定します。
-
-1. **主要フロー検証成功率** — CI/実機gateの成功・失敗をそのまま記録する
-2. **手動操作数** — build / wire / verify / publishで人手が必要な操作を減らす
-3. **再現可能成果数** — 同じ入力・commit・実行環境から再検証できるゲーム成果のみ数える
+- **ブラウザ:** `pages/index.html` → `pages/games/registry.js` → `pages/games/<game-id>/`
+- **ブラウザ状態:** `vrmine.games.<game-id>.state` でゲームごとに分離
+- **VRChat:** Unityプロジェクトの `Assets/`
+- **Unity version:** `ProjectSettings/ProjectVersion.txt`
+- **VRChat toolchain:** `config/vrchat-toolchain.json`
 
 ## 公開中のゲーム
 
@@ -50,9 +29,7 @@ VRMineで維持する主要フローは次の1本です。
 - [深淵侵蝕](https://kafka2306.github.io/vrmine/games/abyss-invasion/) — 4人用の領域支配・進行補助
 - [Stich-Meister](https://kafka2306.github.io/vrmine/games/stich-meister/) — ルールを奪い合うトリックテイキング
 
-## Answer Impostor
-
-主な機能:
+### Answer Impostor
 
 - 擬態者と擬態対象のランダム選出
 - 個別の秘密役割確認
@@ -64,9 +41,7 @@ VRMineで維持する主要フローは次の1本です。
 - `localStorage`への保存
 - JSONのエクスポート・インポート
 
-## 深淵侵蝕
-
-物理盤面またはVRChat盤面の進行を補助します。
+### 深淵侵蝕
 
 - 支配区域と連続領域の記録
 - 侵蝕・潜伏・抗争・儀式の行動ログ
@@ -76,7 +51,7 @@ VRMineで維持する主要フローは次の1本です。
 
 ネットワーク手順は[docs/abyss-invasion-network.md](docs/abyss-invasion-network.md)を参照してください。
 
-## VRChat版 Stich-Meister
+### VRChat版 Stich-Meister
 
 VRChat SDK3 / UdonSharpを使用し、盤面生成、オブジェクト配線、ゲーム状態同期を分離しています。
 
@@ -84,97 +59,60 @@ VRChat SDK3 / UdonSharpを使用し、盤面生成、オブジェクト配線、
 - `VRMineBridge.cs` — 生成物をUdonSharpコンポーネントへ配線
 - `BoardState` / `GameController` — ゲーム進行とネットワーク同期
 
-旧Unity MenuItem verificationはローカルfallbackとしてのみ残し、新しい自動化をそこへ追加しません。正準化中のverification architectureは [#54](https://github.com/KAFKA2306/vrmine/issues/54) を参照してください。
-
 関連資料:
 
 - [Rulebook](docs/Rulebook.md)
 - [STATE](docs/STATE.md)
 - [ARCHITECTURE_RULES](docs/ARCHITECTURE_RULES.md)
 
-## Unity / VRChat verification
+## Unity / VRChat の検証
 
-検証を証拠レベルに分離します。
+現在のtargetはUnity `2022.3.22f1` / VRChat SDK `3.9.0`です。versionは `ProjectSettings/ProjectVersion.txt` と `config/vrchat-toolchain.json` で管理します。
 
-```text
-U1  VPM/package resolve
- ↓
-U2  exact Unity compile + EditMode
- ↓
-U3  PlayMode + ClientSim-supported semantics
- ↓ 必要な変更だけ
-U4  Windows + actual VRChat multi-client
- ↓ release時のみ
-U5  private-world smoke
-```
+GitHub Actionsの `unity-vpm.yml` はUnity Editorを起動せず、次を検証します。
 
-### U1 — 実装済み
+- pinned `vrc-get` のchecksum
+- VPM package graphの解決
+- manifestが検証中に変化しないこと
+- 利用可能なpackage update
 
-U1はUnity Editorを起動せず、VPM package graphの再現性とversion driftを検証します。
+Unity compile、PlayMode、実際のVRChat clientでの確認は、このVPM検証とは別に扱います。
 
-- `config/vrchat-toolchain.json` — exact Unity / VRChat SDK target / `vrc-get` version・release asset SHA-256
-- `node scripts/install-vrc-get.mjs` — Linux x64 / Windows x64へchecksum検証済みbinaryを配置
-- `node scripts/verify-vpm.mjs` — manifest整合、`vrc-get resolve`、canonical manifest非変異、`vrc-get outdated`を検証
-- `.github/workflows/unity-vpm.yml` — `ubuntu-24.04`でU1を実行し、machine-readable evidenceをJob Summaryへ保存
-
-現在のproject targetはUnity `2022.3.22f1` / VRChat SDK `3.9.0`です。`outdated` が新しいSDKを検出してもU1では自動upgradeしません。SDK migrationはexact Unity compile/runtime evidenceと同じ変更で行います。
-
-後続workstream:
-
-- [#49](https://github.com/KAFKA2306/vrmine/issues/49) — Ubuntu + official Unity CLI PoC
-- [#50](https://github.com/KAFKA2306/vrmine/issues/50) — EditMode/NUnit化
-- [#51](https://github.com/KAFKA2306/vrmine/issues/51) — PlayMode + ClientSim
-- [#52](https://github.com/KAFKA2306/vrmine/issues/52) — PR merge gate / artifacts
-- [#53](https://github.com/KAFKA2306/vrmine/issues/53) — real VRChat 2-client machine gate
-
-ClientSimの成功をreal VRChat networkingの成功として扱いません。生成された `Latest*.txt` やdated screenshotはGitへ保存せず、CI/target-machine artifactとして保持します。
-
-## Pagesゲーム基盤
+## Pages
 
 ```text
 pages/
-├── index.html                  # ゲームポータル
-├── games/registry.js           # ゲーム登録
-├── assets/styles.css           # 共通デザイン
-├── assets/platform.js          # 保存・入出力・通知
-├── games/<game-id>/            # 各ゲーム
-└── service-worker.js           # PWAキャッシュ
+├── index.html
+├── games/registry.js
+├── assets/styles.css
+├── assets/platform.js
+├── games/<game-id>/
+└── service-worker.js
 ```
 
-新しいゲームは`pages/games/<game-id>/`へ追加し、`pages/games/registry.js`へ登録します。保存領域は`vrmine.games.<game-id>.state`でゲームごとに分離します。
+新しいゲームは `pages/games/<game-id>/` へ追加し、`pages/games/registry.js` へ登録します。
 
 ## ローカル検証
 
-正準入口は次の2コマンドです。
+通常は次を実行します。
 
 ```bash
 task setup
 task check
 ```
 
-`task setup` はrepo-local verification toolをexact version/checksumで準備します。`task check` は現在GUI無しで再現できるrepository ratchet、ブラウザunit test、U1 VPM resolve/driftを実行します。U1だけを再実行する場合は `task vpm:check` を使います。
+`task setup` はpinned `vrc-get` を準備します。`task check` はAnswer ImpostorのNode.js testとVPM package graph検証を実行します。VPMだけを再実行する場合は `task vpm:check` を使います。
 
-個別コマンド:
+個別に実行する場合:
 
 ```bash
 node --test pages/games/answer-impostor/engine.test.mjs
-node scripts/verify-repository-ratchet.mjs
 node scripts/verify-vpm.mjs
 python3 -m http.server 8000 --directory pages
 ```
 
-GitHub Actionsでは、ゲームロジック、正準構造、静的リンク、JavaScript構文、Pages公開後の実URLに加えてU1 VPM package graphを検証します。Unity/VRChat側のU2–U4は移行中で、完了後はユーザーのUnity手動起動を通常経路にしません。
+Pages全体の検証は `task pages:test`、深淵侵蝕のserverは `task abyss:server` です。
 
-## 検証の原則
+## 検証方針
 
-```text
-入力・操作
-  → 状態遷移
-  → 得点・合法手・同期結果
-  → 実行環境ごとの証拠
-  → release pass / fail
-```
-
-ブラウザ単体試験だけで、Unity、UdonSharp、VRChatクライアント上の動作を証明したことにはしません。機械可読な定義は[`ontology/project.yaml`](ontology/project.yaml)にあります。
-
-**README最終監査:** 2026-08-15
+ブラウザのtestだけでUnity、UdonSharp、VRChat client上の動作を証明したことにはしません。コード・tests・実行結果を文書より優先し、未実行の環境は未検証として扱います。
