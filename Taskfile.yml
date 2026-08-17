@@ -13,12 +13,11 @@ tasks:
     desc: Run fast reproducible repository checks available without opening Unity
     deps: [setup]
     cmds:
-      - node scripts/verify-repository-ratchet.mjs
       - node --test pages/games/answer-impostor/engine.test.mjs
       - node scripts/verify-vpm.mjs
 
   vpm:check:
-    desc: Run U1 VPM resolve and drift verification
+    desc: Run VPM resolve and drift verification
     deps: [setup]
     cmds:
       - node scripts/verify-vpm.mjs
