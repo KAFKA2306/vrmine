@@ -1,5 +1,9 @@
 # VRMine — VRChat・ブラウザ向けゲーム開発基盤
 
+[![Build and deploy VRMine Pages](https://github.com/KAFKA2306/vrmine/actions/workflows/pages.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/pages.yml)
+[![Project integrity](https://github.com/KAFKA2306/vrmine/actions/workflows/project-integrity.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/project-integrity.yml)
+[![Unity U1 VPM verification](https://github.com/KAFKA2306/vrmine/actions/workflows/unity-vpm.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/unity-vpm.yml)
+
 **ブラウザでゲームが動いた。それでも、VRChatで動く証拠にはならない。**
 
 同じゲームでも、状態遷移、同期、保存、入力、実行環境が変われば、壊れ方も変わります。VRMineはその差を潰さず、ブラウザ版とVRChat版を別々に検証しながら、複数のボードゲーム・会話ゲームを共通基盤で育てるプロジェクトです。
