@@ -9,7 +9,7 @@
   "floor": {"position": [0.0, -0.1, 0.0], "scale": [28.0, 0.2, 16.0]},
   "spawn": {"position": [0.0, 0.1, 7.0]},
   "reference_camera": {"position": [0.0, 10.0, -9.0], "rotation_euler_degrees": [48.0, 0.0, 0.0], "field_of_view": 55.0},
-  "video_player": {"position": [13.0, 1.6, 0.0], "rotation_euler_degrees": [0.0, -90.0, 0.0], "status": "blocked_playlist", "prefab_path": null, "playlist_manifest": null},
+  "video_player": {"position": [13.0, 1.6, 0.0], "rotation_euler_degrees": [0.0, -90.0, 0.0], "status": "blocked_playlist", "prefab_path": "Packages/com.vrchat.worlds/Samples/UdonExampleScene/Prefabs/VideoPlayers/UdonSyncPlayer (Unity).prefab", "playlist_manifest": "config/gaussian-video-playlist.json"},
   "exhibits": [
     {"display_index":1,"source_id":"avenida-gomez-morin","prefab_path":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/avenida-gomez-morin.prefab","label":"Avenida Gómez Morín","status":"source_registered","position":[-11.25,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
     {"display_index":2,"source_id":"baluarte-san-pedro","prefab_path":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/baluarte-san-pedro.prefab","label":"Baluarte de San Pedro","status":"source_registered","position":[-8.75,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
