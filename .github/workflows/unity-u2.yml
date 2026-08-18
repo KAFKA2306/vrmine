@@ -18,39 +18,89 @@ concurrency:
 
 jobs:
   editmode:
-    name: U2 Unity 2022.3.22f1 EditMode
+    name: Unity 2022.3.22f1 EditMode
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
+    env:
+      UNITY_VERSION: 2022.3.22f1
+      UNITY_CHANGESET: 887be4894c44
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Require Unity Personal CI credentials
+      - name: Prepare evidence directory
+        shell: bash
+        run: |
+          mkdir -p .artifacts/unity-u2
+          {
+            echo "commit=${GITHUB_SHA}"
+            echo "runner=${RUNNER_OS}"
+            echo "unity_version=${UNITY_VERSION}"
+            echo "unity_changeset=${UNITY_CHANGESET}"
+            echo "disk_before=$(df -B1 --output=avail "$GITHUB_WORKSPACE" | tail -1 | tr -d ' ')"
+          } > .artifacts/unity-u2/environment.txt
+
+      - name: Install Unity CLI
+        shell: bash
+        run: |
+          curl -fsSL https://public-cdn.cloud.unity3d.com/hub/prod/cli/install.sh \
+            | UNITY_CLI_CHANNEL=beta bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install exact Unity Editor
+        shell: bash
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          unity --version | tee .artifacts/unity-u2/unity-cli-version.txt
+          unity install-path -s "$RUNNER_TEMP/unity-editors"
+          unity install "$UNITY_VERSION" -c "$UNITY_CHANGESET"
+          unity editors -i --verbose --json > .artifacts/unity-u2/installed-editors.json
+          editor_path="$(find "$RUNNER_TEMP/unity-editors" -type f -path '*/Editor/Unity' -print -quit)"
+          if [ -z "$editor_path" ]; then
+            echo "Exact Unity Editor binary was not found after installation." >&2
+            exit 1
+          fi
+          echo "UNITY_EDITOR=$editor_path" >> "$GITHUB_ENV"
+          echo "editor_path=$editor_path" >> .artifacts/unity-u2/environment.txt
+          echo "disk_after_install=$(df -B1 --output=avail "$GITHUB_WORKSPACE" | tail -1 | tr -d ' ')" >> .artifacts/unity-u2/environment.txt
+
+      - name: Activate Plus or Pro license
         shell: bash
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         run: |
           missing=0
-          for name in UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+          for name in UNITY_SERIAL UNITY_EMAIL UNITY_PASSWORD; do
             if [ -z "${!name}" ]; then
-              echo "$name is required for Unity Personal CI activation." >&2
+              echo "$name is not configured." >&2
               missing=1
             fi
           done
-          exit "$missing"
+          if [ "$missing" -ne 0 ]; then
+            echo "classification=BLOCKED_LICENSE" >> .artifacts/unity-u2/environment.txt
+            echo "Unity 2022.3 command-line activation is documented for Plus/Pro; Personal activation requires Unity Hub." >&2
+            exit 1
+          fi
+          "$UNITY_EDITOR" -quit -batchmode -nographics \
+            -serial "$UNITY_SERIAL" \
+            -username "$UNITY_EMAIL" \
+            -password "$UNITY_PASSWORD" \
+            -logFile .artifacts/unity-u2/license.log
 
       - name: Run exact Unity EditMode tests
-        uses: game-ci/unity-test-runner@0ff419b913a3630032cbe0de48a0099b5a9f0ed9 # v4 observed 2026-08-19
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          unityVersion: 2022.3.22f1
-          testMode: EditMode
-          artifactsPath: .artifacts/unity-u2
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          "$UNITY_EDITOR" \
+            -batchmode \
+            -nographics \
+            -projectPath "$GITHUB_WORKSPACE" \
+            -runTests \
+            -testPlatform EditMode \
+            -testResults "$GITHUB_WORKSPACE/.artifacts/unity-u2/results.xml" \
+            -logFile "$GITHUB_WORKSPACE/.artifacts/unity-u2/Editor.log"
+          echo "classification=PASS" >> .artifacts/unity-u2/environment.txt
+          echo "disk_after_test=$(df -B1 --output=avail "$GITHUB_WORKSPACE" | tail -1 | tr -d ' ')" >> .artifacts/unity-u2/environment.txt
 
       - name: Upload U2 evidence
         if: always()
@@ -58,4 +108,4 @@ jobs:
         with:
           name: unity-u2-${{ github.sha }}
           path: .artifacts/unity-u2
-          if-no-files-found: warn
+          if-no-files-found: error
