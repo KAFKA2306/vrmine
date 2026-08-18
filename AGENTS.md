@@ -87,7 +87,6 @@ Useful focused checks:
 ```text
 task vpm:check
 node --test pages/games/answer-impostor/engine.test.mjs
-node scripts/verify-repository-ratchet.mjs
 ```
 
 `task setup` installs the pinned `vrc-get` release asset after SHA-256 verification. U1 validates the exact Unity policy, VPM SDK target consistency, `vrc-get resolve` reproducibility, canonical manifest non-mutation, and `vrc-get outdated`; evidence belongs in CI Job Summary / runtime artifacts, not the repository.
