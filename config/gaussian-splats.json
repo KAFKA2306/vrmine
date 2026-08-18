@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "environments": [
+    {
+      "id": "huejotzingo",
+      "type": "gaussian-splat",
+      "format": "ply",
+      "source": {
+        "repository": "KAFKA2306/AutoPhotogrammetry",
+        "commit": "1fa7f35b1fc9fce669f97d5ec7c7f46ce4601206",
+        "path": "output/huejotzingo/runs/splatfacto/20260818T111922Z-6381bd35/export/splat.ply",
+        "raw_url": "https://raw.githubusercontent.com/KAFKA2306/AutoPhotogrammetry/1fa7f35b1fc9fce669f97d5ec7c7f46ce4601206/output/huejotzingo/runs/splatfacto/20260818T111922Z-6381bd35/export/splat.ply",
+        "size_bytes": 38085465,
+        "sha256": "6dc1d2546ab848eee4587fdaaebe1b60b1f2495f8a9a9b6a58de9356222c4571",
+        "provenance": {
+          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
+          "title": "Vista del Ex Convento de San Miguel Arcángel, Huejotzingo, desde un dron",
+          "source_page": "https://commons.wikimedia.org/wiki/File:Vista_del_Ex_Convento_de_San_Miguel_Arc%C3%A1ngel,_Huejotzingo,_desde_un_dron.webm",
+          "author": "Luisalvaz",
+          "license": "CC0 1.0 Universal",
+          "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+        }
+      },
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation_euler_degrees": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "targets": {
+        "browser": {
+          "status": "UNVERIFIED",
+          "renderer": "@playcanvas/supersplat-viewer@1.28.0"
+        },
+        "unity": {
+          "status": "UNVERIFIED",
+          "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa"
+        },
+        "vrchat_pc": {
+          "status": "UNVERIFIED",
+          "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa"
+        },
+        "vrchat_android": {
+          "status": "UNVERIFIED",
+          "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa"
+        }
+      }
+    }
+  ]
+}
