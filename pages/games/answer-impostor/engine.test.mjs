@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import {
   applyRoundResult,
   buildAnswerOrder,
@@ -89,4 +90,26 @@ test('applying round updates cumulative scores', () => {
   assert.equal(scored.history.length, 1);
   assert.equal(scored.status, 'round-result');
   assert.ok(scored.players.some((p) => p.score > 0));
+});
+
+test('event PoC uses one config-selected question pack without external telemetry by default', async () => {
+  const config = JSON.parse(await readFile(new URL('../../events/demo/config.json', import.meta.url), 'utf8'));
+  const pack = JSON.parse(await readFile(new URL('../../events/question-packs/demo.json', import.meta.url), 'utf8'));
+  assert.equal(config.event.slug, 'demo');
+  assert.equal(config.game.id, 'answer-impostor');
+  assert.equal(config.game.question_pack, pack.id);
+  assert.equal(config.analytics.endpoint, null);
+  assert.ok(pack.questions.length >= 3);
+  assert.equal(new Set(pack.questions).size, pack.questions.length);
+});
+
+test('event PoC exposes the four conversion event names and bootstraps the existing game', async () => {
+  const hub = await readFile(new URL('../../events/event-hub.js', import.meta.url), 'utf8');
+  const gameContext = await readFile(new URL('../../events/event-game.js', import.meta.url), 'utf8');
+  const gameHtml = await readFile(new URL('./index.html', import.meta.url), 'utf8');
+  for (const eventName of ['view_hub', 'start_game', 'complete_game', 'cta_click']) {
+    assert.ok(`${hub}\n${gameContext}`.includes(eventName));
+  }
+  assert.ok(gameContext.includes("await import('../games/answer-impostor/game.js')"));
+  assert.ok(gameHtml.includes('../../events/event-game.js'));
 });
