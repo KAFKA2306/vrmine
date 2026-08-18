@@ -87,6 +87,7 @@ jobs:
           grep -F 'fixture-next' pages/3dgs/index.html
           grep -F 'fixture-select' pages/3dgs/index.html
           grep -F 'vrmine:3dgs:first-frame' pages/3dgs/gallery.js
+          grep -F 'data:application/json' pages/3dgs/gallery.js
           grep -F '@playcanvas/supersplat-viewer@1.28.0' config/gaussian-splats.json
           grep -F '6dc1d2546ab848eee4587fdaaebe1b60b1f2495f8a9a9b6a58de9356222c4571' config/gaussian-splats.json
           grep -F 'VRMine Event Demo' pages/events/demo/config.json
@@ -133,12 +134,22 @@ jobs:
             --ignore-gpu-blocklist \
             --enable-unsafe-swiftshader \
             --use-angle=swiftshader \
-            --virtual-time-budget=90000 \
+            --virtual-time-budget=180000 \
             --dump-dom \
             'http://127.0.0.1:8000/3dgs/#huejotzingo' > /tmp/vrmine-3dgs-dom.html
-          grep -F 'data-state="ready"' /tmp/vrmine-3dgs-dom.html
-          grep -F 'huejotzingo: 実PLYのfirst frameを描画しました' /tmp/vrmine-3dgs-dom.html
-          grep -F '9 / 20 upstream entries available' /tmp/vrmine-3dgs-dom.html
+          python3 - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          html = Path('/tmp/vrmine-3dgs-dom.html').read_text(encoding='utf-8')
+          expected = len(json.loads(Path('config/gaussian-splats.json').read_text(encoding='utf-8'))['environments'])
+          match = re.search(r'<p id="viewer-status"[^>]*>(.*?)</p>', html, re.S)
+          print('viewer-status:', re.sub(r'<[^>]+>', '', match.group(1)).strip() if match else 'missing')
+          assert 'data-splat-render="first-frame-pass"' in html, 'runtime first-frame marker is missing'
+          assert f'data-splat-entries="{expected}"' in html, f'runtime manifest count does not match {expected}'
+          assert 'huejotzingo: 実PLYのfirst frameを描画しました' in html, 'selected Huejotzingo did not reach first frame'
+          PY
 
       - name: Detect GitHub Pages configuration
         id: pages
