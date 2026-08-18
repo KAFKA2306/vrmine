@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 
 const exhibition = JSON.parse(await readFile(new URL('../config/gaussian-exhibition.json', import.meta.url), 'utf8'));
 const sources = JSON.parse(await readFile(new URL('../config/gaussian-splats.json', import.meta.url), 'utf8'));
+const playlist = JSON.parse(await readFile(new URL('../config/gaussian-video-playlist.json', import.meta.url), 'utf8'));
 
 assert.equal(exhibition.schema_version, 1, 'unsupported gaussian exhibition schema');
 assert.equal(exhibition.expected_exhibits, 20, 'the exhibition must define exactly 20 slots');
@@ -27,14 +28,13 @@ for (const vector of [
 }
 assert.ok(exhibition.floor.scale.every((value) => Number.isFinite(value) && value > 0), 'floor scale must be positive');
 assert.ok(Number.isFinite(exhibition.reference_camera.field_of_view) && exhibition.reference_camera.field_of_view > 0);
-assert.ok(['blocked_playlist', 'ready'].includes(exhibition.video_player.status), 'invalid video player status');
-if (exhibition.video_player.status === 'blocked_playlist') {
-  assert.equal(exhibition.video_player.prefab_path, null);
-  assert.equal(exhibition.video_player.playlist_manifest, null);
-} else {
-  assert.ok(exhibition.video_player.prefab_path?.endsWith('.prefab'), 'ready video player needs a prefab');
-  assert.ok(exhibition.video_player.playlist_manifest?.endsWith('.json'), 'ready video player needs a playlist manifest');
-}
+assert.equal(exhibition.video_player.prefab_path, playlist.player_prefab_path, 'scene must use playlist-declared SDK player prefab');
+assert.equal(exhibition.video_player.playlist_manifest, 'config/gaussian-video-playlist.json');
+assert.equal(
+  exhibition.video_player.status,
+  playlist.status === 'ready' ? 'ready' : 'blocked_playlist',
+  'scene video readiness must follow the canonical playlist state',
+);
 
 const rowA = exhibition.exhibits.slice(0, 10);
 const rowB = exhibition.exhibits.slice(10, 20);
@@ -97,6 +97,4 @@ assert.equal(assignedSources.size, sources.environments.length, 'registered sour
 assert.equal(blocked, exhibition.expected_exhibits - sources.environments.length, 'blocked slot count must match missing sources');
 assert.ok(sources.environments.length <= exhibition.expected_exhibits, 'source registry exceeds exhibition capacity');
 
-console.log(
-  `Validated Gaussian exhibition: slots=${exhibition.expected_exhibits}, source_registered=${registered}, blocked_source=${blocked}`,
-);
+console.log(`Validated Gaussian exhibition: slots=${exhibition.expected_exhibits}, source_registered=${registered}, blocked_source=${blocked}, video=${exhibition.video_player.status}`);
