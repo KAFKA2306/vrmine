@@ -62,6 +62,7 @@ jobs:
             server/abyss-server.mjs
             pages/games/stich-meister/index.html
             pages/3dgs/index.html
+            pages/3dgs/gallery.js
             config/gaussian-splats.json
             pages/events/event.js
             pages/events/telemetry.js
@@ -80,8 +81,12 @@ jobs:
           grep -F 'event-bridge.js' pages/games/answer-impostor/index.html
           grep -F '深淵侵蝕' pages/games/abyss-invasion/index.html
           grep -F 'Stich-Meister' pages/games/stich-meister/index.html
-          grep -F "fetch('./gaussian-splats.json'" pages/3dgs/index.html
-          grep -F 'vrmine:3dgs:first-frame' pages/3dgs/index.html
+          grep -F 'gallery.js' pages/3dgs/index.html
+          grep -F "fetch('./gaussian-splats.json'" pages/3dgs/gallery.js
+          grep -F 'fixture-previous' pages/3dgs/index.html
+          grep -F 'fixture-next' pages/3dgs/index.html
+          grep -F 'fixture-select' pages/3dgs/index.html
+          grep -F 'vrmine:3dgs:first-frame' pages/3dgs/gallery.js
           grep -F '@playcanvas/supersplat-viewer@1.28.0' config/gaussian-splats.json
           grep -F '6dc1d2546ab848eee4587fdaaebe1b60b1f2495f8a9a9b6a58de9356222c4571' config/gaussian-splats.json
           grep -F 'VRMine Event Demo' pages/events/demo/config.json
@@ -130,9 +135,10 @@ jobs:
             --use-angle=swiftshader \
             --virtual-time-budget=90000 \
             --dump-dom \
-            http://127.0.0.1:8000/3dgs/ > /tmp/vrmine-3dgs-dom.html
+            'http://127.0.0.1:8000/3dgs/#huejotzingo' > /tmp/vrmine-3dgs-dom.html
           grep -F 'data-state="ready"' /tmp/vrmine-3dgs-dom.html
-          grep -F '実PLYのfirst frameを描画しました' /tmp/vrmine-3dgs-dom.html
+          grep -F 'huejotzingo: 実PLYのfirst frameを描画しました' /tmp/vrmine-3dgs-dom.html
+          grep -F '9 / 20 upstream entries available' /tmp/vrmine-3dgs-dom.html
 
       - name: Detect GitHub Pages configuration
         id: pages
@@ -202,6 +208,7 @@ jobs:
           curl --fail --silent --show-error --location "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
           curl --fail --silent --show-error --location "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
           curl --fail --silent --show-error --location "$base/3dgs/?smoke=${EXPECTED_SHA}" -o "$tmp/3dgs.html"
+          curl --fail --silent --show-error --location "$base/3dgs/gallery.js?smoke=${EXPECTED_SHA}" -o "$tmp/gallery.js"
           curl --fail --silent --show-error --location "$base/3dgs/gaussian-splats.json?smoke=${EXPECTED_SHA}" -o "$tmp/gaussian-splats.json"
           curl --fail --silent --show-error --location "$base/events/demo/?smoke=${EXPECTED_SHA}" -o "$tmp/event.html"
           curl --fail --silent --show-error --location "$base/organizers/?smoke=${EXPECTED_SHA}" -o "$tmp/organizers.html"
@@ -211,7 +218,8 @@ jobs:
           grep -F 'Answer Impostor' "$tmp/answer.html"
           grep -F '深淵侵蝕' "$tmp/abyss.html"
           grep -F 'Stich-Meister' "$tmp/stich.html"
-          grep -F "fetch('./gaussian-splats.json'" "$tmp/3dgs.html"
+          grep -F 'gallery.js' "$tmp/3dgs.html"
+          grep -F "fetch('./gaussian-splats.json'" "$tmp/gallery.js"
           grep -F '@playcanvas/supersplat-viewer@1.28.0' "$tmp/gaussian-splats.json"
           grep -F '6dc1d2546ab848eee4587fdaaebe1b60b1f2495f8a9a9b6a58de9356222c4571' "$tmp/gaussian-splats.json"
           grep -F 'VRMine Event Demo' "$tmp/event.html"
