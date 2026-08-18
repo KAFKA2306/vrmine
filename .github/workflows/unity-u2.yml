@@ -51,6 +51,7 @@ jobs:
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           unity --version | tee .artifacts/unity-u2/unity-cli-version.txt
+          mkdir -p "$RUNNER_TEMP/unity-editors"
           unity install-path -s "$RUNNER_TEMP/unity-editors"
           unity install "$UNITY_VERSION" -c "$UNITY_CHANGESET"
           unity editors -i --verbose --json > .artifacts/unity-u2/installed-editors.json
