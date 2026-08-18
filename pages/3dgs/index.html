@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f5f0">
+  <meta name="description" content="AutoPhotogrammetry由来のHuejotzingo Gaussian Splatを、固定versionのSuperSplat Viewerで表示するVRMine browser fixture。">
+  <title>Huejotzingo 3D Gaussian Splat — VRMine</title>
+  <link rel="stylesheet" href="../assets/styles.css">
+  <style>
+    .viewer-shell { min-height: 72vh; border: 1px solid #d8d1c7; border-radius: 16px; overflow: hidden; background: #111; }
+    .viewer-shell iframe { display: block; width: 100%; height: 72vh; border: 0; }
+    .viewer-status { margin: 0 0 1rem; }
+    .viewer-status[data-state="error"] { font-weight: 700; }
+    .meta-list { display: grid; gap: .55rem; padding: 0; list-style: none; }
+    .meta-list code { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ移動</a>
+  <header class="site-header">
+    <a class="brand" href="../"><span class="brand-mark" aria-hidden="true">◇</span><span>VRMine Game Hub</span></a>
+    <nav class="header-actions" aria-label="主要ナビゲーション">
+      <a class="btn btn-small" href="../">Hubへ戻る</a>
+      <a class="btn btn-small" href="https://github.com/KAFKA2306/vrmine/issues/74">Issue #74</a>
+    </nav>
+  </header>
+
+  <main class="shell" id="main">
+    <section class="hero">
+      <p class="eyebrow">3D Gaussian Splat / browser evidence</p>
+      <h1>Huejotzingo</h1>
+      <p class="lead">AutoPhotogrammetryが生成した同一PLYを、独自rasterizerを作らず、固定versionのSuperSplat Viewerで読み込みます。browserでの表示結果はUnity / VRChatの実行証拠とは別です。</p>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div><p class="eyebrow">Viewer</p><h2>Gaussian Splat viewer</h2></div>
+        <p>マウスまたはタッチでorbit / zoomできます。読み込みに失敗した場合はviewer側のerror表示をそのまま残し、別assetへfallbackしません。</p>
+      </div>
+      <p id="viewer-status" class="viewer-status" role="status">viewerを準備しています…</p>
+      <div class="viewer-shell">
+        <iframe id="viewer" title="Huejotzingo Gaussian Splat viewer" allow="fullscreen; xr-spatial-tracking"></iframe>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><div><p class="eyebrow">Provenance</p><h2>Source contract</h2></div></div>
+      <ul class="meta-list">
+        <li>Source: <a href="https://github.com/KAFKA2306/AutoPhotogrammetry/commit/1fa7f35b1fc9fce669f97d5ec7c7f46ce4601206">AutoPhotogrammetry commit 1fa7f35</a></li>
+        <li>Fixture: <code>huejotzingo</code></li>
+        <li>PLY SHA-256: <code>6dc1d2546ab848eee4587fdaaebe1b60b1f2495f8a9a9b6a58de9356222c4571</code></li>
+        <li>Source media: <a href="https://commons.wikimedia.org/wiki/File:Vista_del_Ex_Convento_de_San_Miguel_Arc%C3%A1ngel,_Huejotzingo,_desde_un_dron.webm">Wikimedia Commons</a>, Luisalvaz, CC0 1.0 Universal</li>
+        <li>Browser renderer: <a href="https://github.com/playcanvas/supersplat-viewer">@playcanvas/supersplat-viewer 1.28.0</a> (MIT)</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">VRMine — browser status is independent from Unity / VRChat status.</footer>
+
+  <script type="module">
+    const status = document.getElementById('viewer-status');
+    const iframe = document.getElementById('viewer');
+    const source = 'https://raw.githubusercontent.com/KAFKA2306/AutoPhotogrammetry/1fa7f35b1fc9fce669f97d5ec7c7f46ce4601206/output/huejotzingo/runs/splatfacto/20260818T111922Z-6381bd35/export/splat.ply';
+
+    const canvas = document.createElement('canvas');
+    if (!canvas.getContext('webgl2')) {
+      status.textContent = 'このbrowserではWebGL 2を利用できないためviewerを開始できません。';
+      status.dataset.state = 'error';
+      throw new Error('WebGL 2 unavailable');
+    }
+
+    try {
+      const { html, css, js } = await import('https://cdn.jsdelivr.net/npm/@playcanvas/supersplat-viewer@1.28.0/+esm');
+      const scriptUrl = URL.createObjectURL(new Blob([js], { type: 'text/javascript' }));
+      let documentSource = html
+        .replace(/<link[^>]+href=["'](?:\.\/)?index\.css["'][^>]*>/i, `<style>${css}</style>`)
+        .replace(/<script[^>]+src=["'](?:\.\/)?index\.js["'][^>]*><\/script>/i, '');
+      documentSource = documentSource.replace('</body>', `<script type="module" src="${scriptUrl}"></script></body>`);
+      const viewerUrl = URL.createObjectURL(new Blob([documentSource], { type: 'text/html' }));
+      iframe.src = `${viewerUrl}?content=${encodeURIComponent(source)}`;
+      iframe.addEventListener('load', () => {
+        status.textContent = 'SuperSplat Viewer 1.28.0を開始しました。PLYのloading/error状態はviewer内に表示されます。';
+      }, { once: true });
+    } catch (error) {
+      status.textContent = `viewerの読み込みに失敗しました: ${error.message}`;
+      status.dataset.state = 'error';
+      console.error(error);
+    }
+  </script>
+</body>
+</html>
