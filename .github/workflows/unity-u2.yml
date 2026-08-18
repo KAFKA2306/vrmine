@@ -24,20 +24,28 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Require Unity license secret
+      - name: Require Unity Personal CI credentials
         shell: bash
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         run: |
-          if [ -z "$UNITY_LICENSE" ]; then
-            echo "UNITY_LICENSE is required for U2; configure an activated Unity license file as a repository Actions secret." >&2
-            exit 1
-          fi
+          missing=0
+          for name in UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "$name is required for Unity Personal CI activation." >&2
+              missing=1
+            fi
+          done
+          exit "$missing"
 
       - name: Run exact Unity EditMode tests
-        uses: game-ci/unity-test-runner@v4
+        uses: game-ci/unity-test-runner@0ff419b913a3630032cbe0de48a0099b5a9f0ed9 # v4 observed 2026-08-19
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           unityVersion: 2022.3.22f1
           testMode: EditMode
@@ -46,7 +54,7 @@ jobs:
 
       - name: Upload U2 evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4 observed 2026-08-19
         with:
           name: unity-u2-${{ github.sha }}
           path: .artifacts/unity-u2
