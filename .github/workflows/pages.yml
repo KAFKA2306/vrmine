@@ -56,22 +56,34 @@ jobs:
             pages/games/answer-impostor/index.html
             pages/games/answer-impostor/game.js
             pages/games/answer-impostor/engine.mjs
+            pages/games/answer-impostor/event-bridge.js
             pages/games/abyss-invasion/index.html
             pages/games/abyss-invasion/tracker.js
             server/abyss-server.mjs
             pages/games/stich-meister/index.html
             pages/3dgs/index.html
+            pages/events/event.js
+            pages/events/telemetry.js
+            pages/events/demo/index.html
+            pages/events/demo/config.json
+            pages/events/question-packs/demo.json
+            pages/organizers/index.html
             pages/service-worker.js
           )
           for file in "${required[@]}"; do test -s "$file"; done
           find pages -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -n1 node --check
           node --check server/abyss-server.mjs
+          node -e "const fs=require('fs'); for (const f of ['pages/events/demo/config.json','pages/events/question-packs/demo.json']) JSON.parse(fs.readFileSync(f,'utf8'))"
           grep -F 'vrmine-game-hub-2026-08-15-1' pages/index.html
           grep -F 'Answer Impostor' pages/games/answer-impostor/index.html
+          grep -F 'event-bridge.js' pages/games/answer-impostor/index.html
           grep -F '深淵侵蝕' pages/games/abyss-invasion/index.html
           grep -F 'Stich-Meister' pages/games/stich-meister/index.html
           grep -F '@playcanvas/supersplat-viewer@1.28.0' pages/3dgs/index.html
           grep -F '6dc1d2546ab848eee4587fdaaebe1b60b1f2495f8a9a9b6a58de9356222c4571' pages/3dgs/index.html
+          grep -F 'VRMine Event Demo' pages/events/demo/config.json
+          grep -F 'analytics_endpoint' pages/events/demo/config.json
+          grep -F '5,000〜15,000円 / event' pages/organizers/index.html
           grep -F "href: './games/answer-impostor/'" pages/games/registry.js
           grep -F "href: './games/abyss-invasion/'" pages/games/registry.js
           grep -F 'new WebSocket(server)' pages/games/abyss-invasion/tracker.js
@@ -153,6 +165,8 @@ jobs:
           curl --fail --silent --show-error --location "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
           curl --fail --silent --show-error --location "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
           curl --fail --silent --show-error --location "$base/3dgs/?smoke=${EXPECTED_SHA}" -o "$tmp/3dgs.html"
+          curl --fail --silent --show-error --location "$base/events/demo/?smoke=${EXPECTED_SHA}" -o "$tmp/event.html"
+          curl --fail --silent --show-error --location "$base/organizers/?smoke=${EXPECTED_SHA}" -o "$tmp/organizers.html"
           curl --fail --silent --show-error --location "$base/games/answer-impostor/engine.mjs?smoke=${EXPECTED_SHA}" -o "$tmp/engine.mjs"
           curl --fail --silent --show-error --location "$base/games/abyss-invasion/tracker.js?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.js"
           grep -F 'vrmine-game-hub-v3' "$tmp/service-worker.js"
@@ -160,6 +174,8 @@ jobs:
           grep -F '深淵侵蝕' "$tmp/abyss.html"
           grep -F 'Stich-Meister' "$tmp/stich.html"
           grep -F '@playcanvas/supersplat-viewer@1.28.0' "$tmp/3dgs.html"
+          grep -F 'VRMine Event Demo' "$tmp/event.html"
+          grep -F '5,000〜15,000円 / event' "$tmp/organizers.html"
           grep -F 'scoreRound' "$tmp/engine.mjs"
           grep -F 'new WebSocket(server)' "$tmp/abyss.js"
           echo "Live VRMine game hub verification passed: $base/"
