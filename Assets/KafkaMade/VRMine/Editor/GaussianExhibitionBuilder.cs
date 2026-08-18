@@ -474,7 +474,7 @@ public static class GaussianExhibitionBuilder
         GameObject textObject = new GameObject(name);
         textObject.transform.SetParent(canvasObject.transform, false);
         Text text = textObject.AddComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.fontSize = fontSize;
         text.alignment = TextAnchor.MiddleCenter;
         text.color = Color.white;
