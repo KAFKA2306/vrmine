@@ -4,16 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f5f0">
-  <meta name="description" content="AutoPhotogrammetry由来のHuejotzingo Gaussian Splatを、固定versionのSuperSplat Viewerで表示するVRMine browser fixture。">
-  <title>Huejotzingo 3D Gaussian Splat — VRMine</title>
+  <meta name="description" content="AutoPhotogrammetry由来のGaussian Splatを、VRMineの共通manifestから選択して固定versionのSuperSplat Viewerで表示するbrowser gallery。">
+  <title>3D Gaussian Splat Gallery — VRMine</title>
   <link rel="stylesheet" href="../assets/styles.css">
   <style>
+    .gallery-controls { display: grid; grid-template-columns: auto minmax(12rem, 1fr) auto; gap: .75rem; align-items: center; margin: 0 0 1rem; }
+    .gallery-controls select { min-width: 0; width: 100%; padding: .75rem; border: 1px solid #d8d1c7; border-radius: 10px; background: #fff; color: inherit; }
     .viewer-shell { min-height: 72vh; border: 1px solid #d8d1c7; border-radius: 16px; overflow: hidden; background: #111; }
     .viewer-shell iframe { display: block; width: 100%; height: 72vh; border: 0; }
     .viewer-status { margin: 0 0 1rem; }
     .viewer-status[data-state="ready"], .viewer-status[data-state="error"] { font-weight: 700; }
     .meta-list { display: grid; gap: .55rem; padding: 0; list-style: none; }
     .meta-list code { overflow-wrap: anywhere; }
+    @media (max-width: 640px) { .gallery-controls { grid-template-columns: 1fr 1fr; } .gallery-controls select { grid-column: 1 / -1; grid-row: 1; } }
   </style>
 </head>
 <body>
@@ -29,23 +32,31 @@
   <main class="shell" id="main">
     <section class="hero">
       <p class="eyebrow">3D Gaussian Splat / browser evidence</p>
-      <h1>Huejotzingo</h1>
-      <p class="lead">AutoPhotogrammetryが生成した共通fixtureを、独自rasterizerを作らず、固定versionのSuperSplat Viewerで読み込みます。browserの結果をUnity / VRChatへ流用しません。</p>
+      <h1>Gaussian Splat Gallery</h1>
+      <p class="lead">AutoPhotogrammetry由来の共通manifestをそのまま読み、1件ずつ選択して観察します。独自rasterizerや別catalogは作らず、browserの結果をUnity / VRChatへ流用しません。</p>
     </section>
 
     <section class="section">
       <div class="section-head">
-        <div><p class="eyebrow">Viewer</p><h2>Gaussian Splat viewer</h2></div>
-        <p>viewer標準のorbit / zoomで観察できます。別assetへfallbackせず、実PLYのfirst frameが描画されるまで完了表示にしません。</p>
+        <div><p class="eyebrow">Gallery</p><h2>展示を選択</h2></div>
+        <p><span id="fixture-count">manifestを読み込んでいます…</span>。最終20件はAutoPhotogrammetry #33が正準です。</p>
       </div>
-      <p id="viewer-status" class="viewer-status" role="status" data-state="loading">fixture contractを読み込んでいます…</p>
+      <div class="gallery-controls" aria-label="Gaussian Splat selection">
+        <button class="btn" id="fixture-previous" type="button">Previous</button>
+        <label>
+          <span class="skip-link">展示を直接選択</span>
+          <select id="fixture-select" aria-label="展示を直接選択"></select>
+        </label>
+        <button class="btn" id="fixture-next" type="button">Next</button>
+      </div>
+      <p id="viewer-status" class="viewer-status" role="status" data-state="loading">galleryを準備しています…</p>
       <div class="viewer-shell">
-        <iframe id="viewer" title="Huejotzingo Gaussian Splat viewer" allow="fullscreen; xr-spatial-tracking"></iframe>
+        <iframe id="viewer" title="Selected Gaussian Splat viewer" allow="fullscreen; xr-spatial-tracking"></iframe>
       </div>
     </section>
 
     <section class="section">
-      <div class="section-head"><div><p class="eyebrow">Provenance</p><h2>Source contract</h2></div></div>
+      <div class="section-head"><div><p class="eyebrow">Provenance</p><h2>Selected source contract</h2></div></div>
       <ul class="meta-list">
         <li>Source: <a id="source-commit" href="#">loading…</a></li>
         <li>Fixture: <code id="fixture-id">loading…</code></li>
@@ -57,76 +68,6 @@
   </main>
 
   <footer class="site-footer">VRMine — browser status is independent from Unity / VRChat status.</footer>
-
-  <script type="module">
-    const status = document.getElementById('viewer-status');
-    const iframe = document.getElementById('viewer');
-    const fail = (message) => {
-      status.textContent = message;
-      status.dataset.state = 'error';
-    };
-
-    try {
-      const response = await fetch('./gaussian-splats.json', { cache: 'no-store' });
-      if (!response.ok) throw new Error(`fixture contract HTTP ${response.status}`);
-      const contract = await response.json();
-      const fixture = contract.environments?.find((entry) => entry.id === 'huejotzingo');
-      if (!fixture) throw new Error('huejotzingo fixture is missing');
-      if (fixture.source.provenance.license_status !== 'verified') throw new Error('fixture license is not verified');
-
-      const browserRenderer = contract.renderers?.browser;
-      const versionSeparator = browserRenderer?.lastIndexOf('@') ?? -1;
-      if (versionSeparator <= 0 || versionSeparator === browserRenderer.length - 1) throw new Error('browser renderer pin is invalid');
-      const rendererPackage = browserRenderer.slice(0, versionSeparator);
-      const rendererVersion = browserRenderer.slice(versionSeparator + 1);
-      const source = `https://raw.githubusercontent.com/${contract.source_repository}/${contract.source_commit}/${fixture.source.path}`;
-
-      document.getElementById('source-commit').href = `https://github.com/${contract.source_repository}/commit/${contract.source_commit}`;
-      document.getElementById('source-commit').textContent = `${contract.source_repository} ${contract.source_commit.slice(0, 8)}`;
-      document.getElementById('fixture-id').textContent = fixture.id;
-      document.getElementById('source-sha').textContent = fixture.source.sha256;
-      document.getElementById('source-page').href = fixture.source.provenance.source_page;
-      document.getElementById('source-page').textContent = fixture.source.provenance.title;
-      document.getElementById('source-author').textContent = fixture.source.provenance.author;
-      document.getElementById('source-license').href = fixture.source.provenance.license_url;
-      document.getElementById('source-license').textContent = fixture.source.provenance.license;
-      document.getElementById('renderer-link').textContent = browserRenderer;
-
-      const canvas = document.createElement('canvas');
-      if (!navigator.gpu && !canvas.getContext('webgl2')) throw new Error('WebGPU and WebGL 2 are unavailable');
-
-      const { html, css, js } = await import(`https://cdn.jsdelivr.net/npm/${rendererPackage}@${rendererVersion}/+esm`);
-      const bridge = `<script>
-        window.firstFrame = () => parent.postMessage({ type: 'vrmine:3dgs:first-frame' }, '*');
-        window.addEventListener('error', (event) => parent.postMessage({ type: 'vrmine:3dgs:error', message: event.message || 'viewer error' }, '*'));
-        window.addEventListener('unhandledrejection', (event) => parent.postMessage({ type: 'vrmine:3dgs:error', message: String(event.reason || 'viewer promise rejection') }, '*'));
-      <\/script>`;
-      const scriptUrl = URL.createObjectURL(new Blob([js], { type: 'text/javascript' }));
-      let viewerDocument = html
-        .replace(/<link[^>]+href=["'](?:\.\/)?index\.css["'][^>]*>/i, `<style>${css}</style>`)
-        .replace(/<script[^>]+src=["'](?:\.\/)?index\.js["'][^>]*><\/script>/i, '');
-      viewerDocument = viewerDocument.replace('</head>', `${bridge}</head>`);
-      viewerDocument = viewerDocument.replace('</body>', `<script type="module" src="${scriptUrl}"></script></body>`);
-      const viewerUrl = URL.createObjectURL(new Blob([viewerDocument], { type: 'text/html' }));
-
-      window.addEventListener('message', (event) => {
-        if (event.source !== iframe.contentWindow) return;
-        if (event.data?.type === 'vrmine:3dgs:first-frame') {
-          status.textContent = `実PLYのfirst frameを描画しました — ${browserRenderer}`;
-          status.dataset.state = 'ready';
-        } else if (event.data?.type === 'vrmine:3dgs:error') {
-          fail(`viewer error: ${event.data.message}`);
-        }
-      });
-
-      iframe.addEventListener('load', () => {
-        if (status.dataset.state === 'loading') status.textContent = 'viewer documentを読み込みました。実PLYのfirst frameを待っています…';
-      }, { once: true });
-      iframe.src = `${viewerUrl}?content=${encodeURIComponent(source)}`;
-    } catch (error) {
-      fail(`viewerの読み込みに失敗しました: ${error.message}`);
-      console.error(error);
-    }
-  </script>
+  <script type="module" src="./gallery.js"></script>
 </body>
 </html>
