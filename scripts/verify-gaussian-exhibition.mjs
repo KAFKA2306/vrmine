@@ -10,7 +10,7 @@ assert.equal(exhibition.canonical_platform, 'windows');
 assert.equal(exhibition.source_registry, 'config/gaussian-splats.json');
 assert.equal(exhibition.renderer, sources.renderers.unity_vrchat, 'scene renderer must match the canonical source registry');
 assert.equal(exhibition.target_extent_m, 1, 'exhibits target an approximately 1 m normalized extent');
-assert.ok(exhibition.scene_path.endsWith('.unity'), 'scene_path must point to a Unity scene');
+assert.equal(exhibition.scene_path, 'Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity');
 assert.ok(Array.isArray(exhibition.exhibits), 'exhibits must be an array');
 assert.equal(exhibition.exhibits.length, exhibition.expected_exhibits, 'exhibition slot count mismatch');
 
@@ -21,6 +21,7 @@ for (const vector of [
   exhibition.reference_camera?.position,
   exhibition.reference_camera?.rotation_euler_degrees,
   exhibition.video_player?.position,
+  exhibition.video_player?.rotation_euler_degrees,
 ]) {
   assert.ok(Array.isArray(vector) && vector.length === 3, 'scene vectors must contain three values');
 }
@@ -34,6 +35,18 @@ if (exhibition.video_player.status === 'blocked_playlist') {
   assert.ok(exhibition.video_player.prefab_path?.endsWith('.prefab'), 'ready video player needs a prefab');
   assert.ok(exhibition.video_player.playlist_manifest?.endsWith('.json'), 'ready video player needs a playlist manifest');
 }
+
+const rowA = exhibition.exhibits.slice(0, 10);
+const rowB = exhibition.exhibits.slice(10, 20);
+for (const row of [rowA, rowB]) {
+  for (let i = 1; i < row.length; i++) {
+    assert.equal(row[i].position[0] - row[i - 1].position[0], 2.5, 'exhibit center spacing must be 2.5 m');
+  }
+}
+assert.ok(rowA.every((entry) => entry.position[2] === -2.5), 'first row must be at z=-2.5 m');
+assert.ok(rowB.every((entry) => entry.position[2] === 2.5), 'second row must be at z=2.5 m');
+const maxExhibitX = Math.max(...exhibition.exhibits.map((entry) => Math.abs(entry.position[0])));
+assert.ok(Math.abs(exhibition.video_player.position[0]) > maxExhibitX, 'video player must be at an aisle end');
 
 const sourceById = new Map(sources.environments.map((entry) => [entry.id, entry]));
 assert.equal(sourceById.size, sources.environments.length, 'source ids must be unique before scene assignment');
