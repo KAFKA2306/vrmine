@@ -1,0 +1,53 @@
+name: Unity U2 compile and EditMode
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "Assets/**"
+      - "Packages/**"
+      - "ProjectSettings/**"
+      - ".github/workflows/unity-u2.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vrmine-u2-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  editmode:
+    name: U2 Unity 2022.3.22f1 EditMode
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Require Unity license secret
+        shell: bash
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        run: |
+          if [ -z "$UNITY_LICENSE" ]; then
+            echo "UNITY_LICENSE is required for U2; configure an activated Unity license file as a repository Actions secret." >&2
+            exit 1
+          fi
+
+      - name: Run exact Unity EditMode tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          unityVersion: 2022.3.22f1
+          testMode: EditMode
+          artifactsPath: .artifacts/unity-u2
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload U2 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-u2-${{ github.sha }}
+          path: .artifacts/unity-u2
+          if-no-files-found: warn
