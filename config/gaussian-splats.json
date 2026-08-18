@@ -29,19 +29,28 @@
       "targets": {
         "browser": {
           "status": "UNVERIFIED",
-          "renderer": "@playcanvas/supersplat-viewer@1.28.0"
+          "renderer": "@playcanvas/supersplat-viewer",
+          "renderer_version": "1.28.0",
+          "renderer_revision": "f6378f066d803a7b9dd4b86e5eb78b03f8a37730",
+          "renderer_license": "MIT"
         },
         "unity": {
           "status": "UNVERIFIED",
-          "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa"
+          "renderer": "MichaelMoroz/VRChatGaussianSplatting",
+          "renderer_revision": "f96c0117cba518ff84d059d36f16909b873e23aa",
+          "renderer_license": "MIT"
         },
         "vrchat_pc": {
           "status": "UNVERIFIED",
-          "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa"
+          "renderer": "MichaelMoroz/VRChatGaussianSplatting",
+          "renderer_revision": "f96c0117cba518ff84d059d36f16909b873e23aa",
+          "renderer_license": "MIT"
         },
         "vrchat_android": {
           "status": "UNVERIFIED",
-          "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa"
+          "renderer": "MichaelMoroz/VRChatGaussianSplatting",
+          "renderer_revision": "f96c0117cba518ff84d059d36f16909b873e23aa",
+          "renderer_license": "MIT"
         }
       }
     }
