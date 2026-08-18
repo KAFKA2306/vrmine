@@ -59,3 +59,5 @@ if (eventSlug && /^[a-z0-9-]+$/.test(eventSlug)) {
     console.error('Event context failed:', error);
   }
 }
+
+await import('../games/answer-impostor/game.js');
