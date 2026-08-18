@@ -4,13 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f5f0">
-  <meta name="description" content="AutoPhotogrammetry由来のHuejotzingo Gaussian Splatを、固定versionのSuperSplat Viewerで表示するVRMine browser fixture。">
+  <meta name="description" content="AutoPhotogrammetry由来のHuejotzingo Gaussian Splatを、固定revisionのSuperSplat Viewerで表示するVRMine browser fixture。">
   <title>Huejotzingo 3D Gaussian Splat — VRMine</title>
   <link rel="stylesheet" href="../assets/styles.css">
   <style>
     .viewer-shell { min-height: 72vh; border: 1px solid #d8d1c7; border-radius: 16px; overflow: hidden; background: #111; }
     .viewer-shell iframe { display: block; width: 100%; height: 72vh; border: 0; }
     .viewer-status { margin: 0 0 1rem; }
+    .viewer-status[data-state="ready"] { font-weight: 700; }
     .viewer-status[data-state="error"] { font-weight: 700; }
     .meta-list { display: grid; gap: .55rem; padding: 0; list-style: none; }
     .meta-list code { overflow-wrap: anywhere; }
@@ -30,15 +31,15 @@
     <section class="hero">
       <p class="eyebrow">3D Gaussian Splat / browser evidence</p>
       <h1>Huejotzingo</h1>
-      <p class="lead">AutoPhotogrammetryが生成した同一PLYを、独自rasterizerを作らず、固定versionのSuperSplat Viewerで読み込みます。browserでの表示結果はUnity / VRChatの実行証拠とは別です。</p>
+      <p class="lead">AutoPhotogrammetryが生成した同一PLYを、独自rasterizerを作らず、固定revisionのSuperSplat Viewerで読み込みます。browserでの表示結果はUnity / VRChatの実行証拠とは別です。</p>
     </section>
 
     <section class="section">
       <div class="section-head">
         <div><p class="eyebrow">Viewer</p><h2>Gaussian Splat viewer</h2></div>
-        <p>マウスまたはタッチでorbit / zoomできます。読み込みに失敗した場合はviewer側のerror表示をそのまま残し、別assetへfallbackしません。</p>
+        <p>viewer標準のorbit / zoomで観察できます。別assetへのfallbackは行わず、実PLYのfirst frameが描画されるまで完了表示にしません。</p>
       </div>
-      <p id="viewer-status" class="viewer-status" role="status">viewerを準備しています…</p>
+      <p id="viewer-status" class="viewer-status" role="status" data-state="loading">fixture contractを読み込んでいます…</p>
       <div class="viewer-shell">
         <iframe id="viewer" title="Huejotzingo Gaussian Splat viewer" allow="fullscreen; xr-spatial-tracking"></iframe>
       </div>
@@ -47,11 +48,11 @@
     <section class="section">
       <div class="section-head"><div><p class="eyebrow">Provenance</p><h2>Source contract</h2></div></div>
       <ul class="meta-list">
-        <li>Source: <a href="https://github.com/KAFKA2306/AutoPhotogrammetry/commit/1fa7f35b1fc9fce669f97d5ec7c7f46ce4601206">AutoPhotogrammetry commit 1fa7f35</a></li>
-        <li>Fixture: <code>huejotzingo</code></li>
-        <li>PLY SHA-256: <code>6dc1d2546ab848eee4587fdaaebe1b60b1f2495f8a9a9b6a58de9356222c4571</code></li>
-        <li>Source media: <a href="https://commons.wikimedia.org/wiki/File:Vista_del_Ex_Convento_de_San_Miguel_Arc%C3%A1ngel,_Huejotzingo,_desde_un_dron.webm">Wikimedia Commons</a>, Luisalvaz, CC0 1.0 Universal</li>
-        <li>Browser renderer: <a href="https://github.com/playcanvas/supersplat-viewer">@playcanvas/supersplat-viewer 1.28.0</a> (MIT)</li>
+        <li>Source: <a id="source-commit" href="#">loading…</a></li>
+        <li>Fixture: <code id="fixture-id">loading…</code></li>
+        <li>PLY SHA-256: <code id="source-sha">loading…</code></li>
+        <li>Source media: <a id="source-page" href="#">loading…</a>, <span id="source-author">loading…</span>, <a id="source-license" href="#">loading…</a></li>
+        <li>Browser renderer: <a id="renderer-link" href="https://github.com/playcanvas/supersplat-viewer">loading…</a></li>
       </ul>
     </section>
   </main>
@@ -61,30 +62,70 @@
   <script type="module">
     const status = document.getElementById('viewer-status');
     const iframe = document.getElementById('viewer');
-    const source = 'https://raw.githubusercontent.com/KAFKA2306/AutoPhotogrammetry/1fa7f35b1fc9fce669f97d5ec7c7f46ce4601206/output/huejotzingo/runs/splatfacto/20260818T111922Z-6381bd35/export/splat.ply';
 
-    const canvas = document.createElement('canvas');
-    if (!canvas.getContext('webgl2')) {
-      status.textContent = 'このbrowserではWebGL 2を利用できないためviewerを開始できません。';
+    const fail = (message) => {
+      status.textContent = message;
       status.dataset.state = 'error';
-      throw new Error('WebGL 2 unavailable');
-    }
+    };
 
     try {
-      const { html, css, js } = await import('https://cdn.jsdelivr.net/npm/@playcanvas/supersplat-viewer@1.28.0/+esm');
+      const response = await fetch('./gaussian-splats.json', { cache: 'no-store' });
+      if (!response.ok) throw new Error(`fixture contract HTTP ${response.status}`);
+      const contract = await response.json();
+      const fixture = contract.environments?.find((entry) => entry.id === 'huejotzingo');
+      if (!fixture) throw new Error('huejotzingo fixture is missing');
+      const browser = fixture.targets?.browser;
+      if (!browser?.renderer_version || !browser?.renderer_revision) throw new Error('browser renderer pin is incomplete');
+
+      document.getElementById('source-commit').href = `https://github.com/${fixture.source.repository}/commit/${fixture.source.commit}`;
+      document.getElementById('source-commit').textContent = `${fixture.source.repository} ${fixture.source.commit.slice(0, 8)}`;
+      document.getElementById('fixture-id').textContent = fixture.id;
+      document.getElementById('source-sha').textContent = fixture.source.sha256;
+      document.getElementById('source-page').href = fixture.source.provenance.source_page;
+      document.getElementById('source-page').textContent = fixture.source.provenance.title;
+      document.getElementById('source-author').textContent = fixture.source.provenance.author;
+      document.getElementById('source-license').href = fixture.source.provenance.license_url;
+      document.getElementById('source-license').textContent = fixture.source.provenance.license;
+      document.getElementById('renderer-link').textContent = `${browser.renderer} ${browser.renderer_version} @ ${browser.renderer_revision.slice(0, 8)} (${browser.renderer_license})`;
+
+      const canvas = document.createElement('canvas');
+      const canUseWebGpu = Boolean(navigator.gpu);
+      const canUseWebGl2 = Boolean(canvas.getContext('webgl2'));
+      if (!canUseWebGpu && !canUseWebGl2) throw new Error('WebGPU and WebGL 2 are unavailable');
+
+      const packageUrl = `https://cdn.jsdelivr.net/npm/${browser.renderer}@${browser.renderer_version}/+esm`;
+      const { html, css, js } = await import(packageUrl);
+      const bridge = `<script>
+        window.firstFrame = () => parent.postMessage({ type: 'vrmine:3dgs:first-frame' }, '*');
+        window.addEventListener('error', (event) => parent.postMessage({ type: 'vrmine:3dgs:error', message: event.message || 'viewer error' }, '*'));
+        window.addEventListener('unhandledrejection', (event) => parent.postMessage({ type: 'vrmine:3dgs:error', message: String(event.reason || 'viewer promise rejection') }, '*'));
+      <\/script>`;
       const scriptUrl = URL.createObjectURL(new Blob([js], { type: 'text/javascript' }));
       let documentSource = html
         .replace(/<link[^>]+href=["'](?:\.\/)?index\.css["'][^>]*>/i, `<style>${css}</style>`)
         .replace(/<script[^>]+src=["'](?:\.\/)?index\.js["'][^>]*><\/script>/i, '');
+      documentSource = documentSource.replace('</head>', `${bridge}</head>`);
       documentSource = documentSource.replace('</body>', `<script type="module" src="${scriptUrl}"></script></body>`);
       const viewerUrl = URL.createObjectURL(new Blob([documentSource], { type: 'text/html' }));
-      iframe.src = `${viewerUrl}?content=${encodeURIComponent(source)}`;
+
+      window.addEventListener('message', (event) => {
+        if (event.source !== iframe.contentWindow) return;
+        if (event.data?.type === 'vrmine:3dgs:first-frame') {
+          status.textContent = `実PLYのfirst frameを描画しました — ${browser.renderer} ${browser.renderer_version}`;
+          status.dataset.state = 'ready';
+        } else if (event.data?.type === 'vrmine:3dgs:error') {
+          fail(`viewer error: ${event.data.message}`);
+        }
+      });
+
       iframe.addEventListener('load', () => {
-        status.textContent = 'SuperSplat Viewer 1.28.0を開始しました。PLYのloading/error状態はviewer内に表示されます。';
+        if (status.dataset.state === 'loading') {
+          status.textContent = 'viewer documentを読み込みました。実PLYのfirst frameを待っています…';
+        }
       }, { once: true });
+      iframe.src = `${viewerUrl}?content=${encodeURIComponent(fixture.source.raw_url)}`;
     } catch (error) {
-      status.textContent = `viewerの読み込みに失敗しました: ${error.message}`;
-      status.dataset.state = 'error';
+      fail(`viewerの読み込みに失敗しました: ${error.message}`);
       console.error(error);
     }
   </script>
