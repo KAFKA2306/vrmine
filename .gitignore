@@ -51,12 +51,14 @@ crashlytics-build.properties
 # UdonSharp & VRChat generated files
 /Assets/UdonSharp/
 /Assets/SerializedUdonPrograms/
+/ClientSimStorage/
 
 # Runtime verification evidence belongs in CI artifacts, not Git
 /Assets/KafkaMade/VRMine/Verification/Latest*.txt
 /Assets/KafkaMade/VRMine/Verification/Latest*.txt.meta
 /Assets/KafkaMade/VRMine/Verification/screenshot-*.png
 /Assets/KafkaMade/VRMine/Verification/screenshot-*.png.meta
+/unity_compile.log
 
 # Repo-local pinned tools and generated verification evidence
 /.tools/
