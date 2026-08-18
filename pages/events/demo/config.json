@@ -1,0 +1,11 @@
+{
+  "event_slug": "demo",
+  "event_name": "VRMine Event Demo",
+  "organizer_name": "VRMine",
+  "organizer_url": "https://github.com/KAFKA2306/vrmine",
+  "logo_path": "../../icons/icon-192.svg",
+  "cta_label": "主催者向けPoCを見る",
+  "cta_url": "../../organizers/",
+  "question_pack": "demo",
+  "analytics_endpoint": null
+}
