@@ -1,0 +1,21 @@
+{
+  "event": {
+    "slug": "demo",
+    "name": "VRMine Event Demo",
+    "organizer": {
+      "name": "VRMine",
+      "url": "https://github.com/KAFKA2306/vrmine"
+    },
+    "cta": {
+      "label": "主催者向けPoCを見る",
+      "url": "../"
+    }
+  },
+  "game": {
+    "id": "answer-impostor",
+    "question_pack": "demo"
+  },
+  "analytics": {
+    "endpoint": null
+  }
+}
