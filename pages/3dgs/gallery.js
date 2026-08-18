@@ -20,9 +20,33 @@ let viewerScriptUrl;
 let viewerDocumentUrl;
 let requestToken = 0;
 
+const viewerSettings = {
+  version: 2,
+  tonemapping: 'none',
+  highPrecisionRendering: false,
+  background: { color: [0, 0, 0] },
+  postEffectSettings: {
+    sharpness: { enabled: false, amount: 0 },
+    bloom: { enabled: false, intensity: 1, blurLevel: 2 },
+    grading: { enabled: false, brightness: 0, contrast: 1, saturation: 1, tint: [1, 1, 1] },
+    vignette: { enabled: false, intensity: 0.5, inner: 0.3, outer: 0.75, curvature: 1 },
+    fringing: { enabled: false, intensity: 0.5 }
+  },
+  animTracks: [],
+  cameras: [{ initial: { position: [0, 1, -1], target: [0, 0, 0], fov: 60 } }],
+  annotations: [],
+  startMode: 'default'
+};
+const settingsUrl = `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(viewerSettings))}`;
+
+const setEvidence = (parts) => {
+  document.documentElement.dataset.splatRender = parts.join('-');
+};
+
 const fail = (message) => {
   status.textContent = message;
   status.dataset.state = 'error';
+  setEvidence(['render', 'error']);
 };
 
 const updateNavigation = () => {
@@ -30,6 +54,7 @@ const updateNavigation = () => {
   next.disabled = selectedIndex < 0 || selectedIndex >= entries.length - 1;
   select.value = selectedIndex >= 0 ? entries[selectedIndex].id : '';
   count.textContent = `${entries.length} / 20 upstream entries available`;
+  document.documentElement.dataset.splatEntries = String(entries.length);
 };
 
 const updateMetadata = (entry) => {
@@ -79,7 +104,7 @@ const selectEntry = (index, { updateHash = true } = {}) => {
 
   if (entry.source.provenance.license_status !== 'verified') {
     iframe.removeAttribute('src');
-    fail(`${entry.id}: exact source license is未確認のためbrowser renderingを開始しません。`);
+    fail(`${entry.id}: exact source license is unverified; browser rendering is blocked.`);
     return;
   }
 
@@ -87,9 +112,10 @@ const selectEntry = (index, { updateHash = true } = {}) => {
   const token = requestToken;
   status.textContent = `${entry.id}: 実PLYを読み込み、first frameを待っています…`;
   status.dataset.state = 'loading';
+  delete document.documentElement.dataset.splatRender;
   const source = `https://raw.githubusercontent.com/${contract.source_repository}/${contract.source_commit}/${entry.source.path}`;
   viewerDocumentUrl = URL.createObjectURL(new Blob([makeViewerDocument(entry, token)], { type: 'text/html' }));
-  iframe.src = `${viewerDocumentUrl}?content=${encodeURIComponent(source)}`;
+  iframe.src = `${viewerDocumentUrl}?content=${encodeURIComponent(source)}&settings=${encodeURIComponent(settingsUrl)}&webgl`;
 };
 
 window.addEventListener('message', (event) => {
@@ -98,6 +124,7 @@ window.addEventListener('message', (event) => {
   if (event.data.type === 'vrmine:3dgs:first-frame') {
     status.textContent = `${event.data.id}: 実PLYのfirst frameを描画しました — ${contract.renderers.browser}`;
     status.dataset.state = 'ready';
+    setEvidence(['first', 'frame', 'pass']);
   } else if (event.data.type === 'vrmine:3dgs:error') {
     fail(`${event.data.id}: viewer error: ${event.data.message}`);
   }
