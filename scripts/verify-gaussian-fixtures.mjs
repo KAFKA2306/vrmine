@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 
 const allowedStatuses = new Set(['UNVERIFIED', 'PASS', 'FAIL']);
 const requiredTargets = ['browser', 'unity', 'vrchat_pc', 'vrchat_android'];
+const fullCommit = /^[0-9a-f]{40}$/;
 const config = JSON.parse(await readFile(new URL('../config/gaussian-splats.json', import.meta.url), 'utf8'));
 
 assert.equal(config.schema_version, 1, 'unsupported gaussian fixture schema');
@@ -18,7 +19,7 @@ for (const environment of config.environments) {
 
   assert.equal(environment.type, 'gaussian-splat');
   assert.equal(environment.format, 'ply');
-  assert.match(environment.source.commit, /^[0-9a-f]{40}$/);
+  assert.match(environment.source.commit, fullCommit);
   assert.match(environment.source.sha256, /^[0-9a-f]{64}$/);
   assert.ok(Number.isInteger(environment.source.size_bytes) && environment.source.size_bytes > 0);
   assert.ok(environment.source.repository);
@@ -38,11 +39,15 @@ for (const environment of config.environments) {
     const entry = environment.targets[target];
     assert.ok(allowedStatuses.has(entry.status), `${target} has invalid status ${entry.status}`);
     assert.ok(entry.renderer, `${target} renderer is required`);
+    assert.match(entry.renderer_revision ?? '', fullCommit, `${target} renderer revision must be a full commit SHA`);
+    assert.ok(entry.renderer_license, `${target} renderer license is required`);
   }
+  assert.equal(environment.targets.browser.renderer, '@playcanvas/supersplat-viewer');
+  assert.match(environment.targets.browser.renderer_version ?? '', /^\d+\.\d+\.\d+$/);
 
-  assert.deepEqual(environment.transform.position.length, 3);
-  assert.deepEqual(environment.transform.rotation_euler_degrees.length, 3);
-  assert.deepEqual(environment.transform.scale.length, 3);
+  assert.equal(environment.transform.position.length, 3);
+  assert.equal(environment.transform.rotation_euler_degrees.length, 3);
+  assert.equal(environment.transform.scale.length, 3);
 }
 
 console.log(`Validated ${config.environments.length} Gaussian Splat fixture(s): ${[...ids].join(', ')}`);
