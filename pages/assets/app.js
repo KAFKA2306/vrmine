@@ -23,5 +23,14 @@ if (grid) {
   `).join('');
 }
 
+const heroActions = document.querySelector('.hero-actions');
+if (heroActions) {
+  const organizerLink = document.createElement('a');
+  organizerLink.className = 'btn';
+  organizerLink.href = './events/';
+  organizerLink.textContent = 'イベントで使う';
+  heroActions.append(organizerLink);
+}
+
 document.querySelector('[data-game-count]')?.replaceChildren(String(games.length));
 registerServiceWorker();
