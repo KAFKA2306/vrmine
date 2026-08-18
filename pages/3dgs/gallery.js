@@ -15,9 +15,6 @@ const rendererLink = document.getElementById('renderer-link');
 let contract;
 let entries = [];
 let selectedIndex = -1;
-let viewerTemplate;
-let viewerScriptUrl;
-let viewerDocumentUrl;
 let requestToken = 0;
 
 const viewerSettings = {
@@ -76,19 +73,6 @@ const updateMetadata = (entry) => {
   }
 };
 
-const makeViewerDocument = (entry, token) => {
-  const bridge = `<script>
-    window.firstFrame = () => parent.postMessage({ type: 'vrmine:3dgs:first-frame', id: ${JSON.stringify(entry.id)}, token: ${token} }, '*');
-    window.addEventListener('error', (event) => parent.postMessage({ type: 'vrmine:3dgs:error', id: ${JSON.stringify(entry.id)}, token: ${token}, message: event.message || 'viewer error' }, '*'));
-    window.addEventListener('unhandledrejection', (event) => parent.postMessage({ type: 'vrmine:3dgs:error', id: ${JSON.stringify(entry.id)}, token: ${token}, message: String(event.reason || 'viewer promise rejection') }, '*'));
-  <\/script>`;
-  return viewerTemplate.html
-    .replace(/<link[^>]+href=["'](?:\.\/)?index\.css["'][^>]*>/i, `<style>${viewerTemplate.css}</style>`)
-    .replace(/<script[^>]+src=["'](?:\.\/)?index\.js["'][^>]*><\/script>/i, '')
-    .replace('</head>', `${bridge}</head>`)
-    .replace('</body>', `<script type="module" src="${viewerScriptUrl}"></script></body>`);
-};
-
 const selectEntry = (index, { updateHash = true } = {}) => {
   if (index < 0 || index >= entries.length) return;
   const entry = entries[index];
@@ -96,11 +80,6 @@ const selectEntry = (index, { updateHash = true } = {}) => {
   updateNavigation();
   updateMetadata(entry);
   if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(entry.id)}`);
-
-  if (viewerDocumentUrl) {
-    URL.revokeObjectURL(viewerDocumentUrl);
-    viewerDocumentUrl = undefined;
-  }
 
   if (entry.source.provenance.license_status !== 'verified') {
     iframe.removeAttribute('src');
@@ -114,12 +93,18 @@ const selectEntry = (index, { updateHash = true } = {}) => {
   status.dataset.state = 'loading';
   delete document.documentElement.dataset.splatRender;
   const source = `https://raw.githubusercontent.com/${contract.source_repository}/${contract.source_commit}/${entry.source.path}`;
-  viewerDocumentUrl = URL.createObjectURL(new Blob([makeViewerDocument(entry, token)], { type: 'text/html' }));
-  iframe.src = `${viewerDocumentUrl}?content=${encodeURIComponent(source)}&settings=${encodeURIComponent(settingsUrl)}&webgl`;
+  const params = new URLSearchParams({
+    content: source,
+    settings: settingsUrl,
+    vrmine_id: entry.id,
+    vrmine_token: String(token)
+  });
+  params.set('webgl', '');
+  iframe.src = `./viewer/?${params}`;
 };
 
 window.addEventListener('message', (event) => {
-  if (event.source !== iframe.contentWindow) return;
+  if (event.origin !== location.origin || event.source !== iframe.contentWindow) return;
   if (event.data?.token !== requestToken || event.data?.id !== entries[selectedIndex]?.id) return;
   if (event.data.type === 'vrmine:3dgs:first-frame') {
     status.textContent = `${event.data.id}: 実PLYのfirst frameを描画しました — ${contract.renderers.browser}`;
@@ -150,17 +135,13 @@ try {
   if (!entries.length) throw new Error('no Gaussian Splat entries are available');
 
   const browserRenderer = contract.renderers?.browser;
-  const versionSeparator = browserRenderer?.lastIndexOf('@') ?? -1;
-  if (versionSeparator <= 0 || versionSeparator === browserRenderer.length - 1) throw new Error('browser renderer pin is invalid');
-  const rendererPackage = browserRenderer.slice(0, versionSeparator);
-  const rendererVersion = browserRenderer.slice(versionSeparator + 1);
+  if (browserRenderer !== '@playcanvas/supersplat-viewer@1.28.0') {
+    throw new Error(`unsupported browser renderer pin: ${browserRenderer ?? 'missing'}`);
+  }
   rendererLink.textContent = browserRenderer;
 
   const canvas = document.createElement('canvas');
   if (!navigator.gpu && !canvas.getContext('webgl2')) throw new Error('WebGPU and WebGL 2 are unavailable');
-
-  viewerTemplate = await import(`https://cdn.jsdelivr.net/npm/${rendererPackage}@${rendererVersion}/+esm`);
-  viewerScriptUrl = URL.createObjectURL(new Blob([viewerTemplate.js], { type: 'text/javascript' }));
 
   for (const [index, entry] of entries.entries()) {
     const option = document.createElement('option');
