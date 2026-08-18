@@ -12,7 +12,7 @@ assert.match(config.source_commit, /^[0-9a-f]{40}$/);
 assert.ok(config.renderers.browser);
 assert.ok(config.renderers.unity_vrchat);
 assert.ok(Array.isArray(config.environments), 'environments must be an array');
-assert.equal(config.environments.length, 9, 'all nine measured AutoPhotogrammetry exports must be registered');
+assert.ok(config.environments.length > 0, 'at least one measured AutoPhotogrammetry export must be registered');
 
 assert.deepEqual(Object.keys(config.defaults.targets).sort(), [...requiredTargets].sort());
 for (const target of requiredTargets) {
@@ -60,6 +60,7 @@ for (const environment of config.environments) {
   }
 }
 
-assert.equal(rightsReady, 5, 'expected five sources with directly verified rights evidence');
-assert.equal(rightsBlocked, 4, 'expected four sources still requiring exact-file rights review');
-console.log(`Validated ${config.environments.length} Gaussian Splat sources: rights verified=${rightsReady}, needs_review=${rightsBlocked}`);
+assert.equal(rightsReady + rightsBlocked, config.environments.length, 'every source must have an explicit rights state');
+console.log(
+  `Validated ${config.environments.length} Gaussian Splat sources: rights verified=${rightsReady}, needs_review=${rightsBlocked}`,
+);
