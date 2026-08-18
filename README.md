@@ -3,11 +3,25 @@
 [![Build and deploy VRMine Pages](https://github.com/KAFKA2306/vrmine/actions/workflows/pages.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/pages.yml)
 [![Unity VPM verification](https://github.com/KAFKA2306/vrmine/actions/workflows/unity-vpm.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/unity-vpm.yml)
 
-VRMineは、ブラウザ版とVRChat版を別々に検証しながら、複数のゲームを共通基盤で開発するrepositoryです。ブラウザで動いたことをUnity/UdonSharp/VRChat上の動作証拠として扱いません。
+## Vision
+
+ブラウザ版とVRChat版を同じrepositoryで育てながら、**どの実行環境で何が検証済みかを混同せず、公開可能な状態まで進められること**を目標にします。ブラウザで動いたことをUnity/UdonSharp/VRChat上の動作証拠として扱いません。
 
 **公開ゲームハブ:** https://kafka2306.github.io/vrmine/
 
-## 主な入口
+## Design philosophy
+
+- 実行環境ごとに検証結果を分離し、未実行の環境をPASS扱いしない
+- ゲーム固有の状態と共通の公開・検証責務を分ける
+- 同じ責務の実装・設定・実行経路を並立させない
+- 複数の実利用経路で必要と確認できるまで新しい抽象化を増やさない
+- 操作を自動化しても、必要なUnity/VRChat実行証拠は削らない
+
+## Why
+
+VRMineの差分はUnity、UdonSharp、PWA、WebSocketそのものではなく、**ブラウザで確認できることとUnity/VRChatで確認すべきことを別の証拠として扱うこと**です。公開ページ、Unity Editor、ClientSim、実VRChat clientで証明できる範囲を分け、低い証拠レベルの成功を実機成功へ読み替えません。
+
+## Player / developer journey
 
 ```text
 ゲームを選ぶ
