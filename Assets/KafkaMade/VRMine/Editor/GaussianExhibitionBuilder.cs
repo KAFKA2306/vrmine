@@ -5,15 +5,13 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using VRC.SDK3.Components;
 
 public static class GaussianExhibitionBuilder
 {
     const string ConfigPath = "config/gaussian-exhibition.json";
 
-    [Serializable]
-    sealed class ExhibitionConfig
+    [Serializable] sealed class ExhibitionConfig
     {
         public int schema_version;
         public string scene_path;
@@ -29,38 +27,23 @@ public static class GaussianExhibitionBuilder
         public ExhibitConfig[] exhibits;
     }
 
-    [Serializable]
-    sealed class FloorConfig
-    {
-        public float[] position;
-        public float[] scale;
-    }
-
-    [Serializable]
-    sealed class SpawnConfig
-    {
-        public float[] position;
-    }
-
-    [Serializable]
-    sealed class CameraConfig
+    [Serializable] sealed class FloorConfig { public float[] position; public float[] scale; }
+    [Serializable] sealed class SpawnConfig { public float[] position; }
+    [Serializable] sealed class CameraConfig
     {
         public float[] position;
         public float[] rotation_euler_degrees;
         public float field_of_view;
     }
-
-    [Serializable]
-    sealed class VideoPlayerConfig
+    [Serializable] sealed class VideoPlayerConfig
     {
         public float[] position;
+        public float[] rotation_euler_degrees;
         public string status;
         public string prefab_path;
         public string playlist_manifest;
     }
-
-    [Serializable]
-    sealed class ExhibitConfig
+    [Serializable] sealed class ExhibitConfig
     {
         public int display_index;
         public string source_id;
@@ -72,155 +55,106 @@ public static class GaussianExhibitionBuilder
         public float[] scale;
     }
 
-    [MenuItem("VRMine/Build Gaussian Exhibition")]
+    [MenuItem("VRMine/Build Gaussian Splat Exhibition")]
     public static void Build()
     {
         ExhibitionConfig config = LoadConfig();
         ValidateConfig(config);
 
         var prefabs = new Dictionary<int, GameObject>();
-        var missingPrefabs = new List<string>();
-        for (int i = 0; i < config.exhibits.Length; i++)
+        var missing = new List<string>();
+        foreach (ExhibitConfig exhibit in config.exhibits)
         {
-            ExhibitConfig exhibit = config.exhibits[i];
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(exhibit.prefab_path);
-            if (prefab == null)
-            {
-                missingPrefabs.Add(exhibit.prefab_path);
-                continue;
-            }
-            prefabs.Add(exhibit.display_index, prefab);
+            if (prefab == null) missing.Add(exhibit.prefab_path);
+            else prefabs.Add(exhibit.display_index, prefab);
         }
 
         GameObject videoPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(config.video_player.prefab_path);
-        if (videoPrefab == null)
-        {
-            missingPrefabs.Add(config.video_player.prefab_path);
-        }
-
-        if (missingPrefabs.Count > 0)
-        {
-            throw new InvalidOperationException(
-                "Gaussian exhibition assets are incomplete. Missing prefabs:\n- " +
-                string.Join("\n- ", missingPrefabs));
-        }
+        if (videoPrefab == null) missing.Add(config.video_player.prefab_path);
+        if (missing.Count > 0)
+            throw new InvalidOperationException("Gaussian exhibition assets are incomplete:\n- " + string.Join("\n- ", missing));
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         CreateFloor(config.floor);
-        CreateDirectionalLight();
+        CreateBakedDirectionalLight();
+        CreateLightProbes();
         CreateDescriptor(config.spawn, config.reference_camera);
 
-        GameObject exhibitsRoot = new GameObject("GaussianExhibits");
-        for (int i = 0; i < config.exhibits.Length; i++)
+        GameObject root = new GameObject("GaussianExhibits");
+        foreach (ExhibitConfig exhibit in config.exhibits)
         {
-            ExhibitConfig exhibit = config.exhibits[i];
             GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefabs[exhibit.display_index]);
             instance.name = "Exhibit_" + exhibit.display_index.ToString("00") + "_" + exhibit.source_id;
-            instance.transform.SetParent(exhibitsRoot.transform);
-            instance.transform.SetPositionAndRotation(
-                Vector3Value(exhibit.position),
-                Quaternion.Euler(Vector3Value(exhibit.rotation_euler_degrees)));
-            instance.transform.localScale = Vector3Value(exhibit.scale);
-
+            instance.transform.SetParent(root.transform);
+            instance.transform.SetPositionAndRotation(V3(exhibit.position), Quaternion.Euler(V3(exhibit.rotation_euler_degrees)));
+            instance.transform.localScale = V3(exhibit.scale);
             CreatePad(exhibit);
             CreateLabel(exhibit);
         }
 
         GameObject videoPlayer = (GameObject)PrefabUtility.InstantiatePrefab(videoPrefab);
         videoPlayer.name = "SourceVideoPlayer";
-        videoPlayer.transform.position = Vector3Value(config.video_player.position);
+        videoPlayer.transform.SetPositionAndRotation(
+            V3(config.video_player.position),
+            Quaternion.Euler(V3(config.video_player.rotation_euler_degrees)));
 
-        string directory = Path.GetDirectoryName(config.scene_path);
-        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-        {
-            Directory.CreateDirectory(directory);
-        }
-
+        EnsureAssetFolder(Path.GetDirectoryName(config.scene_path)?.Replace('\\', '/'));
         EditorSceneManager.SaveScene(scene, config.scene_path);
         EnsureBuildScene(config.scene_path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        Debug.Log(
-            "Gaussian exhibition scene created: " + config.scene_path +
-            " (20 exhibits, target extent " + config.target_extent_m + " m)");
+        Debug.Log("Gaussian exhibition scene created: " + config.scene_path);
     }
 
     static ExhibitionConfig LoadConfig()
     {
-        if (!File.Exists(ConfigPath))
-        {
-            throw new FileNotFoundException("Gaussian exhibition config is missing.", ConfigPath);
-        }
-
+        if (!File.Exists(ConfigPath)) throw new FileNotFoundException("Gaussian exhibition config is missing.", ConfigPath);
         ExhibitionConfig config = JsonUtility.FromJson<ExhibitionConfig>(File.ReadAllText(ConfigPath));
-        if (config == null)
-        {
-            throw new InvalidDataException("Gaussian exhibition config could not be parsed.");
-        }
+        if (config == null) throw new InvalidDataException("Gaussian exhibition config could not be parsed.");
         return config;
     }
 
     static void ValidateConfig(ExhibitionConfig config)
     {
-        if (config.schema_version != 1)
-        {
-            throw new InvalidDataException("Unsupported Gaussian exhibition schema: " + config.schema_version);
-        }
+        if (config.schema_version != 1) throw new InvalidDataException("Unsupported Gaussian exhibition schema.");
         if (config.expected_exhibits != 20 || config.exhibits == null || config.exhibits.Length != 20)
-        {
             throw new InvalidDataException("Gaussian exhibition must contain exactly 20 exhibit slots.");
-        }
-        if (!string.Equals(config.canonical_platform, "windows", StringComparison.Ordinal))
-        {
-            throw new InvalidDataException("Canonical first target must be Windows.");
-        }
+        if (config.scene_path != "Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity")
+            throw new InvalidDataException("Unexpected canonical Gaussian exhibition scene path.");
+        if (config.canonical_platform != "windows") throw new InvalidDataException("Canonical first target must be Windows.");
         if (Mathf.Abs(config.target_extent_m - 1f) > 0.001f)
-        {
             throw new InvalidDataException("Gaussian exhibits must target an approximately 1 m normalized extent.");
-        }
 
         var blocked = new List<string>();
         var indexes = new HashSet<int>();
         var sourceIds = new HashSet<string>();
-        for (int i = 0; i < config.exhibits.Length; i++)
+        foreach (ExhibitConfig exhibit in config.exhibits)
         {
-            ExhibitConfig exhibit = config.exhibits[i];
             if (!indexes.Add(exhibit.display_index))
-            {
                 throw new InvalidDataException("Duplicate exhibit display index: " + exhibit.display_index);
-            }
-            if (!string.Equals(exhibit.status, "source_registered", StringComparison.Ordinal) ||
-                string.IsNullOrEmpty(exhibit.source_id) ||
-                string.IsNullOrEmpty(exhibit.prefab_path))
+            ValidateVector(exhibit.position, "exhibit position");
+            ValidateVector(exhibit.rotation_euler_degrees, "exhibit rotation");
+            ValidateVector(exhibit.scale, "exhibit scale");
+
+            if (exhibit.status != "source_registered" || string.IsNullOrEmpty(exhibit.source_id) || string.IsNullOrEmpty(exhibit.prefab_path))
             {
                 blocked.Add(exhibit.display_index.ToString("00"));
                 continue;
             }
             if (!sourceIds.Add(exhibit.source_id))
-            {
                 throw new InvalidDataException("Duplicate exhibit source id: " + exhibit.source_id);
-            }
-            ValidateVector(exhibit.position, "exhibit position");
-            ValidateVector(exhibit.rotation_euler_degrees, "exhibit rotation");
-            ValidateVector(exhibit.scale, "exhibit scale");
         }
 
         if (blocked.Count > 0)
-        {
-            throw new InvalidOperationException(
-                "Gaussian exhibition source inputs are incomplete. Blocked slots: " +
-                string.Join(", ", blocked));
-        }
+            throw new InvalidOperationException("Gaussian exhibition source inputs are incomplete. Blocked slots: " + string.Join(", ", blocked));
 
-        if (config.video_player == null ||
-            !string.Equals(config.video_player.status, "ready", StringComparison.Ordinal) ||
+        if (config.video_player == null || config.video_player.status != "ready" ||
             string.IsNullOrEmpty(config.video_player.prefab_path) ||
-            string.IsNullOrEmpty(config.video_player.playlist_manifest))
-        {
-            throw new InvalidOperationException(
-                "Gaussian exhibition video player is not ready. Complete the 20-entry playlist before building the upload scene.");
-        }
+            string.IsNullOrEmpty(config.video_player.playlist_manifest) ||
+            !File.Exists(config.video_player.playlist_manifest))
+            throw new InvalidOperationException("The real 20-entry video player/playlist is not ready.");
 
         ValidateVector(config.floor.position, "floor position");
         ValidateVector(config.floor.scale, "floor scale");
@@ -228,75 +162,72 @@ public static class GaussianExhibitionBuilder
         ValidateVector(config.reference_camera.position, "reference camera position");
         ValidateVector(config.reference_camera.rotation_euler_degrees, "reference camera rotation");
         ValidateVector(config.video_player.position, "video player position");
+        ValidateVector(config.video_player.rotation_euler_degrees, "video player rotation");
     }
 
     static void ValidateVector(float[] values, string name)
     {
-        if (values == null || values.Length != 3)
-        {
-            throw new InvalidDataException(name + " must contain exactly three values.");
-        }
-        for (int i = 0; i < values.Length; i++)
-        {
-            if (float.IsNaN(values[i]) || float.IsInfinity(values[i]))
-            {
-                throw new InvalidDataException(name + " contains a non-finite value.");
-            }
-        }
+        if (values == null || values.Length != 3) throw new InvalidDataException(name + " must contain exactly three values.");
+        foreach (float value in values)
+            if (float.IsNaN(value) || float.IsInfinity(value)) throw new InvalidDataException(name + " contains a non-finite value.");
     }
 
     static void CreateFloor(FloorConfig config)
     {
         GameObject floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
         floor.name = "WalkableFloor";
-        floor.transform.position = Vector3Value(config.position);
-        floor.transform.localScale = Vector3Value(config.scale);
+        floor.transform.position = V3(config.position);
+        floor.transform.localScale = V3(config.scale);
+        floor.isStatic = true;
     }
 
     static void CreatePad(ExhibitConfig exhibit)
     {
         GameObject pad = GameObject.CreatePrimitive(PrimitiveType.Cube);
         pad.name = "ExhibitPad_" + exhibit.display_index.ToString("00");
-        Vector3 position = Vector3Value(exhibit.position);
-        pad.transform.position = new Vector3(position.x, 0.05f, position.z);
+        Vector3 p = V3(exhibit.position);
+        pad.transform.position = new Vector3(p.x, 0.05f, p.z);
         pad.transform.localScale = new Vector3(1.4f, 0.1f, 1.4f);
+        pad.isStatic = true;
     }
 
     static void CreateLabel(ExhibitConfig exhibit)
     {
-        GameObject canvasObject = new GameObject("ExhibitLabel_" + exhibit.display_index.ToString("00"));
-        Vector3 position = Vector3Value(exhibit.position);
-        canvasObject.transform.position = position + new Vector3(0f, 1.2f, 0.75f);
-        canvasObject.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-        canvasObject.transform.localScale = Vector3.one * 0.002f;
+        Type tmpType = Type.GetType("TMPro.TextMeshPro, Unity.TextMeshPro");
+        if (tmpType == null) throw new InvalidOperationException("TextMesh Pro is required for Gaussian exhibition labels.");
 
-        Canvas canvas = canvasObject.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.WorldSpace;
-        RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
-        canvasRect.sizeDelta = new Vector2(600f, 180f);
+        Quaternion rotation = Quaternion.Euler(V3(exhibit.rotation_euler_degrees));
+        GameObject label = new GameObject("ExhibitLabel_" + exhibit.display_index.ToString("00"));
+        label.transform.SetPositionAndRotation(
+            V3(exhibit.position) + Vector3.up * 1.2f + rotation * Vector3.forward * 0.75f,
+            rotation);
+        label.transform.localScale = Vector3.one * 0.1f;
 
-        GameObject textObject = new GameObject("Text");
-        textObject.transform.SetParent(canvasObject.transform, false);
-        Text text = textObject.AddComponent<Text>();
-        RectTransform textRect = textObject.GetComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = Vector2.zero;
-        textRect.offsetMax = Vector2.zero;
-        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        text.fontSize = 52;
-        text.alignment = TextAnchor.MiddleCenter;
-        text.color = Color.white;
-        text.text = exhibit.display_index.ToString("00") + "  " + exhibit.label;
+        Component text = label.AddComponent(tmpType);
+        tmpType.GetProperty("text")?.SetValue(text, exhibit.display_index.ToString("00") + "  " + exhibit.label);
+        tmpType.GetProperty("fontSize")?.SetValue(text, 4f);
     }
 
-    static void CreateDirectionalLight()
+    static void CreateBakedDirectionalLight()
     {
-        GameObject lightObject = new GameObject("Directional Light");
+        GameObject lightObject = new GameObject("Baked Directional Light");
         lightObject.transform.rotation = Quaternion.Euler(55f, -30f, 0f);
         Light light = lightObject.AddComponent<Light>();
         light.type = LightType.Directional;
-        light.intensity = 1.0f;
+        light.intensity = 1f;
+        light.lightmapBakeType = LightmapBakeType.Baked;
+    }
+
+    static void CreateLightProbes()
+    {
+        GameObject probes = new GameObject("Light Probes");
+        LightProbeGroup group = probes.AddComponent<LightProbeGroup>();
+        group.probePositions = new[]
+        {
+            new Vector3(-9f, 1.6f, 0f), new Vector3(-3f, 1.6f, 0f),
+            new Vector3(3f, 1.6f, 0f), new Vector3(9f, 1.6f, 0f),
+            new Vector3(0f, 1.6f, -3f), new Vector3(0f, 1.6f, 3f),
+        };
     }
 
     static void CreateDescriptor(SpawnConfig spawnConfig, CameraConfig cameraConfig)
@@ -305,43 +236,38 @@ public static class GaussianExhibitionBuilder
         VRCSceneDescriptor descriptor = descriptorObject.AddComponent<VRCSceneDescriptor>();
 
         GameObject spawn = new GameObject("SpawnPoint");
-        spawn.transform.position = Vector3Value(spawnConfig.position);
+        spawn.transform.position = V3(spawnConfig.position);
         descriptor.spawns = new[] { spawn.transform };
 
         GameObject cameraObject = new GameObject("ReferenceCamera");
-        cameraObject.transform.SetPositionAndRotation(
-            Vector3Value(cameraConfig.position),
-            Quaternion.Euler(Vector3Value(cameraConfig.rotation_euler_degrees)));
+        cameraObject.transform.SetPositionAndRotation(V3(cameraConfig.position), Quaternion.Euler(V3(cameraConfig.rotation_euler_degrees)));
         Camera camera = cameraObject.AddComponent<Camera>();
         camera.enabled = false;
         camera.fieldOfView = cameraConfig.field_of_view;
         descriptor.ReferenceCamera = cameraObject;
     }
 
+    static void EnsureAssetFolder(string assetPath)
+    {
+        if (string.IsNullOrEmpty(assetPath) || AssetDatabase.IsValidFolder(assetPath)) return;
+        string parent = Path.GetDirectoryName(assetPath)?.Replace('\\', '/');
+        EnsureAssetFolder(parent);
+        AssetDatabase.CreateFolder(parent, Path.GetFileName(assetPath));
+    }
+
     static void EnsureBuildScene(string scenePath)
     {
         var scenes = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
-        bool found = false;
         for (int i = 0; i < scenes.Count; i++)
         {
-            if (!string.Equals(scenes[i].path, scenePath, StringComparison.Ordinal))
-            {
-                continue;
-            }
+            if (scenes[i].path != scenePath) continue;
             scenes[i] = new EditorBuildSettingsScene(scenePath, true);
-            found = true;
-            break;
+            EditorBuildSettings.scenes = scenes.ToArray();
+            return;
         }
-
-        if (!found)
-        {
-            scenes.Add(new EditorBuildSettingsScene(scenePath, true));
-        }
+        scenes.Add(new EditorBuildSettingsScene(scenePath, true));
         EditorBuildSettings.scenes = scenes.ToArray();
     }
 
-    static Vector3 Vector3Value(float[] values)
-    {
-        return new Vector3(values[0], values[1], values[2]);
-    }
+    static Vector3 V3(float[] values) => new Vector3(values[0], values[1], values[2]);
 }
