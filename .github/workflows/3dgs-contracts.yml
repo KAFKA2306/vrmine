@@ -1,0 +1,38 @@
+name: 3DGS contracts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "config/gaussian-*.json"
+      - "scripts/verify-gaussian-*.mjs"
+      - ".github/workflows/3dgs-contracts.yml"
+  pull_request:
+    paths:
+      - "config/gaussian-*.json"
+      - "scripts/verify-gaussian-*.mjs"
+      - ".github/workflows/3dgs-contracts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+      - name: Check verifier syntax
+        run: |
+          node --check scripts/verify-gaussian-fixtures.mjs
+          node --check scripts/verify-gaussian-exhibition.mjs
+          node --check scripts/verify-gaussian-video-playlist.mjs
+      - name: Validate 3DGS contracts
+        run: |
+          node scripts/verify-gaussian-fixtures.mjs
+          node scripts/verify-gaussian-video-playlist.mjs
+          node scripts/verify-gaussian-exhibition.mjs
