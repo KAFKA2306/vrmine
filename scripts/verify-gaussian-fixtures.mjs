@@ -60,6 +60,6 @@ for (const environment of config.environments) {
   }
 }
 
-assert.equal(rightsReady, 3, 'expected three sources with verified rights in upstream catalog');
-assert.equal(rightsBlocked, 6, 'expected six sources requiring rights review in upstream catalog');
+assert.equal(rightsReady, 5, 'expected five sources with directly verified rights evidence');
+assert.equal(rightsBlocked, 4, 'expected four sources still requiring exact-file rights review');
 console.log(`Validated ${config.environments.length} Gaussian Splat sources: rights verified=${rightsReady}, needs_review=${rightsBlocked}`);
