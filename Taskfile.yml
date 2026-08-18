@@ -19,6 +19,20 @@ tasks:
       - node scripts/verify-gaussian-video-playlist.mjs
       - node scripts/verify-vpm.mjs
 
+  gaussian:renderer:
+    desc: Materialize the exact pinned VRChatGaussianSplatting Unity assets without example splats/scenes
+    cmds:
+      - node scripts/materialize-gaussian-renderer.mjs
+
+  gaussian:sources:
+    desc: Materialize and SHA-256 verify every currently registered AutoPhotogrammetry PLY
+    cmds:
+      - node scripts/materialize-gaussian-sources.mjs
+
+  gaussian:prepare:
+    desc: Materialize the pinned renderer and registered PLY sources before opening Unity
+    deps: [gaussian:renderer, gaussian:sources]
+
   vpm:check:
     desc: Run VPM resolve and drift verification
     deps: [setup]
