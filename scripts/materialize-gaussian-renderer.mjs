@@ -5,7 +5,10 @@ import path from 'node:path';
 const REPOSITORY = 'https://github.com/MichaelMoroz/VRChatGaussianSplatting.git';
 const REVISION = 'f96c0117cba518ff84d059d36f16909b873e23aa';
 const CACHE = path.resolve('Library/VRMine/VRChatGaussianSplatting');
-const DESTINATION = path.resolve('Assets/KafkaMade/VRMine/GaussianSplatting/Upstream');
+// Upstream Editor code loads resources through exact AssetDatabase paths under
+// Assets/VRChatGaussianSplatting. Preserve that root instead of nesting the
+// checkout under VRMine-specific folders.
+const DESTINATION = path.resolve('Assets/VRChatGaussianSplatting');
 const PATHS = ['Editor', 'RTPool', 'RadixSort', 'Resources', 'Scripts', 'Shaders'];
 const ROOT_FILES = [
   'Editor.meta', 'RTPool.meta', 'RadixSort.meta', 'Resources.meta', 'Scripts.meta', 'Shaders.meta',
