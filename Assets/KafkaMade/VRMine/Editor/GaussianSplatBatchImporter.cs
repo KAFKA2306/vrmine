@@ -11,6 +11,7 @@ public static class GaussianSplatBatchImporter
     const string SourceDirectory = "Library/VRMine/GaussianSources";
     const string PrefabDirectory = "Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs";
     const int FinalExhibitCount = 20;
+    const float TargetExtentMeters = 1f;
 
     [Serializable] sealed class Registry { public EnvironmentEntry[] environments; }
     [Serializable] sealed class EnvironmentEntry { public string id; public SourceEntry source; }
@@ -44,10 +45,11 @@ public static class GaussianSplatBatchImporter
 
         Type optionsType = importMethod.GetParameters()[3].ParameterType;
         object options = Activator.CreateInstance(optionsType);
-        SetField(optionsType, ref options, "lodUsePackedPositions", true);
-        SetField(optionsType, ref options, "importSphericalHarmonics", true);
-        SetField(optionsType, ref options, "normalizeSize", true);
-        SetEnumField(optionsType, ref options, "defaultSHBand", "SH3");
+        SetBoolField(optionsType, options, "lodUsePackedPositions", true);
+        SetBoolField(optionsType, options, "importSphericalHarmonics", true);
+        SetBoolField(optionsType, options, "normalizeSize", true);
+        SetFloatField(optionsType, options, "normalizeTargetSize", TargetExtentMeters);
+        SetEnumField(optionsType, options, "defaultSHBand", "SH3");
 
         int chunkSize = 4096;
         FieldInfo chunkField = importerType.GetField("DefaultChunkSize", BindingFlags.Public | BindingFlags.Static);
@@ -68,7 +70,7 @@ public static class GaussianSplatBatchImporter
                 object prefab = importMethod.Invoke(null, new object[] { sourcePath, prefabPath, chunkSize, options });
                 if (prefab == null || AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) == null)
                     throw new InvalidOperationException(environment.id + ": importer did not create the expected prefab: " + prefabPath);
-                Debug.Log("Imported Gaussian Splat LOD: " + environment.id + " -> " + prefabPath);
+                Debug.Log("Imported Gaussian Splat LOD at target extent " + TargetExtentMeters + " m: " + environment.id + " -> " + prefabPath);
             }
             catch (TargetInvocationException exception)
             {
@@ -111,7 +113,7 @@ public static class GaussianSplatBatchImporter
         return null;
     }
 
-    static void SetField(Type type, ref object boxed, string name, bool value)
+    static void SetBoolField(Type type, object boxed, string name, bool value)
     {
         FieldInfo field = type.GetField(name, BindingFlags.Public | BindingFlags.Instance);
         if (field == null || field.FieldType != typeof(bool))
@@ -119,7 +121,15 @@ public static class GaussianSplatBatchImporter
         field.SetValue(boxed, value);
     }
 
-    static void SetEnumField(Type type, ref object boxed, string name, string enumName)
+    static void SetFloatField(Type type, object boxed, string name, float value)
+    {
+        FieldInfo field = type.GetField(name, BindingFlags.Public | BindingFlags.Instance);
+        if (field == null || field.FieldType != typeof(float))
+            throw new MissingFieldException(type.FullName, name);
+        field.SetValue(boxed, value);
+    }
+
+    static void SetEnumField(Type type, object boxed, string name, string enumName)
     {
         FieldInfo field = type.GetField(name, BindingFlags.Public | BindingFlags.Instance);
         if (field == null || !field.FieldType.IsEnum)
