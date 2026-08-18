@@ -87,7 +87,7 @@ jobs:
           grep -F 'Stich-Meister' pages/games/stich-meister/index.html
           grep -F 'gallery.js' pages/3dgs/index.html
           grep -F "fetch('./gaussian-splats.json'" pages/3dgs/gallery.js
-          grep -F "iframe.src = `./viewer/?" pages/3dgs/gallery.js
+          grep -F 'iframe.src = `./viewer/?' pages/3dgs/gallery.js
           grep -F 'fixture-previous' pages/3dgs/index.html
           grep -F 'fixture-next' pages/3dgs/index.html
           grep -F 'fixture-select' pages/3dgs/index.html
@@ -248,7 +248,7 @@ jobs:
           grep -F '深淵侵蝕' "$tmp/abyss.html"
           grep -F 'Stich-Meister' "$tmp/stich.html"
           grep -F 'gallery.js' "$tmp/3dgs.html"
-          grep -F "iframe.src = `./viewer/?" "$tmp/gallery.js"
+          grep -F 'iframe.src = `./viewer/?' "$tmp/gallery.js"
           grep -F '@playcanvas/supersplat-viewer@1.28.0' "$tmp/gaussian-splats.json"
           grep -F '6dc1d2546ab848eee4587fdaaebe1b60b1f2495f8a9a9b6a58de9356222c4571' "$tmp/gaussian-splats.json"
           grep -F 'vrmine:3dgs:first-frame' "$tmp/viewer.html"
