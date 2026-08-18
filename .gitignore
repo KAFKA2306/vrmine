@@ -64,6 +64,9 @@ crashlytics-build.properties
 /.tools/
 /.artifacts/
 
+# Reproducibly materialized third-party Gaussian renderer source.
+/Assets/KafkaMade/VRMine/GaussianSplatting/Upstream/
+
 # Ignore downloaded packages, but not the manifests
 /Packages/*
 !/Packages/manifest.json
