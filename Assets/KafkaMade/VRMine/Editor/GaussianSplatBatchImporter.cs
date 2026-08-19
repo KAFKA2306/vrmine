@@ -10,7 +10,6 @@ public static class GaussianSplatBatchImporter
     const string RegistryPath = "config/gaussian-splats.json";
     const string SourceDirectory = "Library/VRMine/GaussianSources";
     const string PrefabDirectory = "Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs";
-    const int FinalExhibitCount = 20;
     const float TargetExtentMeters = 1f;
 
     [Serializable] sealed class Registry { public EnvironmentEntry[] environments; }
@@ -26,7 +25,7 @@ public static class GaussianSplatBatchImporter
 
         Type importerType = FindType("GaussianSplatting.GaussianSplatLODImporter");
         if (importerType == null)
-            throw new InvalidOperationException("VRChatGaussianSplatting is not materialized. Run `task gaussian:renderer` first.");
+            throw new InvalidOperationException("VRChatGaussianSplatting is not materialized. Run `task gaussian:prepare` before opening Unity.");
 
         MethodInfo importMethod = null;
         foreach (MethodInfo method in importerType.GetMethods(BindingFlags.Public | BindingFlags.Static))
@@ -56,6 +55,8 @@ public static class GaussianSplatBatchImporter
         if (chunkField != null) chunkSize = Convert.ToInt32(chunkField.GetValue(null));
 
         EnsureFolder(PrefabDirectory);
+        int imported = 0;
+        int reused = 0;
         foreach (EnvironmentEntry environment in registry.environments)
         {
             if (environment == null || string.IsNullOrEmpty(environment.id) || environment.source == null)
@@ -64,12 +65,19 @@ public static class GaussianSplatBatchImporter
             string sourcePath = Path.Combine(SourceDirectory, environment.id + ".ply").Replace('\\', '/');
             VerifySource(sourcePath, environment.source.size_bytes, environment.source.sha256, environment.id);
             string prefabPath = PrefabDirectory + "/" + environment.id + ".prefab";
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) != null)
+            {
+                reused++;
+                Debug.Log("Reusing imported Gaussian Splat prefab: " + prefabPath);
+                continue;
+            }
 
             try
             {
                 object prefab = importMethod.Invoke(null, new object[] { sourcePath, prefabPath, chunkSize, options });
                 if (prefab == null || AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) == null)
                     throw new InvalidOperationException(environment.id + ": importer did not create the expected prefab: " + prefabPath);
+                imported++;
                 Debug.Log("Imported Gaussian Splat LOD at target extent " + TargetExtentMeters + " m: " + environment.id + " -> " + prefabPath);
             }
             catch (TargetInvocationException exception)
@@ -80,16 +88,13 @@ public static class GaussianSplatBatchImporter
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        if (registry.environments.Length != FinalExhibitCount)
-            Debug.LogWarning("Gaussian LOD import completed for " + registry.environments.Length + "/" + FinalExhibitCount +
-                " registered sources. Final exhibition remains blocked until AutoPhotogrammetry supplies the remaining " +
-                (FinalExhibitCount - registry.environments.Length) + " source(s).");
+        Debug.Log("Gaussian LOD prefabs ready: count=" + registry.environments.Length + ", imported=" + imported + ", reused=" + reused + ".");
     }
 
     static void VerifySource(string path, long expectedSize, string expectedHash, string id)
     {
         if (!File.Exists(path))
-            throw new FileNotFoundException(id + ": materialized PLY is missing. Run `task gaussian:sources` first.", path);
+            throw new FileNotFoundException(id + ": materialized PLY is missing. Run `task gaussian:prepare` first.", path);
         FileInfo info = new FileInfo(path);
         if (info.Length != expectedSize)
             throw new InvalidDataException(id + ": PLY byte-size mismatch. Expected " + expectedSize + ", got " + info.Length + ".");
