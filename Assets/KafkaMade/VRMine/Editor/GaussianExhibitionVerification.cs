@@ -54,6 +54,22 @@ public static class GaussianExhibitionVerification
         public RegisteredMeasurement[] measurements;
     }
 
+    [Serializable]
+    sealed class PerformanceEvidence
+    {
+        public string activeScene;
+        public int registered;
+        public int exhibits;
+        public int renderers;
+        public int videoPlayers;
+        public int sourcePlyFiles;
+        public long sourcePlyBytes;
+        public int importedAssetFiles;
+        public long importedAssetBytes;
+        public long sceneBytes;
+        public string status;
+    }
+
     [MenuItem("VRMine/Verify Registered Gaussian Exhibition")]
     public static void VerifyRegisteredBatch()
     {
@@ -259,12 +275,60 @@ public static class GaussianExhibitionVerification
         Debug.Log("Gaussian SDK world builder validation completed without exception: scene=" + ScenePath + ", sdk=3.9.0");
     }
 
+    public static void VerifyPerformanceBatch()
+    {
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        string sourceDirectory = "Library/VRMine/GaussianSources";
+        string prefabDirectory = "Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs";
+        string[] sourceFiles = System.IO.Directory.GetFiles(sourceDirectory, "*.ply", System.IO.SearchOption.TopDirectoryOnly);
+        string[] importedFiles = System.IO.Directory.GetFiles(prefabDirectory, "*", System.IO.SearchOption.AllDirectories);
+        var evidence = new PerformanceEvidence
+        {
+            activeScene = scene.path,
+            registered = CountRegisteredSources(),
+            exhibits = CountNamed(scene, "Exhibit_"),
+            renderers = CountSceneComponents(FindType(GaussianSplatRendererTypeName), scene),
+            videoPlayers = GameObject.Find("SourceVideoPlayer") == null ? 0 : 1,
+            sourcePlyFiles = sourceFiles.Length,
+            sourcePlyBytes = SumFiles(sourceFiles),
+            importedAssetFiles = CountNonMetaFiles(importedFiles),
+            importedAssetBytes = SumNonMetaFiles(importedFiles),
+            sceneBytes = new System.IO.FileInfo(ScenePath).Length,
+            status = CountRegisteredSources() == 20 ? "MEASURED_FINAL_COUNT" : "BLOCKED_FINAL_COUNT"
+        };
+        string evidencePath = "Library/VRMine/gaussian-performance-evidence.json";
+        System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(evidencePath));
+        System.IO.File.WriteAllText(evidencePath, JsonUtility.ToJson(evidence, true));
+        Debug.Log("Gaussian performance evidence: registered=" + evidence.registered + ", exhibits=" + evidence.exhibits + ", renderers=" + evidence.renderers + ", videoPlayers=" + evidence.videoPlayers + ", sourcePlyBytes=" + evidence.sourcePlyBytes + ", importedAssetBytes=" + evidence.importedAssetBytes + ", sceneBytes=" + evidence.sceneBytes + ", status=" + evidence.status + ", path=" + evidencePath);
+    }
+
     static int CountSceneComponents<T>(Scene scene) where T : Component
     {
         int count = 0;
         foreach (T component in Resources.FindObjectsOfTypeAll<T>())
             if (component != null && !EditorUtility.IsPersistent(component) && component.gameObject.scene == scene && component.gameObject.activeInHierarchy) count++;
         return count;
+    }
+
+    static long SumFiles(string[] paths)
+    {
+        long total = 0;
+        foreach (string path in paths) total += new System.IO.FileInfo(path).Length;
+        return total;
+    }
+
+    static int CountNonMetaFiles(string[] paths)
+    {
+        int count = 0;
+        foreach (string path in paths) if (!path.EndsWith(".meta", StringComparison.Ordinal)) count++;
+        return count;
+    }
+
+    static long SumNonMetaFiles(string[] paths)
+    {
+        long total = 0;
+        foreach (string path in paths) if (!path.EndsWith(".meta", StringComparison.Ordinal)) total += new System.IO.FileInfo(path).Length;
+        return total;
     }
 
     static int CountEnabledBuildScenes()
