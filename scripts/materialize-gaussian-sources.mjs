@@ -1,51 +1,24 @@
 import { createHash } from 'node:crypto';
 import { createReadStream, createWriteStream } from 'node:fs';
 import { access, mkdir, readFile, rename, rm, stat } from 'node:fs/promises';
-import { spawn, spawnSync } from 'node:child_process';
+import { pipeline } from 'node:stream/promises';
+import { Readable } from 'node:stream';
 import path from 'node:path';
 
 const config = JSON.parse(await readFile('config/gaussian-splats.json', 'utf8'));
-const repository = `https://github.com/${config.source_repository}.git`;
-const revision = config.source_commit;
-const cache = path.resolve('Library/VRMine/AutoPhotogrammetry');
 const output = path.resolve('Library/VRMine/GaussianSources');
-
-function git(args, cwd = process.cwd()) {
-  const result = spawnSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  if (result.status !== 0) throw new Error(`git ${args.join(' ')} failed:\n${result.stderr}`);
-  return result.stdout.trim();
-}
 
 async function exists(file) {
   try { await access(file); return true; } catch { return false; }
 }
 
-async function gitShowToTemporary(repo, spec, destination) {
+async function downloadToTemporary(url, destination) {
   const temporary = `${destination}.partial`;
   await rm(temporary, { force: true });
-
-  const child = spawn('git', ['show', spec], { cwd: repo, stdio: ['ignore', 'pipe', 'pipe'] });
+  const response = await fetch(url);
+  if (!response.ok || response.body === null) throw new Error(`download failed: ${response.status} ${url}`);
   const file = createWriteStream(temporary, { flags: 'wx' });
-  let stderr = '';
-  child.stderr.setEncoding('utf8');
-  child.stderr.on('data', (chunk) => { stderr += chunk; });
-  child.stdout.pipe(file);
-
-  const [code] = await Promise.all([
-    new Promise((resolve, reject) => {
-      child.on('error', reject);
-      child.on('close', resolve);
-    }),
-    new Promise((resolve, reject) => {
-      file.on('error', reject);
-      file.on('finish', resolve);
-    }),
-  ]);
-
-  if (code !== 0) {
-    await rm(temporary, { force: true });
-    throw new Error(`git show ${spec} failed: ${stderr}`);
-  }
+  await pipeline(Readable.fromWeb(response.body), file);
   return temporary;
 }
 
@@ -67,18 +40,6 @@ async function validExisting(destination, environment) {
   return (await sha256(destination)) === environment.source.sha256;
 }
 
-await mkdir(path.dirname(cache), { recursive: true });
-if (!(await exists(path.join(cache, '.git')))) {
-  await rm(cache, { recursive: true, force: true });
-  git(['clone', '--filter=blob:none', '--no-checkout', repository, cache]);
-} else {
-  git(['remote', 'set-url', 'origin', repository], cache);
-}
-git(['fetch', '--filter=blob:none', 'origin', revision], cache);
-git(['checkout', '--detach', revision], cache);
-const actual = git(['rev-parse', 'HEAD'], cache);
-if (actual !== revision) throw new Error(`source revision mismatch: expected ${revision}, got ${actual}`);
-
 await mkdir(output, { recursive: true });
 let reused = 0;
 let materialized = 0;
@@ -90,7 +51,7 @@ for (const environment of config.environments) {
     continue;
   }
 
-  const temporary = await gitShowToTemporary(cache, `${revision}:${environment.source.path}`, destination);
+  const temporary = await downloadToTemporary(environment.source.download_url, destination);
   try {
     const info = await stat(temporary);
     const digest = await sha256(temporary);

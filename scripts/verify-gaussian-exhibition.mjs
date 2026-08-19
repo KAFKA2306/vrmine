@@ -35,6 +35,7 @@ for (const [index, source] of sources.environments.entries()) {
   ids.add(source.id);
   assert.ok(Number.isInteger(source.source?.size_bytes) && source.source.size_bytes > 0, `${source.id}: size_bytes missing`);
   assert.match(source.source?.sha256 ?? '', /^[0-9a-f]{64}$/, `${source.id}: sha256 missing or invalid`);
+  assert.match(source.source?.download_url ?? '', /^https:\/\//, `${source.id}: direct download_url missing`);
 }
 
 assert.equal(playlist.expected_entries, exhibition.final_expected_exhibits, 'final playlist count must follow the final product count');
@@ -59,5 +60,7 @@ const promotion = materializerSource.indexOf('await rename(temporary, destinatio
 assert.ok(temporaryStat >= 0 && temporaryHash >= 0 && promotion >= 0, 'PLY materializer must verify a partial file and promote it with rename');
 assert.ok(temporaryStat < promotion && temporaryHash < promotion, 'PLY size/hash verification must happen before destination promotion');
 assert.ok(!materializerSource.includes('await rm(destination, { force: true });'), 'PLY materializer must not delete the destination before verified promotion');
+assert.doesNotMatch(materializerSource, /spawnSync|gitShowToTemporary|git\s+\[/, 'PLY materializer must not depend on a source repository checkout');
+assert.match(materializerSource, /environment\.source\.download_url/, 'PLY materializer must use each source direct download URL');
 
 console.log(`Validated count-independent Gaussian exhibition contract: registered=${sources.environments.length}, final_required=${exhibition.final_expected_exhibits}, renderer=1`);
