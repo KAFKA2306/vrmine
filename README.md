@@ -79,6 +79,21 @@ VRChat SDK3 / UdonSharpを使用し、盤面生成、オブジェクト配線、
 - [STATE](docs/STATE.md)
 - [ARCHITECTURE_RULES](docs/ARCHITECTURE_RULES.md)
 
+## Gaussian Splat展示をローカルで開く
+
+通常のローカル操作は次の4手順です。
+
+```bash
+git clone https://github.com/KAFKA2306/vrmine.git
+cd vrmine
+task gaussian:prepare
+# このprojectをVCC / Unityで開く
+```
+
+`task gaussian:prepare` は `config/gaussian-splats.json` に登録された**現在の件数N**について、pinned `VRChatGaussianSplatting` とPLYを取得し、PLYのbyte-size/SHA-256を検証します。同じ検証済みfileは再利用します。次にVCC/Unityでprojectを開くと、準備要求を1回だけ消費して、N件のLOD prefab import、約1mへのnormalize、件数から計算した2列配置、床/world shell、spawn、Reference Camera、label、light probes、lighting設定、1個の`GaussianSplatRenderer`を作成し、`Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity`を開いた状態にします。
+
+通常経路では手動のPLY download、hash確認、`Gaussian Splatting / Import Splats...`、prefab配置、床/spawn/material/lighting修復を要求しません。UdonSharpはVRChat内で必要なruntime挙動（最終20動画playlist等）に限定し、PLY取得/import/scene authoringには使用しません。最終製品として20展示を満たしたかどうかはIssue #72の別gateで判定し、ローカルpipeline自体は登録件数に依存しません。
+
 ## Unity / VRChat の検証
 
 現在のtargetはUnity `2022.3.22f1` / VRChat SDK `3.9.0`です。versionは `ProjectSettings/ProjectVersion.txt` と `config/vrchat-toolchain.json` で管理します。
@@ -115,12 +130,15 @@ task setup
 task check
 ```
 
-`task setup` はpinned `vrc-get` を準備します。`task check` はAnswer ImpostorのNode.js testとVPM package graph検証を実行します。VPMだけを再実行する場合は `task vpm:check` を使います。
+`task setup` はpinned `vrc-get` を準備します。`task check` はAnswer ImpostorのNode.js test、Gaussian Splatのsource/exhibition/video contract、VPM package graphを検証します。VPMだけを再実行する場合は `task vpm:check` を使います。
 
 個別に実行する場合:
 
 ```bash
 node --test pages/games/answer-impostor/engine.test.mjs
+node scripts/verify-gaussian-fixtures.mjs
+node scripts/verify-gaussian-exhibition.mjs
+node scripts/verify-gaussian-video-playlist.mjs
 node scripts/verify-vpm.mjs
 python3 -m http.server 8000 --directory pages
 ```
