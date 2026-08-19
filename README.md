@@ -87,17 +87,13 @@ VRChat SDK3 / UdonSharpを使用し、盤面生成、オブジェクト配線、
 
 ### 現在の最短手順
 
-この自動化は現在 [PR #112](https://github.com/KAFKA2306/vrmine/pull/112) で検証中なので、merge前はbranchを明示してcloneします。
-
 ```bash
-git clone --branch codex/gaussian-exhibition-materialized --single-branch https://github.com/KAFKA2306/vrmine.git
+git clone https://github.com/KAFKA2306/vrmine.git
 cd vrmine
 task gaussian:prepare
 ```
 
 その後、**VCCでこのproject folderを開き、Unity 2022.3.22f1でprojectを開きます。** `task gaussian:prepare` が作った一回限りの準備要求をUnity Editorが読み、`Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity` を生成して開く設計です。
-
-PR #112がmainへmergeされた後は通常のcloneで同じ操作になります。
 
 ```bash
 git clone https://github.com/KAFKA2306/vrmine.git
@@ -108,7 +104,7 @@ task gaussian:prepare
 ### `task gaussian:prepare` が自動で行うこと
 
 - pinned `VRChatGaussianSplatting` rendererを取得
-- `config/gaussian-splats.json` に登録された全PLYをpinned AutoPhotogrammetry commitから取得
+- `config/gaussian-splats.json` に登録された全PLYを各entryのpinned artifact URLから取得
 - PLYのbyte-sizeとSHA-256を検証
 - 既に検証済みのrenderer/PLYは再利用
 - Unity Editorでscene生成を1回実行するための準備要求を作成
