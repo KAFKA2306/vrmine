@@ -36,6 +36,26 @@ tasks:
       - node -e "const fs=require('fs'); fs.mkdirSync('Library/VRMine',{recursive:true}); fs.writeFileSync('Library/VRMine/prepare-gaussian-on-open','1\n')"
       - echo "Prepared Gaussian inputs. Open this project in VCC/Unity; VRMine will import the registered PLYs and open GaussianSplatExhibition.unity automatically."
 
+  gaussian:verify-u2:
+    desc: Run the registered-source Unity U2 verification in Unity 2022.3.22f1 on Windows
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-gaussian-unity.ps1 -Mode registered
+
+  gaussian:verify-sdk:
+    desc: Exercise the canonical VRChat SDK world-builder validation path in Unity on Windows
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-gaussian-unity.ps1 -Mode sdk
+
+  gaussian:measure:
+    desc: Collect current Gaussian source/import/scene size evidence in Unity on Windows
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-gaussian-unity.ps1 -Mode performance
+
+  gaussian:verify-final:
+    desc: Run the strict final 20-exhibit Unity verification; fails closed until final inputs are complete
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-gaussian-unity.ps1 -Mode final
+
   vpm:check:
     desc: Run VPM resolve and drift verification
     deps: [setup]
