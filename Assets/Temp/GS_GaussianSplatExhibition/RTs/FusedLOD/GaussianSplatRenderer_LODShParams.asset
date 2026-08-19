@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!28 &2800000
+Texture2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GaussianSplatRenderer_LODShParams
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 2
+  m_Width: 4
+  m_Height: 9
+  m_CompleteImageSize: 576
+  m_MipsStripped: 0
+  m_TextureFormat: 20
+  m_MipCount: 1
+  m_IsReadable: 0
+  m_IsPreProcessed: 0
+  m_IgnoreMipmapLimit: 0
+  m_MipmapLimitGroupName: 
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_VTOnly: 0
+  m_AlphaIsTransparency: 0
+  m_ImageCount: 1
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_LightmapFormat: 0
+  m_ColorSpace: 0
+  m_PlatformBlob: 
+  image data: 576
+  _typelessdata: 0000704100f715480000000000000000f7590abee9120bbea53203be00004040de1d863ec599863e2184753e00000000000000000000000000000000000000000000704180e6e84700800c440080bc444cf235be4e0c2bbef4af28be00004040685aa63e90259f3e7580a53e00000000000014420080fb44000000000000000000007041c0eb1b4800c0794400006743871853be57972dbefd273abe000040403081bc3e12f8aa3e40f2c63e000000000000844200901a45000000000000000000007041c0820c4800e0c544008042454f313bbec24a43bed91141be00004040a6f7aa3ebc59a33ef2109c3e000000000000d24200801545000000000000000000007041805d114800e0034500d02c45b0510abe006e1bbe5f2d17be0000404033f16f3e8b09873ec8f9853e0000000000000c430030364500000000000000000000704100c11f4800f0254500704b45332c25be2c1c12be47c40dbe00004040516e8d3e1dee823e79d8993e00000000000031430000594300000000000000000000704180a81c4800604b4500305f45551b1ebebc3516beb52f27be00004040ac259e3e8e3d963e78f29b3e000000000000584300d07d45000000000000000000007041801e5f48002070450020ae440f64d5bd4fa3cdbd20f8dcbd000040404ebe8a3e7a7f883e1cf8833e000000000000804300c01f44000000000000000000007041807c7b480038924500001743d5b7debd664512bec0f91cbe0000404096376d3e3c35823edf068f3e0000000000809b4300906f450000000000000000
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 

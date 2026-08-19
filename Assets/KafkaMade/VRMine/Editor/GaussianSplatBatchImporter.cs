@@ -12,7 +12,7 @@ public static class GaussianSplatBatchImporter
     const string SourceDirectory = "Library/VRMine/GaussianSources";
     const string PrefabDirectory = "Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs";
     const string ProvenanceDirectory = "Library/VRMine/GaussianImportProvenance";
-    const int ProvenanceSchemaVersion = 1;
+    const int ProvenanceSchemaVersion = 4;
 
     [Serializable] sealed class Registry
     {
@@ -149,6 +149,7 @@ public static class GaussianSplatBatchImporter
                 if (prefab == null || AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) == null)
                     throw new InvalidOperationException(environment.id + ": importer did not create the expected prefab: " + prefabPath);
 
+                NormalizePrefabPresentation(prefabPath, exhibition.target_extent_m);
                 WriteProvenance(provenancePath, expectedProvenance);
                 imported++;
                 Debug.Log("Imported Gaussian Splat LOD at target extent " + exhibition.target_extent_m + " m: " + environment.id + " -> " + prefabPath);
@@ -266,6 +267,30 @@ public static class GaussianSplatBatchImporter
         if (field == null || !field.FieldType.IsEnum)
             throw new MissingFieldException(type.FullName, name);
         field.SetValue(boxed, Enum.Parse(field.FieldType, enumName));
+    }
+
+    static void NormalizePrefabPresentation(string prefabPath, float targetExtent)
+    {
+        GameObject root = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        Type splatType = FindType("GaussianSplatting.GaussianSplatObject");
+        Component splat = root.GetComponentInChildren(splatType, true);
+        object[] args = new object[] { new Bounds() };
+        bool valid = (bool)splatType.GetMethod("TryGetLocalBounds").Invoke(splat, args);
+        if (!valid) throw new InvalidDataException("Gaussian bounds are unavailable: " + prefabPath);
+        Bounds bounds = TransformBounds(splat.transform, (Bounds)args[0]);
+        float extent = Mathf.Max(bounds.size.x, Mathf.Max(bounds.size.y, bounds.size.z));
+        root.transform.localScale = Vector3.one * (targetExtent / Mathf.Max(0.000001f, extent));
+        EditorUtility.SetDirty(root);
+    }
+
+    static Bounds TransformBounds(Transform transform, Bounds bounds)
+    {
+        var result = new Bounds(transform.TransformPoint(bounds.center), Vector3.zero);
+        for (int x = -1; x <= 1; x += 2)
+            for (int y = -1; y <= 1; y += 2)
+                for (int z = -1; z <= 1; z += 2)
+                    result.Encapsulate(transform.TransformPoint(bounds.center + Vector3.Scale(bounds.extents, new Vector3(x, y, z))));
+        return result;
     }
 
     static void EnsureFolder(string assetPath)
