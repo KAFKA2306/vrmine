@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "Assets/KafkaMade/VRMine/Editor/GaussianSplatBatchImporter.cs"
+      - "Assets/KafkaMade/VRMine/Editor/GaussianImportOverrides.cs"
       - "Assets/KafkaMade/VRMine/Editor/GaussianExhibition*.cs"
       - "config/gaussian-*.json"
       - "scripts/verify-gaussian-*.mjs"
@@ -14,6 +15,7 @@ on:
   pull_request:
     paths:
       - "Assets/KafkaMade/VRMine/Editor/GaussianSplatBatchImporter.cs"
+      - "Assets/KafkaMade/VRMine/Editor/GaussianImportOverrides.cs"
       - "Assets/KafkaMade/VRMine/Editor/GaussianExhibition*.cs"
       - "config/gaussian-*.json"
       - "scripts/verify-gaussian-*.mjs"

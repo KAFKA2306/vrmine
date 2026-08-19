@@ -1,11 +1,12 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "scene_path": "Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity",
   "final_expected_exhibits": 20,
   "canonical_platform": "windows",
   "source_registry": "config/gaussian-splats.json",
   "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa",
   "target_extent_m": 1.0,
+  "import_overrides": [],
   "layout": {
     "center_spacing_m": 2.5,
     "aisle_width_m": 4.0,
