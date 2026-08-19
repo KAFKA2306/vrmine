@@ -49,12 +49,14 @@ Write-Host "Mode: $Mode"
 Write-Host "Method: $method"
 Write-Host "Log: $logPath"
 
-& $UnityPath \
-    -batchmode \
-    -quit \
-    -projectPath $projectRoot \
-    -executeMethod $method \
-    -logFile $logPath
+$unityArgs = @(
+    '-batchmode',
+    '-quit',
+    '-projectPath', $projectRoot,
+    '-executeMethod', $method,
+    '-logFile', $logPath
+)
+& $UnityPath @unityArgs
 $exitCode = $LASTEXITCODE
 
 if (-not (Test-Path $logPath)) {
