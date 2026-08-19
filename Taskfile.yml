@@ -30,8 +30,11 @@ tasks:
       - node scripts/materialize-gaussian-sources.mjs
 
   gaussian:prepare:
-    desc: Materialize the pinned renderer and registered PLY sources before opening Unity
+    desc: Materialize renderer and registered PLYs, then request automatic scene preparation on next Unity open
     deps: [gaussian:renderer, gaussian:sources]
+    cmds:
+      - node -e "const fs=require('fs'); fs.mkdirSync('Library/VRMine',{recursive:true}); fs.writeFileSync('Library/VRMine/prepare-gaussian-on-open','1\n')"
+      - echo "Prepared Gaussian inputs. Open this project in VCC/Unity; VRMine will import the registered PLYs and open GaussianSplatExhibition.unity automatically."
 
   vpm:check:
     desc: Run VPM resolve and drift verification
