@@ -37,11 +37,13 @@ VRMineの差分はUnity、UdonSharp、PWA、WebSocketそのものではなく、
 - **Unity version:** `ProjectSettings/ProjectVersion.txt`
 - **VRChat toolchain:** `config/vrchat-toolchain.json`
 
-## 公開中のゲーム
+## 公開Pages
+
+以下はGitHub Pagesで公開しているブラウザ画面です。Pagesへの公開は、Unity Editor・ClientSim・実VRChat clientでの動作確認を意味しません。
 
 - [Answer Impostor](https://kafka2306.github.io/vrmine/games/answer-impostor/) — 4〜8人、1端末の擬態クイズ
 - [深淵侵蝕](https://kafka2306.github.io/vrmine/games/abyss-invasion/) — 4人用の領域支配・進行補助
-- [Stich-Meister](https://kafka2306.github.io/vrmine/games/stich-meister/) — ルールを奪い合うトリックテイキング
+- [Stich-Meister](https://kafka2306.github.io/vrmine/games/stich-meister/) — VRChat版の設計・実装状況を公開中。実VRChatでの通し対局は未検証（[#68](https://github.com/KAFKA2306/vrmine/issues/68)）
 
 ### Answer Impostor
 
@@ -115,12 +117,13 @@ task setup
 task check
 ```
 
-`task setup` はpinned `vrc-get` を準備します。`task check` はAnswer ImpostorのNode.js testとVPM package graph検証を実行します。VPMだけを再実行する場合は `task vpm:check` を使います。
+`task setup` はpinned `vrc-get` を準備します。`task check` はAnswer ImpostorのNode.js test、Gaussian Splat fixtureの検証、VPM package graphの解決とmanifest drift検証を実行します。VPMだけを再実行する場合は `task vpm:check` を使います。
 
 個別に実行する場合:
 
 ```bash
 node --test pages/games/answer-impostor/engine.test.mjs
+node scripts/verify-gaussian-fixtures.mjs
 node scripts/verify-vpm.mjs
 python3 -m http.server 8000 --directory pages
 ```
