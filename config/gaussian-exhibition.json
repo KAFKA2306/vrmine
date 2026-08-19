@@ -1,35 +1,23 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "scene_path": "Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity",
-  "expected_exhibits": 20,
+  "final_expected_exhibits": 20,
   "canonical_platform": "windows",
   "source_registry": "config/gaussian-splats.json",
   "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa",
   "target_extent_m": 1.0,
-  "floor": {"position": [0.0, -0.1, 0.0], "scale": [28.0, 0.2, 16.0]},
-  "spawn": {"position": [0.0, 0.1, 7.0]},
-  "reference_camera": {"position": [0.0, 10.0, -9.0], "rotation_euler_degrees": [48.0, 0.0, 0.0], "field_of_view": 55.0},
-  "video_player": {"position": [13.0, 1.6, 0.0], "rotation_euler_degrees": [0.0, -90.0, 0.0], "status": "blocked_playlist", "prefab_path": "Packages/com.vrchat.worlds/Samples/UdonExampleScene/Prefabs/VideoPlayers/UdonSyncPlayer (Unity).prefab", "playlist_manifest": "config/gaussian-video-playlist.json"},
-  "exhibits": [
-    {"display_index":1,"source_id":"avenida-gomez-morin","prefab_path":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/avenida-gomez-morin.prefab","label":"Avenida Gómez Morín","status":"source_registered","position":[-11.25,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":2,"source_id":"baluarte-san-pedro","prefab_path":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/baluarte-san-pedro.prefab","label":"Baluarte de San Pedro","status":"source_registered","position":[-8.75,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":3,"source_id":"calvillo-centro","prefab_path":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/calvillo-centro.prefab","label":"Calvillo","status":"source_registered","position":[-6.25,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":4,"source_id":"huejotzingo","prefab_path":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/huejotzingo.prefab","label":"Huejotzingo","status":"source_registered","position":[-3.75,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":5,"source_id":"puente-san-ignacio-01","prefab_path":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/puente-san-ignacio-01.prefab","label":"Puente de San Ignacio 01","status":"source_registered","position":[-1.25,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":6,"source_id":"puente-san-ignacio-03","prefab_path":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/puente-san-ignacio-03.prefab","label":"Puente de San Ignacio 03","status":"source_registered","position":[1.25,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":7,"source_id":"san-francisco-nayarit-01","prefab_path":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/san-francisco-nayarit-01.prefab","label":"San Francisco, Nayarit 01","status":"source_registered","position":[3.75,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":8,"source_id":"templo-san-marcos","prefab_path":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/templo-san-marcos.prefab","label":"Templo de San Marcos","status":"source_registered","position":[6.25,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":9,"source_id":"tepotzotlan-virreinato","prefab_path":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/tepotzotlan-virreinato.prefab","label":"Tepotzotlán Virreinato","status":"source_registered","position":[8.75,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":10,"source_id":null,"prefab_path":null,"label":"Pending source 10","status":"blocked_source","position":[11.25,0.5,-2.5],"rotation_euler_degrees":[0.0,0.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":11,"source_id":null,"prefab_path":null,"label":"Pending source 11","status":"blocked_source","position":[-11.25,0.5,2.5],"rotation_euler_degrees":[0.0,180.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":12,"source_id":null,"prefab_path":null,"label":"Pending source 12","status":"blocked_source","position":[-8.75,0.5,2.5],"rotation_euler_degrees":[0.0,180.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":13,"source_id":null,"prefab_path":null,"label":"Pending source 13","status":"blocked_source","position":[-6.25,0.5,2.5],"rotation_euler_degrees":[0.0,180.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":14,"source_id":null,"prefab_path":null,"label":"Pending source 14","status":"blocked_source","position":[-3.75,0.5,2.5],"rotation_euler_degrees":[0.0,180.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":15,"source_id":null,"prefab_path":null,"label":"Pending source 15","status":"blocked_source","position":[-1.25,0.5,2.5],"rotation_euler_degrees":[0.0,180.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":16,"source_id":null,"prefab_path":null,"label":"Pending source 16","status":"blocked_source","position":[1.25,0.5,2.5],"rotation_euler_degrees":[0.0,180.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":17,"source_id":null,"prefab_path":null,"label":"Pending source 17","status":"blocked_source","position":[3.75,0.5,2.5],"rotation_euler_degrees":[0.0,180.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":18,"source_id":null,"prefab_path":null,"label":"Pending source 18","status":"blocked_source","position":[6.25,0.5,2.5],"rotation_euler_degrees":[0.0,180.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":19,"source_id":null,"prefab_path":null,"label":"Pending source 19","status":"blocked_source","position":[8.75,0.5,2.5],"rotation_euler_degrees":[0.0,180.0,0.0],"scale":[1.0,1.0,1.0]},
-    {"display_index":20,"source_id":null,"prefab_path":null,"label":"Pending source 20","status":"blocked_source","position":[11.25,0.5,2.5],"rotation_euler_degrees":[0.0,180.0,0.0],"scale":[1.0,1.0,1.0]}
-  ]
+  "layout": {
+    "center_spacing_m": 2.5,
+    "aisle_width_m": 4.0,
+    "margin_m": 2.0,
+    "pad_size_m": 1.4,
+    "wall_height_m": 3.0
+  },
+  "reference_camera": {
+    "field_of_view": 55.0
+  },
+  "video_player": {
+    "prefab_path": "Packages/com.vrchat.worlds/Samples/UdonExampleScene/Prefabs/VideoPlayers/UdonSyncPlayer (Unity).prefab",
+    "playlist_manifest": "config/gaussian-video-playlist.json"
+  }
 }
