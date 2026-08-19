@@ -11,7 +11,11 @@ const bridge = `<script>
     const id = params.get('vrmine_id');
     const token = Number(params.get('vrmine_token'));
     const post = (type, message) => parent.postMessage({ type, id, token, message }, location.origin);
-    window.firstFrame = () => post('vrmine:3dgs:first-frame');
+    window.firstFrame = () => {
+      document.documentElement.dataset.vrmineFirstFrame = 'pass';
+      if (id) document.documentElement.dataset.vrmineSourceId = id;
+      post('vrmine:3dgs:first-frame');
+    };
     window.addEventListener('error', (event) => post('vrmine:3dgs:error', event.message || 'viewer error'));
     window.addEventListener('unhandledrejection', (event) => post('vrmine:3dgs:error', String(event.reason || 'viewer promise rejection')));
   })();
