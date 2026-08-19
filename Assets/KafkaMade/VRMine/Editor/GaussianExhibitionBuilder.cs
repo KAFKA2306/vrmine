@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
 using VRC.Udon;
+using VRC.Core;
 
 public static class GaussianExhibitionBuilder
 {
@@ -122,7 +123,7 @@ public static class GaussianExhibitionBuilder
             instance.name = "Exhibit_" + exhibit.index.ToString("00") + "_" + exhibit.id;
             instance.transform.SetParent(root.transform);
             instance.transform.SetPositionAndRotation(exhibit.position, exhibit.rotation);
-            instance.transform.localScale = Vector3.one;
+            AlignExhibitToFloor(instance);
             instance.SetActive(true);
             CreatePad(config, exhibit);
             CreateLabel(config, exhibit);
@@ -180,6 +181,27 @@ public static class GaussianExhibitionBuilder
         float width = Mathf.Max(6f, Mathf.Max(0, maxRowCount - 1) * config.layout.center_spacing_m + config.layout.pad_size_m + config.layout.margin_m * 2f);
         float depth = Mathf.Max(8f, config.layout.aisle_width_m + config.layout.pad_size_m * 2f + config.layout.margin_m * 2f);
         return new Vector2(width, depth);
+    }
+
+    static void AlignExhibitToFloor(GameObject instance)
+    {
+        Type splatType = FindType(GaussianSplatObjectTypeName);
+        Component splat = instance.GetComponentInChildren(splatType, true);
+        object[] args = new object[] { new Bounds() };
+        bool valid = (bool)splatType.GetMethod("TryGetLocalBounds").Invoke(splat, args);
+        if (!valid) throw new InvalidOperationException("Gaussian bounds are unavailable: " + instance.name);
+        Bounds world = TransformBounds(splat.transform, (Bounds)args[0]);
+        instance.transform.position += Vector3.up * -world.min.y;
+    }
+
+    static Bounds TransformBounds(Transform transform, Bounds bounds)
+    {
+        var result = new Bounds(transform.TransformPoint(bounds.center), Vector3.zero);
+        for (int x = -1; x <= 1; x += 2)
+            for (int y = -1; y <= 1; y += 2)
+                for (int z = -1; z <= 1; z += 2)
+                    result.Encapsulate(transform.TransformPoint(bounds.center + Vector3.Scale(bounds.extents, new Vector3(x, y, z))));
+        return result;
     }
 
     static T LoadJson<T>(string path, string label) where T : class
@@ -276,6 +298,7 @@ public static class GaussianExhibitionBuilder
     {
         GameObject descriptorObject = new GameObject("VRCSceneDescriptor");
         VRCSceneDescriptor descriptor = descriptorObject.AddComponent<VRCSceneDescriptor>();
+        descriptorObject.AddComponent<PipelineManager>();
         GameObject spawn = new GameObject("SpawnPoint");
         spawn.transform.position = new Vector3(0f, 0.1f, floorSize.y * 0.5f - 1f);
         spawn.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
