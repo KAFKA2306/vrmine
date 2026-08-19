@@ -1,56 +1,80 @@
 using System;
+using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public static class GaussianExhibitionPipeline
 {
-    [MenuItem("VRMine/Prepare Gaussian Exhibition For SDK")]
-    public static void BuildAndVerify()
+    const string PrepareOnOpenMarker = "Library/VRMine/prepare-gaussian-on-open";
+
+    [InitializeOnLoadMethod]
+    static void QueuePreparedOpen()
     {
-        Debug.Log("VRMine 3DGS pipeline: importing registered Gaussian Splats...");
+        if (!File.Exists(PrepareOnOpenMarker)) return;
+        EditorApplication.delayCall += PrepareRequestedLocalScene;
+    }
+
+    static void PrepareRequestedLocalScene()
+    {
+        if (!File.Exists(PrepareOnOpenMarker)) return;
+        File.Delete(PrepareOnOpenMarker);
+        try
+        {
+            PrepareLocal();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            EditorUtility.DisplayDialog(
+                "VRMine Gaussian preparation failed",
+                exception.Message + "\n\nRun `task gaussian:prepare` again after fixing the reported input.",
+                "OK");
+        }
+    }
+
+    [MenuItem("VRMine/Prepare Registered Gaussian Exhibition")]
+    public static void PrepareLocal()
+    {
+        Debug.Log("VRMine 3DGS local pipeline: importing registered Gaussian Splats...");
         GaussianSplatBatchImporter.ImportRegistered();
 
-        Debug.Log("VRMine 3DGS pipeline: building canonical exhibition scene...");
-        GaussianExhibitionBuilder.Build();
-
-        Debug.Log("VRMine 3DGS pipeline: preparing volumetric light probes and baked GI settings...");
-        PrepareLightProbeVolume();
+        Debug.Log("VRMine 3DGS local pipeline: building count-independent canonical scene...");
+        GaussianExhibitionBuilder.BuildLocalPreview();
         ConfigureBakedLighting();
         EditorSceneManager.SaveOpenScenes();
 
-        Debug.Log("VRMine 3DGS pipeline: baking static shell lighting...");
+        Debug.Log("VRMine 3DGS local scene ready. Registered PLYs, floor/world shell, spawn, labels, lighting configuration and one Gaussian renderer are wired in GaussianSplatExhibition.unity.");
+    }
+
+    [MenuItem("VRMine/Prepare Final Gaussian Exhibition For SDK")]
+    public static void BuildAndVerify()
+    {
+        Debug.Log("VRMine 3DGS final pipeline: importing registered Gaussian Splats...");
+        GaussianSplatBatchImporter.ImportRegistered();
+
+        Debug.Log("VRMine 3DGS final pipeline: requiring final product count and playlist...");
+        GaussianExhibitionBuilder.BuildFinal();
+        ConfigureBakedLighting();
+        EditorSceneManager.SaveOpenScenes();
+
+        Debug.Log("VRMine 3DGS final pipeline: baking static shell lighting...");
         if (!Lightmapping.Bake())
             throw new InvalidOperationException("Unity failed to complete the synchronous baked-lighting job.");
         EditorSceneManager.SaveOpenScenes();
 
-        Debug.Log("VRMine 3DGS pipeline: verifying upload-readiness scene contract...");
+        Debug.Log("VRMine 3DGS final pipeline: verifying upload-readiness scene contract...");
         GaussianExhibitionVerification.Verify();
 
-        Debug.Log("VRMine 3DGS pipeline PASS. Repository-side preparation is complete; continue with the canonical VRChat SDK Build & Test / Publish flow.");
+        Debug.Log("VRMine 3DGS final pipeline PASS. Repository-side preparation is complete; continue with the canonical VRChat SDK Build & Test / Publish flow.");
     }
 
-    // Unity CLI entry point:
+    // Unity command-line entry point:
     // Unity.exe -batchmode -quit -projectPath <repo> -executeMethod GaussianExhibitionPipeline.BuildAndVerifyBatch
-    public static void BuildAndVerifyBatch()
-    {
-        BuildAndVerify();
-    }
+    public static void BuildAndVerifyBatch() => BuildAndVerify();
 
-    static void PrepareLightProbeVolume()
-    {
-        LightProbeGroup group = UnityEngine.Object.FindObjectOfType<LightProbeGroup>();
-        if (group == null) throw new InvalidOperationException("Gaussian exhibition LightProbeGroup is missing.");
-
-        group.probePositions = new[]
-        {
-            new Vector3(-9f, 0.5f, -3f), new Vector3(-3f, 0.5f, -3f), new Vector3(3f, 0.5f, -3f), new Vector3(9f, 0.5f, -3f),
-            new Vector3(-9f, 0.5f,  3f), new Vector3(-3f, 0.5f,  3f), new Vector3(3f, 0.5f,  3f), new Vector3(9f, 0.5f,  3f),
-            new Vector3(-9f, 2.5f, -3f), new Vector3(-3f, 2.5f, -3f), new Vector3(3f, 2.5f, -3f), new Vector3(9f, 2.5f, -3f),
-            new Vector3(-9f, 2.5f,  3f), new Vector3(-3f, 2.5f,  3f), new Vector3(3f, 2.5f,  3f), new Vector3(9f, 2.5f,  3f),
-        };
-        EditorUtility.SetDirty(group);
-    }
+    // Optional local batch entry point when only currently registered sources are needed.
+    public static void PrepareLocalBatch() => PrepareLocal();
 
     static void ConfigureBakedLighting()
     {
@@ -60,7 +84,6 @@ public static class GaussianExhibitionPipeline
             settings = new LightingSettings();
             Lightmapping.lightingSettings = settings;
         }
-
         settings.autoGenerate = false;
         settings.bakedGI = true;
         settings.realtimeGI = false;
