@@ -43,6 +43,8 @@ public static class GaussianExhibitionVerification
         public int descriptors;
         public int spawnPoints;
         public int referenceCameras;
+        public int enabledBuildScenes;
+        public bool canonicalBuildSceneOnly;
         public int missingScripts;
         public bool sceneDirty;
         public RegisteredMeasurement[] measurements;
@@ -69,6 +71,8 @@ public static class GaussianExhibitionVerification
             descriptors = CountSceneComponents<VRCSceneDescriptor>(scene),
             spawnPoints = CountNamed(scene, "SpawnPoint"),
             referenceCameras = CountNamed(scene, "ReferenceCamera"),
+            enabledBuildScenes = CountEnabledBuildScenes(),
+            canonicalBuildSceneOnly = HasOnlyCanonicalBuildScene(),
             missingScripts = CountMissingScripts(scene),
             sceneDirty = scene.isDirty,
             measurements = MeasureSplats(scene)
@@ -221,15 +225,12 @@ public static class GaussianExhibitionVerification
         if (Lightmapping.lightingDataAsset == null) errors.Add("Lighting Data Asset is missing; run the canonical bake pipeline");
         if (LightmapSettings.lightmaps == null || LightmapSettings.lightmaps.Length == 0) errors.Add("no baked lightmaps are assigned to the scene");
 
-        bool buildSceneEnabled = false;
-        foreach (EditorBuildSettingsScene buildScene in EditorBuildSettings.scenes)
-            if (buildScene.path == ScenePath && buildScene.enabled) buildSceneEnabled = true;
-        if (!buildSceneEnabled) errors.Add("canonical scene is not enabled in EditorBuildSettings");
+        if (!HasOnlyCanonicalBuildScene()) errors.Add("EditorBuildSettings must contain exactly one enabled canonical scene");
 
         if (errors.Count > 0)
             throw new InvalidOperationException("Gaussian exhibition verification failed:\n- " + string.Join("\n- ", errors));
 
-        Debug.Log("Gaussian exhibition verification PASS: descriptor=1, exhibits=20, splats=20, renderer=1, video=1, playlist=20, lightingData=present, lightmaps>0, missingScripts=0, buildScene=enabled");
+        Debug.Log("Gaussian exhibition verification PASS: descriptor=1, exhibits=20, splats=20, renderer=1, video=1, playlist=20, lightingData=present, lightmaps>0, missingScripts=0, buildScenes=1, canonicalBuildSceneOnly=true");
     }
 
     public static void VerifyBatch()
@@ -243,6 +244,19 @@ public static class GaussianExhibitionVerification
         foreach (T component in Resources.FindObjectsOfTypeAll<T>())
             if (component != null && !EditorUtility.IsPersistent(component) && component.gameObject.scene == scene && component.gameObject.activeInHierarchy) count++;
         return count;
+    }
+
+    static int CountEnabledBuildScenes()
+    {
+        int count = 0;
+        foreach (EditorBuildSettingsScene buildScene in EditorBuildSettings.scenes)
+            if (buildScene.enabled) count++;
+        return count;
+    }
+
+    static bool HasOnlyCanonicalBuildScene()
+    {
+        return CountEnabledBuildScenes() == 1 && EditorBuildSettings.scenes.Length == 1 && EditorBuildSettings.scenes[0].enabled && EditorBuildSettings.scenes[0].path == ScenePath;
     }
 
     static int CountSceneComponents(Type componentType, Scene scene)
