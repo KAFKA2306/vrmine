@@ -12,7 +12,7 @@ public static class GaussianSplatBatchImporter
     const string SourceDirectory = "Library/VRMine/GaussianSources";
     const string PrefabDirectory = "Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs";
     const string ProvenanceDirectory = "Library/VRMine/GaussianImportProvenance";
-    const int ProvenanceSchemaVersion = 4;
+    const int ProvenanceSchemaVersion = 5;
 
     [Serializable] sealed class Registry
     {
@@ -25,7 +25,12 @@ public static class GaussianSplatBatchImporter
     [Serializable] sealed class Renderers { public string unity_vrchat; }
     [Serializable] sealed class EnvironmentEntry { public string id; public SourceEntry source; }
     [Serializable] sealed class SourceEntry { public string path; public long size_bytes; public string sha256; }
-    [Serializable] sealed class ExhibitionConfig { public string renderer; public float target_extent_m; }
+    [Serializable] sealed class ExhibitionConfig
+    {
+        public string renderer;
+        public float target_extent_m;
+        public GaussianImportOverride[] import_overrides;
+    }
 
     [Serializable]
     sealed class ImportProvenance
@@ -40,6 +45,7 @@ public static class GaussianSplatBatchImporter
         public string import_method;
         public int chunk_size;
         public string import_options_json;
+        public string import_override_json;
     }
 
     [MenuItem("VRMine/Import Registered Gaussian Splats")]
@@ -60,6 +66,16 @@ public static class GaussianSplatBatchImporter
             throw new InvalidDataException("Gaussian exhibition renderer does not match the canonical source registry renderer.");
         if (float.IsNaN(exhibition.target_extent_m) || float.IsInfinity(exhibition.target_extent_m) || exhibition.target_extent_m <= 0f)
             throw new InvalidDataException("Gaussian exhibition target_extent_m must be a positive finite value.");
+
+        string[] registeredIds = new string[registry.environments.Length];
+        for (int i = 0; i < registry.environments.Length; i++)
+        {
+            EnvironmentEntry environment = registry.environments[i];
+            if (environment == null || string.IsNullOrEmpty(environment.id))
+                throw new InvalidDataException("Gaussian registry contains an invalid environment id.");
+            registeredIds[i] = environment.id;
+        }
+        GaussianImportOverrides.Validate(exhibition.import_overrides, registeredIds);
 
         Type importerType = FindType("GaussianSplatting.GaussianSplatLODImporter");
         if (importerType == null)
@@ -100,7 +116,6 @@ public static class GaussianSplatBatchImporter
         if (chunkSize <= 0)
             throw new InvalidDataException("Pinned GaussianSplatLODImporter.DefaultChunkSize must be positive.");
 
-        string importOptionsJson = JsonUtility.ToJson(options);
         EnsureFolder(PrefabDirectory);
         Directory.CreateDirectory(ProvenanceDirectory);
 
@@ -115,6 +130,13 @@ public static class GaussianSplatBatchImporter
             string sourcePath = Path.Combine(SourceDirectory, environment.id + ".ply").Replace('\\', '/');
             VerifySource(sourcePath, environment.source.size_bytes, environment.source.sha256, environment.id);
 
+            string importOverrideJson = GaussianImportOverrides.Apply(
+                optionsType,
+                options,
+                exhibition.import_overrides,
+                environment.id
+            );
+            string importOptionsJson = JsonUtility.ToJson(options);
             string prefabPath = PrefabDirectory + "/" + environment.id + ".prefab";
             string provenancePath = Path.Combine(ProvenanceDirectory, environment.id + ".json");
             ImportProvenance expectedProvenance = new ImportProvenance
@@ -128,7 +150,8 @@ public static class GaussianSplatBatchImporter
                 renderer = exhibition.renderer,
                 import_method = importerType.FullName + ".ImportLODToPrefab",
                 chunk_size = chunkSize,
-                import_options_json = importOptionsJson
+                import_options_json = importOptionsJson,
+                import_override_json = importOverrideJson
             };
 
             GameObject existingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
@@ -187,7 +210,8 @@ public static class GaussianSplatBatchImporter
                 string.Equals(actual.renderer, expected.renderer, StringComparison.Ordinal) &&
                 string.Equals(actual.import_method, expected.import_method, StringComparison.Ordinal) &&
                 actual.chunk_size == expected.chunk_size &&
-                string.Equals(actual.import_options_json, expected.import_options_json, StringComparison.Ordinal);
+                string.Equals(actual.import_options_json, expected.import_options_json, StringComparison.Ordinal) &&
+                string.Equals(actual.import_override_json, expected.import_override_json, StringComparison.Ordinal);
         }
         catch (Exception)
         {
