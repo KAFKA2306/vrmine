@@ -66,6 +66,7 @@ crashlytics-build.properties
 
 # Reproducibly materialized third-party Gaussian renderer source.
 /Assets/VRChatGaussianSplatting/
+/Assets/VRChatGaussianSplatting.meta
 
 # Ignore downloaded packages, but not the manifests
 /Packages/*
