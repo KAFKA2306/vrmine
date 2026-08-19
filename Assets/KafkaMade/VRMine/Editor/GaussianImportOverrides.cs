@@ -123,7 +123,7 @@ public static class GaussianImportOverrides
         Vector3 size = crop.size.ToVector3();
         if (!Finite(center) || !Finite(size) || size.x <= 0f || size.y <= 0f || size.z <= 0f)
             throw new InvalidOperationException(id + ": crop center/size must be finite and size must be positive.");
-        if (!float.IsFinite(crop.padding) || crop.padding < 0f)
+        if (!Finite(crop.padding) || crop.padding < 0f)
             throw new InvalidOperationException(id + ": crop padding must be finite and non-negative.");
     }
 
@@ -148,8 +148,9 @@ public static class GaussianImportOverrides
         return new Quaternion(value.x / magnitude, value.y / magnitude, value.z / magnitude, value.w / magnitude);
     }
 
-    static bool Finite(Vector3 value) => float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z);
-    static bool Finite(Quaternion value) => float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z) && float.IsFinite(value.w);
+    static bool Finite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
+    static bool Finite(Vector3 value) => Finite(value.x) && Finite(value.y) && Finite(value.z);
+    static bool Finite(Quaternion value) => Finite(value.x) && Finite(value.y) && Finite(value.z) && Finite(value.w);
 
     static void SetField<T>(Type optionsType, object options, string name, T value)
     {
