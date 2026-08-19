@@ -393,6 +393,28 @@ public static class VRMineVerification
         Debug.Log(report.ToString());
     }
 
+    public static void RepairLegacySceneSerialization()
+    {
+        string[] scenePaths =
+        {
+            "Assets/KafkaMade/VRMine/Scenes/BoardGameLab.unity",
+            "Assets/KafkaMade/VRMine/Scenes/VRMine.unity"
+        };
+        for (int i = 0; i < scenePaths.Length; i++)
+        {
+            Scene scene = EditorSceneManager.OpenScene(scenePaths[i], OpenSceneMode.Single);
+            GameObject logBoard = GameObject.Find("LogBoard");
+            LogBoard[] logBoardComponents = logBoard.GetComponents<LogBoard>();
+            for (int componentIndex = 1; componentIndex < logBoardComponents.Length; componentIndex++)
+                Object.DestroyImmediate(logBoardComponents[componentIndex], true);
+            VRC.Udon.UdonBehaviour[] udonBehaviours = logBoard.GetComponents<VRC.Udon.UdonBehaviour>();
+            for (int componentIndex = 0; componentIndex < udonBehaviours.Length; componentIndex++)
+                Object.DestroyImmediate(udonBehaviours[componentIndex], true);
+            EditorSceneManager.SaveScene(scene);
+        }
+        AssetDatabase.SaveAssets();
+    }
+
     static string GetPath(Transform target)
     {
         string path = target.name;
