@@ -4,12 +4,14 @@ on:
   push:
     branches: [main]
     paths:
+      - "Assets/KafkaMade/VRMine/Editor/GaussianSplatBatchImporter.cs"
       - "config/gaussian-*.json"
       - "scripts/verify-gaussian-*.mjs"
       - "scripts/materialize-gaussian-*.mjs"
       - ".github/workflows/3dgs-contracts.yml"
   pull_request:
     paths:
+      - "Assets/KafkaMade/VRMine/Editor/GaussianSplatBatchImporter.cs"
       - "config/gaussian-*.json"
       - "scripts/verify-gaussian-*.mjs"
       - "scripts/materialize-gaussian-*.mjs"
