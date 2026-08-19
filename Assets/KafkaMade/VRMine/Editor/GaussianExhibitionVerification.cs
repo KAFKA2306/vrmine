@@ -5,7 +5,9 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 using VRC.SDK3.Components;
+using VRC.SDK3.Editor;
 
 public static class GaussianExhibitionVerification
 {
@@ -236,6 +238,18 @@ public static class GaussianExhibitionVerification
     public static void VerifyBatch()
     {
         Verify();
+    }
+
+    public static void VerifySdkWorldBuilderBatch()
+    {
+        EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        VRCSdkControlPanel panel = EditorWindow.GetWindow<VRCSdkControlPanel>();
+        var builder = new VRCSdkControlPanelWorldBuilder();
+        builder.RegisterBuilder(panel);
+        builder.Initialize();
+        if (!builder.IsValidBuilder(out string message)) throw new InvalidOperationException(message);
+        builder.CreateValidationsGUI(new VisualElement());
+        Debug.Log("Gaussian SDK world builder validation completed without exception: scene=" + ScenePath + ", sdk=3.9.0");
     }
 
     static int CountSceneComponents<T>(Scene scene) where T : Component
