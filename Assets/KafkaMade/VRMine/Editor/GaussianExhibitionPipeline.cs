@@ -18,17 +18,18 @@ public static class GaussianExhibitionPipeline
     static void PrepareRequestedLocalScene()
     {
         if (!File.Exists(PrepareOnOpenMarker)) return;
-        File.Delete(PrepareOnOpenMarker);
         try
         {
             PrepareLocal();
+            File.Delete(PrepareOnOpenMarker);
+            Debug.Log("VRMine 3DGS preparation marker consumed after successful scene preparation.");
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             EditorUtility.DisplayDialog(
                 "VRMine Gaussian preparation failed",
-                exception.Message + "\n\nRun `task gaussian:prepare` again after fixing the reported input.",
+                exception.Message + "\n\nThe preparation marker was preserved. Fix the reported input and reopen the project (or use VRMine/Prepare Registered Gaussian Exhibition) to retry.",
                 "OK");
         }
     }
