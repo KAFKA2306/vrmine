@@ -4,6 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity
+    guid: 0dc09a2a8aac00a4bbb151b6930da4b5
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 19871b7defa8e494b906943abe098a12, type: 2}
