@@ -1,0 +1,23 @@
+{
+  "schema_version": 2,
+  "scene_path": "Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity",
+  "final_expected_exhibits": 20,
+  "canonical_platform": "windows",
+  "source_registry": "config/gaussian-splats.json",
+  "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa",
+  "target_extent_m": 1.0,
+  "layout": {
+    "center_spacing_m": 2.5,
+    "aisle_width_m": 4.0,
+    "margin_m": 2.0,
+    "pad_size_m": 1.4,
+    "wall_height_m": 3.0
+  },
+  "reference_camera": {
+    "field_of_view": 55.0
+  },
+  "video_player": {
+    "prefab_path": "Packages/com.vrchat.worlds/Samples/UdonExampleScene/Prefabs/VideoPlayers/UdonSyncPlayer (Unity).prefab",
+    "playlist_manifest": "config/gaussian-video-playlist.json"
+  }
+}

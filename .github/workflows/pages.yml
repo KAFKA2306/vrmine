@@ -8,6 +8,8 @@ on:
       - "config/gaussian-splats.json"
       - "scripts/verify-gaussian-fixtures.mjs"
       - "scripts/build-supersplat-viewer.mjs"
+      - "scripts/materialize-browser-smoke-source.mjs"
+      - "scripts/verify-browser-first-frame.mjs"
       - "README.md"
       - ".github/workflows/pages.yml"
   pull_request:
@@ -16,6 +18,8 @@ on:
       - "config/gaussian-splats.json"
       - "scripts/verify-gaussian-fixtures.mjs"
       - "scripts/build-supersplat-viewer.mjs"
+      - "scripts/materialize-browser-smoke-source.mjs"
+      - "scripts/verify-browser-first-frame.mjs"
       - "README.md"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
@@ -67,6 +71,8 @@ jobs:
             pages/3dgs/gallery.js
             config/gaussian-splats.json
             scripts/build-supersplat-viewer.mjs
+            scripts/materialize-browser-smoke-source.mjs
+            scripts/verify-browser-first-frame.mjs
             pages/events/event.js
             pages/events/telemetry.js
             pages/events/demo/index.html
@@ -78,6 +84,8 @@ jobs:
           for file in "${required[@]}"; do test -s "$file"; done
           find pages -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -n1 node --check
           node --check scripts/build-supersplat-viewer.mjs
+          node --check scripts/materialize-browser-smoke-source.mjs
+          node --check scripts/verify-browser-first-frame.mjs
           node --check server/abyss-server.mjs
           node -e "const fs=require('fs'); for (const f of ['pages/events/demo/config.json','pages/events/question-packs/demo.json']) JSON.parse(fs.readFileSync(f,'utf8'))"
           grep -F 'vrmine-game-hub-2026-08-15-1' pages/index.html
@@ -92,6 +100,7 @@ jobs:
           grep -F 'fixture-next' pages/3dgs/index.html
           grep -F 'fixture-select' pages/3dgs/index.html
           grep -F 'vrmine:3dgs:first-frame' scripts/build-supersplat-viewer.mjs
+          grep -F 'vrmineFirstFrame' scripts/build-supersplat-viewer.mjs
           grep -F 'data:application/json' pages/3dgs/gallery.js
           grep -F '@playcanvas/supersplat-viewer@1.28.0' config/gaussian-splats.json
           grep -F '6dc1d2546ab848eee4587fdaaebe1b60b1f2495f8a9a9b6a58de9356222c4571' config/gaussian-splats.json
@@ -123,6 +132,16 @@ jobs:
           test -s _site/3dgs/viewer/index.js
           grep -F 'vrmine:3dgs:first-frame' _site/3dgs/viewer/index.html
 
+      - name: Materialize hash-verified real PLY for runtime proof
+        run: |
+          set -euo pipefail
+          node scripts/materialize-browser-smoke-source.mjs \
+            huejotzingo \
+            _site/3dgs/ci/huejotzingo.ply \
+            _site/3dgs/ci/settings.json
+          test -s _site/3dgs/ci/huejotzingo.ply
+          test -s _site/3dgs/ci/settings.json
+
       - name: Render real 3DGS first frame in headless Chrome
         run: |
           set -euo pipefail
@@ -138,11 +157,18 @@ jobs:
           fi
           python3 -m http.server 8000 --directory _site >/tmp/vrmine-pages-http.log 2>&1 &
           server_pid=$!
-          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          chrome_pid=''
+          cleanup() {
+            if [ -n "$chrome_pid" ]; then kill "$chrome_pid" 2>/dev/null || true; fi
+            kill "$server_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
           for attempt in $(seq 1 20); do
-            if curl --fail --silent http://127.0.0.1:8000/3dgs/ >/dev/null; then break; fi
+            if curl --fail --silent http://127.0.0.1:8000/3dgs/viewer/ >/dev/null; then break; fi
             sleep 1
           done
+          test "$(curl --fail --silent http://127.0.0.1:8000/3dgs/ci/huejotzingo.ply | wc -c)" -eq 38085465
+          url='http://127.0.0.1:8000/3dgs/viewer/?content=../ci/huejotzingo.ply&settings=../ci/settings.json&webgl&noui&vrmine_id=huejotzingo&vrmine_token=1'
           "$chrome" \
             --headless=new \
             --no-sandbox \
@@ -150,22 +176,23 @@ jobs:
             --ignore-gpu-blocklist \
             --enable-unsafe-swiftshader \
             --use-angle=swiftshader \
-            --virtual-time-budget=180000 \
-            --dump-dom \
-            'http://127.0.0.1:8000/3dgs/#huejotzingo' > /tmp/vrmine-3dgs-dom.html
-          python3 - <<'PY'
-          import json
-          import re
-          from pathlib import Path
-
-          html = Path('/tmp/vrmine-3dgs-dom.html').read_text(encoding='utf-8')
-          expected = len(json.loads(Path('config/gaussian-splats.json').read_text(encoding='utf-8'))['environments'])
-          match = re.search(r'<p id="viewer-status"[^>]*>(.*?)</p>', html, re.S)
-          print('viewer-status:', re.sub(r'<[^>]+>', '', match.group(1)).strip() if match else 'missing')
-          assert 'data-splat-render="first-frame-pass"' in html, 'runtime first-frame marker is missing'
-          assert f'data-splat-entries="{expected}"' in html, f'runtime manifest count does not match {expected}'
-          assert 'huejotzingo: 実PLYのfirst frameを描画しました' in html, 'selected Huejotzingo did not reach first frame'
-          PY
+            --disable-background-timer-throttling \
+            --disable-renderer-backgrounding \
+            --run-all-compositor-stages-before-draw \
+            --remote-debugging-address=127.0.0.1 \
+            --remote-debugging-port=9222 \
+            --user-data-dir=/tmp/vrmine-chrome-profile \
+            "$url" \
+            >/tmp/vrmine-chrome.log 2>&1 &
+          chrome_pid=$!
+          if ! node scripts/verify-browser-first-frame.mjs "$url" 120000; then
+            echo '--- Chrome log ---' >&2
+            tail -n 200 /tmp/vrmine-chrome.log >&2 || true
+            echo '--- HTTP server log ---' >&2
+            tail -n 100 /tmp/vrmine-pages-http.log >&2 || true
+            exit 1
+          fi
+          rm -rf _site/3dgs/ci
 
       - name: Detect GitHub Pages configuration
         id: pages

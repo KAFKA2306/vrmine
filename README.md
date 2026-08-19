@@ -81,6 +81,57 @@ VRChat SDK3 / UdonSharpを使用し、盤面生成、オブジェクト配線、
 - [STATE](docs/STATE.md)
 - [ARCHITECTURE_RULES](docs/ARCHITECTURE_RULES.md)
 
+## Gaussian Splat展示をローカルで開く
+
+目標は **clone → PLY自動取得 → VCC/Unityでprojectを開く** だけです。PLYの件数はコードに固定せず、`config/gaussian-splats.json` に登録された現在の件数 `N` をそのまま処理します。
+
+### 現在の最短手順
+
+この自動化は現在 [PR #105](https://github.com/KAFKA2306/vrmine/pull/105) で検証中なので、merge前はbranchを明示してcloneします。
+
+```bash
+git clone --branch feat/3dgs-exhibition-20 --single-branch https://github.com/KAFKA2306/vrmine.git
+cd vrmine
+task gaussian:prepare
+```
+
+その後、**VCCでこのproject folderを開き、Unity 2022.3.22f1でprojectを開きます。** `task gaussian:prepare` が作った一回限りの準備要求をUnity Editorが読み、`Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity` を生成して開く設計です。
+
+PR #105がmainへmergeされた後は通常のcloneで同じ操作になります。
+
+```bash
+git clone https://github.com/KAFKA2306/vrmine.git
+cd vrmine
+task gaussian:prepare
+```
+
+### `task gaussian:prepare` が自動で行うこと
+
+- pinned `VRChatGaussianSplatting` rendererを取得
+- `config/gaussian-splats.json` に登録された全PLYをpinned AutoPhotogrammetry commitから取得
+- PLYのbyte-sizeとSHA-256を検証
+- 既に検証済みのrenderer/PLYは再利用
+- Unity Editorでscene生成を1回実行するための準備要求を作成
+
+Unity Editor側では、登録済みの `N` 件を入力として次を自動生成します。
+
+```text
+N PLY
+→ N LOD prefabs
+→ 約1 mへnormalize
+→ N件を2列へ自動配置
+→ 件数に合わせた床とworld shell
+→ collider / spawn / Reference Camera
+→ exhibit labels
+→ light probes / lighting設定
+→ GaussianSplatRenderer 1個
+→ GaussianSplatExhibition.unity を保存して開く
+```
+
+通常経路では、**手動PLY download、手動hash確認、`Gaussian Splatting / Import Splats...`、prefab手配置、床・spawn・material・lightingの手修正は不要**にします。UdonSharpはVRChat内で必要なruntime挙動（最終動画playlist、同期、操作UI）だけに使い、PLY取得・hash・import・scene authoringには使いません。
+
+現在のsource registryは実PLY 9件です。ローカルpipelineは `N >= 1` で動く設計ですが、最終成果の「20展示world完成」は別条件であり、20/20のPLY、最終playlist、Unity/VRChat実行検証が揃うまでPASS扱いしません。進捗は [#72](https://github.com/KAFKA2306/vrmine/issues/72) と [#109](https://github.com/KAFKA2306/vrmine/issues/109) で管理しています。
+
 ## Unity / VRChat の検証
 
 現在のtargetはUnity `2022.3.22f1` / VRChat SDK `3.9.0`です。versionは `ProjectSettings/ProjectVersion.txt` と `config/vrchat-toolchain.json` で管理します。
@@ -117,13 +168,15 @@ task setup
 task check
 ```
 
-`task setup` はpinned `vrc-get` を準備します。`task check` はAnswer ImpostorのNode.js test、Gaussian Splat fixtureの検証、VPM package graphの解決とmanifest drift検証を実行します。VPMだけを再実行する場合は `task vpm:check` を使います。
+`task setup` はpinned `vrc-get` を準備します。`task check` はAnswer ImpostorのNode.js test、Gaussian Splatのsource/exhibition/video contract、VPM package graphの解決とmanifest drift検証を実行します。VPMだけを再実行する場合は `task vpm:check` を使います。
 
 個別に実行する場合:
 
 ```bash
 node --test pages/games/answer-impostor/engine.test.mjs
 node scripts/verify-gaussian-fixtures.mjs
+node scripts/verify-gaussian-exhibition.mjs
+node scripts/verify-gaussian-video-playlist.mjs
 node scripts/verify-vpm.mjs
 python3 -m http.server 8000 --directory pages
 ```

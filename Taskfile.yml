@@ -15,7 +15,26 @@ tasks:
     cmds:
       - node --test pages/games/answer-impostor/engine.test.mjs
       - node scripts/verify-gaussian-fixtures.mjs
+      - node scripts/verify-gaussian-exhibition.mjs
+      - node scripts/verify-gaussian-video-playlist.mjs
       - node scripts/verify-vpm.mjs
+
+  gaussian:renderer:
+    desc: Materialize the exact pinned VRChatGaussianSplatting Unity assets without example splats/scenes
+    cmds:
+      - node scripts/materialize-gaussian-renderer.mjs
+
+  gaussian:sources:
+    desc: Materialize and SHA-256 verify every currently registered AutoPhotogrammetry PLY
+    cmds:
+      - node scripts/materialize-gaussian-sources.mjs
+
+  gaussian:prepare:
+    desc: Materialize renderer and registered PLYs, then request automatic scene preparation on next Unity open
+    deps: [gaussian:renderer, gaussian:sources]
+    cmds:
+      - node -e "const fs=require('fs'); fs.mkdirSync('Library/VRMine',{recursive:true}); fs.writeFileSync('Library/VRMine/prepare-gaussian-on-open','1\n')"
+      - echo "Prepared Gaussian inputs. Open this project in VCC/Unity; VRMine will import the registered PLYs and open GaussianSplatExhibition.unity automatically."
 
   vpm:check:
     desc: Run VPM resolve and drift verification

@@ -10,10 +10,21 @@ const bridge = `<script>
     const params = new URL(location.href).searchParams;
     const id = params.get('vrmine_id');
     const token = Number(params.get('vrmine_token'));
+    const root = document.documentElement;
+    root.dataset.vrmineBridge = 'ready';
     const post = (type, message) => parent.postMessage({ type, id, token, message }, location.origin);
-    window.firstFrame = () => post('vrmine:3dgs:first-frame');
-    window.addEventListener('error', (event) => post('vrmine:3dgs:error', event.message || 'viewer error'));
-    window.addEventListener('unhandledrejection', (event) => post('vrmine:3dgs:error', String(event.reason || 'viewer promise rejection')));
+    const fail = (message) => {
+      root.dataset.vrmineError = String(message || 'viewer error').slice(0, 500);
+      post('vrmine:3dgs:error', message || 'viewer error');
+    };
+    window.firstFrame = () => {
+      root.dataset.vrmineFirstFrame = 'pass';
+      if (id) root.dataset.vrmineSourceId = id;
+      post('vrmine:3dgs:first-frame');
+    };
+    window.addEventListener('DOMContentLoaded', () => { root.dataset.vrmineDom = 'ready'; }, { once: true });
+    window.addEventListener('error', (event) => fail(event.message || 'viewer error'));
+    window.addEventListener('unhandledrejection', (event) => fail(String(event.reason || 'viewer promise rejection')));
   })();
 </script>`;
 

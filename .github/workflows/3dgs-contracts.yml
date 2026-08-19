@@ -1,0 +1,71 @@
+name: 3DGS contracts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Assets/KafkaMade/VRMine/Editor/GaussianSplatBatchImporter.cs"
+      - "Assets/KafkaMade/VRMine/Editor/GaussianExhibition*.cs"
+      - "config/gaussian-*.json"
+      - "scripts/verify-gaussian-*.mjs"
+      - "scripts/materialize-gaussian-*.mjs"
+      - "Taskfile.yml"
+      - ".github/workflows/3dgs-contracts.yml"
+  pull_request:
+    paths:
+      - "Assets/KafkaMade/VRMine/Editor/GaussianSplatBatchImporter.cs"
+      - "Assets/KafkaMade/VRMine/Editor/GaussianExhibition*.cs"
+      - "config/gaussian-*.json"
+      - "scripts/verify-gaussian-*.mjs"
+      - "scripts/materialize-gaussian-*.mjs"
+      - "Taskfile.yml"
+      - ".github/workflows/3dgs-contracts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+      - name: Check script syntax
+        run: |
+          node --check scripts/verify-gaussian-fixtures.mjs
+          node --check scripts/verify-gaussian-exhibition.mjs
+          node --check scripts/verify-gaussian-video-playlist.mjs
+          node --check scripts/materialize-gaussian-renderer.mjs
+          node --check scripts/materialize-gaussian-sources.mjs
+      - name: Validate 3DGS contracts
+        run: |
+          node scripts/verify-gaussian-fixtures.mjs
+          node scripts/verify-gaussian-video-playlist.mjs
+          node scripts/verify-gaussian-exhibition.mjs
+      - name: Materialize pinned Unity renderer at upstream-compatible path
+        run: |
+          node scripts/materialize-gaussian-renderer.mjs
+          test -s Assets/VRChatGaussianSplatting/Scripts/GaussianSplatRenderer.cs
+          test -s Assets/VRChatGaussianSplatting/Scripts/Importer/GaussianSplatImporter.cs
+          test -d Assets/VRChatGaussianSplatting/Resources
+          grep -F 'revision=f96c0117cba518ff84d059d36f16909b873e23aa' Assets/VRChatGaussianSplatting/VRMINE_UPSTREAM_REVISION.txt
+      - name: Materialize and verify every registered PLY
+        run: |
+          node scripts/materialize-gaussian-sources.mjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const registry = JSON.parse(fs.readFileSync('config/gaussian-splats.json', 'utf8'));
+          for (const entry of registry.environments) {
+            const file = path.join('Library/VRMine/GaussianSources', `${entry.id}.ply`);
+            const stat = fs.statSync(file);
+            if (stat.size !== entry.source.size_bytes) {
+              throw new Error(`${entry.id}: expected ${entry.source.size_bytes} bytes, got ${stat.size}`);
+            }
+          }
+          console.log(`Verified materialized registered PLY count=${registry.environments.length}`);
+          NODE
