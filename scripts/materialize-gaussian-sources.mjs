@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { createReadStream, createWriteStream } from 'node:fs';
-import { access, mkdir, readFile, rm, stat } from 'node:fs/promises';
+import { access, mkdir, readFile, rename, rm, stat } from 'node:fs/promises';
 import { spawn, spawnSync } from 'node:child_process';
 import path from 'node:path';
 
@@ -20,23 +20,33 @@ async function exists(file) {
   try { await access(file); return true; } catch { return false; }
 }
 
-async function gitShowToFile(repo, spec, destination) {
+async function gitShowToTemporary(repo, spec, destination) {
   const temporary = `${destination}.partial`;
   await rm(temporary, { force: true });
-  await new Promise((resolve, reject) => {
-    const child = spawn('git', ['show', spec], { cwd: repo, stdio: ['ignore', 'pipe', 'pipe'] });
-    const file = createWriteStream(temporary);
-    let stderr = '';
-    child.stderr.setEncoding('utf8');
-    child.stderr.on('data', (chunk) => { stderr += chunk; });
-    child.stdout.pipe(file);
-    child.on('error', reject);
-    file.on('error', reject);
-    child.on('close', (code) => code === 0 ? resolve() : reject(new Error(`git show ${spec} failed: ${stderr}`)));
-  });
-  await rm(destination, { force: true });
-  const { rename } = await import('node:fs/promises');
-  await rename(temporary, destination);
+
+  const child = spawn('git', ['show', spec], { cwd: repo, stdio: ['ignore', 'pipe', 'pipe'] });
+  const file = createWriteStream(temporary, { flags: 'wx' });
+  let stderr = '';
+  child.stderr.setEncoding('utf8');
+  child.stderr.on('data', (chunk) => { stderr += chunk; });
+  child.stdout.pipe(file);
+
+  const [code] = await Promise.all([
+    new Promise((resolve, reject) => {
+      child.on('error', reject);
+      child.on('close', resolve);
+    }),
+    new Promise((resolve, reject) => {
+      file.on('error', reject);
+      file.on('finish', resolve);
+    }),
+  ]);
+
+  if (code !== 0) {
+    await rm(temporary, { force: true });
+    throw new Error(`git show ${spec} failed: ${stderr}`);
+  }
+  return temporary;
 }
 
 async function sha256(file) {
@@ -79,17 +89,25 @@ for (const environment of config.environments) {
     console.log(`${environment.id}: reuse verified ${environment.source.size_bytes} bytes ${environment.source.sha256}`);
     continue;
   }
-  await gitShowToFile(cache, `${revision}:${environment.source.path}`, destination);
-  const info = await stat(destination);
-  const digest = await sha256(destination);
-  if (info.size !== environment.source.size_bytes) {
-    throw new Error(`${environment.id}: size mismatch: expected ${environment.source.size_bytes}, got ${info.size}`);
+
+  const temporary = await gitShowToTemporary(cache, `${revision}:${environment.source.path}`, destination);
+  try {
+    const info = await stat(temporary);
+    const digest = await sha256(temporary);
+    if (info.size !== environment.source.size_bytes) {
+      throw new Error(`${environment.id}: size mismatch: expected ${environment.source.size_bytes}, got ${info.size}`);
+    }
+    if (digest !== environment.source.sha256) {
+      throw new Error(`${environment.id}: SHA-256 mismatch: expected ${environment.source.sha256}, got ${digest}`);
+    }
+
+    await rename(temporary, destination);
+    materialized++;
+    console.log(`${environment.id}: materialized ${info.size} bytes ${digest}`);
+  } catch (error) {
+    await rm(temporary, { force: true });
+    throw error;
   }
-  if (digest !== environment.source.sha256) {
-    throw new Error(`${environment.id}: SHA-256 mismatch: expected ${environment.source.sha256}, got ${digest}`);
-  }
-  materialized++;
-  console.log(`${environment.id}: materialized ${info.size} bytes ${digest}`);
 }
 
 console.log(`Gaussian sources ready: count=${config.environments.length}, materialized=${materialized}, reused=${reused}, path=${path.relative(process.cwd(), output)}`);
