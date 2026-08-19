@@ -5,96 +5,35 @@ const exhibition = JSON.parse(await readFile(new URL('../config/gaussian-exhibit
 const sources = JSON.parse(await readFile(new URL('../config/gaussian-splats.json', import.meta.url), 'utf8'));
 const playlist = JSON.parse(await readFile(new URL('../config/gaussian-video-playlist.json', import.meta.url), 'utf8'));
 
-assert.equal(exhibition.schema_version, 1, 'unsupported gaussian exhibition schema');
-assert.equal(exhibition.expected_exhibits, 20, 'the exhibition must define exactly 20 slots');
+assert.equal(exhibition.schema_version, 2, 'unsupported gaussian exhibition schema');
+assert.equal(exhibition.final_expected_exhibits, 20, 'the #72 final product still requires exactly 20 exhibits');
 assert.equal(exhibition.canonical_platform, 'windows');
 assert.equal(exhibition.source_registry, 'config/gaussian-splats.json');
 assert.equal(exhibition.renderer, sources.renderers.unity_vrchat, 'scene renderer must match the canonical source registry');
 assert.equal(exhibition.target_extent_m, 1, 'exhibits target an approximately 1 m normalized extent');
 assert.equal(exhibition.scene_path, 'Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity');
-assert.ok(Array.isArray(exhibition.exhibits), 'exhibits must be an array');
-assert.equal(exhibition.exhibits.length, exhibition.expected_exhibits, 'exhibition slot count mismatch');
+assert.ok(!Object.hasOwn(exhibition, 'exhibits'), 'scene config must not duplicate a fixed-count exhibit list');
+assert.ok(!Object.hasOwn(exhibition, 'floor'), 'floor dimensions must derive from the registered source count/layout');
+assert.ok(!Object.hasOwn(exhibition, 'spawn'), 'spawn must derive from the generated floor/layout');
 
-for (const vector of [
-  exhibition.floor?.position,
-  exhibition.floor?.scale,
-  exhibition.spawn?.position,
-  exhibition.reference_camera?.position,
-  exhibition.reference_camera?.rotation_euler_degrees,
-  exhibition.video_player?.position,
-  exhibition.video_player?.rotation_euler_degrees,
-]) {
-  assert.ok(Array.isArray(vector) && vector.length === 3, 'scene vectors must contain three values');
+for (const key of ['center_spacing_m', 'aisle_width_m', 'pad_size_m', 'wall_height_m']) {
+  assert.ok(Number.isFinite(exhibition.layout?.[key]) && exhibition.layout[key] > 0, `${key} must be positive`);
 }
-assert.ok(exhibition.floor.scale.every((value) => Number.isFinite(value) && value > 0), 'floor scale must be positive');
-assert.ok(Number.isFinite(exhibition.reference_camera.field_of_view) && exhibition.reference_camera.field_of_view > 0);
-assert.equal(exhibition.video_player.prefab_path, playlist.player_prefab_path, 'scene must use playlist-declared SDK player prefab');
-assert.equal(exhibition.video_player.playlist_manifest, 'config/gaussian-video-playlist.json');
-assert.equal(
-  exhibition.video_player.status,
-  playlist.status === 'ready' ? 'ready' : 'blocked_playlist',
-  'scene video readiness must follow the canonical playlist state',
-);
+assert.ok(Number.isFinite(exhibition.layout?.margin_m) && exhibition.layout.margin_m >= 0, 'margin_m must be non-negative');
+assert.ok(Number.isFinite(exhibition.reference_camera?.field_of_view) && exhibition.reference_camera.field_of_view > 0, 'reference camera FOV must be positive');
+assert.equal(exhibition.video_player?.prefab_path, playlist.player_prefab_path, 'scene and playlist must use the same canonical SDK player prefab');
+assert.equal(exhibition.video_player?.playlist_manifest, 'config/gaussian-video-playlist.json');
 
-const rowA = exhibition.exhibits.slice(0, 10);
-const rowB = exhibition.exhibits.slice(10, 20);
-for (const row of [rowA, rowB]) {
-  for (let i = 1; i < row.length; i++) {
-    assert.equal(row[i].position[0] - row[i - 1].position[0], 2.5, 'exhibit center spacing must be 2.5 m');
-  }
-}
-assert.ok(rowA.every((entry) => entry.position[2] === -2.5), 'first row must be at z=-2.5 m');
-assert.ok(rowB.every((entry) => entry.position[2] === 2.5), 'second row must be at z=2.5 m');
-const maxExhibitX = Math.max(...exhibition.exhibits.map((entry) => Math.abs(entry.position[0])));
-assert.ok(Math.abs(exhibition.video_player.position[0]) > maxExhibitX, 'video player must be at an aisle end');
-
-const sourceById = new Map(sources.environments.map((entry) => [entry.id, entry]));
-assert.equal(sourceById.size, sources.environments.length, 'source ids must be unique before scene assignment');
-
-const indexes = new Set();
-const positions = new Set();
-const assignedSources = new Set();
-let registered = 0;
-let blocked = 0;
-
-for (const exhibit of exhibition.exhibits) {
-  assert.ok(Number.isInteger(exhibit.display_index), 'display_index must be an integer');
-  assert.ok(exhibit.display_index >= 1 && exhibit.display_index <= exhibition.expected_exhibits, 'display_index out of range');
-  assert.ok(!indexes.has(exhibit.display_index), `duplicate display_index ${exhibit.display_index}`);
-  indexes.add(exhibit.display_index);
-
-  for (const key of ['position', 'rotation_euler_degrees', 'scale']) {
-    assert.ok(Array.isArray(exhibit[key]) && exhibit[key].length === 3, `${key} must contain three values`);
-    assert.ok(exhibit[key].every(Number.isFinite), `${key} must contain finite values`);
-  }
-  assert.ok(exhibit.scale.every((value) => value > 0), 'exhibit scale must be positive');
-  const positionKey = exhibit.position.join(',');
-  assert.ok(!positions.has(positionKey), `duplicate exhibit position ${positionKey}`);
-  positions.add(positionKey);
-
-  if (exhibit.source_id === null) {
-    blocked++;
-    assert.equal(exhibit.status, 'blocked_source');
-    assert.equal(exhibit.prefab_path, null);
-    continue;
-  }
-
-  registered++;
-  assert.equal(exhibit.status, 'source_registered');
-  assert.ok(sourceById.has(exhibit.source_id), `unknown source_id ${exhibit.source_id}`);
-  assert.ok(!assignedSources.has(exhibit.source_id), `source assigned more than once: ${exhibit.source_id}`);
-  assignedSources.add(exhibit.source_id);
-  assert.equal(
-    exhibit.prefab_path,
-    `Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/${exhibit.source_id}.prefab`,
-    `unexpected prefab path for ${exhibit.source_id}`,
-  );
+assert.ok(Array.isArray(sources.environments) && sources.environments.length >= 1, 'local pipeline requires at least one registered source');
+const ids = new Set();
+for (const [index, source] of sources.environments.entries()) {
+  assert.ok(typeof source.id === 'string' && source.id.length > 0, `source ${index + 1} id is missing`);
+  assert.ok(!ids.has(source.id), `duplicate source id ${source.id}`);
+  ids.add(source.id);
+  assert.ok(Number.isInteger(source.source?.size_bytes) && source.source.size_bytes > 0, `${source.id}: size_bytes missing`);
+  assert.match(source.source?.sha256 ?? '', /^[0-9a-f]{64}$/, `${source.id}: sha256 missing or invalid`);
 }
 
-assert.equal(indexes.size, exhibition.expected_exhibits);
-assert.equal(registered, sources.environments.length, 'every registered source must be assigned exactly once');
-assert.equal(assignedSources.size, sources.environments.length, 'registered source assignment coverage mismatch');
-assert.equal(blocked, exhibition.expected_exhibits - sources.environments.length, 'blocked slot count must match missing sources');
-assert.ok(sources.environments.length <= exhibition.expected_exhibits, 'source registry exceeds exhibition capacity');
+assert.equal(playlist.expected_entries, exhibition.final_expected_exhibits, 'final playlist count must follow the final product count');
 
-console.log(`Validated Gaussian exhibition: slots=${exhibition.expected_exhibits}, source_registered=${registered}, blocked_source=${blocked}, video=${exhibition.video_player.status}`);
+console.log(`Validated count-independent Gaussian exhibition contract: registered=${sources.environments.length}, final_required=${exhibition.final_expected_exhibits}, renderer=1`);
