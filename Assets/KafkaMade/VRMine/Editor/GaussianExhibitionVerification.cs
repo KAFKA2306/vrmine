@@ -65,6 +65,19 @@ public static class GaussianExhibitionVerification
         if (exhibitRoots != 20) errors.Add("exhibit GameObject count must be exactly 20");
         if (missingScripts != 0) errors.Add("missing scripts found: " + missingScripts);
 
+        LightingSettings lightingSettings;
+        if (!Lightmapping.TryGetLightingSettings(out lightingSettings) || lightingSettings == null)
+        {
+            errors.Add("LightingSettings are missing");
+        }
+        else
+        {
+            if (!lightingSettings.bakedGI) errors.Add("Baked GI must be enabled");
+            if (lightingSettings.realtimeGI) errors.Add("Realtime GI must be disabled");
+        }
+        if (Lightmapping.lightingDataAsset == null) errors.Add("Lighting Data Asset is missing; run the canonical bake pipeline");
+        if (LightmapSettings.lightmaps == null || LightmapSettings.lightmaps.Length == 0) errors.Add("no baked lightmaps are assigned to the scene");
+
         bool buildSceneEnabled = false;
         foreach (EditorBuildSettingsScene buildScene in EditorBuildSettings.scenes)
             if (buildScene.path == ScenePath && buildScene.enabled) buildSceneEnabled = true;
@@ -73,7 +86,7 @@ public static class GaussianExhibitionVerification
         if (errors.Count > 0)
             throw new InvalidOperationException("Gaussian exhibition verification failed:\n- " + string.Join("\n- ", errors));
 
-        Debug.Log("Gaussian exhibition verification PASS: descriptor=1, exhibits=20, splats=20, renderer=1, video=1, playlist=20, missingScripts=0, buildScene=enabled");
+        Debug.Log("Gaussian exhibition verification PASS: descriptor=1, exhibits=20, splats=20, renderer=1, video=1, playlist=20, lightingData=present, lightmaps>0, missingScripts=0, buildScene=enabled");
     }
 
     public static void VerifyBatch()
