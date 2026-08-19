@@ -5,6 +5,7 @@ const exhibition = JSON.parse(await readFile(new URL('../config/gaussian-exhibit
 const sources = JSON.parse(await readFile(new URL('../config/gaussian-splats.json', import.meta.url), 'utf8'));
 const playlist = JSON.parse(await readFile(new URL('../config/gaussian-video-playlist.json', import.meta.url), 'utf8'));
 const importerSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianSplatBatchImporter.cs', import.meta.url), 'utf8');
+const pipelineSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianExhibitionPipeline.cs', import.meta.url), 'utf8');
 const materializerSource = await readFile(new URL('./materialize-gaussian-sources.mjs', import.meta.url), 'utf8');
 
 assert.equal(exhibition.schema_version, 2, 'unsupported gaussian exhibition schema');
@@ -45,6 +46,12 @@ for (const field of ['source_repository', 'source_commit', 'source_path', 'sourc
   assert.match(importerSource, new RegExp(`public\\s+[^;]+\\s+${field};`), `import provenance must include ${field}`);
 }
 assert.match(importerSource, /JsonUtility\.ToJson\(options\)/, 'cache provenance must cover the complete upstream ImportOptions value');
+
+const prepareCall = pipelineSource.indexOf('PrepareLocal();');
+const markerDelete = pipelineSource.indexOf('File.Delete(PrepareOnOpenMarker);');
+assert.ok(prepareCall >= 0 && markerDelete >= 0, 'auto-on-open pipeline must prepare the local scene and consume its marker');
+assert.ok(prepareCall < markerDelete, 'auto-on-open marker must be deleted only after successful scene preparation');
+assert.match(pipelineSource, /preparation marker was preserved/i, 'failure path must state that the retry marker is preserved');
 
 const temporaryStat = materializerSource.indexOf('await stat(temporary)');
 const temporaryHash = materializerSource.indexOf('await sha256(temporary)');
