@@ -4,6 +4,8 @@ import { readFile } from 'node:fs/promises';
 const exhibition = JSON.parse(await readFile(new URL('../config/gaussian-exhibition.json', import.meta.url), 'utf8'));
 const sources = JSON.parse(await readFile(new URL('../config/gaussian-splats.json', import.meta.url), 'utf8'));
 const playlist = JSON.parse(await readFile(new URL('../config/gaussian-video-playlist.json', import.meta.url), 'utf8'));
+const importerSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianSplatBatchImporter.cs', import.meta.url), 'utf8');
+const materializerSource = await readFile(new URL('./materialize-gaussian-sources.mjs', import.meta.url), 'utf8');
 
 assert.equal(exhibition.schema_version, 2, 'unsupported gaussian exhibition schema');
 assert.equal(exhibition.final_expected_exhibits, 20, 'the #72 final product still requires exactly 20 exhibits');
@@ -35,5 +37,20 @@ for (const [index, source] of sources.environments.entries()) {
 }
 
 assert.equal(playlist.expected_entries, exhibition.final_expected_exhibits, 'final playlist count must follow the final product count');
+
+assert.doesNotMatch(importerSource, /const\s+float\s+TargetExtentMeters/, 'target extent must have one authority in gaussian-exhibition.json');
+assert.match(importerSource, /exhibition\.target_extent_m/, 'Unity importer must read target_extent_m from gaussian-exhibition.json');
+assert.match(importerSource, /existingPrefab != null && ProvenanceMatches\(provenancePath, expectedProvenance\)/, 'prefab reuse must require matching import provenance');
+for (const field of ['source_repository', 'source_commit', 'source_path', 'source_size_bytes', 'source_sha256', 'renderer', 'import_method', 'chunk_size', 'import_options_json']) {
+  assert.match(importerSource, new RegExp(`public\\s+[^;]+\\s+${field};`), `import provenance must include ${field}`);
+}
+assert.match(importerSource, /JsonUtility\.ToJson\(options\)/, 'cache provenance must cover the complete upstream ImportOptions value');
+
+const temporaryStat = materializerSource.indexOf('await stat(temporary)');
+const temporaryHash = materializerSource.indexOf('await sha256(temporary)');
+const promotion = materializerSource.indexOf('await rename(temporary, destination)');
+assert.ok(temporaryStat >= 0 && temporaryHash >= 0 && promotion >= 0, 'PLY materializer must verify a partial file and promote it with rename');
+assert.ok(temporaryStat < promotion && temporaryHash < promotion, 'PLY size/hash verification must happen before destination promotion');
+assert.ok(!materializerSource.includes('await rm(destination, { force: true });'), 'PLY materializer must not delete the destination before verified promotion');
 
 console.log(`Validated count-independent Gaussian exhibition contract: registered=${sources.environments.length}, final_required=${exhibition.final_expected_exhibits}, renderer=1`);
