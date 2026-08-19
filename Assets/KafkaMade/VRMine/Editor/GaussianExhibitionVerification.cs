@@ -6,6 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using VRC.Core;
 using VRC.SDK3.Components;
 using VRC.SDK3.Editor;
 
@@ -43,6 +44,7 @@ public static class GaussianExhibitionVerification
         public int labels;
         public int renderers;
         public int descriptors;
+        public int pipelineManagers;
         public int spawnPoints;
         public int referenceCameras;
         public int enabledBuildScenes;
@@ -71,6 +73,7 @@ public static class GaussianExhibitionVerification
             labels = CountNamed(scene, "ExhibitLabel_"),
             renderers = CountSceneComponents(rendererType, scene),
             descriptors = CountSceneComponents<VRCSceneDescriptor>(scene),
+            pipelineManagers = CountSceneComponents<PipelineManager>(scene),
             spawnPoints = CountNamed(scene, "SpawnPoint"),
             referenceCameras = CountNamed(scene, "ReferenceCamera"),
             enabledBuildScenes = CountEnabledBuildScenes(),
@@ -84,12 +87,15 @@ public static class GaussianExhibitionVerification
         AssetDatabase.SaveAssets();
         evidence.sceneDirty = scene.isDirty;
 
+        if (evidence.descriptors != 1 || evidence.pipelineManagers != 1)
+            throw new InvalidOperationException("World bootstrap counts are invalid: descriptors=" + evidence.descriptors + ", pipelineManagers=" + evidence.pipelineManagers);
+
         string evidencePath = "Library/VRMine/gaussian-u2-evidence.json";
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(evidencePath));
         System.IO.File.WriteAllText(evidencePath, JsonUtility.ToJson(evidence, true));
         foreach (RegisteredMeasurement measurement in evidence.measurements)
             Debug.Log("Gaussian U2 measurement: id=" + measurement.id + ", extent=" + measurement.extent.ToString("F6") + ", floorBottom=" + measurement.floorBottom.ToString("F6") + ", position=" + measurement.position);
-        Debug.Log("Gaussian U2 evidence: scene=" + evidence.activeScene + ", registered=" + evidence.registered + ", splats=" + evidence.gaussianSplatObjects + ", prefabs=" + evidence.prefabs + ", exhibits=" + evidence.exhibits + ", pads=" + evidence.pads + ", labels=" + evidence.labels + ", renderer=" + evidence.renderers + ", descriptor=" + evidence.descriptors + ", spawn=" + evidence.spawnPoints + ", referenceCamera=" + evidence.referenceCameras + ", missingScripts=" + evidence.missingScripts + ", dirty=" + evidence.sceneDirty + ", path=" + evidencePath);
+        Debug.Log("Gaussian U2 evidence: scene=" + evidence.activeScene + ", registered=" + evidence.registered + ", splats=" + evidence.gaussianSplatObjects + ", prefabs=" + evidence.prefabs + ", exhibits=" + evidence.exhibits + ", pads=" + evidence.pads + ", labels=" + evidence.labels + ", renderer=" + evidence.renderers + ", descriptor=" + evidence.descriptors + ", pipelineManager=" + evidence.pipelineManagers + ", spawn=" + evidence.spawnPoints + ", referenceCamera=" + evidence.referenceCameras + ", missingScripts=" + evidence.missingScripts + ", dirty=" + evidence.sceneDirty + ", path=" + evidencePath);
     }
 
     static int CountRegisteredSources()
@@ -172,6 +178,7 @@ public static class GaussianExhibitionVerification
         var errors = new List<string>();
 
         if (CountSceneComponents<VRCSceneDescriptor>(scene) != 1) errors.Add("VRCSceneDescriptor count must be exactly 1");
+        if (CountSceneComponents<PipelineManager>(scene) != 1) errors.Add("PipelineManager count must be exactly 1");
         if (CountSceneComponents<GaussianVideoPlaylist>(scene) != 1) errors.Add("GaussianVideoPlaylist count must be exactly 1");
         if (CountSceneComponents<GaussianVideoPlaylistAction>(scene) != 23) errors.Add("playlist action count must be 23 (20 direct + prev/replay/next)");
 
