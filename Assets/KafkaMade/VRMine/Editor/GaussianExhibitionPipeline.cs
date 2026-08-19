@@ -14,12 +14,14 @@ public static class GaussianExhibitionPipeline
         Debug.Log("VRMine 3DGS pipeline: building canonical exhibition scene...");
         GaussianExhibitionBuilder.Build();
 
-        Debug.Log("VRMine 3DGS pipeline: preparing volumetric light probes...");
+        Debug.Log("VRMine 3DGS pipeline: preparing volumetric light probes and baked GI settings...");
         PrepareLightProbeVolume();
+        ConfigureBakedLighting();
         EditorSceneManager.SaveOpenScenes();
 
         Debug.Log("VRMine 3DGS pipeline: baking static shell lighting...");
-        Lightmapping.Bake();
+        if (!Lightmapping.Bake())
+            throw new InvalidOperationException("Unity failed to complete the synchronous baked-lighting job.");
         EditorSceneManager.SaveOpenScenes();
 
         Debug.Log("VRMine 3DGS pipeline: verifying upload-readiness scene contract...");
@@ -29,7 +31,7 @@ public static class GaussianExhibitionPipeline
     }
 
     // Unity CLI entry point:
-    // Unity.exe -batchmode -quit -projectPath <repo> -executeMethod GaussianExhibitionPipeline.BuildAndVerify
+    // Unity.exe -batchmode -quit -projectPath <repo> -executeMethod GaussianExhibitionPipeline.BuildAndVerifyBatch
     public static void BuildAndVerifyBatch()
     {
         BuildAndVerify();
@@ -48,5 +50,20 @@ public static class GaussianExhibitionPipeline
             new Vector3(-9f, 2.5f,  3f), new Vector3(-3f, 2.5f,  3f), new Vector3(3f, 2.5f,  3f), new Vector3(9f, 2.5f,  3f),
         };
         EditorUtility.SetDirty(group);
+    }
+
+    static void ConfigureBakedLighting()
+    {
+        LightingSettings settings;
+        if (!Lightmapping.TryGetLightingSettings(out settings) || settings == null)
+        {
+            settings = new LightingSettings();
+            Lightmapping.lightingSettings = settings;
+        }
+
+        settings.autoGenerate = false;
+        settings.bakedGI = true;
+        settings.realtimeGI = false;
+        EditorUtility.SetDirty(settings);
     }
 }
