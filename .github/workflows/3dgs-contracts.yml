@@ -62,6 +62,7 @@ jobs:
           node --check scripts/compile-gaussian-producer-orientation.mjs
           node --check scripts/test-gaussian-producer-orientation.mjs
           node --check scripts/verify-gaussian-producer-orientation.mjs
+          node --check scripts/verify-gaussian-physical-up-consumer.mjs
           node --check scripts/open-gaussian-project.mjs
           python -m py_compile scripts/gaussian_orientation.py scripts/test_gaussian_orientation.py
       - name: Validate 3DGS contracts
@@ -73,6 +74,7 @@ jobs:
           node scripts/verify-gaussian-artifact-resolver.mjs
           node scripts/test-gaussian-producer-orientation.mjs
           node scripts/verify-gaussian-producer-orientation.mjs
+          node scripts/verify-gaussian-physical-up-consumer.mjs
       - name: Verify orientation analyzer on deterministic synthetic planes
         run: python scripts/test_gaussian_orientation.py
       - name: Materialize pinned Unity renderer at upstream-compatible path
