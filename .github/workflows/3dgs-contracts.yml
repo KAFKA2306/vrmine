@@ -11,6 +11,8 @@ on:
       - "config/gaussian-artifacts.yaml"
       - "scripts/verify-gaussian-*.mjs"
       - "scripts/materialize-gaussian-*.mjs"
+      - "scripts/gaussian_orientation.py"
+      - "scripts/test_gaussian_orientation.py"
       - "scripts/open-gaussian-project.mjs"
       - "scripts/open-unity-windows.ps1"
       - "Taskfile.yml"
@@ -24,6 +26,8 @@ on:
       - "config/gaussian-artifacts.yaml"
       - "scripts/verify-gaussian-*.mjs"
       - "scripts/materialize-gaussian-*.mjs"
+      - "scripts/gaussian_orientation.py"
+      - "scripts/test_gaussian_orientation.py"
       - "scripts/open-gaussian-project.mjs"
       - "scripts/open-unity-windows.ps1"
       - "Taskfile.yml"
@@ -52,6 +56,7 @@ jobs:
           node --check scripts/materialize-gaussian-renderer.mjs
           node --check scripts/materialize-gaussian-sources.mjs
           node --check scripts/open-gaussian-project.mjs
+          python -m py_compile scripts/gaussian_orientation.py scripts/test_gaussian_orientation.py
       - name: Validate 3DGS contracts
         run: |
           node scripts/verify-gaussian-fixtures.mjs
@@ -59,6 +64,8 @@ jobs:
           node scripts/verify-gaussian-exhibition.mjs
           node scripts/verify-gaussian-presentation.mjs
           node scripts/verify-gaussian-artifact-resolver.mjs
+      - name: Verify orientation analyzer on deterministic synthetic planes
+        run: python scripts/test_gaussian_orientation.py
       - name: Materialize pinned Unity renderer at upstream-compatible path
         run: |
           node scripts/materialize-gaussian-renderer.mjs
@@ -102,3 +109,7 @@ jobs:
           }
           console.log(`Verified materialized registered PLY count=${registry.environments.length}`);
           NODE
+      - name: Measure orientation from materialized PLY geometry
+        run: |
+          python scripts/gaussian_orientation.py
+          test -s Library/VRMine/gaussian-orientation-evidence.json
