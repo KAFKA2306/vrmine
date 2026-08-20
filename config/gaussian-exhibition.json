@@ -6,6 +6,7 @@
   "source_registry": "config/gaussian-splats.json",
   "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa",
   "target_extent_m": 1.0,
+  "presentation_scale_multiplier": 2.0,
   "import_overrides": [],
   "layout": {
     "center_spacing_m": 2.5,
