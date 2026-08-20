@@ -25,6 +25,9 @@ public sealed class GaussianAlignmentOverride
 {
     public bool enabled;
     public string mode;
+    public string scope;
+    public string physicalUpStatus;
+    public string authority;
     public GaussianQuaternion rotation;
     public GaussianVector3 pivot;
 }
@@ -132,6 +135,14 @@ public static class GaussianImportOverrides
         if (alignment == null || !alignment.enabled) return;
         if (alignment.mode != "horizon" && alignment.mode != "wall")
             throw new InvalidOperationException(id + ": alignment mode must be horizon or wall.");
+        if (!string.IsNullOrEmpty(alignment.scope) &&
+            alignment.scope != "coordinate_basis_only" && alignment.scope != "physical_up_correction")
+            throw new InvalidOperationException(id + ": unsupported alignment scope: " + alignment.scope);
+        if (!string.IsNullOrEmpty(alignment.physicalUpStatus) &&
+            alignment.physicalUpStatus != "accepted" &&
+            alignment.physicalUpStatus != "review_required" &&
+            alignment.physicalUpStatus != "unavailable")
+            throw new InvalidOperationException(id + ": unsupported physical-up status: " + alignment.physicalUpStatus);
         if (alignment.rotation == null)
             throw new InvalidOperationException(id + ": enabled alignment requires a rotation quaternion.");
         Quaternion rotation = alignment.rotation.ToQuaternion();
