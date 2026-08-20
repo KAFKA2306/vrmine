@@ -136,13 +136,18 @@ public static class GaussianImportOverrides
         if (alignment.mode != "horizon" && alignment.mode != "wall")
             throw new InvalidOperationException(id + ": alignment mode must be horizon or wall.");
         if (!string.IsNullOrEmpty(alignment.scope) &&
-            alignment.scope != "coordinate_basis_only" && alignment.scope != "physical_up_correction")
+            alignment.scope != "coordinate_basis_only" &&
+            alignment.scope != "coordinate_basis_plus_physical_up")
             throw new InvalidOperationException(id + ": unsupported alignment scope: " + alignment.scope);
         if (!string.IsNullOrEmpty(alignment.physicalUpStatus) &&
             alignment.physicalUpStatus != "accepted" &&
             alignment.physicalUpStatus != "review_required" &&
             alignment.physicalUpStatus != "unavailable")
             throw new InvalidOperationException(id + ": unsupported physical-up status: " + alignment.physicalUpStatus);
+        if (alignment.scope == "coordinate_basis_plus_physical_up" && alignment.physicalUpStatus != "accepted")
+            throw new InvalidOperationException(id + ": composed physical-up scope requires accepted physical-up evidence.");
+        if (alignment.scope == "coordinate_basis_only" && alignment.physicalUpStatus == "accepted")
+            throw new InvalidOperationException(id + ": accepted physical-up evidence cannot be hidden behind basis-only scope.");
         if (alignment.rotation == null)
             throw new InvalidOperationException(id + ": enabled alignment requires a rotation quaternion.");
         Quaternion rotation = alignment.rotation.ToQuaternion();

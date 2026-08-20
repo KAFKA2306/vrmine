@@ -8,13 +8,10 @@ const EXPECTED_CONSUMER = 'MichaelMoroz/VRChatGaussianSplatting';
 const EXPECTED_MODE = 'horizon_alignment_pre_y_reflection';
 const EXPECTED_POST_TRANSFORM = 'reflect-y';
 const EXPECTED_REPRESENTATION_FIELDS = new Set(['position', 'gaussian_rotation', 'spherical_harmonics']);
+const ALLOWED_SCOPES = new Set(['coordinate_basis_only', 'coordinate_basis_plus_physical_up']);
 
-// Audited legacy generation revision. Repository history proves:
-// - Dockerfile pins Nerfstudio 50e0e3c70c775e89333256213363badbf074f29d.
-// - processing/huejotzingo.py invokes ns-process-data without an orientation override.
-// - pinned Nerfstudio default `up` aligns mean camera-up to model +Z.
-// This proves the MODEL BASIS, not physical gravity. No other revision may use
-// this migration fallback.
+// Audited legacy generation revision. Repository history proves the model basis,
+// not physical gravity. No other revision may use this fallback.
 const AUDITED_LEGACY_REPOSITORY = 'KAFKA2306/AutoPhotogrammetry';
 const AUDITED_LEGACY_REVISION = '1d48110c8abd891d7b0a19f9e6ce793901758742';
 const AUDITED_NERFSTUDIO_REVISION = '50e0e3c70c775e89333256213363badbf074f29d';
@@ -96,8 +93,8 @@ function validateBasisOrientation(id, source, orientation) {
   if (orientation.status !== 'accepted') {
     return `orientation basis status=${orientation.status ?? 'missing'}`;
   }
-  if (orientation.scope !== 'coordinate_basis_only') {
-    throw new Error(`${id}: orientation scope must be coordinate_basis_only`);
+  if (!ALLOWED_SCOPES.has(orientation.scope)) {
+    throw new Error(`${id}: unsupported orientation scope ${orientation.scope}`);
   }
   if (orientation.ply_sha256 !== source.sha256) {
     throw new Error(`${id}: orientation PLY SHA-256 does not match source artifact`);
@@ -105,9 +102,23 @@ function validateBasisOrientation(id, source, orientation) {
   if (orientation.canonical_frame?.name !== 'unity-basis-y-up') {
     throw new Error(`${id}: unsupported canonical frame ${orientation.canonical_frame?.name}`);
   }
-  const physicalUpStatus = orientation.physical_up?.status;
+  const physicalUp = orientation.physical_up;
+  const physicalUpStatus = physicalUp?.status;
   if (!['accepted', 'review_required', 'unavailable'].includes(physicalUpStatus)) {
     throw new Error(`${id}: physical_up.status is missing or unsupported`);
+  }
+  if (orientation.scope === 'coordinate_basis_plus_physical_up') {
+    if (physicalUpStatus !== 'accepted') {
+      throw new Error(`${id}: physical-up composition scope requires accepted physical_up evidence`);
+    }
+    if (!physicalUp?.authority_type || !physicalUp?.evidence_sha256) {
+      throw new Error(`${id}: accepted physical_up requires authority_type and evidence_sha256`);
+    }
+    if (orientation.canonical_frame?.physical_gravity_claimed !== true) {
+      throw new Error(`${id}: physical-up composition must explicitly claim validated physical gravity`);
+    }
+  } else if (physicalUpStatus === 'accepted') {
+    throw new Error(`${id}: accepted physical_up cannot be hidden behind coordinate_basis_only scope`);
   }
 
   const consumer = orientation.consumer_application;
@@ -165,20 +176,24 @@ export function compileProducerOrientation(registry, exhibition, { requireAll = 
 
     const consumer = orientation.consumer_application;
     const previous = existing.get(id) ?? { id };
+    const physicalAccepted = orientation.physical_up.status === 'accepted';
+    const authority = physicalAccepted
+      ? `producer-physical-up:${orientation.physical_up.authority_type}`
+      : resolved.authority;
     compiled.push({
       ...previous,
       id,
       alignment: {
         enabled: true,
         mode: 'horizon',
-        scope: 'coordinate_basis_only',
+        scope: orientation.scope,
         physicalUpStatus: orientation.physical_up.status,
-        authority: resolved.authority,
+        authority,
         rotation: quaternion(consumer.quaternion_xyzw, `${id} consumer quaternion`),
         pivot: vector3(consumer.pivot ?? [0, 0, 0], `${id} consumer pivot`),
       },
     });
-    authorities[id] = resolved.authority;
+    authorities[id] = authority;
   }
 
   if (requireAll && unresolved.length > 0) {
