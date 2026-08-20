@@ -205,7 +205,8 @@ def analyze(points, source_id, mode="horizon", apply_threshold_deg=1.0, min_inli
     q=quat_from_to(normal,target)
     corrected=quat_rotate(q,normal)
     residual=angle_deg(corrected,target)
-    confidence="accepted" if plane["inlier_ratio"]>=min_inlier_ratio and residual<=1e-4 else "review_required"
+    geometric_pass = plane["inlier_ratio"]>=min_inlier_ratio and residual<=1e-4
+    confidence="accepted" if geometric_pass and mode=="horizon" else "review_required"
     action="apply" if confidence=="accepted" and tilt>=apply_threshold_deg else "no_op" if confidence=="accepted" else "review_required"
     return {
         "id":source_id, "mode":mode, "status":confidence, "action":action,
