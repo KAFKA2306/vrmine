@@ -1,0 +1,262 @@
+schema_version: 1
+artifacts:
+  - id: autophotogrammetry/avenida-gomez-morin/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/avenida-gomez-morin/0a04b7fe901856a1d121ea02b572188e1223ce40904bdd518257f10ea4fce628.ply
+    size_bytes: 65410105
+    sha256: 0a04b7fe901856a1d121ea02b572188e1223ce40904bdd518257f10ea4fce628
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/avenida-gomez-morin/runs/splatfacto/20260820T003836Z-ddead145/export/splat.ply
+  - id: autophotogrammetry/baluarte-san-pedro/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/baluarte-san-pedro/a8ab4e51f0713cd0886ece3088cb033db230b6d155e51780a910e7f8fb5f603d.ply
+    size_bytes: 36862577
+    sha256: a8ab4e51f0713cd0886ece3088cb033db230b6d155e51780a910e7f8fb5f603d
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/baluarte-san-pedro/runs/splatfacto/20260820T004913Z-220d8fdb/export/splat.ply
+  - id: autophotogrammetry/calvillo-centro/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/calvillo-centro/0ef3783257d41b53d0359e1c51a69dfdec6ed214387696bf0a7466444e43f554.ply
+    size_bytes: 43457145
+    sha256: 0ef3783257d41b53d0359e1c51a69dfdec6ed214387696bf0a7466444e43f554
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/calvillo-centro/runs/splatfacto/20260820T002756Z-272b4140/export/splat.ply
+  - id: autophotogrammetry/huejotzingo/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/huejotzingo/1b63330848e6de7ef15f817a292876592c6b6cbd2527fe93fc8d9129cf04012d.ply
+    size_bytes: 38555673
+    sha256: 1b63330848e6de7ef15f817a292876592c6b6cbd2527fe93fc8d9129cf04012d
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/huejotzingo/runs/splatfacto/20260820T001159Z-e3dabe8b/export/splat.ply
+  - id: autophotogrammetry/puente-san-ignacio-01/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/puente-san-ignacio-01/8a845b437e58792f92ee71b229844bba4976b32f9037806aebb4cdbd07ed70a3.ply
+    size_bytes: 29579065
+    sha256: 8a845b437e58792f92ee71b229844bba4976b32f9037806aebb4cdbd07ed70a3
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/puente-san-ignacio-01/runs/splatfacto/20260820T014116Z-151ce4ce/export/splat.ply
+  - id: autophotogrammetry/puente-san-ignacio-03/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/puente-san-ignacio-03/65d9f2d3744e11a6cbbe610fbcdc46407423c9c742292358462844ef8c67161c.ply
+    size_bytes: 57474353
+    sha256: 65d9f2d3744e11a6cbbe610fbcdc46407423c9c742292358462844ef8c67161c
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/puente-san-ignacio-03/runs/splatfacto/20260820T003151Z-f3ce6569/export/splat.ply
+  - id: autophotogrammetry/san-francisco-nayarit-01/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/san-francisco-nayarit-01/0b236b57a0649f5c07e34ec6469251ccac015519a25817bbf3e60d8b00d56ea8.ply
+    size_bytes: 37524737
+    sha256: 0b236b57a0649f5c07e34ec6469251ccac015519a25817bbf3e60d8b00d56ea8
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/san-francisco-nayarit-01/runs/splatfacto/20260820T004353Z-1c07f1c9/export/splat.ply
+  - id: autophotogrammetry/templo-san-marcos/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/templo-san-marcos/978dfc0909e5b615aceddcbe238ec9c20bf674dcb64aa7296f21320b4a2bb461.ply
+    size_bytes: 35077721
+    sha256: 978dfc0909e5b615aceddcbe238ec9c20bf674dcb64aa7296f21320b4a2bb461
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/templo-san-marcos/runs/splatfacto/20260820T002338Z-818d82fd/export/splat.ply
+  - id: autophotogrammetry/tepotzotlan-virreinato/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/tepotzotlan-virreinato/d9635fe47a2af9f70c9e9a6e8500d10186f1bacc2bce872f2e0070579185c862.ply
+    size_bytes: 39604217
+    sha256: d9635fe47a2af9f70c9e9a6e8500d10186f1bacc2bce872f2e0070579185c862
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/tepotzotlan-virreinato/runs/splatfacto/20260820T001932Z-34f5f41e/export/splat.ply
+  - id: autophotogrammetry/herstmonceux-castle/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/herstmonceux-castle/d36460210020b039bcc7f43598ed94d50a6a88ad617b1f3aebd08695812f413d.ply
+    size_bytes: 28159017
+    sha256: d36460210020b039bcc7f43598ed94d50a6a88ad617b1f3aebd08695812f413d
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/herstmonceux-castle/runs/splatfacto/20260820T014601Z-7dc5182d/export/splat.ply
+  - id: autophotogrammetry/fachada-san-francisco-javier/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/fachada-san-francisco-javier/fa6e8dfa586a5ab584bbccfebbbc865ddaae0337b9f42a4261189cdef8a8bf0b.ply
+    size_bytes: 29423073
+    sha256: fa6e8dfa586a5ab584bbccfebbbc865ddaae0337b9f42a4261189cdef8a8bf0b
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/fachada-san-francisco-javier/runs/splatfacto/20260820T014953Z-43148c7b/export/splat.ply
+  - id: autophotogrammetry/panoramica-puebla-centro/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/panoramica-puebla-centro/137ddd848a3ca8c230b57fbb968549a2c266f36f35d38869a35fe951dafb26a7.ply
+    size_bytes: 36215793
+    sha256: 137ddd848a3ca8c230b57fbb968549a2c266f36f35d38869a35fe951dafb26a7
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/panoramica-puebla-centro/runs/splatfacto/20260820T015305Z-aa5bdd4a/export/splat.ply
+  - id: autophotogrammetry/centro-aguascalientes/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/centro-aguascalientes/e6b24c9e4e71b9e8a6a6d09e1d09dc34eb9303ea4048adb117264b26469b4408.ply
+    size_bytes: 53207513
+    sha256: e6b24c9e4e71b9e8a6a6d09e1d09dc34eb9303ea4048adb117264b26469b4408
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/centro-aguascalientes/runs/splatfacto/20260820T015757Z-4de6b159/export/splat.ply
+  - id: autophotogrammetry/barco-la-pona-01/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/barco-la-pona-01/adcfc54215a5b287f2e547cc816ca466076a51f9d4536c7f9eb9373d4339e988.ply
+    size_bytes: 48526017
+    sha256: adcfc54215a5b287f2e547cc816ca466076a51f9d4536c7f9eb9373d4339e988
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/barco-la-pona-01/runs/splatfacto/20260820T020510Z-b631a69e/export/splat.ply
+  - id: autophotogrammetry/presa-san-blas/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/presa-san-blas/3ced7a168e68ebcf3ecd5014d130db91823310c4ac3c10d0af826ace78ae9b7c.ply
+    size_bytes: 37857305
+    sha256: 3ced7a168e68ebcf3ecd5014d130db91823310c4ac3c10d0af826ace78ae9b7c
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/presa-san-blas/runs/splatfacto/20260820T021217Z-cc7b9276/export/splat.ply
+  - id: autophotogrammetry/playa-guayabitos-region/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/playa-guayabitos-region/aa528562c007152039f657edbc11e35492a9ac3601f28b8f23b79dc152dc49b3.ply
+    size_bytes: 22480312
+    sha256: aa528562c007152039f657edbc11e35492a9ac3601f28b8f23b79dc152dc49b3
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/playa-guayabitos-region/runs/splatfacto/20260820T021621Z-93883f8f/export/splat.ply
+  - id: autophotogrammetry/cascadas-agua-azul/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/cascadas-agua-azul/a73611f1a733b2c7259e240857e8ecafee6d712338c60e2b7208992de2e7b446.ply
+    size_bytes: 44325641
+    sha256: a73611f1a733b2c7259e240857e8ecafee6d712338c60e2b7208992de2e7b446
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/cascadas-agua-azul/runs/splatfacto/20260820T022216Z-7552e547/export/splat.ply
+  - id: autophotogrammetry/los-cabos-sunset/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/los-cabos-sunset/2af0d44ab7aa29d3da8a2538dbd0f4ae511ec247bd8375f72e023e33b4c7c806.ply
+    size_bytes: 19791992
+    sha256: 2af0d44ab7aa29d3da8a2538dbd0f4ae511ec247bd8375f72e023e33b4c7c806
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/los-cabos-sunset/runs/splatfacto/20260820T025919Z-83e79dd5/export/splat.ply
+  - id: autophotogrammetry/la-pona-fire-2025/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/la-pona-fire-2025/ee8b4a6042bb3da497e979c7abdcce8bec57880850225c00a99c040fa6a33723.ply
+    size_bytes: 60246249
+    sha256: ee8b4a6042bb3da497e979c7abdcce8bec57880850225c00a99c040fa6a33723
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/la-pona-fire-2025/runs/splatfacto/20260820T031006Z-fa117497/export/splat.ply
+  - id: autophotogrammetry/cadena-humana-la-pona/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/cadena-humana-la-pona/d9e3e4a15eba0dc4a3d790f14625a2c9854add42b73ca26bc4b744e38ecc35ef.ply
+    size_bytes: 77351305
+    sha256: d9e3e4a15eba0dc4a3d790f14625a2c9854add42b73ca26bc4b744e38ecc35ef
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/cadena-humana-la-pona/runs/splatfacto/20260820T031530Z-2497f993/export/splat.ply

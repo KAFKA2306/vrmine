@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.519945, y: 0.519945, z: 0.519945}
+  m_LocalScale: {x: 0.45747992, y: 0.45747992, z: 0.45747992}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: tepotzotlan-virreinato
   description: Chunk LOD imported from Library/VRMine/GaussianSources/tepotzotlan-virreinato.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/tepotzotlan-virreinato.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/tepotzotlan-virreinato.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.0,"y":0.0,"z":0.0}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":0.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/tepotzotlan-virreinato.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/tepotzotlan-virreinato.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 87
-  totalSplatCount: 163588
+  chunkCount: 93
+  totalSplatCount: 159688
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 2.9090912
-  smallestChunkSize: 0.004667907
-  boundsMin: {x: -0.91847616, y: -2.8448553, z: -0.5227128}
-  boundsMax: {x: 1.0048041, y: -1.2167993, z: 0.93098545}
+  lodSplatRadius: 3.6056335
+  smallestChunkSize: 0.012670456
+  boundsMin: {x: -1.1441231, y: -3.2020354, z: -0.6490567}
+  boundsMax: {x: 0.98121715, y: -1.2770904, z: 1.5368316}
   positions:
   - {fileID: 2800000, guid: 8c31fbec96f2db44bb3d1ede73e2d018, type: 2}
   colors:
@@ -79,17 +79,17 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 83a16076a884ba84e8dddf099bb5177b, type: 2}
   sh:
   - {fileID: 2800000, guid: 1cb28bcbb149b6944b67010334b47557, type: 2}
-  fileSplatCounts: 047f0200
+  fileSplatCounts: c86f0200
   fileShCoeffCounts: 0f000000
-  fileShCoeffStrides: 047f0200
+  fileShCoeffStrides: c86f0200
   fileShMins:
-  - {x: -0.16130142, y: -0.14268559, z: -0.13844405, w: 0}
+  - {x: -0.18223782, y: -0.14074153, z: -0.12693156, w: 0}
   fileShRanges:
-  - {x: 0.27623227, y: 0.2557229, z: 0.30047968, w: 0}
+  - {x: 0.30134773, y: 0.2611851, z: 0.27464306, w: 0}
   chunkBoundsMinTexture: {fileID: 2800000, guid: b7655f42eb8661a4c950742112c26f07, type: 2}
   chunkBoundsMaxTexture: {fileID: 2800000, guid: 60e3f66d4dd491c4b90c8e2a720346af, type: 2}
   chunkRangeTexture: {fileID: 2800000, guid: f894813ef5c3f07498085cd97fc75d66, type: 2}
-  chunkTextureLayout: {x: 128, y: 0.0078125, z: 87, w: 0}
+  chunkTextureLayout: {x: 128, y: 0.0078125, z: 93, w: 0}
 --- !u!114 &8906087199391025218
 MonoBehaviour:
   m_ObjectHideFlags: 0

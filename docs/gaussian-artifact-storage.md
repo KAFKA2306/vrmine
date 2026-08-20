@@ -4,12 +4,12 @@ VRMineはGaussian Splat PLYのconsumerです。PLY生成やStorage Bucket upload
 
 ## Source modes
 
-`config/gaussian-splats.json` の各entryは、移行期間中は次のいずれかをsourceにできます。
+`config/gaussian-splats.json` の全20 entryは、現在は次の artifact source を正準経路にしています。
 
 - `artifact_id`: hf-cache-hubのartifact manifestを正準sourceとして解決する方式
-- `download_url`: 既存のdirect URLを使うlegacy方式
+- `download_url`: 既存のdirect URLを使うlegacy方式（新規 entryでは使用しない）
 
-`artifact_id` がある場合はartifact方式を優先します。remote publish/readbackが実証される前にlegacy sourceを削除しません。
+`config/gaussian-artifacts.yaml` は、ユーザー確認済みの20件の remote readback（合計 `841,129,810` bytes）と同じサイズ/SHA-256、`k4fka/kafka-data-lake` の hash-addressed pathを記録しています。
 
 ## Shared cache setup
 
@@ -17,6 +17,7 @@ VRMineはGaussian Splat PLYのconsumerです。PLY生成やStorage Bucket upload
 git clone https://github.com/KAFKA2306/hf-cache-hub.git ~/src/hf-cache-hub
 export HF_CACHE_HUB_ROOT="$HOME/src/hf-cache-hub"
 export HF_HOME="$HOME/hf-cache"
+export HF_CACHE_HUB_PYTHON="$HOME/.venvs/hf-cache/bin/python"
 ```
 
 artifact sourceを含むregistryで次を実行します。
@@ -52,6 +53,6 @@ artifact sourceでは、shared cache objectとconsumer pathが同一filesystem�
 3. artifact recordを正準manifestへ登録する。
 4. VRMine registryを `artifact_id` sourceへ切り替える。
 5. clean consumerで `task gaussian:prepare` と3DGS contractsを再実行する。
-6. そのartifactについてのみlegacy `download_url` を削除する。
+6. remote readbackを確認したartifactについてlegacy `download_url` を削除する。
 
 未観測のremote objectを前提にregistryだけ先行変更しません。GitHub Actionsのfixture PASSはconsumer contractの証拠であり、実Storage Bucket上のPLYが存在する証拠とは区別します。

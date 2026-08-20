@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.043173213, y: 0.043173213, z: 0.043173213}
+  m_LocalScale: {x: 0.040106654, y: 0.040106654, z: 0.040106654}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: puente-san-ignacio-03
   description: Chunk LOD imported from Library/VRMine/GaussianSources/puente-san-ignacio-03.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/puente-san-ignacio-03.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/puente-san-ignacio-03.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.0,"y":0.0,"z":0.0}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":0.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/puente-san-ignacio-03.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/puente-san-ignacio-03.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 121
-  totalSplatCount: 228474
+  chunkCount: 126
+  totalSplatCount: 231745
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
   lodSplatRadius: 35.310345
-  smallestChunkSize: 0.024040103
-  boundsMin: {x: -11.781478, y: -15.98423, z: -6.9912796}
-  boundsMax: {x: 11.381032, y: 1.9899883, z: 12.687286}
+  smallestChunkSize: 0.016380837
+  boundsMin: {x: -10.157588, y: -25.786974, z: -7.9455767}
+  boundsMax: {x: 8.584037, y: -0.8534565, z: 8.604098}
   positions:
   - {fileID: 2800000, guid: 748d7853f5689dc438efc1dd71a75389, type: 2}
   colors:
@@ -79,17 +79,17 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 0fd80d554a1ac68408303e69b722fec2, type: 2}
   sh:
   - {fileID: 2800000, guid: f976c1652a6b982439b8727fe8ae3e29, type: 2}
-  fileSplatCounts: 7a7c0300
+  fileSplatCounts: 41890300
   fileShCoeffCounts: 0f000000
-  fileShCoeffStrides: 7a7c0300
+  fileShCoeffStrides: 41890300
   fileShMins:
-  - {x: -0.10419475, y: -0.10040914, z: -0.107895136, w: 0}
+  - {x: -0.10445523, y: -0.10160786, z: -0.10099962, w: 0}
   fileShRanges:
-  - {x: 0.27098316, y: 0.26659757, z: 0.2577523, w: 0}
+  - {x: 0.28538316, y: 0.24797812, z: 0.24074946, w: 0}
   chunkBoundsMinTexture: {fileID: 2800000, guid: ed22da306ffd2e446b16d06d3dab5ee2, type: 2}
   chunkBoundsMaxTexture: {fileID: 2800000, guid: 11ee19e4e3c7e0c43bc446236198dacf, type: 2}
   chunkRangeTexture: {fileID: 2800000, guid: bfacb31cea504d34ab3baa2cd23e10b8, type: 2}
-  chunkTextureLayout: {x: 128, y: 0.0078125, z: 121, w: 0}
+  chunkTextureLayout: {x: 128, y: 0.0078125, z: 126, w: 0}
 --- !u!114 &6945360667997791285
 MonoBehaviour:
   m_ObjectHideFlags: 0

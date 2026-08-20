@@ -214,7 +214,7 @@ public static class GaussianExhibitionBuilder
 
     static void ValidateConfig(ExhibitionConfig config)
     {
-        if (config.schema_version != 2) throw new InvalidDataException("Unsupported Gaussian exhibition schema.");
+        if (config.schema_version != 3) throw new InvalidDataException("Unsupported Gaussian exhibition schema.");
         if (config.final_expected_exhibits <= 0) throw new InvalidDataException("final_expected_exhibits must be positive.");
         if (config.scene_path != "Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity")
             throw new InvalidDataException("Unexpected canonical Gaussian exhibition scene path.");

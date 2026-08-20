@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.24087565, y: 0.24087565, z: 0.24087565}
+  m_LocalScale: {x: 0.38171366, y: 0.38171366, z: 0.38171366}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: san-francisco-nayarit-01
   description: Chunk LOD imported from Library/VRMine/GaussianSources/san-francisco-nayarit-01.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/san-francisco-nayarit-01.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/san-francisco-nayarit-01.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.0,"y":0.0,"z":0.0}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":0.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/san-francisco-nayarit-01.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/san-francisco-nayarit-01.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 95
-  totalSplatCount: 160418
+  chunkCount: 87
+  totalSplatCount: 151303
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 5.988304
-  smallestChunkSize: 0.019537259
-  boundsMin: {x: -1.9657899, y: -2.3079371, z: -2.2215862}
-  boundsMax: {x: 2.18573, y: 0.6954322, z: 0.8775172}
+  lodSplatRadius: 3.271566
+  smallestChunkSize: 0.0085588675
+  boundsMin: {x: -0.8309858, y: -1.3100294, z: -1.352489}
+  boundsMax: {x: 1.788779, y: 0.13813281, z: -0.03233695}
   positions:
   - {fileID: 2800000, guid: 5ec8e8c1e0c82ab40b72db9e1c0effd9, type: 2}
   colors:
@@ -79,17 +79,17 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 9d247dac243ef234594b1119490d7452, type: 2}
   sh:
   - {fileID: 2800000, guid: 126247b5001054b4485b3c8510e472c1, type: 2}
-  fileSplatCounts: a2720200
+  fileSplatCounts: 074f0200
   fileShCoeffCounts: 0f000000
-  fileShCoeffStrides: a2720200
+  fileShCoeffStrides: 074f0200
   fileShMins:
-  - {x: -0.15440114, y: -0.14668936, z: -0.16326793, w: 0}
+  - {x: -0.16690409, y: -0.13806595, z: -0.22747031, w: 0}
   fileShRanges:
-  - {x: 0.30888116, y: 0.29343837, z: 0.30458426, w: 0}
+  - {x: 0.31524032, y: 0.2841189, z: 0.36720127, w: 0}
   chunkBoundsMinTexture: {fileID: 2800000, guid: 6feb50c2e497b8c4986050cbae3f5fcc, type: 2}
   chunkBoundsMaxTexture: {fileID: 2800000, guid: 2ca225ba547e9994cb16871c31877353, type: 2}
   chunkRangeTexture: {fileID: 2800000, guid: 992cdf93e3e93924991f907c905c912f, type: 2}
-  chunkTextureLayout: {x: 128, y: 0.0078125, z: 95, w: 0}
+  chunkTextureLayout: {x: 128, y: 0.0078125, z: 87, w: 0}
 --- !u!114 &2275885623376419671
 MonoBehaviour:
   m_ObjectHideFlags: 0

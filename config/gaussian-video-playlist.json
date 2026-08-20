@@ -4,28 +4,148 @@
   "source_registry": "config/gaussian-splats.json",
   "exhibition_manifest": "config/gaussian-exhibition.json",
   "player_prefab_path": "Packages/com.vrchat.worlds/Samples/UdonExampleScene/Prefabs/VideoPlayers/UdonSyncPlayer (Unity).prefab",
-  "rate_limit_seconds": 5.0,
+  "rate_limit_seconds": 5,
   "status": "blocked_upstream",
   "entries": [
-    {"display_index":1,"source_id":"avenida-gomez-morin","playback_url":null,"requires_untrusted_urls":null,"status":"blocked_playback_url"},
-    {"display_index":2,"source_id":"baluarte-san-pedro","playback_url":null,"requires_untrusted_urls":null,"status":"blocked_playback_url"},
-    {"display_index":3,"source_id":"calvillo-centro","playback_url":null,"requires_untrusted_urls":null,"status":"blocked_playback_url"},
-    {"display_index":4,"source_id":"huejotzingo","playback_url":"https://upload.wikimedia.org/wikipedia/commons/transcoded/3/34/Vista_del_Ex_Convento_de_San_Miguel_Arc%C3%A1ngel%2C_Huejotzingo%2C_desde_un_dron.webm/Vista_del_Ex_Convento_de_San_Miguel_Arc%C3%A1ngel%2C_Huejotzingo%2C_desde_un_dron.webm.1080p.vp9.webm","requires_untrusted_urls":true,"status":"ready_untrusted"},
-    {"display_index":5,"source_id":"puente-san-ignacio-01","playback_url":null,"requires_untrusted_urls":null,"status":"blocked_playback_url"},
-    {"display_index":6,"source_id":"puente-san-ignacio-03","playback_url":"https://upload.wikimedia.org/wikipedia/commons/9/97/Puente_de_San_Ignacio_desde_un_dron_03.webm","requires_untrusted_urls":true,"status":"ready_untrusted"},
-    {"display_index":7,"source_id":"san-francisco-nayarit-01","playback_url":null,"requires_untrusted_urls":null,"status":"blocked_playback_url"},
-    {"display_index":8,"source_id":"templo-san-marcos","playback_url":null,"requires_untrusted_urls":null,"status":"blocked_playback_url"},
-    {"display_index":9,"source_id":"tepotzotlan-virreinato","playback_url":null,"requires_untrusted_urls":null,"status":"blocked_playback_url"},
-    {"display_index":10,"source_id":null,"playback_url":null,"requires_untrusted_urls":null,"status":"blocked_source"},
-    {"display_index":11,"source_id":null,"playback_url":null,"requires_untrusted_urls":null,"status":"blocked_source"},
-    {"display_index":12,"source_id":null,"playback_url":null,"requires_untrusted_urls":null,"status":"blocked_source"},
-    {"display_index":13,"source_id":null,"playback_url":null,"requires_untrusted_urls":null,"status":"blocked_source"},
-    {"display_index":14,"source_id":null,"playback_url":null,"requires_untrusted_urls":null,"status":"blocked_source"},
-    {"display_index":15,"source_id":null,"playback_url":null,"requires_untrusted_urls":null,"status":"blocked_source"},
-    {"display_index":16,"source_id":null,"playback_url":null,"requires_untrusted_urls":null,"status":"blocked_source"},
-    {"display_index":17,"source_id":null,"playback_url":null,"requires_untrusted_urls":null,"status":"blocked_source"},
-    {"display_index":18,"source_id":null,"playback_url":null,"requires_untrusted_urls":null,"status":"blocked_source"},
-    {"display_index":19,"source_id":null,"playback_url":null,"requires_untrusted_urls":null,"status":"blocked_source"},
-    {"display_index":20,"source_id":null,"playback_url":null,"requires_untrusted_urls":null,"status":"blocked_source"}
+    {
+      "display_index": 1,
+      "source_id": "avenida-gomez-morin",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 2,
+      "source_id": "baluarte-san-pedro",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 3,
+      "source_id": "calvillo-centro",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 4,
+      "source_id": "huejotzingo",
+      "playback_url": "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/34/Vista_del_Ex_Convento_de_San_Miguel_Arc%C3%A1ngel%2C_Huejotzingo%2C_desde_un_dron.webm/Vista_del_Ex_Convento_de_San_Miguel_Arc%C3%A1ngel%2C_Huejotzingo%2C_desde_un_dron.webm.1080p.vp9.webm",
+      "requires_untrusted_urls": true,
+      "status": "ready_untrusted"
+    },
+    {
+      "display_index": 5,
+      "source_id": "puente-san-ignacio-01",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 6,
+      "source_id": "puente-san-ignacio-03",
+      "playback_url": "https://upload.wikimedia.org/wikipedia/commons/9/97/Puente_de_San_Ignacio_desde_un_dron_03.webm",
+      "requires_untrusted_urls": true,
+      "status": "ready_untrusted"
+    },
+    {
+      "display_index": 7,
+      "source_id": "san-francisco-nayarit-01",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 8,
+      "source_id": "templo-san-marcos",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 9,
+      "source_id": "tepotzotlan-virreinato",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 10,
+      "source_id": "herstmonceux-castle",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 11,
+      "source_id": "fachada-san-francisco-javier",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 12,
+      "source_id": "panoramica-puebla-centro",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 13,
+      "source_id": "centro-aguascalientes",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 14,
+      "source_id": "barco-la-pona-01",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 15,
+      "source_id": "presa-san-blas",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 16,
+      "source_id": "playa-guayabitos-region",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 17,
+      "source_id": "cascadas-agua-azul",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 18,
+      "source_id": "los-cabos-sunset",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 19,
+      "source_id": "la-pona-fire-2025",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 20,
+      "source_id": "cadena-humana-la-pona",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    }
   ]
 }

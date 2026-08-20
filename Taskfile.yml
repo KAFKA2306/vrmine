@@ -15,6 +15,7 @@ tasks:
     cmds:
       - node --test pages/games/answer-impostor/engine.test.mjs
       - node --check scripts/run-gaussian-unity.mjs
+      - node --check scripts/open-gaussian-project.mjs
       - node scripts/verify-gaussian-fixtures.mjs
       - node scripts/verify-gaussian-exhibition.mjs
       - node scripts/verify-gaussian-video-playlist.mjs
@@ -35,7 +36,13 @@ tasks:
     deps: [gaussian:renderer, gaussian:sources]
     cmds:
       - node -e "const fs=require('fs'); fs.mkdirSync('Library/VRMine',{recursive:true}); fs.writeFileSync('Library/VRMine/prepare-gaussian-on-open','1\n')"
-      - echo "Prepared Gaussian inputs. Open this project in VCC/Unity; VRMine will import the registered PLYs and open GaussianSplatExhibition.unity automatically."
+      - echo "Prepared Gaussian inputs. Run 'task gaussian:open' to register/resolve the project in VCC and open Unity."
+
+  gaussian:open:
+    desc: Materialize Gaussian inputs, register/resolve the project in VCC, and open the pinned Unity editor
+    deps: [gaussian:prepare]
+    cmds:
+      - node scripts/open-gaussian-project.mjs
 
   gaussian:verify-u2:
     desc: Run the registered-source Unity U2 verification with the project-pinned Unity editor

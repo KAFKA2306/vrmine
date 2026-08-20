@@ -8,8 +8,11 @@ on:
       - "Assets/KafkaMade/VRMine/Editor/GaussianImportOverrides.cs"
       - "Assets/KafkaMade/VRMine/Editor/GaussianExhibition*.cs"
       - "config/gaussian-*.json"
+      - "config/gaussian-artifacts.yaml"
       - "scripts/verify-gaussian-*.mjs"
       - "scripts/materialize-gaussian-*.mjs"
+      - "scripts/open-gaussian-project.mjs"
+      - "scripts/open-unity-windows.ps1"
       - "Taskfile.yml"
       - ".github/workflows/3dgs-contracts.yml"
   pull_request:
@@ -18,8 +21,11 @@ on:
       - "Assets/KafkaMade/VRMine/Editor/GaussianImportOverrides.cs"
       - "Assets/KafkaMade/VRMine/Editor/GaussianExhibition*.cs"
       - "config/gaussian-*.json"
+      - "config/gaussian-artifacts.yaml"
       - "scripts/verify-gaussian-*.mjs"
       - "scripts/materialize-gaussian-*.mjs"
+      - "scripts/open-gaussian-project.mjs"
+      - "scripts/open-unity-windows.ps1"
       - "Taskfile.yml"
       - ".github/workflows/3dgs-contracts.yml"
   workflow_dispatch:
@@ -44,6 +50,7 @@ jobs:
           node --check scripts/verify-gaussian-artifact-resolver.mjs
           node --check scripts/materialize-gaussian-renderer.mjs
           node --check scripts/materialize-gaussian-sources.mjs
+          node --check scripts/open-gaussian-project.mjs
       - name: Validate 3DGS contracts
         run: |
           node scripts/verify-gaussian-fixtures.mjs

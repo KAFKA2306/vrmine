@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.13164103, y: 0.13164103, z: 0.13164103}
+  m_LocalScale: {x: 0.120588824, y: 0.120588824, z: 0.120588824}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: templo-san-marcos
   description: Chunk LOD imported from Library/VRMine/GaussianSources/templo-san-marcos.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/templo-san-marcos.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/templo-san-marcos.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.0,"y":0.0,"z":0.0}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":0.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/templo-san-marcos.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/templo-san-marcos.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 72
-  totalSplatCount: 143883
+  chunkCount: 82
+  totalSplatCount: 141436
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 12.047058
-  smallestChunkSize: 0.014772602
-  boundsMin: {x: -4.236144, y: -4.9525137, z: -4.28803}
-  boundsMax: {x: 3.3602715, y: 0.5286803, z: 3.2871003}
+  lodSplatRadius: 13.128204
+  smallestChunkSize: 0.04154434
+  boundsMin: {x: -4.683515, y: -5.066073, z: -4.1032934}
+  boundsMax: {x: 3.6091275, y: 1.513206, z: 3.661687}
   positions:
   - {fileID: 2800000, guid: 47979110416b3cc44a4501e29e72920d, type: 2}
   colors:
@@ -79,17 +79,17 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 9b3270ad8655c874eb75e76c230b8b93, type: 2}
   sh:
   - {fileID: 2800000, guid: 715fb590182bcf94ba9c8b3a2c08714f, type: 2}
-  fileSplatCounts: 0b320200
+  fileSplatCounts: 7c280200
   fileShCoeffCounts: 0f000000
-  fileShCoeffStrides: 0b320200
+  fileShCoeffStrides: 7c280200
   fileShMins:
-  - {x: -0.18280528, y: -0.19071487, z: -0.18854465, w: 0}
+  - {x: -0.14655975, y: -0.14610605, z: -0.15046972, w: 0}
   fileShRanges:
-  - {x: 0.33392066, y: 0.319044, z: 0.30481678, w: 0}
+  - {x: 0.32541293, y: 0.3225724, z: 0.31055582, w: 0}
   chunkBoundsMinTexture: {fileID: 2800000, guid: e2508d5076a6bc24ab3efacffc94cfb9, type: 2}
   chunkBoundsMaxTexture: {fileID: 2800000, guid: ec16dcf8a83463443b74ff2acdb1f945, type: 2}
   chunkRangeTexture: {fileID: 2800000, guid: 763391072a24629448372c7ed7090705, type: 2}
-  chunkTextureLayout: {x: 128, y: 0.0078125, z: 72, w: 0}
+  chunkTextureLayout: {x: 128, y: 0.0078125, z: 82, w: 0}
 --- !u!114 &6113067225111446743
 MonoBehaviour:
   m_ObjectHideFlags: 0

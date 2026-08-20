@@ -50,7 +50,7 @@ function resolveArtifact(environment) {
   const manifest = environment.source.artifact_manifest
     ? path.resolve(environment.source.artifact_manifest)
     : path.join(root, 'artifacts.yaml');
-  const python = process.env.PYTHON ?? process.env.PYTHON3 ?? 'python3';
+  const python = process.env.HF_CACHE_HUB_PYTHON ?? process.env.PYTHON ?? process.env.PYTHON3 ?? 'python3';
   let stdout;
   try {
     stdout = execFileSync(

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public static class GaussianExhibitionPipeline
 {
-    const string PrepareOnOpenMarker = "Library/VRMine/prepare-gaussian-on-open";
+    static string PrepareOnOpenMarker => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Library", "VRMine", "prepare-gaussian-on-open");
 
     [InitializeOnLoadMethod]
     static void QueuePreparedOpen()
@@ -40,7 +40,7 @@ public static class GaussianExhibitionPipeline
         Debug.Log("VRMine 3DGS local pipeline: importing registered Gaussian Splats...");
         GaussianSplatBatchImporter.ImportRegistered();
 
-        Debug.Log("VRMine 3DGS local pipeline: building count-independent canonical scene...");
+        Debug.Log("VRMine 3DGS local pipeline: building canonical scene from all registered sources...");
         GaussianExhibitionBuilder.BuildLocalPreview();
         ConfigureBakedLighting();
         EditorSceneManager.SaveOpenScenes();

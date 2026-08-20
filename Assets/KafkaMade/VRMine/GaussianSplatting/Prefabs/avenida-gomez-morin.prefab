@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.07902707, y: 0.07902707, z: 0.07902707}
+  m_LocalScale: {x: 0.0497869, y: 0.0497869, z: 0.0497869}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: avenida-gomez-morin
   description: Chunk LOD imported from Library/VRMine/GaussianSources/avenida-gomez-morin.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/avenida-gomez-morin.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/avenida-gomez-morin.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.0,"y":0.0,"z":0.0}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":0.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/avenida-gomez-morin.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/avenida-gomez-morin.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 152
-  totalSplatCount: 257522
+  chunkCount: 143
+  totalSplatCount: 263744
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 19.692308
-  smallestChunkSize: 0.0018998154
-  boundsMin: {x: -5.651811, y: -5.8565335, z: -7.8363237}
-  boundsMax: {x: 7.0020804, y: 3.5590758, z: 3.9540243}
+  lodSplatRadius: 29.257143
+  smallestChunkSize: 0.003006361
+  boundsMin: {x: -8.477574, y: -10.919747, z: -11.968857}
+  boundsMax: {x: 7.9402876, y: 2.6081028, z: 8.116749}
   positions:
   - {fileID: 2800000, guid: bcb0d5bf5dd95de418481839573045cd, type: 2}
   colors:
@@ -79,17 +79,17 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 7e72735e9436e2e4cba89120149549c7, type: 2}
   sh:
   - {fileID: 2800000, guid: 963e404ec63bccc4bb51cf10e753cd66, type: 2}
-  fileSplatCounts: f2ed0300
+  fileSplatCounts: 40060400
   fileShCoeffCounts: 0f000000
-  fileShCoeffStrides: f2ed0300
+  fileShCoeffStrides: 40060400
   fileShMins:
-  - {x: -0.10874907, y: -0.14284286, z: -0.15329647, w: 0}
+  - {x: -0.104576945, y: -0.13862135, z: -0.123052835, w: 0}
   fileShRanges:
-  - {x: 0.23165736, y: 0.2543124, z: 0.2793493, w: 0}
+  - {x: 0.21121526, y: 0.2606085, z: 0.26282224, w: 0}
   chunkBoundsMinTexture: {fileID: 2800000, guid: 24e473fe17796b3439a325f11697082e, type: 2}
   chunkBoundsMaxTexture: {fileID: 2800000, guid: 5b8d7d56e38a54045923fb6f94f9c24a, type: 2}
   chunkRangeTexture: {fileID: 2800000, guid: 36752211d4e47334aba739a8e145958c, type: 2}
-  chunkTextureLayout: {x: 256, y: 0.00390625, z: 152, w: 0}
+  chunkTextureLayout: {x: 256, y: 0.00390625, z: 143, w: 0}
 --- !u!114 &1502333893816155072
 MonoBehaviour:
   m_ObjectHideFlags: 0

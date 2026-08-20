@@ -7,13 +7,22 @@ const playlist = JSON.parse(await readFile(new URL('../config/gaussian-video-pla
 const importerSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianSplatBatchImporter.cs', import.meta.url), 'utf8');
 const importOverridesSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianImportOverrides.cs', import.meta.url), 'utf8');
 const pipelineSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianExhibitionPipeline.cs', import.meta.url), 'utf8');
+const builderSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianExhibitionBuilder.cs', import.meta.url), 'utf8');
 const materializerSource = await readFile(new URL('./materialize-gaussian-sources.mjs', import.meta.url), 'utf8');
+const launcherSource = await readFile(new URL('./open-gaussian-project.mjs', import.meta.url), 'utf8');
+const windowsLauncherSource = await readFile(new URL('./open-unity-windows.ps1', import.meta.url), 'utf8');
+const artifactManifestSource = await readFile(new URL('../config/gaussian-artifacts.yaml', import.meta.url), 'utf8');
+const taskfileSource = await readFile(new URL('../Taskfile.yml', import.meta.url), 'utf8');
 
 assert.equal(exhibition.schema_version, 3, 'unsupported gaussian exhibition schema');
+assert.match(builderSource, /config\.schema_version != 3/, 'Unity builder schema validation must match the canonical exhibition schema');
+assert.equal(sources.environments.length, exhibition.final_expected_exhibits, 'the canonical Unity registry must contain the complete final exhibit count');
 assert.equal(exhibition.final_expected_exhibits, 20, 'the #72 final product still requires exactly 20 exhibits');
 assert.equal(exhibition.canonical_platform, 'windows');
 assert.equal(exhibition.source_registry, 'config/gaussian-splats.json');
 assert.equal(exhibition.renderer, sources.renderers.unity_vrchat, 'scene renderer must match the canonical source registry');
+assert.equal((artifactManifestSource.match(/^  - id:/gm) ?? []).length, sources.environments.length, 'artifact manifest must cover every registered source');
+assert.match(artifactManifestSource, /bucket: k4fka\/kafka-data-lake/, 'Gaussian artifacts must use the canonical shared Storage Bucket');
 assert.equal(exhibition.target_extent_m, 1, 'exhibits target an approximately 1 m normalized extent');
 assert.equal(exhibition.scene_path, 'Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity');
 assert.ok(Array.isArray(exhibition.import_overrides), 'import_overrides must be an array');
@@ -95,6 +104,16 @@ assert.ok(temporaryStat < promotion && temporaryHash < promotion, 'PLY size/hash
 assert.ok(!materializerSource.includes('await rm(destination, { force: true });'), 'PLY materializer must not delete the destination before verified promotion');
 assert.doesNotMatch(materializerSource, /spawnSync|gitShowToTemporary|git\s+\[/, 'PLY materializer must not depend on a source repository checkout');
 assert.match(materializerSource, /environment\.source\.artifact_id/, 'PLY materializer must support hf-cache-hub artifact IDs');
+assert.match(materializerSource, /HF_CACHE_HUB_PYTHON/, 'PLY materializer must support the documented hf-cache-hub Python environment');
 assert.match(materializerSource, /environment\.source\.download_url/, 'PLY materializer must retain legacy direct URL support during migration');
 
-console.log(`Validated count-independent Gaussian exhibition contract: registered=${sources.environments.length}, import_overrides=${exhibition.import_overrides.length}, final_required=${exhibition.final_expected_exhibits}, renderer=1`);
+assert.match(taskfileSource, /gaussian:open:/, 'Taskfile must expose the one-command Gaussian project opener');
+assert.match(taskfileSource, /node scripts\/open-gaussian-project\.mjs/, 'gaussian:open must use the canonical launcher');
+assert.match(launcherSource, /\['add', 'project'/, 'launcher must register the project in VCC');
+assert.match(launcherSource, /\['resolve', 'project'/, 'launcher must resolve project packages through VCC');
+assert.match(launcherSource, /-projectPath/, 'launcher must pass the project path to Unity');
+assert.match(launcherSource, /detached: true/, 'native Linux launcher must return control after starting the editor');
+assert.match(windowsLauncherSource, /Start-Process/, 'Windows launcher must start Unity through PowerShell');
+assert.match(windowsLauncherSource, /Restart Unity as a standard user/, 'Windows launcher must handle Unity administrator warning');
+
+console.log(`Validated Gaussian exhibition contract: registered=${sources.environments.length}, import_overrides=${exhibition.import_overrides.length}, final_required=${exhibition.final_expected_exhibits}, renderer=1`);

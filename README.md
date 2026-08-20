@@ -90,24 +90,21 @@ VRChat SDK3 / UdonSharpを使用し、盤面生成、オブジェクト配線、
 ```bash
 git clone https://github.com/KAFKA2306/vrmine.git
 cd vrmine
-task gaussian:prepare
+task gaussian:open
 ```
 
-その後、**VCCでこのproject folderを開き、Unity 2022.3.22f1でprojectを開きます。** `task gaussian:prepare` が作った一回限りの準備要求をUnity Editorが読み、`Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity` を生成して開く設計です。
+`task gaussian:open` を使うと、`hf-cache-hub` の共有 Storage Bucket から 20 件の PLY を取得・検証します。その後、VCC CLIが利用可能な環境ではprojectを登録・packageをresolveし、Unity `2022.3.22f1` を起動します。VCC CLIが見つからない場合も、Unityは直接起動されます（CLIを使う場合は `VPM_EXE` を指定）。Unity Editorは一回限りの準備要求を読み、`Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity` を 20 件構成で生成して開きます。PLYだけ取得したい場合は `task gaussian:prepare` を使います。
 
-```bash
-git clone https://github.com/KAFKA2306/vrmine.git
-cd vrmine
-task gaussian:prepare
-```
+PLY取得には `hf-cache-hub` の checkout、`HF_CACHE_HUB_ROOT`、および private Storage Bucket を読む Hugging Face 認証が必要です。resolver の Python 環境には `huggingface-hub>=1.0`、`filelock`、`PyYAML` を入れ、必要なら `HF_CACHE_HUB_PYTHON` で指定します。
 
 ### `task gaussian:prepare` が自動で行うこと
 
 - pinned `VRChatGaussianSplatting` rendererを取得
-- `config/gaussian-splats.json` に登録された全PLYを各entryのpinned artifact URLから取得
+- `config/gaussian-splats.json` に登録された全20 PLYを `config/gaussian-artifacts.yaml` の hf-cache-hub artifact IDから取得
 - PLYのbyte-sizeとSHA-256を検証
 - 既に検証済みのrenderer/PLYは再利用
 - Unity Editorでscene生成を1回実行するための準備要求を作成
+- `task gaussian:open` ではVCC CLIへのproject登録・package resolveと、固定Unityバージョンの起動まで実行
 
 Unity Editor側では、登録済みの `N` 件を入力として次を自動生成します。
 

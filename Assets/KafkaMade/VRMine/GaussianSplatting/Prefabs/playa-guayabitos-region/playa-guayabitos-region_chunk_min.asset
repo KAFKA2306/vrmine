@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!28 &2800000
+Texture2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: playa-guayabitos-region_chunk_min
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 2
+  m_Width: 64
+  m_Height: 1
+  m_CompleteImageSize: 1024
+  m_MipsStripped: 0
+  m_TextureFormat: 20
+  m_MipCount: 1
+  m_IsReadable: 0
+  m_IsPreProcessed: 0
+  m_IgnoreMipmapLimit: 0
+  m_MipmapLimitGroupName: 
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_VTOnly: 0
+  m_AlphaIsTransparency: 0
+  m_ImageCount: 1
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_LightmapFormat: 0
+  m_ColorSpace: 0
+  m_PlatformBlob: 
+  image data: 1024
+  _typelessdata: 6822c3bfa2ded9bf54106ebf00006e4398dd81bfdc1e0ac0c3474bbf00008e4202c187bfe229d6bf8de687bf0040a644a9692fbf3243d6bf81792abf000076437e922fbf5927a6bfeeece5be00809b438eb62ebfd4188dbf8e07c5be000048427cee2fbf9e2c8ebf6cb364be00007744dec917bf242c8ebf54255bbe0080ba4386e017bf900282bf7e6b62be00d05f45b8ea17bff72d82bfb8c704be00f06e45c0b2ffbe40e6a5bf8800b9be00002444ba10ffbe9c1b8ebf1045adbe00007c42e2c0ffbef8338ebf64a864be00803f4470c1ffbe692082bf9c8d60be0050164588bfe7be3a0a82bf92544ebe0040e144cac6ffbea22c82bfd1d104be00f0144520bfe7be852e82bffaaa04be0030354546b8cfbe1a338ebfb6e963be00203e45a2b5cfbebe1682bf66ad3bbe00600a4572b0b7be763082bf626932be00b00f458cb6cfbe8a3082bf60c304be00407545000ed2bfcc030dc090e010bd0080064480d087bf90321bc06048d8bc0080a243720188bfba0ed6bfe0d012bd00c079442cf12fbff870d4bf90cd12bd003078457c54e3bf5263cdbf4bdb00bf0000c0420afc87bfa8596cbf16d27fbf00808343403f5fbfb40d6cbfbeb8b1be00002842f0ed5fbfb6e76bbf085863be0000bf43fce247bf08586cbf5aa448be00e0d944a4d347bfe0526cbf74c004be00b063450c7747bfb45154bf6cda29be00b0024522c147bfc8556cbfa622a8be00f0084590e823bff22b6cbf2ac758be005013450af12fbf24476cbf45ce04be008011452aed23bf065a6cbf22d004be0060fe4400bf2cbf3e3154bf2cdddabd00c03044aee917bf065a6cbfd0174abe0060e9442e2718bf96556cbff6d28abe0000fe42fa22e8bf1ff66bbf60f7d4bc00003042d8c383bf564b6cbf6b8d12bd00401544679b9bbed5f70ec041515abf0080a143b4169fbea40ad6bffacec4bf0080be4398a59fbedc71a0bf784131bf00c05a44f0a99fbe541b8ebf7a49b5be005052459aab9fbefe258ebf7dcd04be00701c45ae9f87bed41c8ebfface04be00c07045d6a79fbe773082bfe8932dbe0000ae4418355fbee4298ebfdefa63be00b02c451e065fbe08348ebf328602be0000b242203b5fbe240c88bfe4d204be00903945802c5fbe003188bf9a81a9bd0020c144f4bc2ebe18298ebff66b04be00001943d82a2fbeea2e88bf3ed104be00707e45b6325fbe523082bf987f61be00c06c44803cfebd7e27a0bf427f78be0040ea4460dc823ddc41d5bff4b144bf00006c43d8d6e03ebdff08c0347193bf0000b242bbaa9fbe651b18c0dcb878be00b054450000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
