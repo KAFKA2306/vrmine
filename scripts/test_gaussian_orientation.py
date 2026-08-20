@@ -44,7 +44,7 @@ assert ground["post_alignment_residual_deg"] < 1e-4
 wall_theta = math.radians(8.0)
 wall_normal = (math.cos(wall_theta), math.sin(wall_theta), 0.0)
 wall = mod.analyze(synthetic_plane(wall_normal, seed=11), "synthetic-wall", "wall")
-assert wall["action"] == "apply"
+assert wall["action"] == "review_required"
 assert_close(wall["tilt_deg"], 8.0, 0.15, "wall normal tilt")
 assert wall["post_alignment_residual_deg"] < 1e-4
 
