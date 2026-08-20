@@ -1,4 +1,4 @@
-import { spawnSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createReadStream, createWriteStream } from 'node:fs';
 import { access, copyFile, mkdir, readFile, rename, rm, stat } from 'node:fs/promises';
@@ -51,20 +51,25 @@ function resolveArtifact(environment) {
     ? path.resolve(environment.source.artifact_manifest)
     : path.join(root, 'artifacts.yaml');
   const python = process.env.PYTHON ?? process.env.PYTHON3 ?? 'python3';
-  const result = spawnSync(
-    python,
-    [resolver, 'resolve', '--manifest', manifest, '--id', environment.source.artifact_id],
-    { encoding: 'utf8', env: process.env },
-  );
-  if (result.error) throw result.error;
+  let stdout;
+  try {
+    stdout = execFileSync(
+      python,
+      [resolver, 'resolve', '--manifest', manifest, '--id', environment.source.artifact_id],
+      { encoding: 'utf8', env: process.env, stdio: ['ignore', 'pipe', 'pipe'] },
+    );
+  } catch (error) {
+    const detail = error?.stdout?.toString?.() || error?.stderr?.toString?.() || error?.message || 'unknown error';
+    throw new Error(`${environment.id}: artifact resolve command failed: ${detail}`);
+  }
   let payload;
   try {
-    payload = JSON.parse(result.stdout);
+    payload = JSON.parse(stdout);
   } catch {
-    throw new Error(`${environment.id}: hf-cache-hub resolver returned non-JSON output: ${result.stdout || result.stderr}`);
+    throw new Error(`${environment.id}: hf-cache-hub resolver returned non-JSON output: ${stdout}`);
   }
-  if (result.status !== 0 || payload.status !== 'READY') {
-    throw new Error(`${environment.id}: artifact resolve failed: ${payload.error ?? result.stderr ?? 'unknown error'}`);
+  if (payload.status !== 'READY') {
+    throw new Error(`${environment.id}: artifact resolve failed: ${payload.error ?? 'unknown error'}`);
   }
   if (payload.sha256 !== environment.source.sha256) {
     throw new Error(`${environment.id}: resolver SHA-256 mismatch: expected ${environment.source.sha256}, got ${payload.sha256}`);
