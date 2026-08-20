@@ -42,10 +42,11 @@ public static class GaussianExhibitionPipeline
 
         Debug.Log("VRMine 3DGS local pipeline: building canonical scene from all registered sources...");
         GaussianExhibitionBuilder.BuildLocalPreview();
+        GaussianExhibitionPresentation.Apply();
         ConfigureBakedLighting();
         EditorSceneManager.SaveOpenScenes();
 
-        Debug.Log("VRMine 3DGS local scene ready. Registered PLYs, floor/world shell, spawn, labels, lighting configuration and one Gaussian renderer are wired in GaussianSplatExhibition.unity.");
+        Debug.Log("VRMine 3DGS local scene ready. Registered PLYs, configured presentation scale, floor/world shell, spawn, labels, lighting configuration and one Gaussian renderer are wired in GaussianSplatExhibition.unity.");
     }
 
     [MenuItem("VRMine/Prepare Final Gaussian Exhibition For SDK")]
@@ -56,6 +57,7 @@ public static class GaussianExhibitionPipeline
 
         Debug.Log("VRMine 3DGS final pipeline: requiring final product count and playlist...");
         GaussianExhibitionBuilder.BuildFinal();
+        GaussianExhibitionPresentation.Apply();
         ConfigureBakedLighting();
         EditorSceneManager.SaveOpenScenes();
 
