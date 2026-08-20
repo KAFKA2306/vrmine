@@ -41,6 +41,7 @@ jobs:
           node --check scripts/verify-gaussian-fixtures.mjs
           node --check scripts/verify-gaussian-exhibition.mjs
           node --check scripts/verify-gaussian-video-playlist.mjs
+          node --check scripts/verify-gaussian-artifact-resolver.mjs
           node --check scripts/materialize-gaussian-renderer.mjs
           node --check scripts/materialize-gaussian-sources.mjs
       - name: Validate 3DGS contracts
@@ -48,6 +49,7 @@ jobs:
           node scripts/verify-gaussian-fixtures.mjs
           node scripts/verify-gaussian-video-playlist.mjs
           node scripts/verify-gaussian-exhibition.mjs
+          node scripts/verify-gaussian-artifact-resolver.mjs
       - name: Materialize pinned Unity renderer at upstream-compatible path
         run: |
           node scripts/materialize-gaussian-renderer.mjs
