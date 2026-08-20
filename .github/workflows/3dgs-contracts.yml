@@ -64,7 +64,18 @@ jobs:
           test -s Assets/VRChatGaussianSplatting/Scripts/Importer/GaussianSplatImporter.cs
           test -d Assets/VRChatGaussianSplatting/Resources
           grep -F 'revision=f96c0117cba518ff84d059d36f16909b873e23aa' Assets/VRChatGaussianSplatting/VRMINE_UPSTREAM_REVISION.txt
+      - name: Check out pinned hf-cache-hub artifact resolver
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: KAFKA2306/hf-cache-hub
+          ref: b41ca5a6601a6ac7724cb09b3fe90554c7356d69
+          path: .hf-cache-hub
+      - name: Install artifact resolver dependencies
+        run: python -m pip install "PyYAML>=6.0,<7" "huggingface-hub>=1.0,<2" "filelock>=3.0"
       - name: Materialize and verify every registered PLY
+        env:
+          HF_CACHE_HUB_ROOT: ${{ github.workspace }}/.hf-cache-hub
+          HF_HOME: ${{ runner.temp }}/hf-cache
         run: |
           node scripts/materialize-gaussian-sources.mjs
           node - <<'NODE'
