@@ -72,7 +72,7 @@ Material:
     - _PRECOMPUTED_SORTING: 0
     - _VRC_LIGHT_VOLUMES: 0
     m_Floats:
-    - _ActualSplatCount: 4268
+    - _ActualSplatCount: 5171
     - _AlphaCull: 0.04
     - _AlphaCutoff: 0.04
     - _AntiAliasing: 1
