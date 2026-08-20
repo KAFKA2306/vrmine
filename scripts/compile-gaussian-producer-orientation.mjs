@@ -9,11 +9,12 @@ const EXPECTED_MODE = 'horizon_alignment_pre_y_reflection';
 const EXPECTED_POST_TRANSFORM = 'reflect-y';
 const EXPECTED_REPRESENTATION_FIELDS = new Set(['position', 'gaussian_rotation', 'spherical_harmonics']);
 
-// This one legacy revision is auditable from repository history:
+// Audited legacy generation revision. Repository history proves:
 // - Dockerfile pins Nerfstudio 50e0e3c70c775e89333256213363badbf074f29d.
-// - processing/huejotzingo.py invokes ns-process-data without orientation-method override.
-// - pinned Nerfstudio's default orientation method is `up`, which defines model +Z as up.
-// No other revision is allowed to use this fallback.
+// - processing/huejotzingo.py invokes ns-process-data without an orientation override.
+// - pinned Nerfstudio default `up` aligns mean camera-up to model +Z.
+// This proves the MODEL BASIS, not physical gravity. No other revision may use
+// this migration fallback.
 const AUDITED_LEGACY_REPOSITORY = 'KAFKA2306/AutoPhotogrammetry';
 const AUDITED_LEGACY_REVISION = '1d48110c8abd891d7b0a19f9e6ce793901758742';
 const AUDITED_NERFSTUDIO_REVISION = '50e0e3c70c775e89333256213363badbf074f29d';
@@ -41,23 +42,33 @@ function quaternion(values, label) {
   return { x: values[0], y: values[1], z: values[2], w: values[3] };
 }
 
-function auditedLegacyOrientation(registry, source) {
+function auditedLegacyBasisOrientation(registry, source) {
   if (registry.source_repository !== AUDITED_LEGACY_REPOSITORY) return null;
   if (registry.source_commit !== AUDITED_LEGACY_REVISION) return null;
   if (source?.provenance?.artifact_repository_commit !== AUDITED_LEGACY_REVISION) return null;
   if (!source?.sha256) return null;
 
   return {
-    schema_version: 1,
+    schema_version: 2,
     status: 'accepted',
+    scope: 'coordinate_basis_only',
     ply_sha256: source.sha256,
-    canonical_frame: { name: 'unity-semantic-y-up' },
-    derivation_method: 'audited-legacy-source-revision-default-nerfstudio-up',
+    canonical_frame: {
+      name: 'unity-basis-y-up',
+      physical_gravity_claimed: false,
+    },
+    derivation_method: 'audited-legacy-revision-nerfstudio-model-basis',
+    physical_up: {
+      status: 'review_required',
+      observable_from_sfm_alone: false,
+      authority: null,
+      reason: 'legacy run proves Nerfstudio model +Z basis only; processed transforms/gravity evidence were not retained',
+    },
     audit: {
       repository: AUDITED_LEGACY_REPOSITORY,
       revision: AUDITED_LEGACY_REVISION,
       nerfstudio_revision: AUDITED_NERFSTUDIO_REVISION,
-      limitation: 'establishes the Nerfstudio +Z-up model basis; does not prove zero residual physical horizon tilt',
+      limitation: 'basis conversion only; residual physical horizon tilt is intentionally unresolved',
     },
     consumer_application: {
       consumer: EXPECTED_CONSUMER,
@@ -73,9 +84,49 @@ function auditedLegacyOrientation(registry, source) {
 
 function resolveOrientation(registry, source) {
   if (source.orientation) return { orientation: source.orientation, authority: 'producer-artifact-metadata' };
-  const legacy = auditedLegacyOrientation(registry, source);
-  if (legacy) return { orientation: legacy, authority: 'audited-legacy-revision' };
+  const legacy = auditedLegacyBasisOrientation(registry, source);
+  if (legacy) return { orientation: legacy, authority: 'audited-legacy-basis' };
   return { orientation: null, authority: null };
+}
+
+function validateBasisOrientation(id, source, orientation) {
+  if (orientation.schema_version !== 2) {
+    throw new Error(`${id}: unsupported orientation schema; v2 basis/physical-up split is required`);
+  }
+  if (orientation.status !== 'accepted') {
+    return `orientation basis status=${orientation.status ?? 'missing'}`;
+  }
+  if (orientation.scope !== 'coordinate_basis_only') {
+    throw new Error(`${id}: orientation scope must be coordinate_basis_only`);
+  }
+  if (orientation.ply_sha256 !== source.sha256) {
+    throw new Error(`${id}: orientation PLY SHA-256 does not match source artifact`);
+  }
+  if (orientation.canonical_frame?.name !== 'unity-basis-y-up') {
+    throw new Error(`${id}: unsupported canonical frame ${orientation.canonical_frame?.name}`);
+  }
+  const physicalUpStatus = orientation.physical_up?.status;
+  if (!['accepted', 'review_required', 'unavailable'].includes(physicalUpStatus)) {
+    throw new Error(`${id}: physical_up.status is missing or unsupported`);
+  }
+
+  const consumer = orientation.consumer_application;
+  if (!consumer || consumer.consumer !== EXPECTED_CONSUMER) {
+    throw new Error(`${id}: unsupported orientation consumer`);
+  }
+  if (consumer.revision !== PINNED_RENDERER_REVISION) {
+    throw new Error(`${id}: orientation was derived for a different renderer revision`);
+  }
+  if (consumer.mode !== EXPECTED_MODE || consumer.mandatory_post_transform !== EXPECTED_POST_TRANSFORM) {
+    throw new Error(`${id}: unsupported consumer orientation application mode`);
+  }
+  const representationAware = new Set(consumer.representation_aware ?? []);
+  for (const required of EXPECTED_REPRESENTATION_FIELDS) {
+    if (!representationAware.has(required)) {
+      throw new Error(`${id}: producer orientation contract is missing representation-aware field ${required}`);
+    }
+  }
+  return null;
 }
 
 export function compileProducerOrientation(registry, exhibition, { requireAll = true } = {}) {
@@ -103,37 +154,16 @@ export function compileProducerOrientation(registry, exhibition, { requireAll = 
     const resolved = resolveOrientation(registry, source);
     const orientation = resolved.orientation;
     if (!orientation) {
-      unresolved.push({ id, reason: 'orientation metadata missing and no audited legacy revision applies' });
+      unresolved.push({ id, reason: 'orientation metadata missing and no audited legacy basis applies' });
       continue;
     }
-    if (orientation.status !== 'accepted') {
-      unresolved.push({ id, reason: `orientation status=${orientation.status ?? 'missing'}` });
+    const unresolvedReason = validateBasisOrientation(id, source, orientation);
+    if (unresolvedReason) {
+      unresolved.push({ id, reason: unresolvedReason });
       continue;
-    }
-    if (orientation.ply_sha256 !== source.sha256) {
-      throw new Error(`${id}: orientation PLY SHA-256 does not match source artifact`);
-    }
-    if (orientation.canonical_frame?.name !== 'unity-semantic-y-up') {
-      throw new Error(`${id}: unsupported canonical frame ${orientation.canonical_frame?.name}`);
     }
 
     const consumer = orientation.consumer_application;
-    if (!consumer || consumer.consumer !== EXPECTED_CONSUMER) {
-      throw new Error(`${id}: unsupported orientation consumer`);
-    }
-    if (consumer.revision !== PINNED_RENDERER_REVISION) {
-      throw new Error(`${id}: orientation was derived for a different renderer revision`);
-    }
-    if (consumer.mode !== EXPECTED_MODE || consumer.mandatory_post_transform !== EXPECTED_POST_TRANSFORM) {
-      throw new Error(`${id}: unsupported consumer orientation application mode`);
-    }
-    const representationAware = new Set(consumer.representation_aware ?? []);
-    for (const required of EXPECTED_REPRESENTATION_FIELDS) {
-      if (!representationAware.has(required)) {
-        throw new Error(`${id}: producer orientation contract is missing representation-aware field ${required}`);
-      }
-    }
-
     const previous = existing.get(id) ?? { id };
     compiled.push({
       ...previous,
@@ -141,6 +171,9 @@ export function compileProducerOrientation(registry, exhibition, { requireAll = 
       alignment: {
         enabled: true,
         mode: 'horizon',
+        scope: 'coordinate_basis_only',
+        physicalUpStatus: orientation.physical_up.status,
+        authority: resolved.authority,
         rotation: quaternion(consumer.quaternion_xyzw, `${id} consumer quaternion`),
         pivot: vector3(consumer.pivot ?? [0, 0, 0], `${id} consumer pivot`),
       },
@@ -150,7 +183,7 @@ export function compileProducerOrientation(registry, exhibition, { requireAll = 
 
   if (requireAll && unresolved.length > 0) {
     const detail = unresolved.map((entry) => `${entry.id}: ${entry.reason}`).join('; ');
-    throw new Error(`Producer orientation unresolved for ${unresolved.length} Gaussian artifacts: ${detail}`);
+    throw new Error(`Producer orientation basis unresolved for ${unresolved.length} Gaussian artifacts: ${detail}`);
   }
 
   return {
@@ -158,6 +191,11 @@ export function compileProducerOrientation(registry, exhibition, { requireAll = 
     compiled_count: compiled.length,
     unresolved,
     authorities,
+    physical_up_counts: compiled.reduce((counts, entry) => {
+      const status = entry.alignment.physicalUpStatus;
+      counts[status] = (counts[status] ?? 0) + 1;
+      return counts;
+    }, {}),
   };
 }
 
@@ -171,8 +209,10 @@ async function main() {
   if (args.has('--write')) {
     await writeFile(exhibitionPath, `${JSON.stringify(result.exhibition, null, 2)}\n`, 'utf8');
   }
-  const legacyCount = Object.values(result.authorities).filter((value) => value === 'audited-legacy-revision').length;
-  console.log(`compiled producer orientation overrides=${result.compiled_count} unresolved=${result.unresolved.length} audited_legacy=${legacyCount}`);
+  const legacyCount = Object.values(result.authorities).filter((value) => value === 'audited-legacy-basis').length;
+  console.log(
+    `compiled producer basis overrides=${result.compiled_count} unresolved=${result.unresolved.length} audited_legacy=${legacyCount} physical_up=${JSON.stringify(result.physical_up_counts)}`,
+  );
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
