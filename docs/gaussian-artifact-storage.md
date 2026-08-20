@@ -43,6 +43,8 @@ Library/VRMine/GaussianSources/<id>.ply
 
 `Library/` はGit管理対象ではありません。consumer pathはcacheそのもののauthorityではなく、Unity import用のmaterializationです。同一SHA-256 objectのremote downloadはhf-cache-hub shared cacheで再利用できます。
 
+artifact sourceでは、shared cache objectとconsumer pathが同一filesystem上にある場合はhard linkを優先し、PLY bytesの二重保存を避けます。hard linkを作れないfilesystem境界や環境ではcopyへfallbackします。どちらの経路でもpromotion前後のsize/SHA-256検証は維持します。CLI出力の `artifact_hardlinks` / `artifact_copies` で実際のlocal materialization方式を確認できます。
+
 ## Migration rule
 
 1. AutoPhotogrammetry等のproducerがPLYを生成する。
