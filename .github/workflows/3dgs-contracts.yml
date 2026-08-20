@@ -46,6 +46,7 @@ jobs:
         run: |
           node --check scripts/verify-gaussian-fixtures.mjs
           node --check scripts/verify-gaussian-exhibition.mjs
+          node --check scripts/verify-gaussian-presentation.mjs
           node --check scripts/verify-gaussian-video-playlist.mjs
           node --check scripts/verify-gaussian-artifact-resolver.mjs
           node --check scripts/materialize-gaussian-renderer.mjs
@@ -56,6 +57,7 @@ jobs:
           node scripts/verify-gaussian-fixtures.mjs
           node scripts/verify-gaussian-video-playlist.mjs
           node scripts/verify-gaussian-exhibition.mjs
+          node scripts/verify-gaussian-presentation.mjs
           node scripts/verify-gaussian-artifact-resolver.mjs
       - name: Materialize pinned Unity renderer at upstream-compatible path
         run: |
@@ -72,6 +74,14 @@ jobs:
           path: .hf-cache-hub
       - name: Install artifact resolver dependencies
         run: python -m pip install "PyYAML>=6.0,<7" "huggingface-hub>=1.0,<2" "filelock>=3.0"
+      - name: Verify Storage Bucket credentials
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [ -z "$HF_TOKEN" ]; then
+            echo "::error::HF_TOKEN repository secret is required to verify the private Gaussian Storage Bucket."
+            exit 1
+          fi
       - name: Materialize and verify every registered PLY
         env:
           HF_CACHE_HUB_ROOT: ${{ github.workspace }}/.hf-cache-hub
