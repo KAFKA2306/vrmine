@@ -76,6 +76,7 @@ jobs:
         env:
           HF_CACHE_HUB_ROOT: ${{ github.workspace }}/.hf-cache-hub
           HF_HOME: ${{ runner.temp }}/hf-cache
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           node scripts/materialize-gaussian-sources.mjs
           node - <<'NODE'
