@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createReadStream, createWriteStream } from 'node:fs';
-import { access, copyFile, mkdir, readFile, rename, rm, stat } from 'node:fs/promises';
+import { access, copyFile, link, mkdir, readFile, rename, rm, stat } from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
 import { Readable } from 'node:stream';
 import path from 'node:path';
@@ -87,8 +87,14 @@ async function artifactToTemporary(environment, destination) {
   const payload = resolveArtifact(environment);
   const temporary = `${destination}.partial`;
   await rm(temporary, { force: true });
-  await copyFile(payload.cache_path, temporary);
-  return { temporary, payload };
+  let localMaterialization = 'hardlink';
+  try {
+    await link(payload.cache_path, temporary);
+  } catch {
+    await copyFile(payload.cache_path, temporary);
+    localMaterialization = 'copy';
+  }
+  return { temporary, payload, localMaterialization };
 }
 
 function sourceMode(environment) {
@@ -105,6 +111,8 @@ let reused = 0;
 let materialized = 0;
 let cacheHits = 0;
 let transferredBytes = 0;
+let hardlinks = 0;
+let copies = 0;
 for (const environment of config.environments) {
   const destination = path.join(output, `${environment.id}.ply`);
   if (await validExisting(destination, environment)) {
@@ -116,10 +124,12 @@ for (const environment of config.environments) {
   const mode = sourceMode(environment);
   let temporary;
   let resolverPayload = null;
+  let localMaterialization = null;
   if (mode === 'artifact') {
     const resolved = await artifactToTemporary(environment, destination);
     temporary = resolved.temporary;
     resolverPayload = resolved.payload;
+    localMaterialization = resolved.localMaterialization;
   } else {
     temporary = await downloadToTemporary(environment.source.download_url, destination);
   }
@@ -139,7 +149,9 @@ for (const environment of config.environments) {
     if (resolverPayload) {
       if (resolverPayload.cache_hit === true) cacheHits++;
       transferredBytes += Number(resolverPayload.transferred_bytes ?? 0);
-      console.log(`${environment.id}: artifact materialized ${info.size} bytes ${digest} cache_hit=${resolverPayload.cache_hit === true}`);
+      if (localMaterialization === 'hardlink') hardlinks++;
+      if (localMaterialization === 'copy') copies++;
+      console.log(`${environment.id}: artifact materialized ${info.size} bytes ${digest} cache_hit=${resolverPayload.cache_hit === true} local=${localMaterialization}`);
     } else {
       console.log(`${environment.id}: materialized ${info.size} bytes ${digest}`);
     }
@@ -149,4 +161,4 @@ for (const environment of config.environments) {
   }
 }
 
-console.log(`Gaussian sources ready: count=${config.environments.length}, materialized=${materialized}, reused=${reused}, artifact_cache_hits=${cacheHits}, artifact_transferred_bytes=${transferredBytes}, path=${path.relative(process.cwd(), output)}`);
+console.log(`Gaussian sources ready: count=${config.environments.length}, materialized=${materialized}, reused=${reused}, artifact_cache_hits=${cacheHits}, artifact_transferred_bytes=${transferredBytes}, artifact_hardlinks=${hardlinks}, artifact_copies=${copies}, path=${path.relative(process.cwd(), output)}`);
