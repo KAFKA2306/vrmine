@@ -20,19 +20,24 @@ def assert_close(actual, expected, tol, label):
 
 def synthetic_plane(normal, seed=7, plane_points=3000, outliers=300):
     rng = random.Random(seed)
-    e1 = (0.0, 1.0, 0.0)
+    normal = mod.vunit(normal)
+    if normal is None:
+        raise ValueError("synthetic plane normal must be non-zero")
+    candidates = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
+    seed_axis = min(candidates, key=lambda axis: abs(mod.vdot(normal, axis)))
+    e1 = mod.vunit(mod.vcross(normal, seed_axis))
     e2 = mod.vunit(mod.vcross(normal, e1))
-    if e2 is None:
-        e1 = (1.0, 0.0, 0.0)
-        e2 = mod.vunit(mod.vcross(normal, e1))
+    if e1 is None or e2 is None:
+        raise ValueError("failed to build synthetic tangent basis")
     points = []
     for _ in range(plane_points):
         a = rng.uniform(-5.0, 5.0)
         b = rng.uniform(-5.0, 5.0)
+        noise = rng.gauss(0.0, 0.01)
         point = (
-            e1[0] * a + e2[0] * b + normal[0] * rng.gauss(0.0, 0.01),
-            e1[1] * a + e2[1] * b + normal[1] * rng.gauss(0.0, 0.01),
-            e1[2] * a + e2[2] * b + normal[2] * rng.gauss(0.0, 0.01),
+            e1[0] * a + e2[0] * b + normal[0] * noise,
+            e1[1] * a + e2[1] * b + normal[1] * noise,
+            e1[2] * a + e2[2] * b + normal[2] * noise,
         )
         points.append(point)
     for _ in range(outliers):
