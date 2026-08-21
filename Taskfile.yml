@@ -14,6 +14,7 @@ tasks:
     deps: [setup]
     cmds:
       - node --test pages/games/answer-impostor/engine.test.mjs
+      - node scripts/verify-quality-gates.mjs
       - node scripts/verify-perspective-cage.mjs
       - node --check scripts/run-perspective-cage-unity.mjs
       - node --check scripts/run-gaussian-unity.mjs
@@ -23,10 +24,18 @@ tasks:
       - node scripts/verify-gaussian-video-playlist.mjs
       - node scripts/verify-vpm.mjs
 
+  merge:check:
+    desc: PR Merge Gate — run repository checks that may decide integration into main
+    deps: [check]
+
   perspective-cage:verify-unity:
     desc: Build the canonical Perspective Cage scene twice and run its Unity verification gate
     cmds:
       - node scripts/run-perspective-cage-unity.mjs
+
+  release:perspective-cage:u2:
+    desc: Release Candidate Gate — run exact-Unity Perspective Cage scene verification
+    deps: [perspective-cage:verify-unity]
 
   gaussian:renderer:
     desc: Materialize the exact pinned VRChatGaussianSplatting Unity assets without example splats/scenes
