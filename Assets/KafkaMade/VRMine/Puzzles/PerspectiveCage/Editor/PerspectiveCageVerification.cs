@@ -12,7 +12,7 @@ using Object = UnityEngine.Object;
 
 public static class PerspectiveCageVerification
 {
-    const string ReportPath = "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Verification/LatestPerspectiveCageVerification.txt";
+    const string ReportPath = "Library/VRMine/PerspectiveCageVerification.txt";
 
     [MenuItem("VRMine/Perspective Cage/Build And Verify")]
     public static void BuildAndVerify()
@@ -117,7 +117,6 @@ public static class PerspectiveCageVerification
         string folder = Path.GetDirectoryName(ReportPath);
         if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
         File.WriteAllText(ReportPath, report.ToString(), Encoding.UTF8);
-        AssetDatabase.Refresh();
         reportText = report.ToString();
         return failures;
     }
