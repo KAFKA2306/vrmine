@@ -292,8 +292,15 @@ public class PerspectiveCageController : UdonSharpBehaviour
         {
             if (marker >= markerObjects.Length || markerObjects[marker] == null) continue;
             Transform target = null;
-            if ((p03PlacedMask & (1 << marker)) != 0 && marker < socketTargets.Length) target = socketTargets[marker];
-            else if (marker < markerHomes.Length) target = markerHomes[marker];
+            if ((p03PlacedMask & (1 << marker)) != 0 && p03SocketByMarker != null && p03SocketByMarker.Length == 4)
+            {
+                int socket = p03SocketByMarker[marker];
+                if (socket >= 0 && socket < socketTargets.Length) target = socketTargets[socket];
+            }
+            else if (marker < markerHomes.Length)
+            {
+                target = markerHomes[marker];
+            }
             if (target != null)
             {
                 markerObjects[marker].transform.position = target.position;
