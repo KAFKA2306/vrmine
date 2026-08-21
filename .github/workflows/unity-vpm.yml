@@ -1,4 +1,4 @@
-name: Repository U1 verification
+name: PR Merge Gate — Repository U1
 
 on:
   push:
@@ -7,10 +7,14 @@ on:
       - "Packages/**"
       - "ProjectSettings/ProjectVersion.txt"
       - "config/vrchat-toolchain.json"
+      - "config/quality-gates.json"
       - "config/perspective-cage.json"
       - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
+      - "docs/QUALITY_GATES.md"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
       - "scripts/install-vrc-get.mjs"
       - "scripts/verify-vpm.mjs"
+      - "scripts/verify-quality-gates.mjs"
       - "scripts/verify-perspective-cage.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
       - "Taskfile.yml"
@@ -20,10 +24,14 @@ on:
       - "Packages/**"
       - "ProjectSettings/ProjectVersion.txt"
       - "config/vrchat-toolchain.json"
+      - "config/quality-gates.json"
       - "config/perspective-cage.json"
       - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
+      - "docs/QUALITY_GATES.md"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
       - "scripts/install-vrc-get.mjs"
       - "scripts/verify-vpm.mjs"
+      - "scripts/verify-quality-gates.mjs"
       - "scripts/verify-perspective-cage.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
       - "Taskfile.yml"
@@ -34,12 +42,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: vrmine-u1-${{ github.ref }}
+  group: vrmine-merge-gate-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   u1:
-    name: U1 static contracts and VPM
+    name: PR Merge Gate — U1 static contracts and VPM
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -48,6 +56,9 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
+
+      - name: Verify merge/release gate separation
+        run: node scripts/verify-quality-gates.mjs
 
       - name: Verify Perspective Cage contract and implementation shape
         run: node scripts/verify-perspective-cage.mjs
@@ -61,13 +72,16 @@ jobs:
       - name: Verify VPM package graph
         run: node scripts/verify-vpm.mjs
 
-      - name: Publish U1 evidence summary
+      - name: Publish merge-gate evidence summary
         if: always()
         shell: bash
         run: |
+          {
+            echo '## VRMine PR Merge Gate'
+            echo 'This workflow decides repository integration only. It does not claim Unity/SDK/actual-client release readiness.'
+          } >> "$GITHUB_STEP_SUMMARY"
           if [ -f .artifacts/vpm-u1.json ]; then
             {
-              echo '## VRMine U1 evidence'
               echo '```json'
               cat .artifacts/vpm-u1.json
               echo '```'
