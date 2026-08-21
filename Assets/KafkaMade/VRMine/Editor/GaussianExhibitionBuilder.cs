@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Reflection;
 using UdonSharp;
 using UdonSharpEditor;
@@ -25,7 +26,6 @@ public static class GaussianExhibitionBuilder
     {
         public int schema_version;
         public string scene_path;
-        public int final_expected_exhibits;
         public string canonical_platform;
         public string source_registry;
         public string renderer;
@@ -55,7 +55,6 @@ public static class GaussianExhibitionBuilder
     [Serializable] sealed class PlaylistConfig
     {
         public int schema_version;
-        public int expected_entries;
         public string player_prefab_path;
         public float rate_limit_seconds;
         public string status;
@@ -84,7 +83,7 @@ public static class GaussianExhibitionBuilder
     [MenuItem("VRMine/Build Gaussian Splat Exhibition (Registered Sources)")]
     public static void BuildLocalPreview() => Build(false);
 
-    [MenuItem("VRMine/Build Final 20 Gaussian Splat Exhibition")]
+    [MenuItem("VRMine/Build Final Gaussian Splat Exhibition")]
     public static void BuildFinal() => Build(true);
 
     static void Build(bool requireFinalProduct)
@@ -94,8 +93,7 @@ public static class GaussianExhibitionBuilder
         Registry registry = LoadJson<Registry>(config.source_registry, "Gaussian source registry");
         if (registry.environments == null || registry.environments.Length == 0)
             throw new InvalidDataException("Gaussian source registry must contain at least one registered source.");
-        if (requireFinalProduct && registry.environments.Length != config.final_expected_exhibits)
-            throw new InvalidOperationException("Final exhibition requires exactly " + config.final_expected_exhibits + " registered sources; found " + registry.environments.Length + ".");
+        string blueprintId = ReadBlueprintId(config.scene_path);
 
         List<Exhibit> exhibits = BuildExhibitLayout(config, registry);
         var prefabs = new Dictionary<string, GameObject>();
@@ -114,7 +112,7 @@ public static class GaussianExhibitionBuilder
         CreateFloorAndShell(config, floorSize);
         CreateBakedDirectionalLight();
         CreateLightProbes(floorSize);
-        CreateDescriptor(config, floorSize);
+        CreateDescriptor(config, floorSize, blueprintId);
 
         GameObject root = new GameObject("GaussianExhibits");
         foreach (Exhibit exhibit in exhibits)
@@ -214,8 +212,7 @@ public static class GaussianExhibitionBuilder
 
     static void ValidateConfig(ExhibitionConfig config)
     {
-        if (config.schema_version != 3) throw new InvalidDataException("Unsupported Gaussian exhibition schema.");
-        if (config.final_expected_exhibits <= 0) throw new InvalidDataException("final_expected_exhibits must be positive.");
+        if (config.schema_version != 4) throw new InvalidDataException("Unsupported Gaussian exhibition schema.");
         if (config.scene_path != "Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity")
             throw new InvalidDataException("Unexpected canonical Gaussian exhibition scene path.");
         if (config.canonical_platform != "windows") throw new InvalidDataException("Canonical first target must be Windows.");
@@ -294,11 +291,12 @@ public static class GaussianExhibitionBuilder
         };
     }
 
-    static void CreateDescriptor(ExhibitionConfig config, Vector2 floorSize)
+    static void CreateDescriptor(ExhibitionConfig config, Vector2 floorSize, string blueprintId)
     {
         GameObject descriptorObject = new GameObject("VRCSceneDescriptor");
         VRCSceneDescriptor descriptor = descriptorObject.AddComponent<VRCSceneDescriptor>();
-        descriptorObject.AddComponent<PipelineManager>();
+        PipelineManager pipeline = descriptorObject.AddComponent<PipelineManager>();
+        ApplyBlueprintId(pipeline, blueprintId);
         GameObject spawn = new GameObject("SpawnPoint");
         spawn.transform.position = new Vector3(0f, 0.1f, floorSize.y * 0.5f - 1f);
         spawn.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
@@ -341,7 +339,7 @@ public static class GaussianExhibitionBuilder
 
     static void ValidateFinalPlaylist(ExhibitionConfig config, Registry registry, PlaylistConfig playlist)
     {
-        if (playlist.schema_version != 1 || playlist.status != "ready" || playlist.entries == null || playlist.entries.Length != config.final_expected_exhibits)
+        if (playlist.schema_version != 2 || playlist.status != "ready" || playlist.entries == null || playlist.entries.Length != registry.environments.Length)
             throw new InvalidOperationException("Final source-video playlist is not ready for all exhibits.");
         if (playlist.player_prefab_path != config.video_player.prefab_path) throw new InvalidDataException("Playlist and exhibition disagree on the canonical video-player prefab.");
         if (playlist.rate_limit_seconds < 5f) throw new InvalidDataException("Video URL rate limit must be at least 5 seconds.");
@@ -355,6 +353,23 @@ public static class GaussianExhibitionBuilder
             if (entry.status != "ready_allowlisted" && entry.status != "ready_untrusted") throw new InvalidDataException("Playlist entry has invalid status: " + entry.source_id);
             if ((entry.status == "ready_untrusted") != entry.requires_untrusted_urls) throw new InvalidDataException("Playlist trust-state mismatch: " + entry.source_id);
         }
+    }
+
+    static string ReadBlueprintId(string scenePath)
+    {
+        if (!File.Exists(scenePath)) return null;
+        Match match = Regex.Match(File.ReadAllText(scenePath), @"(?m)^\s*blueprintId:\s*(wrld_[^\s]+)\s*$");
+        return match.Success ? match.Groups[1].Value : null;
+    }
+
+    static void ApplyBlueprintId(PipelineManager pipeline, string blueprintId)
+    {
+        if (string.IsNullOrEmpty(blueprintId)) return;
+        SerializedObject serialized = new SerializedObject(pipeline);
+        SerializedProperty property = serialized.FindProperty("blueprintId");
+        if (property == null) throw new InvalidDataException("PipelineManager blueprintId property is unavailable.");
+        property.stringValue = blueprintId;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
     }
 
     static void EnsureGaussianRuntimeTopology(Scene scene, int expectedExhibits)

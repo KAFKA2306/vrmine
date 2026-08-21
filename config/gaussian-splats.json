@@ -206,51 +206,24 @@
       }
     },
     {
-      "id": "nordic",
+      "id": "herstmonceux-castle",
       "type": "gaussian-splat",
       "format": "ply",
       "source": {
-        "path": "output/wikimedia-the-destroyer-in-gothenburg-10c008c4fb/quality-sweep/default/splatfacto/20260820T234429Z-6d388a41/export/splat.ply",
-        "artifact_id": "autophotogrammetry/nordic/splat",
+        "path": "output/herstmonceux-castle/runs/splatfacto/20260820T014601Z-7dc5182d/export/splat.ply",
+        "artifact_id": "autophotogrammetry/herstmonceux-castle/splat",
         "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 163143681,
-        "sha256": "e76e938f2acd8d246e61516f2b27b4150d78306718f982c9079c16740a5c455a",
+        "size_bytes": 28159017,
+        "sha256": "d36460210020b039bcc7f43598ed94d50a6a88ad617b1f3aebd08695812f413d",
         "provenance": {
           "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "\"The Destroyer\" in Gothenburg",
-          "source_page": "https://commons.wikimedia.org/wiki/File:%22The_Destroyer%22_in_Gothenburg.webm",
-          "author": "Swedrone",
+          "title": "Aerial video of Herstmonceux Castle",
+          "source_page": "https://commons.wikimedia.org/wiki/File:Aerial_video_of_Herstmonceux_Castle.webm",
+          "author": "Beautiful Landmarks",
           "license_status": "verified",
           "license": "CC BY 3.0",
-          "license_url": "https://creativecommons.org/licenses/by/3.0",
-          "artifact_repository_commit": "0912262da92689563aaf2c6054b7b156efe591ec"
-        },
-        "orientation": {
-          "schema_version": 2,
-          "status": "accepted",
-          "scope": "coordinate_basis_only",
-          "ply_sha256": "e76e938f2acd8d246e61516f2b27b4150d78306718f982c9079c16740a5c455a",
-          "canonical_frame": {
-            "name": "unity-basis-y-up",
-            "physical_gravity_claimed": false
-          },
-          "physical_up": {
-            "status": "review_required",
-            "observable_from_sfm_alone": false,
-            "authority": null,
-            "reason": "SfM has a global rotation gauge; physical gravity requires an independent auditable authority."
-          },
-          "consumer_application": {
-            "consumer": "MichaelMoroz/VRChatGaussianSplatting",
-            "revision": "f96c0117cba518ff84d059d36f16909b873e23aa",
-            "mode": "horizon_alignment_pre_y_reflection",
-            "quaternion_xyzw": [0.7071067811865476, 0, 0, 0.7071067811865476],
-            "pivot": [0, 0, 0],
-            "mandatory_post_transform": "reflect-y",
-            "representation_aware": ["position", "gaussian_rotation", "spherical_harmonics"]
-          },
-          "evidence_sha256": "6e752716cbf6639efa60206d88b83e4cd73505dd38642b6e210869280c7ff925",
-          "derivation_method": "nerfstudio basis convention plus explicit consumer import transform"
+          "license_url": "https://creativecommons.org/licenses/by/3.0/",
+          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
         }
       }
     },
@@ -471,6 +444,55 @@
           "license": null,
           "license_url": null,
           "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
+        }
+      }
+    },
+    {
+      "id": "nordic",
+      "type": "gaussian-splat",
+      "format": "ply",
+      "source": {
+        "path": "output/wikimedia-the-destroyer-in-gothenburg-10c008c4fb/quality-sweep/default/splatfacto/20260820T234429Z-6d388a41/export/splat.ply",
+        "artifact_id": "autophotogrammetry/nordic/splat",
+        "artifact_manifest": "config/gaussian-artifacts.yaml",
+        "size_bytes": 163143681,
+        "sha256": "e76e938f2acd8d246e61516f2b27b4150d78306718f982c9079c16740a5c455a",
+        "provenance": {
+          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
+          "title": "\"The Destroyer\" in Gothenburg",
+          "source_page": "https://commons.wikimedia.org/wiki/File:%22The_Destroyer%22_in_Gothenburg.webm",
+          "author": "Swedrone",
+          "license_status": "verified",
+          "license": "CC BY 3.0",
+          "license_url": "https://creativecommons.org/licenses/by/3.0",
+          "artifact_repository_commit": "0912262da92689563aaf2c6054b7b156efe591ec"
+        },
+        "orientation": {
+          "schema_version": 2,
+          "status": "accepted",
+          "scope": "coordinate_basis_only",
+          "ply_sha256": "e76e938f2acd8d246e61516f2b27b4150d78306718f982c9079c16740a5c455a",
+          "canonical_frame": {
+            "name": "unity-basis-y-up",
+            "physical_gravity_claimed": false
+          },
+          "physical_up": {
+            "status": "review_required",
+            "observable_from_sfm_alone": false,
+            "authority": null,
+            "reason": "SfM has a global rotation gauge; physical gravity requires an independent auditable authority."
+          },
+          "consumer_application": {
+            "consumer": "MichaelMoroz/VRChatGaussianSplatting",
+            "revision": "f96c0117cba518ff84d059d36f16909b873e23aa",
+            "mode": "horizon_alignment_pre_y_reflection",
+            "quaternion_xyzw": [0.7071067811865476, 0, 0, 0.7071067811865476],
+            "pivot": [0, 0, 0],
+            "mandatory_post_transform": "reflect-y",
+            "representation_aware": ["position", "gaussian_rotation", "spherical_harmonics"]
+          },
+          "evidence_sha256": "6e752716cbf6639efa60206d88b83e4cd73505dd38642b6e210869280c7ff925",
+          "derivation_method": "nerfstudio basis convention plus explicit consumer import transform"
         }
       }
     }

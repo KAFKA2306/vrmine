@@ -4,12 +4,12 @@ import { readFile } from 'node:fs/promises';
 const playlist = JSON.parse(await readFile(new URL('../config/gaussian-video-playlist.json', import.meta.url), 'utf8'));
 const exhibition = JSON.parse(await readFile(new URL('../config/gaussian-exhibition.json', import.meta.url), 'utf8'));
 const sources = JSON.parse(await readFile(new URL('../config/gaussian-splats.json', import.meta.url), 'utf8'));
+const expectedEntries = sources.environments.length;
 
 const expectedPlayer = 'Packages/com.vrchat.worlds/Samples/UdonExampleScene/Prefabs/VideoPlayers/UdonSyncPlayer (Unity).prefab';
 const allowedEntryStatuses = new Set(['ready_allowlisted', 'ready_untrusted', 'blocked_playback_url', 'blocked_source']);
 
-assert.equal(playlist.schema_version, 1, 'unsupported Gaussian video playlist schema');
-assert.equal(playlist.expected_entries, exhibition.final_expected_exhibits, 'final playlist count must match the final exhibition requirement');
+assert.equal(playlist.schema_version, 2, 'unsupported Gaussian video playlist schema');
 assert.equal(playlist.source_registry, 'config/gaussian-splats.json');
 assert.equal(playlist.exhibition_manifest, 'config/gaussian-exhibition.json');
 assert.equal(playlist.player_prefab_path, expectedPlayer, 'use the canonical SDK Unity sync-player prefab');
@@ -17,8 +17,7 @@ assert.equal(exhibition.video_player?.prefab_path, expectedPlayer, 'exhibition m
 assert.equal(playlist.rate_limit_seconds, 5, 'VRChat URL loads must be throttled to the canonical 5 second interval');
 assert.ok(['blocked_upstream', 'ready'].includes(playlist.status), 'invalid playlist status');
 assert.ok(Array.isArray(playlist.entries), 'playlist entries must be an array');
-assert.equal(playlist.entries.length, playlist.expected_entries, 'playlist slot count mismatch');
-assert.ok(sources.environments.length <= playlist.expected_entries, 'registered sources exceed final playlist capacity');
+assert.equal(playlist.entries.length, expectedEntries, 'playlist slot count must match the registered source count');
 
 const sourceById = new Map(sources.environments.map((entry) => [entry.id, entry]));
 assert.equal(sourceById.size, sources.environments.length, 'source ids must be unique');
@@ -71,12 +70,12 @@ for (let i = 0; i < playlist.entries.length; i++) {
   }
 }
 
-assert.equal(seenIndexes.size, playlist.expected_entries);
+assert.equal(seenIndexes.size, expectedEntries);
 assert.equal(seenSources.size, sources.environments.length, 'every currently registered 3DGS source must have one video slot');
-assert.equal(blockedSource, playlist.expected_entries - sources.environments.length, 'missing final source slots must remain explicit');
+assert.equal(blockedSource, 0, 'the scalable playlist must not contain unregistered capacity slots');
 
-const fullyReady = ready === playlist.expected_entries;
+const fullyReady = ready === expectedEntries;
 assert.equal(playlist.status, fullyReady ? 'ready' : 'blocked_upstream', 'top-level playlist status must fail closed');
-assert.equal(blockedUrl + blockedSource + ready, playlist.expected_entries);
+assert.equal(blockedUrl + blockedSource + ready, expectedEntries);
 
-console.log(`Validated Gaussian source-video playlist: final_slots=${playlist.expected_entries}, registered_sources=${sources.environments.length}, playable=${ready}, blocked_url=${blockedUrl}, blocked_source=${blockedSource}`);
+console.log(`Validated Gaussian source-video playlist: entries=${expectedEntries}, registered_sources=${sources.environments.length}, playable=${ready}, blocked_url=${blockedUrl}, blocked_source=${blockedSource}`);

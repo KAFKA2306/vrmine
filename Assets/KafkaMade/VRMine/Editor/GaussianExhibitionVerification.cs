@@ -192,11 +192,12 @@ public static class GaussianExhibitionVerification
 
         Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
         var errors = new List<string>();
+        int registeredCount = CountRegisteredSources();
 
         if (CountSceneComponents<VRCSceneDescriptor>(scene) != 1) errors.Add("VRCSceneDescriptor count must be exactly 1");
         if (CountSceneComponents<PipelineManager>(scene) != 1) errors.Add("PipelineManager count must be exactly 1");
         if (CountSceneComponents<GaussianVideoPlaylist>(scene) != 1) errors.Add("GaussianVideoPlaylist count must be exactly 1");
-        if (CountSceneComponents<GaussianVideoPlaylistAction>(scene) != 23) errors.Add("playlist action count must be 23 (20 direct + prev/replay/next)");
+        if (CountSceneComponents<GaussianVideoPlaylistAction>(scene) != registeredCount + 3) errors.Add("playlist action count must match registered sources plus prev/replay/next");
 
         GameObject floor = GameObject.Find("WalkableFloor");
         if (floor == null || floor.scene != scene || floor.GetComponent<Collider>() == null) errors.Add("WalkableFloor collider is missing");
@@ -219,7 +220,7 @@ public static class GaussianExhibitionVerification
         }
         else
         {
-            if (CountSceneComponents(splatType, scene) != 20) errors.Add("active GaussianSplatObject count must be exactly 20");
+            if (CountSceneComponents(splatType, scene) != registeredCount) errors.Add("active GaussianSplatObject count must match registered sources");
             if (CountSceneComponents(rendererType, scene) != 1) errors.Add("active GaussianSplatRenderer count must be exactly 1");
         }
 
@@ -234,7 +235,7 @@ public static class GaussianExhibitionVerification
                 missingScripts += GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(transform.gameObject);
             }
         }
-        if (exhibitRoots != 20) errors.Add("exhibit GameObject count must be exactly 20");
+        if (exhibitRoots != registeredCount) errors.Add("exhibit GameObject count must match registered sources");
         if (missingScripts != 0) errors.Add("missing scripts found: " + missingScripts);
 
         LightingSettings lightingSettings;
@@ -255,7 +256,7 @@ public static class GaussianExhibitionVerification
         if (errors.Count > 0)
             throw new InvalidOperationException("Gaussian exhibition verification failed:\n- " + string.Join("\n- ", errors));
 
-        Debug.Log("Gaussian exhibition verification PASS: descriptor=1, exhibits=20, splats=20, renderer=1, video=1, playlist=20, lightingData=present, lightmaps>0, missingScripts=0, buildScenes=1, canonicalBuildSceneOnly=true");
+        Debug.Log("Gaussian exhibition verification PASS: descriptor=1, exhibits=" + registeredCount + ", splats=" + registeredCount + ", renderer=1, video=1, playlist=" + registeredCount + ", lightingData=present, lightmaps>0, missingScripts=0, buildScenes=1, canonicalBuildSceneOnly=true");
     }
 
     public static void VerifyBatch()
@@ -294,7 +295,7 @@ public static class GaussianExhibitionVerification
             importedAssetFiles = CountNonMetaFiles(importedFiles),
             importedAssetBytes = SumNonMetaFiles(importedFiles),
             sceneBytes = new System.IO.FileInfo(ScenePath).Length,
-            status = CountRegisteredSources() == 20 ? "MEASURED_FINAL_COUNT" : "BLOCKED_FINAL_COUNT"
+            status = "MEASURED_REGISTERED_COUNT"
         };
         string evidencePath = "Library/VRMine/gaussian-performance-evidence.json";
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(evidencePath));

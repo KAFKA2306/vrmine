@@ -1,6 +1,5 @@
 {
-  "schema_version": 1,
-  "expected_entries": 20,
+  "schema_version": 2,
   "source_registry": "config/gaussian-splats.json",
   "exhibition_manifest": "config/gaussian-exhibition.json",
   "player_prefab_path": "Packages/com.vrchat.worlds/Samples/UdonExampleScene/Prefabs/VideoPlayers/UdonSyncPlayer (Unity).prefab",
@@ -72,7 +71,7 @@
     },
     {
       "display_index": 10,
-      "source_id": "nordic",
+      "source_id": "herstmonceux-castle",
       "playback_url": null,
       "requires_untrusted_urls": null,
       "status": "blocked_playback_url"
@@ -143,6 +142,13 @@
     {
       "display_index": 20,
       "source_id": "cadena-humana-la-pona",
+      "playback_url": null,
+      "requires_untrusted_urls": null,
+      "status": "blocked_playback_url"
+    },
+    {
+      "display_index": 21,
+      "source_id": "nordic",
       "playback_url": null,
       "requires_untrusted_urls": null,
       "status": "blocked_playback_url"

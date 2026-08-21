@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2294610207446377062
+--- !u!1 &6220407366988808945
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,38 +8,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4465203843676101444}
-  - component: {fileID: 2863213045049031451}
-  - component: {fileID: 3685708240239158982}
+  - component: {fileID: 8875447574001985136}
+  - component: {fileID: 1332618193072496987}
+  - component: {fileID: 550791612710069935}
   m_Layer: 0
-  m_Name: nordic
+  m_Name: herstmonceux-castle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4465203843676101444
+--- !u!4 &8875447574001985136
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2294610207446377062}
+  m_GameObject: {fileID: 6220407366988808945}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.24304518, y: 0.24304518, z: 0.24304518}
+  m_LocalScale: {x: 0.33186546, y: 0.33186546, z: 0.33186546}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2863213045049031451
+--- !u!114 &1332618193072496987
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2294610207446377062}
+  m_GameObject: {fileID: 6220407366988808945}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1fec6026cf5dbc4db7994d260293bc8, type: 3}
@@ -54,49 +54,49 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  _udonSharpBackingUdonBehaviour: {fileID: 3685708240239158982}
+  _udonSharpBackingUdonBehaviour: {fileID: 550791612710069935}
   gaussianSplatRenderer: {fileID: 0}
-  splatName: nordic
-  description: Chunk LOD imported from Library/VRMine/GaussianSources/nordic.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/nordic.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/nordic.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":true,"horizonRotation":{"x":0.7071068286895752,"y":0.0,"z":0.0,"w":0.7071068286895752},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  splatName: herstmonceux-castle
+  description: Chunk LOD imported from Library/VRMine/GaussianSources/herstmonceux-castle.ply
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/herstmonceux-castle.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/herstmonceux-castle.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":true,"horizonRotation":{"x":0.7071068286895752,"y":0.0,"z":0.0,"w":0.7071068286895752},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 347
-  totalSplatCount: 657831
+  chunkCount: 70
+  totalSplatCount: 113538
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 5.333334
-  smallestChunkSize: 0.001
-  boundsMin: {x: -0.3600073, y: -2.158458, z: 0.7719138}
-  boundsMax: {x: 2.4485965, y: 1.9560034, z: 2.6764882}
+  lodSplatRadius: 3.9999998
+  smallestChunkSize: 0.027392434
+  boundsMin: {x: -1.014169, y: -2.3619928, z: -1.163891}
+  boundsMax: {x: 1.1623499, y: -0.88450456, z: 1.8493785}
   positions:
-  - {fileID: 2800000, guid: 403391bbf3ef39e48936c4c5180bcff2, type: 2}
+  - {fileID: 2800000, guid: 76f66deadbd092942bd75a0855968340, type: 2}
   colors:
-  - {fileID: 2800000, guid: 7b6814c36a7d70740bc761841f7cd7e4, type: 2}
+  - {fileID: 2800000, guid: 48a69ce3506e852478ddc454f81dd99f, type: 2}
   rotations:
-  - {fileID: 2800000, guid: 86b148038bc06254eaee4a3832c02fd4, type: 2}
+  - {fileID: 2800000, guid: 40d3eefe175d3ea4091bda2c76f055cf, type: 2}
   scales:
-  - {fileID: 2800000, guid: 140401dfc9df5e144aee5d33c355548a, type: 2}
+  - {fileID: 2800000, guid: 091d3e6a246f5774db1784c4ab822ce9, type: 2}
   sh:
-  - {fileID: 2800000, guid: 99948f01a4580b748894557c106e6360, type: 2}
-  fileSplatCounts: a7090a00
+  - {fileID: 2800000, guid: ba259f36ed9b23843bbc3c4fcebfb823, type: 2}
+  fileSplatCounts: 82bb0100
   fileShCoeffCounts: 0f000000
-  fileShCoeffStrides: a7090a00
+  fileShCoeffStrides: 82bb0100
   fileShMins:
-  - {x: -1.8160375, y: -1.6760418, z: -1.8349295, w: 0}
+  - {x: -0.18194146, y: -0.18518129, z: -0.1742188, w: 0}
   fileShRanges:
-  - {x: 3.360806, y: 3.070067, z: 3.241972, w: 0}
-  chunkBoundsMinTexture: {fileID: 2800000, guid: 9334a73ff81b02b48b64e8bef569ee01, type: 2}
-  chunkBoundsMaxTexture: {fileID: 2800000, guid: 01c8d91b72a5a214e8cec195fa3e5987, type: 2}
-  chunkRangeTexture: {fileID: 2800000, guid: f4e07d86c1f81924c826c3eacb586233, type: 2}
-  chunkTextureLayout: {x: 512, y: 0.001953125, z: 347, w: 0}
---- !u!114 &3685708240239158982
+  - {x: 0.4016595, y: 0.37210238, z: 0.43160695, w: 0}
+  chunkBoundsMinTexture: {fileID: 2800000, guid: 213532207445b024b82890e0f50bf08e, type: 2}
+  chunkBoundsMaxTexture: {fileID: 2800000, guid: f6be3733c71105647a3502545d8960d7, type: 2}
+  chunkRangeTexture: {fileID: 2800000, guid: 7a0ffeaf1ea8ff542b1b2dd54d105992, type: 2}
+  chunkTextureLayout: {x: 128, y: 0.0078125, z: 70, w: 0}
+--- !u!114 &550791612710069935
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2294610207446377062}
+  m_GameObject: {fileID: 6220407366988808945}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}

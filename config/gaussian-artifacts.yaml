@@ -260,3 +260,16 @@ artifacts:
       repository: KAFKA2306/AutoPhotogrammetry
       revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
       source_path: output/cadena-humana-la-pona/runs/splatfacto/20260820T031530Z-2497f993/export/splat.ply
+  - id: autophotogrammetry/herstmonceux-castle/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/herstmonceux-castle/d36460210020b039bcc7f43598ed94d50a6a88ad617b1f3aebd08695812f413d.ply
+    size_bytes: 28159017
+    sha256: d36460210020b039bcc7f43598ed94d50a6a88ad617b1f3aebd08695812f413d
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
+      source_path: output/herstmonceux-castle/runs/splatfacto/20260820T014601Z-7dc5182d/export/splat.ply

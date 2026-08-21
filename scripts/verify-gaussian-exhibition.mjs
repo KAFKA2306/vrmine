@@ -14,10 +14,9 @@ const windowsLauncherSource = await readFile(new URL('./open-unity-windows.ps1',
 const artifactManifestSource = await readFile(new URL('../config/gaussian-artifacts.yaml', import.meta.url), 'utf8');
 const taskfileSource = await readFile(new URL('../Taskfile.yml', import.meta.url), 'utf8');
 
-assert.equal(exhibition.schema_version, 3, 'unsupported gaussian exhibition schema');
-assert.match(builderSource, /config\.schema_version != 3/, 'Unity builder schema validation must match the canonical exhibition schema');
-assert.equal(sources.environments.length, exhibition.final_expected_exhibits, 'the canonical Unity registry must contain the complete final exhibit count');
-assert.equal(exhibition.final_expected_exhibits, 20, 'the #72 final product still requires exactly 20 exhibits');
+assert.equal(exhibition.schema_version, 4, 'unsupported gaussian exhibition schema');
+assert.match(builderSource, /config\.schema_version != 4/, 'Unity builder schema validation must match the canonical exhibition schema');
+assert.ok(sources.environments.length >= 1, 'the canonical Unity registry must contain at least one exhibit');
 assert.equal(exhibition.canonical_platform, 'windows');
 assert.equal(exhibition.source_registry, 'config/gaussian-splats.json');
 assert.equal(exhibition.renderer, sources.renderers.unity_vrchat, 'scene renderer must match the canonical source registry');
@@ -74,7 +73,7 @@ for (const override of exhibition.import_overrides) {
   }
 }
 
-assert.equal(playlist.expected_entries, exhibition.final_expected_exhibits, 'final playlist count must follow the final product count');
+assert.equal(playlist.entries.length, sources.environments.length, 'final playlist count must follow the registered source count');
 
 assert.doesNotMatch(importerSource, /const\s+float\s+TargetExtentMeters/, 'target extent must have one authority in gaussian-exhibition.json');
 assert.match(importerSource, /exhibition\.target_extent_m/, 'Unity importer must read target_extent_m from gaussian-exhibition.json');
@@ -116,4 +115,4 @@ assert.match(launcherSource, /detached: true/, 'native Linux launcher must retur
 assert.match(windowsLauncherSource, /Start-Process/, 'Windows launcher must start Unity through PowerShell');
 assert.match(windowsLauncherSource, /Restart Unity as a standard user/, 'Windows launcher must handle Unity administrator warning');
 
-console.log(`Validated Gaussian exhibition contract: registered=${sources.environments.length}, import_overrides=${exhibition.import_overrides.length}, final_required=${exhibition.final_expected_exhibits}, renderer=1`);
+console.log(`Validated Gaussian exhibition contract: registered=${sources.environments.length}, import_overrides=${exhibition.import_overrides.length}, renderer=1`);

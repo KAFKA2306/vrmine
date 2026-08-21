@@ -60,7 +60,7 @@ tasks:
       - node scripts/run-gaussian-unity.mjs performance
 
   gaussian:verify-final:
-    desc: Run the strict final 20-exhibit Unity verification; fails closed until final inputs are complete
+    desc: Run the strict registered-source Unity verification; fails closed until final inputs are complete
     cmds:
       - node scripts/run-gaussian-unity.mjs final
 
