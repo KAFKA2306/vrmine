@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const modes = {
+  build: 'GaussianExhibitionPipeline.BuildAndVerifyBatch',
   registered: 'GaussianExhibitionVerification.VerifyRegisteredBatch',
   final: 'GaussianExhibitionVerification.VerifyBatch',
   sdk: 'GaussianExhibitionVerification.VerifySdkWorldBuilderBatch',
@@ -76,7 +77,11 @@ if (run.status !== 0) {
   throw new Error(`Unity verification failed with exit code ${run.status}. See ${logPath}`);
 }
 
-if (mode === 'registered') {
+if (mode === 'build') {
+  const marker = 'VRMine 3DGS final pipeline PASS';
+  if (!log.includes(marker)) throw new Error(`Build verification exited 0 without the expected PASS marker. See ${logPath}`);
+  console.log('PASS: final Gaussian build, bake and repository verification pipeline.');
+} else if (mode === 'registered') {
   const evidencePath = path.join(evidenceDir, 'gaussian-u2-evidence.json');
   if (!fs.existsSync(evidencePath)) throw new Error(`Registered verification exited 0 but evidence is missing: ${evidencePath}`);
   console.log(`PASS: registered Unity verification. Evidence: ${evidencePath}`);
