@@ -12,6 +12,14 @@ public class PerspectiveCageController : UdonSharpBehaviour
     public const int ActionHint = 2;
     public const int ActionReset = 3;
 
+    // Immutable world configuration, serialized by PerspectiveCageBuilder from config/perspective-cage.json.
+    public int p01Solution;
+    public int[] p02Solution = new int[4];
+    public int[] p03SocketByMarker = new int[4];
+    public int p04Solution;
+    public int[] p05Solution = new int[4];
+
+    // Canonical public instance state. Only the current owner mutates these fields.
     [UdonSynced] public int completionMask;
     [UdonSynced] public int p02Step;
     [UdonSynced] public int p03PlacedMask;
@@ -30,6 +38,7 @@ public class PerspectiveCageController : UdonSharpBehaviour
     public Transform[] markerHomes = new Transform[4];
     public Transform[] socketTargets = new Transform[4];
 
+    // Local-only interaction cursor. A selection is not puzzle truth until the owner accepts a socket placement.
     int selectedMarker = -1;
     int observedResetGeneration = -1;
 
@@ -116,15 +125,35 @@ public class PerspectiveCageController : UdonSharpBehaviour
     public int VerifyDeterministicLogic()
     {
         int failures = 0;
-        if (ExpectedP02(0) != 1 || ExpectedP02(1) != 3 || ExpectedP02(2) != 0 || ExpectedP02(3) != 2) failures++;
-        if (ExpectedP05(0) != 2 || ExpectedP05(1) != 3 || ExpectedP05(2) != 4 || ExpectedP05(3) != 1) failures++;
-        for (int i = 0; i < 4; i++) if (ExpectedSocket(i) != i) failures++;
+        if (p01Solution < 0 || p01Solution > 4) failures++;
+        if (p04Solution < 0 || p04Solution > 4) failures++;
+        if (!ValidFour(p02Solution, 0, 3, true)) failures++;
+        if (!ValidFour(p03SocketByMarker, 0, 3, true)) failures++;
+        if (!ValidFour(p05Solution, 0, 4, false)) failures++;
         return failures;
+    }
+
+    bool ValidFour(int[] values, int min, int max, bool requireUnique)
+    {
+        if (values == null || values.Length != 4) return false;
+        int seen = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            int value = values[i];
+            if (value < min || value > max) return false;
+            if (requireUnique)
+            {
+                int bit = 1 << value;
+                if ((seen & bit) != 0) return false;
+                seen |= bit;
+            }
+        }
+        return true;
     }
 
     void HandleP01(int value)
     {
-        if (value != 3)
+        if (value != p01Solution)
         {
             BroadcastWrong(0);
             return;
@@ -134,7 +163,7 @@ public class PerspectiveCageController : UdonSharpBehaviour
 
     void HandleP02(int value)
     {
-        if (value != ExpectedP02(p02Step))
+        if (p02Step < 0 || p02Step >= p02Solution.Length || value != p02Solution[p02Step])
         {
             p02Step = 0;
             SyncState();
@@ -142,9 +171,9 @@ public class PerspectiveCageController : UdonSharpBehaviour
             return;
         }
         p02Step++;
-        if (p02Step >= 4)
+        if (p02Step >= p02Solution.Length)
         {
-            p02Step = 4;
+            p02Step = p02Solution.Length;
             completionMask |= 1 << 1;
         }
         SyncState();
@@ -154,7 +183,7 @@ public class PerspectiveCageController : UdonSharpBehaviour
     {
         if (value < 0 || value > 3 || marker < 0 || marker > 3) return;
         if ((p03PlacedMask & (1 << marker)) != 0) return;
-        if (value != ExpectedSocket(marker))
+        if (p03SocketByMarker == null || p03SocketByMarker.Length != 4 || value != p03SocketByMarker[marker])
         {
             BroadcastWrong(2);
             return;
@@ -166,7 +195,7 @@ public class PerspectiveCageController : UdonSharpBehaviour
 
     void HandleP04(int value)
     {
-        if (value != 4)
+        if (value != p04Solution)
         {
             BroadcastWrong(3);
             return;
@@ -176,7 +205,7 @@ public class PerspectiveCageController : UdonSharpBehaviour
 
     void HandleP05(int value)
     {
-        if (value != ExpectedP05(p05Step))
+        if (p05Step < 0 || p05Step >= p05Solution.Length || value != p05Solution[p05Step])
         {
             p05Step = 0;
             SyncState();
@@ -184,37 +213,13 @@ public class PerspectiveCageController : UdonSharpBehaviour
             return;
         }
         p05Step++;
-        if (p05Step >= 4)
+        if (p05Step >= p05Solution.Length)
         {
-            p05Step = 4;
+            p05Step = p05Solution.Length;
             completionMask |= 1 << 4;
             cleared = true;
         }
         SyncState();
-    }
-
-    int ExpectedP02(int step)
-    {
-        if (step == 0) return 1;
-        if (step == 1) return 3;
-        if (step == 2) return 0;
-        if (step == 3) return 2;
-        return -1;
-    }
-
-    int ExpectedP05(int step)
-    {
-        if (step == 0) return 2;
-        if (step == 1) return 3;
-        if (step == 2) return 4;
-        if (step == 3) return 1;
-        return -1;
-    }
-
-    int ExpectedSocket(int marker)
-    {
-        if (marker >= 0 && marker < 4) return marker;
-        return -1;
     }
 
     void CompletePuzzle(int puzzleIndex)
@@ -267,7 +272,6 @@ public class PerspectiveCageController : UdonSharpBehaviour
 
         for (int i = 0; i < progressionDoors.Length && i < 4; i++)
             if (progressionDoors[i] != null) progressionDoors[i].SetActive(!IsPuzzleComplete(i));
-
         if (clearDoor != null) clearDoor.SetActive(!cleared);
         if (clearPresentation != null) clearPresentation.SetActive(cleared);
 
