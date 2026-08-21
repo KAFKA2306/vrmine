@@ -1,4 +1,4 @@
-# VRMine — VRChat・ブラウザ向けゲーム開発基盤
+# VRMine — VRChat・3D spatial project
 
 [![Build and deploy VRMine Pages](https://github.com/KAFKA2306/vrmine/actions/workflows/pages.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/pages.yml)
 [![Unity VPM verification](https://github.com/KAFKA2306/vrmine/actions/workflows/unity-vpm.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/unity-vpm.yml)
@@ -24,16 +24,16 @@ VRMineの差分はUnity、UdonSharp、PWA、WebSocketそのものではなく、
 ## Player / developer journey
 
 ```text
-ゲームを選ぶ
-  → ゲーム固有の入力・操作
-  → 状態遷移
+コンテンツを選ぶ
+  → ゲーム固有の操作または3D展示を開く
+  → 状態遷移 / scene生成
   → 実行環境ごとの検証
   → PagesまたはVRChatへ公開
 ```
 
 - **ブラウザ:** `pages/index.html` → `pages/games/registry.js` → `pages/games/<game-id>/`
 - **ブラウザ状態:** `vrmine.games.<game-id>.state` でゲームごとに分離
-- **VRChat:** Unityプロジェクトの `Assets/`
+- **VRChat / spatial:** Unityプロジェクトの `Assets/`
 - **Unity version:** `ProjectSettings/ProjectVersion.txt`
 - **VRChat toolchain:** `config/vrchat-toolchain.json`
 
@@ -81,6 +81,21 @@ VRChat SDK3 / UdonSharpを使用し、盤面生成、オブジェクト配線、
 - [STATE](docs/STATE.md)
 - [ARCHITECTURE_RULES](docs/ARCHITECTURE_RULES.md)
 
+## Perspective Cage
+
+短編VRChat謎解きWorld **「視点の檻 / CAGE OF PERSPECTIVE」** は、5つの空間パズルを `config/perspective-cage.json` で定義し、同じUnity project内の `Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/` にruntimeとdeterministic builderを持ちます。
+
+Repository側では、scene shell生成、UdonSharpによる公開状態同期、3段階hint、reset、late-join時のpresentation再構築まで実装済みです。これはUnity Editorやactual VRChat clientでの成功を意味しません。製品release判定は [#145](https://github.com/KAFKA2306/vrmine/issues/145) がauthorityです。
+
+ローカルのrepository-level / Unity-level入口:
+
+```bash
+task check
+task release:perspective-cage:u2
+```
+
+`task check` はrepository contractを検証します。`task release:perspective-cage:u2` はexact Unity `2022.3.22f1` が利用できる環境でRelease Candidate Gateを実行する入口です。actual VRChat clientの1-player通し、reset/replay、2-client sync、late joinは別途U4 evidenceが必要です。
+
 ## Gaussian Splat展示をローカルで開く
 
 目標は **clone → PLY自動取得 → VCC/Unityでprojectを開く** だけです。PLYの件数はコードに固定せず、`config/gaussian-splats.json` に登録された現在の件数 `N` をそのまま処理します。
@@ -93,14 +108,14 @@ cd vrmine
 task gaussian:open
 ```
 
-`task gaussian:open` を使うと、`hf-cache-hub` の共有 Storage Bucket から 20 件の PLY を取得・検証します。その後、VCC CLIが利用可能な環境ではprojectを登録・packageをresolveし、Unity `2022.3.22f1` を起動します。VCC CLIが見つからない場合も、Unityは直接起動されます（CLIを使う場合は `VPM_EXE` を指定）。Unity Editorは一回限りの準備要求を読み、`Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity` を 20 件構成で生成して開きます。PLYだけ取得したい場合は `task gaussian:prepare` を使います。
+`task gaussian:open` を使うと、`hf-cache-hub` の共有 Storage Bucket から登録済みPLYを取得・検証します。その後、VCC CLIが利用可能な環境ではprojectを登録・packageをresolveし、Unity `2022.3.22f1` を起動します。VCC CLIが見つからない場合も、Unityは直接起動されます（CLIを使う場合は `VPM_EXE` を指定）。Unity Editorは一回限りの準備要求を読み、`Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity` をregistry件数に合わせて生成して開きます。PLYだけ取得したい場合は `task gaussian:prepare` を使います。
 
 PLY取得には `hf-cache-hub` の checkout、`HF_CACHE_HUB_ROOT`、および private Storage Bucket を読む Hugging Face 認証が必要です。resolver の Python 環境には `huggingface-hub>=1.0`、`filelock`、`PyYAML` を入れ、必要なら `HF_CACHE_HUB_PYTHON` で指定します。
 
 ### `task gaussian:prepare` が自動で行うこと
 
 - pinned `VRChatGaussianSplatting` rendererを取得
-- `config/gaussian-splats.json` に登録された全20 PLYを `config/gaussian-artifacts.yaml` の hf-cache-hub artifact IDから取得
+- `config/gaussian-splats.json` に登録されたPLYを `config/gaussian-artifacts.yaml` の hf-cache-hub artifact IDから取得
 - PLYのbyte-sizeとSHA-256を検証
 - 既に検証済みのrenderer/PLYは再利用
 - Unity Editorでscene生成を1回実行するための準備要求を作成
@@ -123,7 +138,7 @@ N PLY
 
 通常経路では、**手動PLY download、手動hash確認、`Gaussian Splatting / Import Splats...`、prefab手配置、床・spawn・material・lightingの手修正は不要**にします。UdonSharpはVRChat内で必要なruntime挙動（最終動画playlist、同期、操作UI）だけに使い、PLY取得・hash・import・scene authoringには使いません。
 
-現在のsource registryは実PLY 9件です。ローカルpipelineは `N >= 1` で動く設計ですが、最終成果の「20展示world完成」は別条件であり、20/20のPLY、最終playlist、Unity/VRChat実行検証が揃うまでPASS扱いしません。進捗は [#72](https://github.com/KAFKA2306/vrmine/issues/72) と [#109](https://github.com/KAFKA2306/vrmine/issues/109) で管理しています。
+現在のdownstream registryは20件です。ただし、20件が登録されていることとprivate artifact bytesが20/20検証済みであることは別です。現時点の残件は [#138](https://github.com/KAFKA2306/vrmine/issues/138) のprivate bucket exact-hash readback、[#132](https://github.com/KAFKA2306/vrmine/issues/132) のphysical-up evidence、[#139](https://github.com/KAFKA2306/vrmine/issues/139) のUnity / SDK / actual VRChat client検証です。これらが揃うまで20展示worldをruntime完成扱いしません。
 
 ## Unity / VRChat の検証
 
@@ -161,12 +176,13 @@ task setup
 task check
 ```
 
-`task setup` はpinned `vrc-get` を準備します。`task check` はAnswer ImpostorのNode.js test、Gaussian Splatのsource/exhibition/video contract、VPM package graphの解決とmanifest drift検証を実行します。VPMだけを再実行する場合は `task vpm:check` を使います。
+`task setup` はpinned `vrc-get` を準備します。`task check` はAnswer ImpostorのNode.js test、Perspective Cage contract、Gaussian Splatのsource/exhibition/video contract、VPM package graphの解決とmanifest drift検証を実行します。VPMだけを再実行する場合は `task vpm:check` を使います。
 
 個別に実行する場合:
 
 ```bash
 node --test pages/games/answer-impostor/engine.test.mjs
+node scripts/verify-perspective-cage.mjs
 node scripts/verify-gaussian-fixtures.mjs
 node scripts/verify-gaussian-exhibition.mjs
 node scripts/verify-gaussian-video-playlist.mjs
