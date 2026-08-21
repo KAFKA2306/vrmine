@@ -54,13 +54,13 @@ public class PerspectiveCageController : UdonSharpBehaviour
             return;
         }
         if (puzzleIndex < 0 || puzzleIndex > 4 || cleared) return;
+        if (puzzleIndex > 0 && !IsPuzzleComplete(puzzleIndex - 1)) return;
+        if (IsPuzzleComplete(puzzleIndex)) return;
         if (action == ActionHint)
         {
             RaiseHint(puzzleIndex);
             return;
         }
-        if (puzzleIndex > 0 && !IsPuzzleComplete(puzzleIndex - 1)) return;
-        if (IsPuzzleComplete(puzzleIndex)) return;
 
         if (puzzleIndex == 0) HandleP01(value);
         else if (puzzleIndex == 1) HandleP02(value);
@@ -269,7 +269,11 @@ public class PerspectiveCageController : UdonSharpBehaviour
             Transform target = null;
             if ((p03PlacedMask & (1 << marker)) != 0 && marker < socketTargets.Length) target = socketTargets[marker];
             else if (marker < markerHomes.Length) target = markerHomes[marker];
-            if (target != null) markerObjects[marker].transform.SetPositionAndRotation(target.position, target.rotation);
+            if (target != null)
+            {
+                markerObjects[marker].transform.position = target.position;
+                markerObjects[marker].transform.rotation = target.rotation;
+            }
         }
     }
 
@@ -277,7 +281,7 @@ public class PerspectiveCageController : UdonSharpBehaviour
     {
         if (puzzleIndex >= 0 && puzzleIndex < wrongFeedbacks.Length && wrongFeedbacks[puzzleIndex] != null)
             wrongFeedbacks[puzzleIndex].SetActive(true);
-        SendCustomEventDelayedSeconds(nameof(ClearWrongFeedback), 1.5f);
+        SendCustomEventDelayedSeconds("ClearWrongFeedback", 1.5f);
     }
 
     public void ClearWrongFeedback()
