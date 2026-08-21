@@ -10,6 +10,6 @@ public class PerspectiveCageInteractable : UdonSharpBehaviour
 
     public override void Interact()
     {
-        if (controller != null) controller.HandleInteraction(puzzleIndex, action, value);
+        if (controller != null) controller.SubmitInteraction(puzzleIndex, action, value);
     }
 }
