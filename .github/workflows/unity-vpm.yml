@@ -1,4 +1,4 @@
-name: Unity U1 VPM verification
+name: Repository U1 verification
 
 on:
   push:
@@ -7,8 +7,10 @@ on:
       - "Packages/**"
       - "ProjectSettings/ProjectVersion.txt"
       - "config/vrchat-toolchain.json"
+      - "config/perspective-cage.json"
       - "scripts/install-vrc-get.mjs"
       - "scripts/verify-vpm.mjs"
+      - "scripts/verify-perspective-cage.mjs"
       - "Taskfile.yml"
       - ".github/workflows/unity-vpm.yml"
   pull_request:
@@ -16,8 +18,10 @@ on:
       - "Packages/**"
       - "ProjectSettings/ProjectVersion.txt"
       - "config/vrchat-toolchain.json"
+      - "config/perspective-cage.json"
       - "scripts/install-vrc-get.mjs"
       - "scripts/verify-vpm.mjs"
+      - "scripts/verify-perspective-cage.mjs"
       - "Taskfile.yml"
       - ".github/workflows/unity-vpm.yml"
   workflow_dispatch:
@@ -26,12 +30,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: vrmine-u1-vpm-${{ github.ref }}
+  group: vrmine-u1-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  vpm:
-    name: U1 VPM resolve and drift
+  u1:
+    name: U1 static contracts and VPM
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -40,6 +44,9 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
+
+      - name: Verify Perspective Cage specification
+        run: node scripts/verify-perspective-cage.mjs
 
       - name: Install pinned vrc-get
         run: node scripts/install-vrc-get.mjs
@@ -53,7 +60,7 @@ jobs:
         run: |
           if [ -f .artifacts/vpm-u1.json ]; then
             {
-              echo '## VRMine U1 VPM evidence'
+              echo '## VRMine U1 evidence'
               echo '```json'
               cat .artifacts/vpm-u1.json
               echo '```'
