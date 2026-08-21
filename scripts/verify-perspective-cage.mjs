@@ -137,7 +137,7 @@ requireTokens(source.builder, files.builder, [
   'EditorSceneManager.SaveScene(scene, ScenePath)',
   'RegisterBuildScene()',
   'new GameObject("VRCSceneDescriptor")',
-  'new GameObject("ReferenceCamera")',
+  'Anchor("ReferenceCamera",',
 ]);
 requireTokens(source.verification, files.verification, [
   'PerspectiveCageBuilder.Build();',
@@ -146,6 +146,7 @@ requireTokens(source.verification, files.verification, [
   'MissingScripts',
   'BuildSettings',
   'Perspective Cage verification PASS',
+  'Library/VRMine/PerspectiveCageVerification.txt',
 ]);
 if ((source.verification.match(/PerspectiveCageBuilder\.Build\(\);/g) ?? []).length < 4) fail('verification must exercise builder rerun in both interactive and batch paths');
 requireTokens(source.runner, files.runner, [
@@ -153,6 +154,7 @@ requireTokens(source.runner, files.runner, [
   "'PerspectiveCageVerification.BuildAndVerifyBatch'",
   'Perspective Cage verification PASS',
   'PerspectiveCage.unity',
+  "path.join(evidenceDir, 'PerspectiveCageVerification.txt')",
 ]);
 
 const metaSources = [source.controllerMeta, source.interactableMeta, source.builderMeta, source.verificationMeta];
