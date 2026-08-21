@@ -54,7 +54,7 @@ if (run.status !== 0) throw new Error(`Perspective Cage Unity verification faile
 if (!log.includes('Perspective Cage verification PASS')) throw new Error(`Unity exited 0 without Perspective Cage PASS marker. See ${logPath}`);
 
 const scenePath = path.join(projectRoot, 'Assets', 'KafkaMade', 'VRMine', 'Puzzles', 'PerspectiveCage', 'Scenes', 'PerspectiveCage.unity');
-const reportPath = path.join(projectRoot, 'Assets', 'KafkaMade', 'VRMine', 'Puzzles', 'PerspectiveCage', 'Verification', 'LatestPerspectiveCageVerification.txt');
+const reportPath = path.join(evidenceDir, 'PerspectiveCageVerification.txt');
 if (!fs.existsSync(scenePath)) throw new Error(`Canonical scene was not generated: ${scenePath}`);
 if (!fs.existsSync(reportPath)) throw new Error(`Unity verification report was not generated: ${reportPath}`);
 const report = fs.readFileSync(reportPath, 'utf8');
