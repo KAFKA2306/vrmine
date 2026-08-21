@@ -75,6 +75,9 @@ const expectedFinalSequence = resultOrder.map((id) => outputById[id]);
 if (JSON.stringify(finalPuzzle.solution.sequence) !== JSON.stringify(expectedFinalSequence)) fail(`p05.solution.sequence must be derived from room outputs: ${expectedFinalSequence.join(' -> ')}`);
 if (finalPuzzle.solution.output !== 'clear') fail('p05.solution.output must be clear');
 
+const vpm = JSON.parse(readRequired('Packages/vpm-manifest.json'));
+if (vpm.dependencies?.['com.vrchat.worlds']?.version !== '3.9.0') fail('Perspective Cage parameterized owner events require the repository-pinned VRChat Worlds SDK 3.9.0');
+
 const files = {
   controller: 'Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Runtime/PerspectiveCageController.cs',
   controllerMeta: 'Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Runtime/PerspectiveCageController.cs.meta',
@@ -90,6 +93,7 @@ const source = Object.fromEntries(Object.entries(files).map(([key, relative]) =>
 
 requireTokens(source.controller, files.controller, [
   '[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]',
+  'using VRC.SDK3.UdonNetworkCalling;',
   '[UdonSynced] public int completionMask',
   '[UdonSynced] public int p02Step',
   '[UdonSynced] public int p03PlacedMask',
@@ -98,19 +102,26 @@ requireTokens(source.controller, files.controller, [
   '[UdonSynced] public int resetGeneration',
   '[UdonSynced] public bool cleared',
   'public override void OnDeserialization()',
-  'Networking.SetOwner',
+  'public override void OnOwnershipTransferred(VRCPlayerApi player)',
+  'public void SubmitInteraction(int puzzleIndex, int action, int value)',
+  'SendCustomNetworkEvent(NetworkEventTarget.Owner, nameof(ApplyInteraction), puzzleIndex, action, value, marker)',
+  '[NetworkCallable(maxEventsPerSecond: 20)]',
+  'public void ApplyInteraction(int puzzleIndex, int action, int value, int marker)',
+  'if (!Networking.IsOwner(gameObject)) return;',
   'RequestSerialization()',
-  'public void ResetWorld()',
+  'ResetWorldOwner()',
   'selectedMarker = -1',
-  'SendCustomEventDelayedSeconds',
+  'SendCustomNetworkEvent(NetworkEventTarget.All, nameof(ShowWrongNetwork), puzzleIndex)',
+  'SendCustomEventDelayedSeconds(nameof(ClearWrongFeedback), 1.5f)',
   'ExpectedP02',
   'ExpectedP05',
   'VerifyDeterministicLogic',
 ]);
+if (source.controller.includes('Networking.SetOwner')) fail('Perspective Cage state must use one current owner as the mutation authority; per-interaction SetOwner is forbidden');
 requireTokens(source.interactable, files.interactable, [
   '[UdonBehaviourSyncMode(BehaviourSyncMode.None)]',
   'public override void Interact()',
-  'controller.HandleInteraction(puzzleIndex, action, value)',
+  'controller.SubmitInteraction(puzzleIndex, action, value)',
 ]);
 requireTokens(source.builder, files.builder, [
   'public const string ScenePath = "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Scenes/PerspectiveCage.unity"',
@@ -140,7 +151,7 @@ if ((source.verification.match(/PerspectiveCageBuilder\.Build\(\);/g) ?? []).len
 requireTokens(source.runner, files.runner, [
   "projectVersion !== '2022.3.22f1'",
   "'PerspectiveCageVerification.BuildAndVerifyBatch'",
-  "Perspective Cage verification PASS",
+  'Perspective Cage verification PASS',
   'PerspectiveCage.unity',
 ]);
 
@@ -160,6 +171,8 @@ console.log(JSON.stringify({
   hints: puzzles.reduce((sum, puzzle) => sum + puzzle.hints.length, 0),
   finalSequence: expectedFinalSequence,
   primaryTarget: spec.world.primary_target,
+  vrchatWorldsSdk: vpm.dependencies['com.vrchat.worlds'].version,
+  networkingAuthority: 'single-current-owner',
   implementationFiles: Object.keys(files).length,
   unityRuntimeEvidence: 'requires exact Unity 2022.3.22f1 execution',
 }, null, 2));
