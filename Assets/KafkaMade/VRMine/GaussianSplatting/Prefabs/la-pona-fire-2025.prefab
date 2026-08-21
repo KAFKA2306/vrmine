@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6847681, y: 0.6847681, z: 0.6847681}
+  m_LocalScale: {x: 0.684768, y: 0.684768, z: 0.684768}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: la-pona-fire-2025
   description: Chunk LOD imported from Library/VRMine/GaussianSources/la-pona-fire-2025.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/la-pona-fire-2025.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/la-pona-fire-2025.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/la-pona-fire-2025.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/la-pona-fire-2025.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":true,"horizonRotation":{"x":0.7071068286895752,"y":0.0,"z":0.0,"w":0.7071068286895752},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 110
+  chunkCount: 111
   totalSplatCount: 242922
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 2.359447
-  smallestChunkSize: 0.064997904
-  boundsMin: {x: -0.6721329, y: -1.6457286, z: -0.65168524}
-  boundsMax: {x: 0.6350916, y: -0.33213186, z: 0.80866325}
+  lodSplatRadius: 2.3594468
+  smallestChunkSize: 0.089789264
+  boundsMin: {x: -0.67213285, y: -0.65168524, z: 0.33213198}
+  boundsMax: {x: 0.6350914, y: 0.80866337, z: 1.6457286}
   positions:
   - {fileID: 2800000, guid: ea77981336812e747805a1342d4f2520, type: 2}
   colors:
@@ -89,7 +89,7 @@ MonoBehaviour:
   chunkBoundsMinTexture: {fileID: 2800000, guid: 3d244887d40dd6f4ca8db15e00c7ee70, type: 2}
   chunkBoundsMaxTexture: {fileID: 2800000, guid: 0afebc2d29e0f6340b4cd66e6dd09a7e, type: 2}
   chunkRangeTexture: {fileID: 2800000, guid: 2a847b6d976e43e40910e72486ab8655, type: 2}
-  chunkTextureLayout: {x: 128, y: 0.0078125, z: 110, w: 0}
+  chunkTextureLayout: {x: 128, y: 0.0078125, z: 111, w: 0}
 --- !u!114 &1453700321764446783
 MonoBehaviour:
   m_ObjectHideFlags: 0

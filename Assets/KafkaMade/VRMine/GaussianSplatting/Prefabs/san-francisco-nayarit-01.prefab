@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.38171366, y: 0.38171366, z: 0.38171366}
+  m_LocalScale: {x: 0.38171372, y: 0.38171372, z: 0.38171372}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: san-francisco-nayarit-01
   description: Chunk LOD imported from Library/VRMine/GaussianSources/san-francisco-nayarit-01.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/san-francisco-nayarit-01.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/san-francisco-nayarit-01.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/san-francisco-nayarit-01.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/san-francisco-nayarit-01.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":true,"horizonRotation":{"x":0.7071068286895752,"y":0.0,"z":0.0,"w":0.7071068286895752},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
   chunkCount: 87
   totalSplatCount: 151303
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 3.271566
-  smallestChunkSize: 0.0085588675
-  boundsMin: {x: -0.8309858, y: -1.3100294, z: -1.352489}
-  boundsMax: {x: 1.788779, y: 0.13813281, z: -0.03233695}
+  lodSplatRadius: 3.2715654
+  smallestChunkSize: 0.012212009
+  boundsMin: {x: -0.83098555, y: -1.352489, z: -0.13813263}
+  boundsMax: {x: 1.7887788, y: -0.03233707, z: 1.3100295}
   positions:
   - {fileID: 2800000, guid: 5ec8e8c1e0c82ab40b72db9e1c0effd9, type: 2}
   colors:

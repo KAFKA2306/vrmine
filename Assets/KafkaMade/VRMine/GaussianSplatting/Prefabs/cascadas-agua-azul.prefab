@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: cascadas-agua-azul
   description: Chunk LOD imported from Library/VRMine/GaussianSources/cascadas-agua-azul.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/cascadas-agua-azul.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/cascadas-agua-azul.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/cascadas-agua-azul.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/cascadas-agua-azul.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":true,"horizonRotation":{"x":0.7071068286895752,"y":0.0,"z":0.0,"w":0.7071068286895752},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 103
+  chunkCount: 105
   totalSplatCount: 178726
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
   lodSplatRadius: 8.325203
-  smallestChunkSize: 0.0051870868
-  boundsMin: {x: -2.2405999, y: -4.212306, z: -2.2115612}
-  boundsMax: {x: 4.2227945, y: -2.2671337, z: 2.6618195}
+  smallestChunkSize: 0.006092522
+  boundsMin: {x: -2.2405999, y: -2.211561, z: 2.2671342}
+  boundsMax: {x: 4.2227945, y: 2.6618197, z: 4.2123065}
   positions:
   - {fileID: 2800000, guid: c8537fb5f6938954983368b48ebef531, type: 2}
   colors:
@@ -89,7 +89,7 @@ MonoBehaviour:
   chunkBoundsMinTexture: {fileID: 2800000, guid: 311c222bc89e5394795229d89e9e4e76, type: 2}
   chunkBoundsMaxTexture: {fileID: 2800000, guid: 7fdde6ee9753a984b9c34c9f6374d82f, type: 2}
   chunkRangeTexture: {fileID: 2800000, guid: bc0a3c42230b5f1439e311989861fbce, type: 2}
-  chunkTextureLayout: {x: 128, y: 0.0078125, z: 103, w: 0}
+  chunkTextureLayout: {x: 128, y: 0.0078125, z: 105, w: 0}
 --- !u!114 &2860017919370802896
 MonoBehaviour:
   m_ObjectHideFlags: 0

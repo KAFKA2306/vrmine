@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: los-cabos-sunset
   description: Chunk LOD imported from Library/VRMine/GaussianSources/los-cabos-sunset.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/los-cabos-sunset.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/los-cabos-sunset.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/los-cabos-sunset.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/los-cabos-sunset.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":true,"horizonRotation":{"x":0.7071068286895752,"y":0.0,"z":0.0,"w":0.7071068286895752},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 44
+  chunkCount: 50
   totalSplatCount: 79800
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 7.8769226
-  smallestChunkSize: 0.0085948985
-  boundsMin: {x: -3.9913244, y: -6.277767, z: -2.3559973}
-  boundsMax: {x: 1.882864, y: -3.684511, z: 2.206331}
+  lodSplatRadius: 7.876923
+  smallestChunkSize: 0.008476036
+  boundsMin: {x: -3.9913244, y: -2.355997, z: 3.6845112}
+  boundsMax: {x: 1.882864, y: 2.2063322, z: 6.277768}
   positions:
   - {fileID: 2800000, guid: 75cd3a0ea5061634c82d88177cf3b7f0, type: 2}
   colors:
@@ -89,7 +89,7 @@ MonoBehaviour:
   chunkBoundsMinTexture: {fileID: 2800000, guid: 204aceb831f7bbc41a642e3620d18128, type: 2}
   chunkBoundsMaxTexture: {fileID: 2800000, guid: 316591b04d8cd994398488454fd85c14, type: 2}
   chunkRangeTexture: {fileID: 2800000, guid: 4c1cc04481d6316459dafbf20879728d, type: 2}
-  chunkTextureLayout: {x: 64, y: 0.015625, z: 44, w: 0}
+  chunkTextureLayout: {x: 64, y: 0.015625, z: 50, w: 0}
 --- !u!114 &6445179778228038038
 MonoBehaviour:
   m_ObjectHideFlags: 0

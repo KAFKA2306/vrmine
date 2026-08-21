@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: avenida-gomez-morin
   description: Chunk LOD imported from Library/VRMine/GaussianSources/avenida-gomez-morin.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/avenida-gomez-morin.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/avenida-gomez-morin.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/avenida-gomez-morin.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/avenida-gomez-morin.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":true,"horizonRotation":{"x":0.7071068286895752,"y":0.0,"z":0.0,"w":0.7071068286895752},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
   chunkCount: 143
   totalSplatCount: 263744
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 29.257143
-  smallestChunkSize: 0.003006361
-  boundsMin: {x: -8.477574, y: -10.919747, z: -11.968857}
-  boundsMax: {x: 7.9402876, y: 2.6081028, z: 8.116749}
+  lodSplatRadius: 29.257145
+  smallestChunkSize: 0.003006378
+  boundsMin: {x: -8.477574, y: -11.968859, z: -2.6081028}
+  boundsMax: {x: 7.9402876, y: 8.116747, z: 10.919748}
   positions:
   - {fileID: 2800000, guid: bcb0d5bf5dd95de418481839573045cd, type: 2}
   colors:

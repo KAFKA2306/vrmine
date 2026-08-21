@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3329535, y: 0.3329535, z: 0.3329535}
+  m_LocalScale: {x: 0.33295357, y: 0.33295357, z: 0.33295357}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: playa-guayabitos-region
   description: Chunk LOD imported from Library/VRMine/GaussianSources/playa-guayabitos-region.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/playa-guayabitos-region.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/playa-guayabitos-region.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/playa-guayabitos-region.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/playa-guayabitos-region.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":true,"horizonRotation":{"x":0.7071068286895752,"y":0.0,"z":0.0,"w":0.7071068286895752},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 59
+  chunkCount: 54
   totalSplatCount: 90640
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 4.571429
-  smallestChunkSize: 0.07420041
-  boundsMin: {x: -1.8135674, y: -2.424961, z: -1.5375664}
-  boundsMax: {x: 1.1898549, y: -0.49563575, z: 1.3181505}
+  lodSplatRadius: 4.5714283
+  smallestChunkSize: 0.021514133
+  boundsMin: {x: -1.8135673, y: -1.5375662, z: 0.4956358}
+  boundsMax: {x: 1.1898545, y: 1.3181508, z: 2.4249613}
   positions:
   - {fileID: 2800000, guid: 10281884ef7ffa8408d56e373e64f343, type: 2}
   colors:
@@ -89,7 +89,7 @@ MonoBehaviour:
   chunkBoundsMinTexture: {fileID: 2800000, guid: 58240b26b7bdbab4db4036af239f8485, type: 2}
   chunkBoundsMaxTexture: {fileID: 2800000, guid: 768897c473e9b1f468265ceeaf998b78, type: 2}
   chunkRangeTexture: {fileID: 2800000, guid: 4a87e13596bd59f4ba8570c26026b965, type: 2}
-  chunkTextureLayout: {x: 64, y: 0.015625, z: 59, w: 0}
+  chunkTextureLayout: {x: 64, y: 0.015625, z: 54, w: 0}
 --- !u!114 &2077095351290779829
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25885326, y: 0.25885326, z: 0.25885326}
+  m_LocalScale: {x: 0.2588533, y: 0.2588533, z: 0.2588533}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -58,17 +58,17 @@ MonoBehaviour:
   gaussianSplatRenderer: {fileID: 0}
   splatName: calvillo-centro
   description: Chunk LOD imported from Library/VRMine/GaussianSources/calvillo-centro.ply
-  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/calvillo-centro.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/calvillo-centro.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":false,"horizonRotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
+  importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/calvillo-centro.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/calvillo-centro.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":true,"horizonRotation":{"x":0.7071068286895752,"y":0.0,"z":0.0,"w":0.7071068286895752},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 94
+  chunkCount: 99
   totalSplatCount: 175224
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 6.02353
-  smallestChunkSize: 0.03824408
-  boundsMin: {x: -2.2998893, y: -2.3889387, z: -2.4566066}
-  boundsMax: {x: 1.5633032, y: 0.5168929, z: 1.1371098}
+  lodSplatRadius: 6.0235295
+  smallestChunkSize: 0.036240786
+  boundsMin: {x: -2.299889, y: -2.4566064, z: -0.5168929}
+  boundsMax: {x: 1.563303, y: 1.1371095, z: 2.388939}
   positions:
   - {fileID: 2800000, guid: b2da740430d7f2a4c890c423a3bdf67c, type: 2}
   colors:
@@ -89,7 +89,7 @@ MonoBehaviour:
   chunkBoundsMinTexture: {fileID: 2800000, guid: 1d52254aa5a37524088a6d7fd5db7bfb, type: 2}
   chunkBoundsMaxTexture: {fileID: 2800000, guid: bf1e46cb8ce805b43863d02f5cc44c45, type: 2}
   chunkRangeTexture: {fileID: 2800000, guid: a2db3db0efa258e40b339bea66c45017, type: 2}
-  chunkTextureLayout: {x: 128, y: 0.0078125, z: 94, w: 0}
+  chunkTextureLayout: {x: 128, y: 0.0078125, z: 99, w: 0}
 --- !u!114 &8574644937976477960
 MonoBehaviour:
   m_ObjectHideFlags: 0
