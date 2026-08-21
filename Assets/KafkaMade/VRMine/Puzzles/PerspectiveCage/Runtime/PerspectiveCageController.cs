@@ -89,10 +89,15 @@ public class PerspectiveCageController : UdonSharpBehaviour
             RaiseHint(puzzleIndex);
             return;
         }
+        if (puzzleIndex == 2)
+        {
+            if (action != ActionSocket) return;
+        }
+        else if (action != ActionInput) return;
 
         if (puzzleIndex == 0) HandleP01(value);
         else if (puzzleIndex == 1) HandleP02(value);
-        else if (puzzleIndex == 2) HandleP03(action, value, marker);
+        else if (puzzleIndex == 2) HandleP03(value, marker);
         else if (puzzleIndex == 3) HandleP04(value);
         else HandleP05(value);
     }
@@ -145,9 +150,9 @@ public class PerspectiveCageController : UdonSharpBehaviour
         SyncState();
     }
 
-    void HandleP03(int action, int value, int marker)
+    void HandleP03(int value, int marker)
     {
-        if (action != ActionSocket || value < 0 || value > 3 || marker < 0 || marker > 3) return;
+        if (value < 0 || value > 3 || marker < 0 || marker > 3) return;
         if ((p03PlacedMask & (1 << marker)) != 0) return;
         if (value != ExpectedSocket(marker))
         {
