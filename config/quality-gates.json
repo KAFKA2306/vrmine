@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "policy": "merge_and_release_are_independent_gates",
+  "pr_merge_gate": {
+    "purpose": "Decide whether a change is safe and maintainable enough to integrate into main.",
+    "required": [
+      "scope_complete",
+      "static_contracts_pass",
+      "repository_u1_pass",
+      "changed_surface_tests_pass",
+      "pr_mergeable",
+      "no_unresolved_blocking_review"
+    ],
+    "not_required": [
+      "unity_editor_execution",
+      "sdk_builder_validation",
+      "actual_vrchat_client",
+      "multiplayer_runtime_evidence",
+      "release_performance_measurement"
+    ],
+    "rule": "Unavailable release-only infrastructure must not by itself block a PR merge when the merge gate passes."
+  },
+  "release_candidate_gate": {
+    "purpose": "Decide whether an exact main commit is eligible for product-level runtime validation.",
+    "required": [
+      "exact_main_commit",
+      "exact_unity_toolchain",
+      "unity_compile_pass",
+      "canonical_scene_integrity_pass",
+      "sdk_builder_blocking_validation_zero"
+    ]
+  },
+  "product_release_gate": {
+    "purpose": "Decide whether a build may be represented as a completed/released VRChat product.",
+    "required": [
+      "release_candidate_gate_pass",
+      "actual_client_single_player_clear",
+      "wrong_input_recovery",
+      "reset_and_replay",
+      "two_client_public_state_sync",
+      "late_join_reconstruction",
+      "owner_transition_recovery",
+      "playthrough_duration_recorded",
+      "runtime_evidence_tied_to_exact_commit"
+    ],
+    "explicitly_unverified_without_evidence": [
+      "quest_android",
+      "performance_targets_not_measured_on_actual_client"
+    ]
+  },
+  "state_rules": {
+    "implementation_issue_may_close_after_merge_gate": true,
+    "release_issue_may_close_without_product_release_gate": false,
+    "epic_may_claim_product_complete_without_product_release_gate": false,
+    "lower_evidence_may_be_promoted_to_actual_client_pass": false
+  }
+}
