@@ -8,9 +8,11 @@ on:
       - "ProjectSettings/ProjectVersion.txt"
       - "config/vrchat-toolchain.json"
       - "config/perspective-cage.json"
+      - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
       - "scripts/install-vrc-get.mjs"
       - "scripts/verify-vpm.mjs"
       - "scripts/verify-perspective-cage.mjs"
+      - "scripts/run-perspective-cage-unity.mjs"
       - "Taskfile.yml"
       - ".github/workflows/unity-vpm.yml"
   pull_request:
@@ -19,9 +21,11 @@ on:
       - "ProjectSettings/ProjectVersion.txt"
       - "config/vrchat-toolchain.json"
       - "config/perspective-cage.json"
+      - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
       - "scripts/install-vrc-get.mjs"
       - "scripts/verify-vpm.mjs"
       - "scripts/verify-perspective-cage.mjs"
+      - "scripts/run-perspective-cage-unity.mjs"
       - "Taskfile.yml"
       - ".github/workflows/unity-vpm.yml"
   workflow_dispatch:
@@ -45,8 +49,11 @@ jobs:
         with:
           node-version: 22
 
-      - name: Verify Perspective Cage specification
+      - name: Verify Perspective Cage contract and implementation shape
         run: node scripts/verify-perspective-cage.mjs
+
+      - name: Syntax-check Perspective Cage Unity runner
+        run: node --check scripts/run-perspective-cage-unity.mjs
 
       - name: Install pinned vrc-get
         run: node scripts/install-vrc-get.mjs
