@@ -1,6 +1,8 @@
 using UdonSharp;
 using UnityEngine;
+using VRC.SDK3.UdonNetworkCalling;
 using VRC.SDKBase;
+using VRC.Udon.Common.Interfaces;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class PerspectiveCageController : UdonSharpBehaviour
@@ -29,10 +31,12 @@ public class PerspectiveCageController : UdonSharpBehaviour
     public Transform[] socketTargets = new Transform[4];
 
     int selectedMarker = -1;
+    int observedResetGeneration = -1;
 
     void Start()
     {
         selectedMarker = -1;
+        observedResetGeneration = resetGeneration;
         ApplyPresentation();
     }
 
@@ -46,11 +50,35 @@ public class PerspectiveCageController : UdonSharpBehaviour
         ApplyPresentation();
     }
 
-    public void HandleInteraction(int puzzleIndex, int action, int value)
+    public void SubmitInteraction(int puzzleIndex, int action, int value)
     {
+        if (puzzleIndex == 2 && action == ActionInput)
+        {
+            if (value < 0 || value > 3) return;
+            if (!IsPuzzleComplete(1) || IsPuzzleComplete(2)) return;
+            if ((p03PlacedMask & (1 << value)) != 0) return;
+            selectedMarker = value;
+            return;
+        }
+
+        int marker = -1;
+        if (puzzleIndex == 2 && action == ActionSocket)
+        {
+            marker = selectedMarker;
+            selectedMarker = -1;
+            if (marker < 0 || marker > 3) return;
+        }
+
+        SendCustomNetworkEvent(NetworkEventTarget.Owner, nameof(ApplyInteraction), puzzleIndex, action, value, marker);
+    }
+
+    [NetworkCallable(maxEventsPerSecond: 20)]
+    public void ApplyInteraction(int puzzleIndex, int action, int value, int marker)
+    {
+        if (!Networking.IsOwner(gameObject)) return;
         if (action == ActionReset)
         {
-            ResetWorld();
+            ResetWorldOwner();
             return;
         }
         if (puzzleIndex < 0 || puzzleIndex > 4 || cleared) return;
@@ -64,7 +92,7 @@ public class PerspectiveCageController : UdonSharpBehaviour
 
         if (puzzleIndex == 0) HandleP01(value);
         else if (puzzleIndex == 1) HandleP02(value);
-        else if (puzzleIndex == 2) HandleP03(action, value);
+        else if (puzzleIndex == 2) HandleP03(action, value, marker);
         else if (puzzleIndex == 3) HandleP04(value);
         else HandleP05(value);
     }
@@ -93,7 +121,7 @@ public class PerspectiveCageController : UdonSharpBehaviour
     {
         if (value != 3)
         {
-            ShowWrong(0);
+            BroadcastWrong(0);
             return;
         }
         CompletePuzzle(0);
@@ -103,13 +131,11 @@ public class PerspectiveCageController : UdonSharpBehaviour
     {
         if (value != ExpectedP02(p02Step))
         {
-            OwnState();
             p02Step = 0;
             SyncState();
-            ShowWrong(1);
+            BroadcastWrong(1);
             return;
         }
-        OwnState();
         p02Step++;
         if (p02Step >= 4)
         {
@@ -119,25 +145,16 @@ public class PerspectiveCageController : UdonSharpBehaviour
         SyncState();
     }
 
-    void HandleP03(int action, int value)
+    void HandleP03(int action, int value, int marker)
     {
-        if (value < 0 || value > 3) return;
-        if (action == ActionInput)
+        if (action != ActionSocket || value < 0 || value > 3 || marker < 0 || marker > 3) return;
+        if ((p03PlacedMask & (1 << marker)) != 0) return;
+        if (value != ExpectedSocket(marker))
         {
-            if ((p03PlacedMask & (1 << value)) != 0) return;
-            selectedMarker = value;
+            BroadcastWrong(2);
             return;
         }
-        if (action != ActionSocket || selectedMarker < 0) return;
-        if (value != ExpectedSocket(selectedMarker))
-        {
-            selectedMarker = -1;
-            ShowWrong(2);
-            return;
-        }
-        OwnState();
-        p03PlacedMask |= 1 << selectedMarker;
-        selectedMarker = -1;
+        p03PlacedMask |= 1 << marker;
         if ((p03PlacedMask & 15) == 15) completionMask |= 1 << 2;
         SyncState();
     }
@@ -146,7 +163,7 @@ public class PerspectiveCageController : UdonSharpBehaviour
     {
         if (value != 4)
         {
-            ShowWrong(3);
+            BroadcastWrong(3);
             return;
         }
         CompletePuzzle(3);
@@ -156,13 +173,11 @@ public class PerspectiveCageController : UdonSharpBehaviour
     {
         if (value != ExpectedP05(p05Step))
         {
-            OwnState();
             p05Step = 0;
             SyncState();
-            ShowWrong(4);
+            BroadcastWrong(4);
             return;
         }
-        OwnState();
         p05Step++;
         if (p05Step >= 4)
         {
@@ -199,7 +214,6 @@ public class PerspectiveCageController : UdonSharpBehaviour
 
     void CompletePuzzle(int puzzleIndex)
     {
-        OwnState();
         completionMask |= 1 << puzzleIndex;
         SyncState();
     }
@@ -208,16 +222,14 @@ public class PerspectiveCageController : UdonSharpBehaviour
     {
         int current = GetHintLevel(puzzleIndex);
         if (current >= 3) return;
-        OwnState();
         int shift = puzzleIndex * 2;
         hintPacked &= ~(3 << shift);
         hintPacked |= (current + 1) << shift;
         SyncState();
     }
 
-    public void ResetWorld()
+    void ResetWorldOwner()
     {
-        OwnState();
         completionMask = 0;
         p02Step = 0;
         p03PlacedMask = 0;
@@ -230,12 +242,6 @@ public class PerspectiveCageController : UdonSharpBehaviour
         ClearWrongFeedback();
     }
 
-    void OwnState()
-    {
-        VRCPlayerApi local = Networking.LocalPlayer;
-        if (local != null && !Networking.IsOwner(gameObject)) Networking.SetOwner(local, gameObject);
-    }
-
     void SyncState()
     {
         RequestSerialization();
@@ -244,6 +250,16 @@ public class PerspectiveCageController : UdonSharpBehaviour
 
     public void ApplyPresentation()
     {
+        if (observedResetGeneration != resetGeneration)
+        {
+            observedResetGeneration = resetGeneration;
+            selectedMarker = -1;
+        }
+        else if (selectedMarker >= 0 && (p03PlacedMask & (1 << selectedMarker)) != 0)
+        {
+            selectedMarker = -1;
+        }
+
         for (int i = 0; i < progressionDoors.Length && i < 4; i++)
             if (progressionDoors[i] != null) progressionDoors[i].SetActive(!IsPuzzleComplete(i));
 
@@ -277,11 +293,17 @@ public class PerspectiveCageController : UdonSharpBehaviour
         }
     }
 
-    void ShowWrong(int puzzleIndex)
+    void BroadcastWrong(int puzzleIndex)
+    {
+        SendCustomNetworkEvent(NetworkEventTarget.All, nameof(ShowWrongNetwork), puzzleIndex);
+    }
+
+    [NetworkCallable(maxEventsPerSecond: 20)]
+    public void ShowWrongNetwork(int puzzleIndex)
     {
         if (puzzleIndex >= 0 && puzzleIndex < wrongFeedbacks.Length && wrongFeedbacks[puzzleIndex] != null)
             wrongFeedbacks[puzzleIndex].SetActive(true);
-        SendCustomEventDelayedSeconds("ClearWrongFeedback", 1.5f);
+        SendCustomEventDelayedSeconds(nameof(ClearWrongFeedback), 1.5f);
     }
 
     public void ClearWrongFeedback()
