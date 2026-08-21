@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "world": {
+    "id": "perspective-cage",
+    "title_ja": "視点の檻",
+    "title_en": "CAGE OF PERSPECTIVE",
+    "players": { "min": 1, "max": 4 },
+    "target_playtime_minutes": { "min": 15, "max": 30 },
+    "primary_target": "vrchat_pc",
+    "canonical_scene": "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Scenes/PerspectiveCage.unity"
+  },
+  "intro_rule": {
+    "description_ja": "4つの結果は、部屋番号順ではなく、入口に示した位置順 3→1→4→2 で読む。",
+    "result_order": ["p03", "p01", "p04", "p02"]
+  },
+  "puzzles": [
+    {
+      "id": "p01",
+      "room": 1,
+      "title_ja": "視点",
+      "goal": "空間に分散した断片が一つの図形に見える観測位置を見つけ、その図形を選ぶ。",
+      "observable_clues": [
+        "床の細いガイド線が一か所で交差する",
+        "左右の柱間隔が観測位置からだけ対称に見える",
+        "額縁の空白中央が視線高さの目安になる"
+      ],
+      "interaction_type": "choice",
+      "solution": { "choice": "diamond", "output": "diamond" },
+      "wrong_input_behavior": "不正解feedbackのみを表示し、進行状態は変更しない。",
+      "completion_effect": "Room 2へのdoorを開き、結果symbol diamondを公開状態へ記録する。",
+      "hints": [
+        "形そのものより、どこから見るかを探す。",
+        "床・柱・額縁の三つが同時に揃う位置がある。",
+        "床線の交点付近から、浮いている断片を一つの輪郭として見る。"
+      ],
+      "reset_state": "未完了、選択なし、feedback非表示。",
+      "multiplayer_scope": "public_instance",
+      "accessibility_fallback": "図形は色ではなく輪郭差で識別できる。"
+    },
+    {
+      "id": "p02",
+      "room": 2,
+      "title_ja": "順序",
+      "goal": "4つのobjectを、床の段差とobject高さの対応から導いた順に押す。",
+      "observable_clues": [
+        "床には高さの異なる4段差がある",
+        "A〜Dのobjectにも4種類の高さがある",
+        "段差は低い順に B→D→A→C と対応する"
+      ],
+      "interaction_type": "sequence",
+      "solution": { "sequence": ["B", "D", "A", "C"], "output": "circle" },
+      "wrong_input_behavior": "現在の入力sequenceだけを空に戻し、Room 1の結果やhint状態は保持する。",
+      "completion_effect": "Room 3へのdoorを開き、結果symbol circleを公開状態へ記録する。",
+      "hints": [
+        "押す順番は文字順ではない。",
+        "床の4段差と4つのobjectを同じ尺度で比べる。",
+        "低いものから高いものへ対応させる。"
+      ],
+      "reset_state": "未完了、入力sequence長0、全object待機状態。",
+      "multiplayer_scope": "public_instance",
+      "accessibility_fallback": "高さ差に加えて各段差とobjectへ1〜4本の刻線を付ける。"
+    },
+    {
+      "id": "p03",
+      "room": 3,
+      "title_ja": "対応",
+      "goal": "4つのmarkerを、形状と向きの両方が一致するsocketへ配置する。",
+      "observable_clues": [
+        "各markerには異なる外形がある",
+        "各markerには向きを示す切欠きがある",
+        "socket側にも同じ外形と切欠きがある"
+      ],
+      "interaction_type": "mapping",
+      "solution": {
+        "mapping": {
+          "marker_triangle": "socket_west",
+          "marker_circle": "socket_north",
+          "marker_square": "socket_east",
+          "marker_diamond": "socket_south"
+        },
+        "output": "square"
+      },
+      "wrong_input_behavior": "不一致socketへの配置はrejectし、markerを最後の安全位置へ戻す。",
+      "completion_effect": "Room 4へのdoorを開き、結果symbol squareを公開状態へ記録する。",
+      "hints": [
+        "色ではなく、輪郭を比べる。",
+        "輪郭が合っても向きが違うsocketがある。",
+        "外形と切欠きの向きが両方一致する場所へ置く。"
+      ],
+      "reset_state": "未完了、4 markerは各初期pedestal、4 socketは空。",
+      "multiplayer_scope": "public_instance",
+      "accessibility_fallback": "色を使わず、形状・切欠き・刻印の三重cueを持たせる。"
+    },
+    {
+      "id": "p04",
+      "room": 4,
+      "title_ja": "不在",
+      "goal": "これまで繰り返し提示されていたsymbol集合と比較し、このroomだけ欠けているsymbolを選ぶ。",
+      "observable_clues": [
+        "introとRoom 1〜3には triangle/circle/square/diamond/cross の5 symbol一覧が残る",
+        "Room 4の一覧には4 symbolしかない",
+        "Room 4内の比較panelから過去のsymbol一覧を再確認できる"
+      ],
+      "interaction_type": "choice",
+      "solution": { "choice": "cross", "output": "cross" },
+      "wrong_input_behavior": "不正解feedbackのみを表示し、過去room completionは変更しない。",
+      "completion_effect": "Final roomへのdoorを開き、結果symbol crossを公開状態へ記録する。",
+      "hints": [
+        "目立つものではなく、無いものを探す。",
+        "この部屋のsymbol一覧を、比較panelの一覧と照合する。",
+        "5種類あるはずのsymbolのうち、この部屋だけ見当たらない一つを選ぶ。"
+      ],
+      "reset_state": "未完了、選択なし、比較panelは利用可能。",
+      "multiplayer_scope": "public_instance",
+      "accessibility_fallback": "記憶だけに依存せず、過去一覧をRoom 4内で再確認できる。"
+    },
+    {
+      "id": "p05",
+      "room": 5,
+      "title_ja": "再解釈",
+      "goal": "P01〜P04の結果をintroの位置順 3→1→4→2 に並べ替えてfinal consoleへ入力する。",
+      "observable_clues": [
+        "introに4つの位置と読み順3→1→4→2が提示されている",
+        "Final roomにP01〜P04の公開結果を確認できるpanelがある",
+        "consoleは4 symbol入力を受け付ける"
+      ],
+      "interaction_type": "sequence",
+      "solution": {
+        "references": ["p03", "p01", "p04", "p02"],
+        "sequence": ["square", "diamond", "cross", "circle"],
+        "output": "clear"
+      },
+      "wrong_input_behavior": "final input bufferだけを空に戻し、P01〜P04 completionと結果は保持する。",
+      "completion_effect": "clear doorを開き、world clear状態を公開する。",
+      "hints": [
+        "4つの結果は揃っている。次は並べ方を見る。",
+        "入口の4位置には、読む順番が書かれていた。",
+        "部屋番号順ではなく、3番目→1番目→4番目→2番目の結果を入力する。"
+      ],
+      "reset_state": "未完了、final input buffer長0、clear door閉。",
+      "multiplayer_scope": "public_instance",
+      "accessibility_fallback": "symbol名は必要に応じて輪郭アイコンと短いtext labelを併記する。"
+    }
+  ]
+}
