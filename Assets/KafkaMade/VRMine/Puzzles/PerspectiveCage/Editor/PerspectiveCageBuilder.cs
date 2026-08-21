@@ -15,7 +15,9 @@ public static class PerspectiveCageBuilder
     const string SpecPath = "config/perspective-cage.json";
     const float ZoneSpacing = 12f;
 
-    [Serializable] class PuzzleSpec { public string id; public string title_ja; public string[] hints; }
+    [Serializable] class MappingSpec { public string marker_triangle; public string marker_circle; public string marker_square; public string marker_diamond; }
+    [Serializable] class SolutionSpec { public string choice; public string[] sequence; public MappingSpec mapping; public string output; public string[] references; }
+    [Serializable] class PuzzleSpec { public string id; public string title_ja; public string[] hints; public SolutionSpec solution; }
     [Serializable] class IntroRule { public string description_ja; }
     [Serializable] class WorldSpec { public PuzzleSpec[] puzzles; public IntroRule intro_rule; }
 
@@ -51,13 +53,14 @@ public static class PerspectiveCageBuilder
         controller.markerObjects = new GameObject[4];
         controller.markerHomes = new Transform[4];
         controller.socketTargets = new Transform[4];
+        ConfigureSolutions(controller, spec);
 
         BuildIntro(world.transform, spec, shell);
         BuildP01(world.transform, controller, ZoneCenter(1), spec.puzzles[0], clue, accent, active);
         BuildP02(world.transform, controller, ZoneCenter(2), spec.puzzles[1], clue, accent, active);
         BuildP03(world.transform, controller, ZoneCenter(3), spec.puzzles[2], clue, accent, active);
         BuildP04(world.transform, controller, ZoneCenter(4), spec.puzzles[3], clue, accent, active);
-        BuildP05(world.transform, controller, ZoneCenter(5), spec.puzzles[4], clue, accent, active);
+        BuildP05(world.transform, controller, ZoneCenter(5), spec, clue, accent, active);
         BuildClearArea(world.transform, controller, ZoneCenter(6), active);
 
         for (int i = 0; i < 4; i++)
@@ -81,8 +84,74 @@ public static class PerspectiveCageBuilder
         if (!File.Exists(fullPath)) throw new FileNotFoundException("Perspective Cage spec not found", fullPath);
         WorldSpec spec = JsonUtility.FromJson<WorldSpec>(File.ReadAllText(fullPath));
         if (spec == null || spec.puzzles == null || spec.puzzles.Length != 5) throw new InvalidDataException("Perspective Cage spec must contain exactly five puzzles");
-        for (int i = 0; i < 5; i++) if (spec.puzzles[i].hints == null || spec.puzzles[i].hints.Length != 3) throw new InvalidDataException("Each puzzle must contain exactly three hints");
+        for (int i = 0; i < 5; i++)
+        {
+            if (spec.puzzles[i] == null || spec.puzzles[i].solution == null) throw new InvalidDataException("Each puzzle must contain a solution");
+            if (spec.puzzles[i].hints == null || spec.puzzles[i].hints.Length != 3) throw new InvalidDataException("Each puzzle must contain exactly three hints");
+        }
         return spec;
+    }
+
+    static void ConfigureSolutions(PerspectiveCageController controller, WorldSpec spec)
+    {
+        controller.p01Solution = SymbolIndex(spec.puzzles[0].solution.choice);
+        controller.p02Solution = MapSequence(spec.puzzles[1].solution.sequence, ObjectIndex);
+        MappingSpec mapping = spec.puzzles[2].solution.mapping;
+        if (mapping == null) throw new InvalidDataException("P03 mapping is required");
+        controller.p03SocketByMarker = new[] {
+            SocketIndex(mapping.marker_triangle),
+            SocketIndex(mapping.marker_circle),
+            SocketIndex(mapping.marker_square),
+            SocketIndex(mapping.marker_diamond)
+        };
+        controller.p04Solution = SymbolIndex(spec.puzzles[3].solution.choice);
+        controller.p05Solution = MapSequence(spec.puzzles[4].solution.sequence, SymbolIndex);
+        if (controller.VerifyDeterministicLogic() != 0) throw new InvalidDataException("Canonical puzzle solutions could not be serialized into the controller contract");
+    }
+
+    static int[] MapSequence(string[] values, Func<string, int> mapper)
+    {
+        if (values == null || values.Length != 4) throw new InvalidDataException("Puzzle sequence must contain exactly four values");
+        int[] result = new int[4];
+        for (int i = 0; i < 4; i++) result[i] = mapper(values[i]);
+        return result;
+    }
+
+    static int SymbolIndex(string value)
+    {
+        string normalized = (value ?? "").Trim().ToLowerInvariant();
+        if (normalized == "triangle") return 0;
+        if (normalized == "circle") return 1;
+        if (normalized == "square") return 2;
+        if (normalized == "diamond") return 3;
+        if (normalized == "cross") return 4;
+        throw new InvalidDataException("Unknown symbol: " + value);
+    }
+
+    static int ObjectIndex(string value)
+    {
+        string normalized = (value ?? "").Trim().ToUpperInvariant();
+        if (normalized == "A") return 0;
+        if (normalized == "B") return 1;
+        if (normalized == "C") return 2;
+        if (normalized == "D") return 3;
+        throw new InvalidDataException("Unknown P02 object: " + value);
+    }
+
+    static int SocketIndex(string value)
+    {
+        string normalized = (value ?? "").Trim().ToLowerInvariant();
+        if (normalized == "socket_west") return 0;
+        if (normalized == "socket_north") return 1;
+        if (normalized == "socket_east") return 2;
+        if (normalized == "socket_south") return 3;
+        throw new InvalidDataException("Unknown P03 socket: " + value);
+    }
+
+    static int MarkerForSocket(int[] socketByMarker, int socket)
+    {
+        for (int marker = 0; marker < socketByMarker.Length; marker++) if (socketByMarker[marker] == socket) return marker;
+        throw new InvalidDataException("P03 mapping is not bijective for socket " + socket);
     }
 
     static void BuildIntro(Transform parent, WorldSpec spec, Material shell)
@@ -151,18 +220,24 @@ public static class PerspectiveCageBuilder
             center + new Vector3(-3f, 1.3f, 2.0f), center + new Vector3(0f, 1.3f, 3.1f),
             center + new Vector3(3f, 1.3f, 2.0f), center + new Vector3(0f, 1.3f, 0.9f)
         };
-        for (int i = 0; i < 4; i++)
+
+        for (int marker = 0; marker < 4; marker++)
         {
-            GameObject home = Anchor("P03Home" + i, homes[i], parent);
-            GameObject socketTarget = Anchor("P03SocketTarget" + i, targets[i], parent);
-            controller.markerHomes[i] = home.transform;
-            controller.socketTargets[i] = socketTarget.transform;
-            controller.markerObjects[i] = Icon("P03Marker" + i, homes[i], i, clue, accent, parent);
-            Icon("P03Socket" + i, targets[i], i, clue, accent, parent);
-            Button("P03Select" + i, markerNames[i], homes[i] + new Vector3(0f, -0.9f, -0.5f), 2, PerspectiveCageController.ActionInput, i, controller, active, parent);
-            Vector3 buttonPos = targets[i] + new Vector3(0f, -0.9f, 0.55f);
-            Button("P03SocketButton" + i, socketNames[i], buttonPos, 2, PerspectiveCageController.ActionSocket, i, controller, active, parent);
+            GameObject home = Anchor("P03Home" + marker, homes[marker], parent);
+            controller.markerHomes[marker] = home.transform;
+            controller.markerObjects[marker] = Icon("P03Marker" + marker, homes[marker], marker, clue, accent, parent);
+            Button("P03Select" + marker, markerNames[marker], homes[marker] + new Vector3(0f, -0.9f, -0.5f), 2, PerspectiveCageController.ActionInput, marker, controller, active, parent);
         }
+
+        for (int socket = 0; socket < 4; socket++)
+        {
+            GameObject socketTarget = Anchor("P03SocketTarget" + socket, targets[socket], parent);
+            controller.socketTargets[socket] = socketTarget.transform;
+            int matchingMarker = MarkerForSocket(controller.p03SocketByMarker, socket);
+            Icon("P03Socket" + socket, targets[socket], matchingMarker, clue, accent, parent);
+            Button("P03SocketButton" + socket, socketNames[socket], targets[socket] + new Vector3(0f, -0.9f, 0.55f), 2, PerspectiveCageController.ActionSocket, socket, controller, active, parent);
+        }
+
         Label("P03Cue", "MATCH SHAPE + NOTCH DIRECTION", center + new Vector3(0f, 3.1f, 0f), 0.03f, parent);
         Feedback(parent, controller, center, 2, spec, active);
     }
@@ -179,11 +254,16 @@ public static class PerspectiveCageBuilder
         Feedback(parent, controller, center, 3, spec, active);
     }
 
-    static void BuildP05(Transform parent, PerspectiveCageController controller, Vector3 center, PuzzleSpec spec, Material clue, Material accent, Material active)
+    static void BuildP05(Transform parent, PerspectiveCageController controller, Vector3 center, WorldSpec worldSpec, Material clue, Material accent, Material active)
     {
+        PuzzleSpec spec = worldSpec.puzzles[4];
         Heading(parent, center, spec);
         Cube("P05ResultsPanel", center + new Vector3(0f, 2.5f, 3f), new Vector3(8f, 1.6f, 0.12f), clue, parent);
-        Label("P05Results", "RESULTS\n1 DIAMOND   2 CIRCLE   3 SQUARE   4 CROSS", center + new Vector3(0f, 2.5f, 2.85f), 0.038f, parent);
+        string results = "RESULTS\n1 " + worldSpec.puzzles[0].solution.output.ToUpperInvariant()
+            + "   2 " + worldSpec.puzzles[1].solution.output.ToUpperInvariant()
+            + "   3 " + worldSpec.puzzles[2].solution.output.ToUpperInvariant()
+            + "   4 " + worldSpec.puzzles[3].solution.output.ToUpperInvariant();
+        Label("P05Results", results, center + new Vector3(0f, 2.5f, 2.85f), 0.038f, parent);
         Cube("P05RulePanel", center + new Vector3(0f, 1.2f, 3f), new Vector3(5f, 1f, 0.12f), accent, parent);
         Label("P05Rule", "READ: 3 → 1 → 4 → 2", center + new Vector3(0f, 1.2f, 2.85f), 0.042f, parent);
         string[] symbols = { "TRIANGLE", "CIRCLE", "SQUARE", "DIAMOND", "CROSS" };
@@ -205,8 +285,7 @@ public static class PerspectiveCageBuilder
         controller.wrongFeedbacks[puzzle] = wrong;
         if (puzzle < 4)
         {
-            string[] outputs = { "DIAMOND", "CIRCLE", "SQUARE", "CROSS" };
-            GameObject result = Label("Result_P0" + (puzzle + 1), "RESULT: " + outputs[puzzle], center + new Vector3(0f, 0.45f, 4.75f), 0.034f, parent);
+            GameObject result = Label("Result_P0" + (puzzle + 1), "RESULT: " + spec.solution.output.ToUpperInvariant(), center + new Vector3(0f, 0.45f, 4.75f), 0.034f, parent);
             result.SetActive(false);
             controller.resultPanels[puzzle] = result;
         }
