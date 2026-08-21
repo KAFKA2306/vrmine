@@ -11,6 +11,8 @@ on:
       - "config/gaussian-artifacts.yaml"
       - "scripts/verify-gaussian-*.mjs"
       - "scripts/materialize-gaussian-*.mjs"
+      - "scripts/compile-gaussian-producer-orientation.mjs"
+      - "scripts/test-gaussian-producer-orientation.mjs"
       - "scripts/gaussian_orientation.py"
       - "scripts/test_gaussian_orientation.py"
       - "scripts/open-gaussian-project.mjs"
@@ -26,6 +28,8 @@ on:
       - "config/gaussian-artifacts.yaml"
       - "scripts/verify-gaussian-*.mjs"
       - "scripts/materialize-gaussian-*.mjs"
+      - "scripts/compile-gaussian-producer-orientation.mjs"
+      - "scripts/test-gaussian-producer-orientation.mjs"
       - "scripts/gaussian_orientation.py"
       - "scripts/test_gaussian_orientation.py"
       - "scripts/open-gaussian-project.mjs"
@@ -55,6 +59,10 @@ jobs:
           node --check scripts/verify-gaussian-artifact-resolver.mjs
           node --check scripts/materialize-gaussian-renderer.mjs
           node --check scripts/materialize-gaussian-sources.mjs
+          node --check scripts/compile-gaussian-producer-orientation.mjs
+          node --check scripts/test-gaussian-producer-orientation.mjs
+          node --check scripts/verify-gaussian-producer-orientation.mjs
+          node --check scripts/verify-gaussian-physical-up-consumer.mjs
           node --check scripts/open-gaussian-project.mjs
           python -m py_compile scripts/gaussian_orientation.py scripts/test_gaussian_orientation.py
       - name: Validate 3DGS contracts
@@ -64,8 +72,15 @@ jobs:
           node scripts/verify-gaussian-exhibition.mjs
           node scripts/verify-gaussian-presentation.mjs
           node scripts/verify-gaussian-artifact-resolver.mjs
-      - name: Verify orientation analyzer on deterministic synthetic planes
-        run: python scripts/test_gaussian_orientation.py
+          node scripts/test-gaussian-producer-orientation.mjs
+          node scripts/verify-gaussian-producer-orientation.mjs
+          node scripts/verify-gaussian-physical-up-consumer.mjs
+      - name: Verify diagnostic-only orientation reporting
+        run: |
+          python scripts/test_gaussian_orientation.py
+          python scripts/gaussian_orientation.py \
+            --allow-missing \
+            --output Library/VRMine/gaussian-orientation-evidence.json
       - name: Materialize pinned Unity renderer at upstream-compatible path
         run: |
           node scripts/materialize-gaussian-renderer.mjs
@@ -73,27 +88,85 @@ jobs:
           test -s Assets/VRChatGaussianSplatting/Scripts/Importer/GaussianSplatImporter.cs
           test -d Assets/VRChatGaussianSplatting/Resources
           grep -F 'revision=f96c0117cba518ff84d059d36f16909b873e23aa' Assets/VRChatGaussianSplatting/VRMINE_UPSTREAM_REVISION.txt
+      - name: Persist contract orientation decision matrix
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: 3dgs-orientation-contract-status
+          path: Library/VRMine/gaussian-orientation-evidence.json
+          if-no-files-found: error
+          retention-days: 14
+
+  artifact-verification:
+    needs: contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Emit per-source status before private materialization
+        run: |
+          python scripts/gaussian_orientation.py \
+            --allow-missing \
+            --output Library/VRMine/gaussian-orientation-evidence.json
+      - name: Determine private artifact availability
+        id: access
+        run: |
+          mkdir -p Library/VRMine
+          if [ -z "$HF_TOKEN" ]; then
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          registry = json.loads(Path('config/gaussian-splats.json').read_text(encoding='utf-8'))
+          status = {
+              'schema_version': 1,
+              'status': 'blocked',
+              'reason': 'HF_TOKEN repository secret is not configured',
+              'registered_artifacts': len(registry['environments']),
+              'next_action': 'configure a read-capable HF_TOKEN repository secret; do not place the token in source or logs',
+          }
+          Path('Library/VRMine/gaussian-artifact-verification-status.json').write_text(
+              json.dumps(status, indent=2) + '\n', encoding='utf-8'
+          )
+          PY
+            echo "::warning::Private Gaussian artifact verification is BLOCKED because HF_TOKEN is not configured. Contract CI remains authoritative and green; artifact bytes are not claimed verified."
+            echo "### 3DGS private artifact verification" >> "$GITHUB_STEP_SUMMARY"
+            echo "BLOCKED: HF_TOKEN repository secret is not configured. 20/20 orientation decisions are still persisted as review/blocked without pretending artifact bytes were read." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "available=true" >> "$GITHUB_OUTPUT"
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          status = {
+              'schema_version': 1,
+              'status': 'credential_available',
+              'reason': 'HF_TOKEN is configured; exact artifact materialization will run',
+          }
+          Path('Library/VRMine/gaussian-artifact-verification-status.json').write_text(
+              json.dumps(status, indent=2) + '\n', encoding='utf-8'
+          )
+          PY
+          fi
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        if: steps.access.outputs.available == 'true'
+        with:
+          node-version: 22
       - name: Check out pinned hf-cache-hub artifact resolver
+        if: steps.access.outputs.available == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: KAFKA2306/hf-cache-hub
           ref: b41ca5a6601a6ac7724cb09b3fe90554c7356d69
           path: .hf-cache-hub
       - name: Install artifact resolver dependencies
+        if: steps.access.outputs.available == 'true'
         run: python -m pip install "PyYAML>=6.0,<7" "huggingface-hub>=1.0,<2" "filelock>=3.0"
-      - name: Verify Storage Bucket credentials
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          if [ -z "$HF_TOKEN" ]; then
-            echo "::error::HF_TOKEN repository secret is required to verify the private Gaussian Storage Bucket."
-            exit 1
-          fi
       - name: Materialize and verify every registered PLY
+        if: steps.access.outputs.available == 'true'
         env:
           HF_CACHE_HUB_ROOT: ${{ github.workspace }}/.hf-cache-hub
           HF_HOME: ${{ runner.temp }}/hf-cache
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           node scripts/materialize-gaussian-sources.mjs
           node - <<'NODE'
@@ -109,7 +182,40 @@ jobs:
           }
           console.log(`Verified materialized registered PLY count=${registry.environments.length}`);
           NODE
-      - name: Measure orientation from materialized PLY geometry
+      - name: Measure exact-hash geometry diagnostics for every PLY
+        if: steps.access.outputs.available == 'true'
         run: |
-          python scripts/gaussian_orientation.py
+          python scripts/gaussian_orientation.py \
+            --output Library/VRMine/gaussian-orientation-evidence.json
           test -s Library/VRMine/gaussian-orientation-evidence.json
+      - name: Mark private artifact verification complete
+        if: steps.access.outputs.available == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          evidence = json.loads(Path('Library/VRMine/gaussian-orientation-evidence.json').read_text(encoding='utf-8'))
+          status = {
+              'schema_version': 1,
+              'status': 'verified',
+              'registered_artifacts': evidence['summary']['registered'],
+              'artifact_verification': evidence['summary']['artifact_verification'],
+              'orientation_decisions': evidence['summary']['orientation_decisions'],
+              'physical_up': evidence['summary']['physical_up'],
+          }
+          Path('Library/VRMine/gaussian-artifact-verification-status.json').write_text(
+              json.dumps(status, indent=2) + '\n', encoding='utf-8'
+          )
+          PY
+          echo "### 3DGS private artifact verification" >> "$GITHUB_STEP_SUMMARY"
+          echo "VERIFIED: every registered PLY was materialized and exact-hash geometry diagnostics were persisted." >> "$GITHUB_STEP_SUMMARY"
+      - name: Persist private artifact verification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: 3dgs-private-artifact-verification
+          path: |
+            Library/VRMine/gaussian-artifact-verification-status.json
+            Library/VRMine/gaussian-orientation-evidence.json
+          if-no-files-found: error
+          retention-days: 14
