@@ -100,8 +100,9 @@ jobs:
     needs: contracts
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    env:
-      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Emit per-source status before private materialization
@@ -109,44 +110,72 @@ jobs:
           python scripts/gaussian_orientation.py \
             --allow-missing \
             --output Library/VRMine/gaussian-orientation-evidence.json
-      - name: Determine private artifact availability
+      - name: Resolve private artifact authentication
         id: access
+        env:
+          STATIC_HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
         run: |
           mkdir -p Library/VRMine
-          if [ -z "$HF_TOKEN" ]; then
+          python -m pip install --quiet "huggingface_hub>=1.19,<2"
+
+          auth_method=""
+          set +e
+          oidc_token="$(hf auth token 2>Library/VRMine/hf-oidc-error.txt)"
+          oidc_status=$?
+          set -e
+          if [ "$oidc_status" -eq 0 ] && [ -n "$oidc_token" ]; then
+            echo "::add-mask::$oidc_token"
+            printf 'HF_TOKEN=%s\n' "$oidc_token" >> "$GITHUB_ENV"
+            auth_method="trusted_publisher_oidc"
+          elif [ -n "$STATIC_HF_TOKEN" ]; then
+            echo "::add-mask::$STATIC_HF_TOKEN"
+            printf 'HF_TOKEN=%s\n' "$STATIC_HF_TOKEN" >> "$GITHUB_ENV"
+            auth_method="repository_secret"
+          fi
+
+          if [ -z "$auth_method" ]; then
             echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "method=none" >> "$GITHUB_OUTPUT"
             python - <<'PY'
           import json
           from pathlib import Path
           registry = json.loads(Path('config/gaussian-splats.json').read_text(encoding='utf-8'))
           status = {
-              'schema_version': 1,
+              'schema_version': 2,
               'status': 'blocked',
-              'reason': 'HF_TOKEN repository secret is not configured',
+              'reason': 'No matching Hugging Face Trusted Publisher OIDC credential and no HF_TOKEN repository secret',
               'registered_artifacts': len(registry['environments']),
-              'next_action': 'configure a read-capable HF_TOKEN repository secret; do not place the token in source or logs',
+              'authentication_attempts': ['trusted_publisher_oidc', 'repository_secret'],
+              'oidc_resource': 'buckets/k4fka/kafka-data-lake',
+              'next_action': 'configure a Hugging Face Trusted Publisher for KAFKA2306/vrmine + 3dgs-contracts.yml on the kafka-data-lake bucket, or configure a read-capable HF_TOKEN secret; never put token material in source/logs',
           }
           Path('Library/VRMine/gaussian-artifact-verification-status.json').write_text(
               json.dumps(status, indent=2) + '\n', encoding='utf-8'
           )
           PY
-            echo "::warning::Private Gaussian artifact verification is BLOCKED because HF_TOKEN is not configured. Contract CI remains authoritative and green; artifact bytes are not claimed verified."
+            echo "::warning::Private Gaussian artifact verification is BLOCKED: no matching HF Trusted Publisher and no HF_TOKEN secret. Contract CI remains green; artifact bytes are not claimed verified."
             echo "### 3DGS private artifact verification" >> "$GITHUB_STEP_SUMMARY"
-            echo "BLOCKED: HF_TOKEN repository secret is not configured. 20/20 orientation decisions are still persisted as review/blocked without pretending artifact bytes were read." >> "$GITHUB_STEP_SUMMARY"
+            echo "BLOCKED: configure Hugging Face Trusted Publisher for buckets/k4fka/kafka-data-lake (preferred) or HF_TOKEN repository secret. 20/20 orientation decisions remain explicit without pretending private bytes were read." >> "$GITHUB_STEP_SUMMARY"
           else
             echo "available=true" >> "$GITHUB_OUTPUT"
-            python - <<'PY'
+            echo "method=$auth_method" >> "$GITHUB_OUTPUT"
+            AUTH_METHOD="$auth_method" python - <<'PY'
           import json
+          import os
           from pathlib import Path
           status = {
-              'schema_version': 1,
+              'schema_version': 2,
               'status': 'credential_available',
-              'reason': 'HF_TOKEN is configured; exact artifact materialization will run',
+              'authentication_method': os.environ['AUTH_METHOD'],
+              'oidc_resource': 'buckets/k4fka/kafka-data-lake',
+              'reason': 'short-lived OIDC or repository-secret credential is available; exact artifact materialization will run',
           }
           Path('Library/VRMine/gaussian-artifact-verification-status.json').write_text(
               json.dumps(status, indent=2) + '\n', encoding='utf-8'
           )
           PY
+            echo "Hugging Face artifact authentication method: $auth_method" >> "$GITHUB_STEP_SUMMARY"
           fi
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         if: steps.access.outputs.available == 'true'
@@ -161,7 +190,7 @@ jobs:
           path: .hf-cache-hub
       - name: Install artifact resolver dependencies
         if: steps.access.outputs.available == 'true'
-        run: python -m pip install "PyYAML>=6.0,<7" "huggingface-hub>=1.0,<2" "filelock>=3.0"
+        run: python -m pip install "PyYAML>=6.0,<7" "huggingface-hub>=1.19,<2" "filelock>=3.0"
       - name: Materialize and verify every registered PLY
         if: steps.access.outputs.available == 'true'
         env:
@@ -190,14 +219,18 @@ jobs:
           test -s Library/VRMine/gaussian-orientation-evidence.json
       - name: Mark private artifact verification complete
         if: steps.access.outputs.available == 'true'
+        env:
+          AUTH_METHOD: ${{ steps.access.outputs.method }}
         run: |
           python - <<'PY'
           import json
+          import os
           from pathlib import Path
           evidence = json.loads(Path('Library/VRMine/gaussian-orientation-evidence.json').read_text(encoding='utf-8'))
           status = {
-              'schema_version': 1,
+              'schema_version': 2,
               'status': 'verified',
+              'authentication_method': os.environ['AUTH_METHOD'],
               'registered_artifacts': evidence['summary']['registered'],
               'artifact_verification': evidence['summary']['artifact_verification'],
               'orientation_decisions': evidence['summary']['orientation_decisions'],
@@ -217,5 +250,6 @@ jobs:
           path: |
             Library/VRMine/gaussian-artifact-verification-status.json
             Library/VRMine/gaussian-orientation-evidence.json
+            Library/VRMine/hf-oidc-error.txt
           if-no-files-found: error
           retention-days: 14
