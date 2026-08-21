@@ -15,12 +15,18 @@ tasks:
     cmds:
       - node --test pages/games/answer-impostor/engine.test.mjs
       - node scripts/verify-perspective-cage.mjs
+      - node --check scripts/run-perspective-cage-unity.mjs
       - node --check scripts/run-gaussian-unity.mjs
       - node --check scripts/open-gaussian-project.mjs
       - node scripts/verify-gaussian-fixtures.mjs
       - node scripts/verify-gaussian-exhibition.mjs
       - node scripts/verify-gaussian-video-playlist.mjs
       - node scripts/verify-vpm.mjs
+
+  perspective-cage:verify-unity:
+    desc: Build the canonical Perspective Cage scene twice and run its Unity verification gate
+    cmds:
+      - node scripts/run-perspective-cage-unity.mjs
 
   gaussian:renderer:
     desc: Materialize the exact pinned VRChatGaussianSplatting Unity assets without example splats/scenes
