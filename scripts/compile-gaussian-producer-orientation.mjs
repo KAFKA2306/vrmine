@@ -227,7 +227,7 @@ async function main() {
   if (!exhibition.basis_contract) {
     throw new Error('Gaussian exhibition basis_contract is required');
   }
-  const basisContractPath = path.resolve(path.dirname(exhibitionPath), path.basename(exhibition.basis_contract));
+  const basisContractPath = path.resolve(exhibition.basis_contract);
   const basisContract = JSON.parse(await readFile(basisContractPath, 'utf8'));
   const result = compileProducerOrientation(registry, exhibition, {
     requireAll: !args.has('--allow-missing'),
