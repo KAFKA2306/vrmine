@@ -1,9 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { createReadStream, createWriteStream } from 'node:fs';
+import { createReadStream } from 'node:fs';
 import { access, copyFile, link, mkdir, readFile, rename, rm, stat } from 'node:fs/promises';
-import { pipeline } from 'node:stream/promises';
-import { Readable } from 'node:stream';
 import path from 'node:path';
 
 const configPath = process.env.VRMINE_GAUSSIAN_CONFIG ?? 'config/gaussian-splats.json';
@@ -12,16 +10,6 @@ const output = path.resolve(process.env.VRMINE_GAUSSIAN_OUTPUT ?? 'Library/VRMin
 
 async function exists(file) {
   try { await access(file); return true; } catch { return false; }
-}
-
-async function downloadToTemporary(url, destination) {
-  const temporary = `${destination}.partial`;
-  await rm(temporary, { force: true });
-  const response = await fetch(url);
-  if (!response.ok || response.body === null) throw new Error(`download failed: ${response.status} ${url}`);
-  const file = createWriteStream(temporary, { flags: 'wx' });
-  await pipeline(Readable.fromWeb(response.body), file);
-  return temporary;
 }
 
 async function sha256(file) {
@@ -43,19 +31,23 @@ async function validExisting(destination, environment) {
 }
 
 function resolveArtifact(environment) {
+  const source = environment.source ?? {};
+  if (typeof source.artifact_id !== 'string' || source.artifact_id.length === 0) {
+    throw new Error(`${environment.id}: source.artifact_id is required`);
+  }
   const rootValue = process.env.HF_CACHE_HUB_ROOT;
   if (!rootValue) throw new Error(`${environment.id}: HF_CACHE_HUB_ROOT is required for artifact source`);
   const root = path.resolve(rootValue);
   const resolver = path.join(root, 'scripts', 'artifact_cache.py');
-  const manifest = environment.source.artifact_manifest
-    ? path.resolve(environment.source.artifact_manifest)
+  const manifest = source.artifact_manifest
+    ? path.resolve(source.artifact_manifest)
     : path.join(root, 'artifacts.yaml');
   const python = process.env.HF_CACHE_HUB_PYTHON ?? process.env.PYTHON ?? process.env.PYTHON3 ?? 'python3';
   let stdout;
   try {
     stdout = execFileSync(
       python,
-      [resolver, 'resolve', '--manifest', manifest, '--id', environment.source.artifact_id],
+      [resolver, 'resolve', '--manifest', manifest, '--id', source.artifact_id],
       { encoding: 'utf8', env: process.env, stdio: ['ignore', 'pipe', 'pipe'] },
     );
   } catch (error) {
@@ -71,11 +63,11 @@ function resolveArtifact(environment) {
   if (payload.status !== 'READY') {
     throw new Error(`${environment.id}: artifact resolve failed: ${payload.error ?? 'unknown error'}`);
   }
-  if (payload.sha256 !== environment.source.sha256) {
-    throw new Error(`${environment.id}: resolver SHA-256 mismatch: expected ${environment.source.sha256}, got ${payload.sha256}`);
+  if (payload.sha256 !== source.sha256) {
+    throw new Error(`${environment.id}: resolver SHA-256 mismatch: expected ${source.sha256}, got ${payload.sha256}`);
   }
-  if (payload.size_bytes !== environment.source.size_bytes) {
-    throw new Error(`${environment.id}: resolver size mismatch: expected ${environment.source.size_bytes}, got ${payload.size_bytes}`);
+  if (payload.size_bytes !== source.size_bytes) {
+    throw new Error(`${environment.id}: resolver size mismatch: expected ${source.size_bytes}, got ${payload.size_bytes}`);
   }
   if (typeof payload.cache_path !== 'string' || payload.cache_path.length === 0) {
     throw new Error(`${environment.id}: resolver did not return cache_path`);
@@ -97,15 +89,6 @@ async function artifactToTemporary(environment, destination) {
   return { temporary, payload, localMaterialization };
 }
 
-function sourceMode(environment) {
-  const source = environment.source ?? {};
-  const hasArtifact = typeof source.artifact_id === 'string' && source.artifact_id.length > 0;
-  const hasLegacy = typeof source.download_url === 'string' && source.download_url.length > 0;
-  if (hasArtifact) return 'artifact';
-  if (hasLegacy) return 'legacy-url';
-  throw new Error(`${environment.id}: source requires artifact_id or download_url`);
-}
-
 await mkdir(output, { recursive: true });
 let reused = 0;
 let materialized = 0;
@@ -121,19 +104,8 @@ for (const environment of config.environments) {
     continue;
   }
 
-  const mode = sourceMode(environment);
-  let temporary;
-  let resolverPayload = null;
-  let localMaterialization = null;
-  if (mode === 'artifact') {
-    const resolved = await artifactToTemporary(environment, destination);
-    temporary = resolved.temporary;
-    resolverPayload = resolved.payload;
-    localMaterialization = resolved.localMaterialization;
-  } else {
-    temporary = await downloadToTemporary(environment.source.download_url, destination);
-  }
-
+  const resolved = await artifactToTemporary(environment, destination);
+  const { temporary, payload: resolverPayload, localMaterialization } = resolved;
   try {
     const info = await stat(temporary);
     const digest = await sha256(temporary);
@@ -146,15 +118,11 @@ for (const environment of config.environments) {
 
     await rename(temporary, destination);
     materialized++;
-    if (resolverPayload) {
-      if (resolverPayload.cache_hit === true) cacheHits++;
-      transferredBytes += Number(resolverPayload.transferred_bytes ?? 0);
-      if (localMaterialization === 'hardlink') hardlinks++;
-      if (localMaterialization === 'copy') copies++;
-      console.log(`${environment.id}: artifact materialized ${info.size} bytes ${digest} cache_hit=${resolverPayload.cache_hit === true} local=${localMaterialization}`);
-    } else {
-      console.log(`${environment.id}: materialized ${info.size} bytes ${digest}`);
-    }
+    if (resolverPayload.cache_hit === true) cacheHits++;
+    transferredBytes += Number(resolverPayload.transferred_bytes ?? 0);
+    if (localMaterialization === 'hardlink') hardlinks++;
+    if (localMaterialization === 'copy') copies++;
+    console.log(`${environment.id}: artifact materialized ${info.size} bytes ${digest} cache_hit=${resolverPayload.cache_hit === true} local=${localMaterialization}`);
   } catch (error) {
     await rm(temporary, { force: true });
     throw error;
