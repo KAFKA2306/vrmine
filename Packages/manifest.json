@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main",
     "com.vrchat.base": "3.9.0",
     "com.vrchat.worlds": "3.9.0",
     "com.vrmine.bootstrap": "file:com.vrmine.bootstrap",
