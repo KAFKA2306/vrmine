@@ -57,6 +57,7 @@ jobs:
           node --check scripts/verify-gaussian-presentation.mjs
           node --check scripts/verify-gaussian-video-playlist.mjs
           node --check scripts/verify-gaussian-artifact-resolver.mjs
+          node --check scripts/verify-gaussian-current-contract.mjs
           node --check scripts/materialize-gaussian-renderer.mjs
           node --check scripts/materialize-gaussian-sources.mjs
           node --check scripts/compile-gaussian-producer-orientation.mjs
@@ -72,6 +73,7 @@ jobs:
           node scripts/verify-gaussian-exhibition.mjs
           node scripts/verify-gaussian-presentation.mjs
           node scripts/verify-gaussian-artifact-resolver.mjs
+          node scripts/verify-gaussian-current-contract.mjs
           node scripts/test-gaussian-producer-orientation.mjs
           node scripts/verify-gaussian-producer-orientation.mjs
           node scripts/verify-gaussian-physical-up-consumer.mjs
