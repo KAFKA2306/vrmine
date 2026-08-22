@@ -1,10 +1,8 @@
 using System.IO;
 using System.Text;
-using MCPForUnity.Editor.Services;
 using UdonSharp;
 using UdonSharpEditor;
 using UnityEditor;
-using UnityEditor.PackageManager;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,33 +21,12 @@ public static class VRMineVerification
     static Vector3[] runtimeStartPositions;
     static Vector3[] chessStartPositions;
     static bool chessSnapPassed;
-    static string RequestPath => Path.GetFullPath(Path.Combine(Application.dataPath, "../Library/VRMineVerification.request"));
-    static string ResponsePath => Path.GetFullPath(Path.Combine(Application.dataPath, "../Library/VRMineVerification.response"));
 
     [InitializeOnLoadMethod]
     static void Initialize()
     {
-        EditorApplication.update -= RunRequest;
-        EditorApplication.update += RunRequest;
         EditorApplication.update -= RunRuntimeGate;
         EditorApplication.update += RunRuntimeGate;
-    }
-
-    static void RunRequest()
-    {
-        if (!File.Exists(RequestPath)) return;
-        string request = File.ReadAllText(RequestPath).Trim();
-        if (File.Exists(ResponsePath) && File.ReadAllText(ResponsePath) == request) return;
-        File.WriteAllText(ResponsePath, request);
-        if (request == "resolve")
-        {
-            EditorApplication.delayCall += () => Client.Resolve();
-            return;
-        }
-        if (request.StartsWith("gate")) EditorApplication.delayCall += RunGate;
-        if (request.StartsWith("runtime"))
-            StartRuntimeGate();
-        if (request.StartsWith("mcp")) StartMcp();
     }
 
     static void RunRuntimeGate()
@@ -258,15 +235,6 @@ public static class VRMineVerification
         EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
         SessionState.SetString("VRMine.RuntimePhase", phase);
         EditorApplication.isPlaying = true;
-    }
-
-    static async void StartMcp()
-    {
-        EditorPrefs.SetBool("MCPForUnity.UseHttpTransport", true);
-        EditorPrefs.SetString("MCPForUnity.HttpTransportScope", "local");
-        EditorPrefs.SetString("MCPForUnity.HttpUrl", "http://127.0.0.1:8080");
-        EditorPrefs.SetBool("MCPForUnity.AutoStartOnLoad", true);
-        await MCPServiceLocator.Bridge.StartAsync();
     }
 
     [MenuItem("VRMine/Verification/Run Gate")]
