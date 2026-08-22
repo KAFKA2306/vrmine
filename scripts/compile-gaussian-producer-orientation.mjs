@@ -10,13 +10,6 @@ const EXPECTED_POST_TRANSFORM = 'reflect-y';
 const EXPECTED_REPRESENTATION_FIELDS = new Set(['position', 'gaussian_rotation', 'spherical_harmonics']);
 const ALLOWED_SCOPES = new Set(['coordinate_basis_only', 'coordinate_basis_plus_physical_up']);
 
-// Audited legacy generation revision. Repository history proves the model basis,
-// not physical gravity. No other revision may use this fallback.
-const AUDITED_LEGACY_REPOSITORY = 'KAFKA2306/AutoPhotogrammetry';
-const AUDITED_LEGACY_REVISION = '1d48110c8abd891d7b0a19f9e6ce793901758742';
-const AUDITED_NERFSTUDIO_REVISION = '50e0e3c70c775e89333256213363badbf074f29d';
-const SQRT_HALF = Math.SQRT1_2;
-
 function finiteNumber(value) {
   return typeof value === 'number' && Number.isFinite(value);
 }
@@ -39,50 +32,71 @@ function quaternion(values, label) {
   return { x: values[0], y: values[1], z: values[2], w: values[3] };
 }
 
-function auditedLegacyBasisOrientation(registry, source) {
-  if (registry.source_repository !== AUDITED_LEGACY_REPOSITORY) return null;
-  if (registry.source_commit !== AUDITED_LEGACY_REVISION) return null;
-  if (source?.provenance?.artifact_repository_commit !== AUDITED_LEGACY_REVISION) return null;
-  if (!source?.sha256) return null;
+function validateConsumerApplication(id, consumer) {
+  if (!consumer || consumer.consumer !== EXPECTED_CONSUMER) {
+    throw new Error(`${id}: unsupported orientation consumer`);
+  }
+  if (consumer.revision !== PINNED_RENDERER_REVISION) {
+    throw new Error(`${id}: orientation was derived for a different renderer revision`);
+  }
+  if (consumer.mode !== EXPECTED_MODE || consumer.mandatory_post_transform !== EXPECTED_POST_TRANSFORM) {
+    throw new Error(`${id}: unsupported consumer orientation application mode`);
+  }
+  const representationAware = new Set(consumer.representation_aware ?? []);
+  for (const required of EXPECTED_REPRESENTATION_FIELDS) {
+    if (!representationAware.has(required)) {
+      throw new Error(`${id}: producer orientation contract is missing representation-aware field ${required}`);
+    }
+  }
+}
 
+function validateBasisContract(registry, contract) {
+  if (!contract) return;
+  if (contract.schema_version !== 1 || contract.status !== 'accepted') {
+    throw new Error('Gaussian artifact-set basis contract must be schema v1 and accepted');
+  }
+  if (contract.scope !== 'coordinate_basis_only') {
+    throw new Error(`Gaussian artifact-set basis contract has unsupported scope ${contract.scope}`);
+  }
+  if (contract.producer?.repository !== registry.source_repository) {
+    throw new Error('Gaussian artifact-set basis contract producer repository does not match registry');
+  }
+  if (contract.producer?.revision !== registry.source_commit) {
+    throw new Error('Gaussian artifact-set basis contract producer revision does not match registry');
+  }
+  if (contract.canonical_frame?.name !== 'unity-basis-y-up') {
+    throw new Error('Gaussian artifact-set basis contract canonical frame is unsupported');
+  }
+  if (contract.canonical_frame?.physical_gravity_claimed !== false) {
+    throw new Error('Coordinate-basis-only contract must not claim physical gravity');
+  }
+  if (contract.physical_up?.status !== 'review_required') {
+    throw new Error('Coordinate-basis-only contract must keep physical_up review_required');
+  }
+  validateConsumerApplication('artifact-set basis contract', contract.consumer_application);
+}
+
+function orientationFromBasisContract(source, contract) {
+  if (!contract) return null;
+  if (source?.provenance?.artifact_repository_commit !== contract.producer.revision) return null;
+  if (!source?.sha256) return null;
   return {
     schema_version: 2,
     status: 'accepted',
-    scope: 'coordinate_basis_only',
+    scope: contract.scope,
     ply_sha256: source.sha256,
-    canonical_frame: {
-      name: 'unity-basis-y-up',
-      physical_gravity_claimed: false,
-    },
-    derivation_method: 'audited-legacy-revision-nerfstudio-model-basis',
-    physical_up: {
-      status: 'review_required',
-      observable_from_sfm_alone: false,
-      authority: null,
-      reason: 'legacy run proves Nerfstudio model +Z basis only; processed transforms/gravity evidence were not retained',
-    },
-    audit: {
-      repository: AUDITED_LEGACY_REPOSITORY,
-      revision: AUDITED_LEGACY_REVISION,
-      nerfstudio_revision: AUDITED_NERFSTUDIO_REVISION,
-      limitation: 'basis conversion only; residual physical horizon tilt is intentionally unresolved',
-    },
-    consumer_application: {
-      consumer: EXPECTED_CONSUMER,
-      revision: PINNED_RENDERER_REVISION,
-      mode: EXPECTED_MODE,
-      quaternion_xyzw: [SQRT_HALF, 0, 0, SQRT_HALF],
-      pivot: [0, 0, 0],
-      mandatory_post_transform: EXPECTED_POST_TRANSFORM,
-      representation_aware: ['position', 'gaussian_rotation', 'spherical_harmonics'],
-    },
+    canonical_frame: contract.canonical_frame,
+    derivation_method: 'explicit-artifact-set-coordinate-basis-contract',
+    physical_up: contract.physical_up,
+    producer: contract.producer,
+    consumer_application: contract.consumer_application,
   };
 }
 
-function resolveOrientation(registry, source) {
+function resolveOrientation(source, basisContract) {
   if (source.orientation) return { orientation: source.orientation, authority: 'producer-artifact-metadata' };
-  const legacy = auditedLegacyBasisOrientation(registry, source);
-  if (legacy) return { orientation: legacy, authority: 'audited-legacy-basis' };
+  const contracted = orientationFromBasisContract(source, basisContract);
+  if (contracted) return { orientation: contracted, authority: 'artifact-set-basis-contract' };
   return { orientation: null, authority: null };
 }
 
@@ -121,26 +135,15 @@ function validateBasisOrientation(id, source, orientation) {
     throw new Error(`${id}: accepted physical_up cannot be hidden behind coordinate_basis_only scope`);
   }
 
-  const consumer = orientation.consumer_application;
-  if (!consumer || consumer.consumer !== EXPECTED_CONSUMER) {
-    throw new Error(`${id}: unsupported orientation consumer`);
-  }
-  if (consumer.revision !== PINNED_RENDERER_REVISION) {
-    throw new Error(`${id}: orientation was derived for a different renderer revision`);
-  }
-  if (consumer.mode !== EXPECTED_MODE || consumer.mandatory_post_transform !== EXPECTED_POST_TRANSFORM) {
-    throw new Error(`${id}: unsupported consumer orientation application mode`);
-  }
-  const representationAware = new Set(consumer.representation_aware ?? []);
-  for (const required of EXPECTED_REPRESENTATION_FIELDS) {
-    if (!representationAware.has(required)) {
-      throw new Error(`${id}: producer orientation contract is missing representation-aware field ${required}`);
-    }
-  }
+  validateConsumerApplication(id, orientation.consumer_application);
   return null;
 }
 
-export function compileProducerOrientation(registry, exhibition, { requireAll = true } = {}) {
+export function compileProducerOrientation(
+  registry,
+  exhibition,
+  { requireAll = true, basisContract = null } = {},
+) {
   if (!registry || !Array.isArray(registry.environments)) {
     throw new Error('Gaussian registry environments are missing');
   }
@@ -150,6 +153,7 @@ export function compileProducerOrientation(registry, exhibition, { requireAll = 
   if (exhibition.renderer !== PINNED_RENDERER) {
     throw new Error(`Unexpected Gaussian renderer: ${exhibition.renderer}`);
   }
+  validateBasisContract(registry, basisContract);
 
   const existing = new Map(exhibition.import_overrides.map((entry) => [entry.id, entry]));
   const compiled = [];
@@ -162,10 +166,10 @@ export function compileProducerOrientation(registry, exhibition, { requireAll = 
     if (!id || !source?.sha256) {
       throw new Error('Every Gaussian environment requires id and source.sha256');
     }
-    const resolved = resolveOrientation(registry, source);
+    const resolved = resolveOrientation(source, basisContract);
     const orientation = resolved.orientation;
     if (!orientation) {
-      unresolved.push({ id, reason: 'orientation metadata missing and no audited legacy basis applies' });
+      unresolved.push({ id, reason: 'orientation metadata missing and no explicit artifact-set basis contract applies' });
       continue;
     }
     const unresolvedReason = validateBasisOrientation(id, source, orientation);
@@ -220,13 +224,21 @@ async function main() {
   const exhibitionPath = process.env.VRMINE_GAUSSIAN_EXHIBITION ?? 'config/gaussian-exhibition.json';
   const registry = JSON.parse(await readFile(registryPath, 'utf8'));
   const exhibition = JSON.parse(await readFile(exhibitionPath, 'utf8'));
-  const result = compileProducerOrientation(registry, exhibition, { requireAll: !args.has('--allow-missing') });
+  if (!exhibition.basis_contract) {
+    throw new Error('Gaussian exhibition basis_contract is required');
+  }
+  const basisContractPath = path.resolve(path.dirname(exhibitionPath), path.basename(exhibition.basis_contract));
+  const basisContract = JSON.parse(await readFile(basisContractPath, 'utf8'));
+  const result = compileProducerOrientation(registry, exhibition, {
+    requireAll: !args.has('--allow-missing'),
+    basisContract,
+  });
   if (args.has('--write')) {
     await writeFile(exhibitionPath, `${JSON.stringify(result.exhibition, null, 2)}\n`, 'utf8');
   }
-  const legacyCount = Object.values(result.authorities).filter((value) => value === 'audited-legacy-basis').length;
+  const contractCount = Object.values(result.authorities).filter((value) => value === 'artifact-set-basis-contract').length;
   console.log(
-    `compiled producer basis overrides=${result.compiled_count} unresolved=${result.unresolved.length} audited_legacy=${legacyCount} physical_up=${JSON.stringify(result.physical_up_counts)}`,
+    `compiled producer basis overrides=${result.compiled_count} unresolved=${result.unresolved.length} artifact_set_contract=${contractCount} physical_up=${JSON.stringify(result.physical_up_counts)}`,
   );
 }
 
