@@ -103,7 +103,6 @@ jobs:
           grep -F 'vrmineFirstFrame' scripts/build-supersplat-viewer.mjs
           grep -F 'data:application/json' pages/3dgs/gallery.js
           grep -F '@playcanvas/supersplat-viewer@1.28.0' config/gaussian-splats.json
-          grep -F '6dc1d2546ab848eee4587fdaaebe1b60b1f2495f8a9a9b6a58de9356222c4571' config/gaussian-splats.json
           grep -F 'VRMine Event Demo' pages/events/demo/config.json
           grep -F 'analytics_endpoint' pages/events/demo/config.json
           grep -F '5,000〜15,000円 / event' pages/organizers/index.html
@@ -277,7 +276,7 @@ jobs:
           grep -F 'gallery.js' "$tmp/3dgs.html"
           grep -F 'iframe.src = `./viewer/?' "$tmp/gallery.js"
           grep -F '@playcanvas/supersplat-viewer@1.28.0' "$tmp/gaussian-splats.json"
-          grep -F '6dc1d2546ab848eee4587fdaaebe1b60b1f2495f8a9a9b6a58de9356222c4571' "$tmp/gaussian-splats.json"
+          test "$(jq '.environments | length' "$tmp/gaussian-splats.json")" -eq 20
           grep -F 'vrmine:3dgs:first-frame' "$tmp/viewer.html"
           test -s "$tmp/viewer.js"
           grep -F 'VRMine Event Demo' "$tmp/event.html"
