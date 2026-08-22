@@ -4,7 +4,9 @@ import { compileProducerOrientation } from './compile-gaussian-producer-orientat
 
 const sha = 'a'.repeat(64);
 const sqrtHalf = Math.sqrt(0.5);
-const legacyRevision = '1d48110c8abd891d7b0a19f9e6ce793901758742';
+const producerRevision = '1d48110c8abd891d7b0a19f9e6ce793901758742';
+const rendererRevision = 'f96c0117cba518ff84d059d36f16909b873e23aa';
+const renderer = `MichaelMoroz/VRChatGaussianSplatting@${rendererRevision}`;
 const acceptedBasisOrientation = {
   schema_version: 2,
   status: 'accepted',
@@ -18,13 +20,32 @@ const acceptedBasisOrientation = {
   },
   consumer_application: {
     consumer: 'MichaelMoroz/VRChatGaussianSplatting',
-    revision: 'f96c0117cba518ff84d059d36f16909b873e23aa',
+    revision: rendererRevision,
     mode: 'horizon_alignment_pre_y_reflection',
     quaternion_xyzw: [sqrtHalf, 0, 0, sqrtHalf],
     pivot: [0, 0, 0],
     mandatory_post_transform: 'reflect-y',
     representation_aware: ['position', 'gaussian_rotation', 'spherical_harmonics'],
   },
+};
+
+const basisContract = {
+  schema_version: 1,
+  status: 'accepted',
+  scope: 'coordinate_basis_only',
+  producer: {
+    repository: 'KAFKA2306/AutoPhotogrammetry',
+    revision: producerRevision,
+    nerfstudio_revision: '50e0e3c70c775e89333256213363badbf074f29d',
+    coordinate_frame: 'nerfstudio-model-basis',
+  },
+  canonical_frame: { name: 'unity-basis-y-up', physical_gravity_claimed: false },
+  physical_up: {
+    status: 'review_required',
+    observable_from_sfm_alone: false,
+    authority: null,
+  },
+  consumer_application: acceptedBasisOrientation.consumer_application,
 };
 
 function registry(orientation = acceptedBasisOrientation) {
@@ -34,14 +55,14 @@ function registry(orientation = acceptedBasisOrientation) {
   };
 }
 
-function legacyRegistry({ revision = legacyRevision, artifactRevision = legacyRevision } = {}) {
+function contractedRegistry({ revision = producerRevision, artifactRevision = producerRevision } = {}) {
   return {
     schema_version: 1,
     source_repository: 'KAFKA2306/AutoPhotogrammetry',
     source_commit: revision,
     environments: [
       {
-        id: 'legacy-fixture',
+        id: 'contract-fixture',
         source: {
           sha256: sha,
           provenance: { artifact_repository_commit: artifactRevision },
@@ -52,7 +73,7 @@ function legacyRegistry({ revision = legacyRevision, artifactRevision = legacyRe
 }
 
 const exhibition = {
-  renderer: 'MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa',
+  renderer,
   import_overrides: [{ id: 'fixture', crop: { enabled: false } }],
 };
 
@@ -78,28 +99,32 @@ const exhibition = {
 }
 
 {
-  const legacyExhibition = { ...exhibition, import_overrides: [] };
-  const result = compileProducerOrientation(legacyRegistry(), legacyExhibition);
+  const contractedExhibition = { ...exhibition, import_overrides: [] };
+  const result = compileProducerOrientation(contractedRegistry(), contractedExhibition, { basisContract });
   assert.equal(result.compiled_count, 1);
   assert.equal(result.unresolved.length, 0);
-  assert.equal(result.authorities['legacy-fixture'], 'audited-legacy-basis');
+  assert.equal(result.authorities['contract-fixture'], 'artifact-set-basis-contract');
   assert.equal(result.physical_up_counts.review_required, 1);
   const override = result.exhibition.import_overrides[0];
   assert.equal(override.alignment.scope, 'coordinate_basis_only');
   assert.equal(override.alignment.physicalUpStatus, 'review_required');
-  assert.equal(override.alignment.authority, 'audited-legacy-basis');
+  assert.equal(override.alignment.authority, 'artifact-set-basis-contract');
   assert.ok(Math.abs(override.alignment.rotation.x - sqrtHalf) < 1e-12);
   assert.ok(Math.abs(override.alignment.rotation.w - sqrtHalf) < 1e-12);
 }
 
 {
-  const legacyExhibition = { ...exhibition, import_overrides: [] };
+  const contractedExhibition = { ...exhibition, import_overrides: [] };
   assert.throws(
-    () => compileProducerOrientation(legacyRegistry({ revision: '0'.repeat(40) }), legacyExhibition),
+    () => compileProducerOrientation(contractedRegistry({ revision: '0'.repeat(40) }), contractedExhibition, { basisContract }),
+    /producer revision does not match registry/,
+  );
+  assert.throws(
+    () => compileProducerOrientation(contractedRegistry({ artifactRevision: '0'.repeat(40) }), contractedExhibition, { basisContract }),
     /basis unresolved/,
   );
   assert.throws(
-    () => compileProducerOrientation(legacyRegistry({ artifactRevision: '0'.repeat(40) }), legacyExhibition),
+    () => compileProducerOrientation(contractedRegistry(), contractedExhibition),
     /basis unresolved/,
   );
 }

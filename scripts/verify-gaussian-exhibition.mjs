@@ -20,6 +20,7 @@ assert.equal(sources.environments.length, exhibition.final_expected_exhibits, 't
 assert.equal(exhibition.final_expected_exhibits, 20, 'the #72 final product still requires exactly 20 exhibits');
 assert.equal(exhibition.canonical_platform, 'windows');
 assert.equal(exhibition.source_registry, 'config/gaussian-splats.json');
+assert.equal(exhibition.basis_contract, 'config/gaussian-basis-contract.json');
 assert.equal(exhibition.renderer, sources.renderers.unity_vrchat, 'scene renderer must match the canonical source registry');
 assert.equal((artifactManifestSource.match(/^  - id:/gm) ?? []).length, sources.environments.length, 'artifact manifest must cover every registered source');
 assert.match(artifactManifestSource, /bucket: k4fka\/kafka-data-lake/, 'Gaussian artifacts must use the canonical shared Storage Bucket');
@@ -46,10 +47,8 @@ for (const [index, source] of sources.environments.entries()) {
   ids.add(source.id);
   assert.ok(Number.isInteger(source.source?.size_bytes) && source.source.size_bytes > 0, `${source.id}: size_bytes missing`);
   assert.match(source.source?.sha256 ?? '', /^[0-9a-f]{64}$/, `${source.id}: sha256 missing or invalid`);
-  const hasArtifact = typeof source.source?.artifact_id === 'string' && source.source.artifact_id.length > 0;
-  const hasLegacy = typeof source.source?.download_url === 'string' && source.source.download_url.length > 0;
-  assert.ok(hasArtifact || hasLegacy, `${source.id}: source requires artifact_id or download_url`);
-  if (hasLegacy) assert.match(source.source.download_url, /^https:\/\//, `${source.id}: download_url must be HTTPS`);
+  assert.ok(typeof source.source?.artifact_id === 'string' && source.source.artifact_id.length > 0, `${source.id}: artifact_id is required`);
+  assert.equal(Object.hasOwn(source.source, 'download_url'), false, `${source.id}: direct download source is not permitted`);
 }
 
 const finiteVector = (value) => value && ['x', 'y', 'z'].every((key) => Number.isFinite(value[key]));
@@ -103,9 +102,9 @@ assert.ok(temporaryStat >= 0 && temporaryHash >= 0 && promotion >= 0, 'PLY mater
 assert.ok(temporaryStat < promotion && temporaryHash < promotion, 'PLY size/hash verification must happen before destination promotion');
 assert.ok(!materializerSource.includes('await rm(destination, { force: true });'), 'PLY materializer must not delete the destination before verified promotion');
 assert.doesNotMatch(materializerSource, /spawnSync|gitShowToTemporary|git\s+\[/, 'PLY materializer must not depend on a source repository checkout');
-assert.match(materializerSource, /environment\.source\.artifact_id/, 'PLY materializer must support hf-cache-hub artifact IDs');
+assert.match(materializerSource, /source\.artifact_id/, 'PLY materializer must require hf-cache-hub artifact IDs');
 assert.match(materializerSource, /HF_CACHE_HUB_PYTHON/, 'PLY materializer must support the documented hf-cache-hub Python environment');
-assert.match(materializerSource, /environment\.source\.download_url/, 'PLY materializer must retain legacy direct URL support during migration');
+assert.doesNotMatch(materializerSource, /download_url|downloadToTemporary|fetch\(/, 'PLY materializer must use only the artifact resolver');
 
 assert.match(taskfileSource, /gaussian:open:/, 'Taskfile must expose the one-command Gaussian project opener');
 assert.match(taskfileSource, /node scripts\/open-gaussian-project\.mjs/, 'gaussian:open must use the canonical launcher');

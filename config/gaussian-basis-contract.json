@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "status": "accepted",
+  "scope": "coordinate_basis_only",
+  "producer": {
+    "repository": "KAFKA2306/AutoPhotogrammetry",
+    "revision": "1d48110c8abd891d7b0a19f9e6ce793901758742",
+    "nerfstudio_revision": "50e0e3c70c775e89333256213363badbf074f29d",
+    "coordinate_frame": "nerfstudio-model-basis"
+  },
+  "artifact_manifest": "config/gaussian-artifacts.yaml",
+  "canonical_frame": {
+    "name": "unity-basis-y-up",
+    "physical_gravity_claimed": false
+  },
+  "physical_up": {
+    "status": "review_required",
+    "observable_from_sfm_alone": false,
+    "authority": null,
+    "reason": "This artifact set has a reproducible model-basis conversion, but no independently observed gravity authority."
+  },
+  "consumer_application": {
+    "consumer": "MichaelMoroz/VRChatGaussianSplatting",
+    "revision": "f96c0117cba518ff84d059d36f16909b873e23aa",
+    "mode": "horizon_alignment_pre_y_reflection",
+    "quaternion_xyzw": [
+      0.7071067811865476,
+      0.0,
+      0.0,
+      0.7071067811865476
+    ],
+    "pivot": [0.0, 0.0, 0.0],
+    "mandatory_post_transform": "reflect-y",
+    "representation_aware": [
+      "position",
+      "gaussian_rotation",
+      "spherical_harmonics"
+    ]
+  }
+}
