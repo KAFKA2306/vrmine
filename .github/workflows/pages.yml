@@ -6,6 +6,8 @@ on:
     paths:
       - "pages/**"
       - "config/gaussian-splats.json"
+      - "config/gaussian-artifacts.yaml"
+      - "config/gaussian-basis-contract.json"
       - "scripts/verify-gaussian-fixtures.mjs"
       - "scripts/build-supersplat-viewer.mjs"
       - "scripts/materialize-browser-smoke-source.mjs"
@@ -16,6 +18,8 @@ on:
     paths:
       - "pages/**"
       - "config/gaussian-splats.json"
+      - "config/gaussian-artifacts.yaml"
+      - "config/gaussian-basis-contract.json"
       - "scripts/verify-gaussian-fixtures.mjs"
       - "scripts/build-supersplat-viewer.mjs"
       - "scripts/materialize-browser-smoke-source.mjs"
@@ -70,6 +74,8 @@ jobs:
             pages/3dgs/index.html
             pages/3dgs/gallery.js
             config/gaussian-splats.json
+            config/gaussian-artifacts.yaml
+            config/gaussian-basis-contract.json
             scripts/build-supersplat-viewer.mjs
             scripts/materialize-browser-smoke-source.mjs
             scripts/verify-browser-first-frame.mjs
@@ -131,9 +137,27 @@ jobs:
           test -s _site/3dgs/viewer/index.js
           grep -F 'vrmine:3dgs:first-frame' _site/3dgs/viewer/index.html
 
+      - name: Check out pinned hf-cache-hub artifact resolver
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: KAFKA2306/hf-cache-hub
+          ref: b41ca5a6601a6ac7724cb09b3fe90554c7356d69
+          path: .hf-cache-hub
+
+      - name: Install artifact resolver dependencies
+        run: python -m pip install "PyYAML>=6.0,<7" "huggingface-hub>=1.19,<2" "filelock>=3.0"
+
       - name: Materialize hash-verified real PLY for runtime proof
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_HOME: ${{ runner.temp }}/hf-cache
+          HF_CACHE_HUB_ROOT: ${{ github.workspace }}/.hf-cache-hub
         run: |
           set -euo pipefail
+          if [ -z "${HF_TOKEN:-}" ]; then
+            echo "HF_TOKEN is required to read the private Gaussian artifact bucket" >&2
+            exit 1
+          fi
           node scripts/materialize-browser-smoke-source.mjs \
             huejotzingo \
             _site/3dgs/ci/huejotzingo.ply \
@@ -166,7 +190,8 @@ jobs:
             if curl --fail --silent http://127.0.0.1:8000/3dgs/viewer/ >/dev/null; then break; fi
             sleep 1
           done
-          test "$(curl --fail --silent http://127.0.0.1:8000/3dgs/ci/huejotzingo.ply | wc -c)" -eq 38085465
+          expected_bytes="$(jq -r '.environments[] | select(.id == "huejotzingo") | .source.size_bytes' config/gaussian-splats.json)"
+          test "$(curl --fail --silent http://127.0.0.1:8000/3dgs/ci/huejotzingo.ply | wc -c)" -eq "$expected_bytes"
           url='http://127.0.0.1:8000/3dgs/viewer/?content=../ci/huejotzingo.ply&settings=../ci/settings.json&webgl&noui&vrmine_id=huejotzingo&vrmine_token=1'
           "$chrome" \
             --headless=new \
