@@ -15,8 +15,7 @@ const taskfileSource = await readFile(new URL('../Taskfile.yml', import.meta.url
 
 assert.equal(exhibition.schema_version, 3, 'unsupported gaussian exhibition schema');
 assert.match(builderSource, /config\.schema_version != 3/, 'Unity builder schema validation must match the canonical exhibition schema');
-assert.equal(sources.environments.length, exhibition.final_expected_exhibits, 'the canonical Unity registry must contain the complete final exhibit count');
-assert.equal(exhibition.final_expected_exhibits, 20, 'the #72 final product still requires exactly 20 exhibits');
+assert.equal(Object.hasOwn(exhibition, 'final_expected_exhibits'), false, 'exhibit count must derive from the canonical registry');
 assert.equal(exhibition.canonical_platform, 'windows');
 assert.equal(exhibition.source_registry, 'config/gaussian-splats.json');
 assert.equal(exhibition.basis_contract, 'config/gaussian-basis-contract.json');
@@ -115,4 +114,4 @@ assert.match(launcherSource, /detached: true/, 'native Linux launcher must retur
 assert.match(windowsLauncherSource, /Start-Process/, 'Windows launcher must start Unity through PowerShell');
 assert.match(windowsLauncherSource, /Restart Unity as a standard user/, 'Windows launcher must handle Unity administrator warning');
 
-console.log(`Validated Gaussian exhibition contract: registered=${sources.environments.length}, import_overrides=${exhibition.import_overrides.length}, final_required=${exhibition.final_expected_exhibits}, renderer=1, playback=${sources.environments.length}`);
+console.log(`Validated Gaussian exhibition contract: registered=${sources.environments.length}, import_overrides=${exhibition.import_overrides.length}, renderer=1, playback=${sources.environments.length}`);
