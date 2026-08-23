@@ -61,8 +61,16 @@ function validateBasisContract(registry, contract) {
   if (contract.producer?.repository !== registry.source_repository) {
     throw new Error('Gaussian artifact-set basis contract producer repository does not match registry');
   }
-  if (contract.producer?.revision !== registry.source_commit) {
-    throw new Error('Gaussian artifact-set basis contract producer revision does not match registry');
+  if (typeof contract.producer?.revision !== 'string' || !/^[0-9a-f]{40}$/.test(contract.producer.revision)) {
+    throw new Error('Gaussian artifact-set basis contract producer revision must be an immutable commit SHA');
+  }
+  if (typeof contract.artifact_manifest !== 'string' || contract.artifact_manifest.length === 0) {
+    throw new Error('Gaussian artifact-set basis contract artifact manifest is missing');
+  }
+  for (const environment of registry.environments ?? []) {
+    if (environment.source?.artifact_manifest !== contract.artifact_manifest) {
+      throw new Error(`${environment.id ?? 'unknown'}: artifact-set basis contract does not match source artifact manifest`);
+    }
   }
   if (contract.canonical_frame?.name !== 'unity-basis-y-up') {
     throw new Error('Gaussian artifact-set basis contract canonical frame is unsupported');
@@ -78,7 +86,7 @@ function validateBasisContract(registry, contract) {
 
 function orientationFromBasisContract(source, contract) {
   if (!contract) return null;
-  if (source?.provenance?.artifact_repository_commit !== contract.producer.revision) return null;
+  if (source?.artifact_manifest !== contract.artifact_manifest) return null;
   if (!source?.sha256) return null;
   return {
     schema_version: 2,
