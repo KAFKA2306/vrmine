@@ -41,7 +41,6 @@
     "field_of_view": 55.0
   },
   "video_player": {
-    "prefab_path": "Packages/com.vrchat.worlds/Samples/UdonExampleScene/Prefabs/VideoPlayers/UdonSyncPlayer (Unity).prefab",
-    "playlist_manifest": "config/gaussian-video-playlist.json"
+    "prefab_path": "Packages/com.vrchat.worlds/Samples/UdonExampleScene/Prefabs/VideoPlayers/UdonSyncPlayer (Unity).prefab"
   }
 }
