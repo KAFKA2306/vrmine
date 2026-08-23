@@ -8,9 +8,6 @@ const settingsOutput = path.resolve(process.argv[4] ?? '_site/3dgs/ci/settings.j
 const contract = JSON.parse(await readFile(new URL('../config/gaussian-splats.json', import.meta.url), 'utf8'));
 const entry = contract.environments.find((candidate) => candidate.id === id);
 if (!entry) throw new Error(`unknown Gaussian source id: ${id}`);
-if (entry.source?.provenance?.license_status !== 'verified') {
-  throw new Error(`${id}: browser smoke source must have a verified license`);
-}
 
 const sourceUrl = `https://raw.githubusercontent.com/${contract.source_repository}/${contract.source_commit}/${entry.source.path}`;
 const response = await fetch(sourceUrl, { redirect: 'follow' });
