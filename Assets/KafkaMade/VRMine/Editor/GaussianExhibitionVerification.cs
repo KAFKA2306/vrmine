@@ -13,8 +13,12 @@ using VRC.SDK3.Editor;
 public static class GaussianExhibitionVerification
 {
     const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity";
+    const string RegistryPath = "config/gaussian-splats.json";
     const string GaussianSplatObjectTypeName = "GaussianSplatting.GaussianSplatObject";
     const string GaussianSplatRendererTypeName = "GaussianSplatting.GaussianSplatRenderer";
+
+    [Serializable] sealed class Registry { public RegistryEntry[] environments; }
+    [Serializable] sealed class RegistryEntry { public string id; }
 
     [Serializable]
     sealed class RegisteredMeasurement
@@ -78,10 +82,11 @@ public static class GaussianExhibitionVerification
         Type rendererType = FindType(GaussianSplatRendererTypeName);
         if (splatType == null || rendererType == null) throw new InvalidOperationException("Gaussian runtime types are missing");
 
+        int registered = CountRegisteredSources();
         var evidence = new RegisteredEvidence
         {
             activeScene = scene.path,
-            registered = CountRegisteredSources(),
+            registered = registered,
             gaussianSplatObjects = CountSceneComponents(splatType, scene),
             prefabs = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs" }).Length,
             exhibits = CountNamed(scene, "Exhibit_"),
@@ -103,24 +108,29 @@ public static class GaussianExhibitionVerification
         AssetDatabase.SaveAssets();
         evidence.sceneDirty = scene.isDirty;
 
-        if (evidence.descriptors != 1 || evidence.pipelineManagers != 1)
-            throw new InvalidOperationException("World bootstrap counts are invalid: descriptors=" + evidence.descriptors + ", pipelineManagers=" + evidence.pipelineManagers);
+        if (registered <= 0) throw new InvalidOperationException("Canonical Gaussian registry is empty.");
+        if (evidence.gaussianSplatObjects != registered || evidence.exhibits != registered || evidence.pads != registered || evidence.labels != registered)
+            throw new InvalidOperationException("Scene does not materialize every registered exhibit: registered=" + registered + ", splats=" + evidence.gaussianSplatObjects + ", exhibits=" + evidence.exhibits + ", pads=" + evidence.pads + ", labels=" + evidence.labels);
+        if (evidence.descriptors != 1 || evidence.pipelineManagers != 1 || evidence.renderers != 1)
+            throw new InvalidOperationException("World bootstrap counts are invalid: descriptors=" + evidence.descriptors + ", pipelineManagers=" + evidence.pipelineManagers + ", renderers=" + evidence.renderers);
 
         string evidencePath = "Library/VRMine/gaussian-u2-evidence.json";
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(evidencePath));
         System.IO.File.WriteAllText(evidencePath, JsonUtility.ToJson(evidence, true));
         foreach (RegisteredMeasurement measurement in evidence.measurements)
-            Debug.Log("Gaussian U2 measurement: id=" + measurement.id + ", extent=" + measurement.extent.ToString("F6") + ", floorBottom=" + measurement.floorBottom.ToString("F6") + ", position=" + measurement.position);
-        Debug.Log("Gaussian U2 evidence: scene=" + evidence.activeScene + ", registered=" + evidence.registered + ", splats=" + evidence.gaussianSplatObjects + ", prefabs=" + evidence.prefabs + ", exhibits=" + evidence.exhibits + ", pads=" + evidence.pads + ", labels=" + evidence.labels + ", renderer=" + evidence.renderers + ", descriptor=" + evidence.descriptors + ", pipelineManager=" + evidence.pipelineManagers + ", spawn=" + evidence.spawnPoints + ", referenceCamera=" + evidence.referenceCameras + ", missingScripts=" + evidence.missingScripts + ", dirty=" + evidence.sceneDirty + ", path=" + evidencePath);
+            Debug.Log("Gaussian measurement: id=" + measurement.id + ", extent=" + measurement.extent.ToString("F6") + ", floorBottom=" + measurement.floorBottom.ToString("F6") + ", position=" + measurement.position);
+        Debug.Log("Gaussian evidence: scene=" + evidence.activeScene + ", registered=" + evidence.registered + ", splats=" + evidence.gaussianSplatObjects + ", prefabs=" + evidence.prefabs + ", exhibits=" + evidence.exhibits + ", pads=" + evidence.pads + ", labels=" + evidence.labels + ", renderer=" + evidence.renderers + ", descriptor=" + evidence.descriptors + ", pipelineManager=" + evidence.pipelineManagers + ", spawn=" + evidence.spawnPoints + ", referenceCamera=" + evidence.referenceCameras + ", missingScripts=" + evidence.missingScripts + ", dirty=" + evidence.sceneDirty + ", path=" + evidencePath);
     }
 
     static int CountRegisteredSources()
     {
-        string json = System.IO.File.ReadAllText("config/gaussian-splats.json");
-        int count = 0;
-        int cursor = 0;
-        while ((cursor = json.IndexOf("\"id\"", cursor, StringComparison.Ordinal)) >= 0) { count++; cursor += 4; }
-        return count;
+        if (!System.IO.File.Exists(RegistryPath)) throw new InvalidOperationException("Canonical Gaussian registry is missing: " + RegistryPath);
+        Registry registry = JsonUtility.FromJson<Registry>(System.IO.File.ReadAllText(RegistryPath));
+        if (registry == null || registry.environments == null) throw new InvalidOperationException("Canonical Gaussian registry could not be parsed.");
+        var ids = new HashSet<string>();
+        foreach (RegistryEntry entry in registry.environments)
+            if (entry == null || string.IsNullOrEmpty(entry.id) || !ids.Add(entry.id)) throw new InvalidOperationException("Canonical Gaussian registry contains a missing or duplicate id.");
+        return registry.environments.Length;
     }
 
     static int CountNamed(Scene scene, string prefix)
@@ -192,11 +202,13 @@ public static class GaussianExhibitionVerification
 
         Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
         var errors = new List<string>();
+        int registered = CountRegisteredSources();
+        if (registered <= 0) errors.Add("canonical registry must contain at least one exhibit");
 
         if (CountSceneComponents<VRCSceneDescriptor>(scene) != 1) errors.Add("VRCSceneDescriptor count must be exactly 1");
         if (CountSceneComponents<PipelineManager>(scene) != 1) errors.Add("PipelineManager count must be exactly 1");
         if (CountSceneComponents<GaussianVideoPlaylist>(scene) != 1) errors.Add("GaussianVideoPlaylist count must be exactly 1");
-        if (CountSceneComponents<GaussianVideoPlaylistAction>(scene) != 23) errors.Add("playlist action count must be 23 (20 direct + prev/replay/next)");
+        if (CountSceneComponents<GaussianVideoPlaylistAction>(scene) != registered + 3) errors.Add("playlist action count must equal registered exhibits plus prev/replay/next controls");
 
         GameObject floor = GameObject.Find("WalkableFloor");
         if (floor == null || floor.scene != scene || floor.GetComponent<Collider>() == null) errors.Add("WalkableFloor collider is missing");
@@ -219,22 +231,13 @@ public static class GaussianExhibitionVerification
         }
         else
         {
-            if (CountSceneComponents(splatType, scene) != 20) errors.Add("active GaussianSplatObject count must be exactly 20");
+            if (CountSceneComponents(splatType, scene) != registered) errors.Add("active GaussianSplatObject count must match canonical registry");
             if (CountSceneComponents(rendererType, scene) != 1) errors.Add("active GaussianSplatRenderer count must be exactly 1");
         }
 
-        int exhibitRoots = 0;
-        int missingScripts = 0;
-        foreach (GameObject root in scene.GetRootGameObjects())
-        {
-            Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
-            foreach (Transform transform in transforms)
-            {
-                if (transform.name.StartsWith("Exhibit_", StringComparison.Ordinal)) exhibitRoots++;
-                missingScripts += GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(transform.gameObject);
-            }
-        }
-        if (exhibitRoots != 20) errors.Add("exhibit GameObject count must be exactly 20");
+        int exhibitRoots = CountNamed(scene, "Exhibit_");
+        int missingScripts = CountMissingScripts(scene);
+        if (exhibitRoots != registered) errors.Add("exhibit GameObject count must match canonical registry");
         if (missingScripts != 0) errors.Add("missing scripts found: " + missingScripts);
 
         LightingSettings lightingSettings;
@@ -255,13 +258,10 @@ public static class GaussianExhibitionVerification
         if (errors.Count > 0)
             throw new InvalidOperationException("Gaussian exhibition verification failed:\n- " + string.Join("\n- ", errors));
 
-        Debug.Log("Gaussian exhibition verification PASS: descriptor=1, exhibits=20, splats=20, renderer=1, video=1, playlist=20, lightingData=present, lightmaps>0, missingScripts=0, buildScenes=1, canonicalBuildSceneOnly=true");
+        Debug.Log("Gaussian exhibition verification PASS: registered=" + registered + ", splats=" + registered + ", renderer=1, video=1, playlist=" + registered + ", lightingData=present, lightmaps>0, missingScripts=0, buildScenes=1, canonicalBuildSceneOnly=true");
     }
 
-    public static void VerifyBatch()
-    {
-        Verify();
-    }
+    public static void VerifyBatch() => Verify();
 
     public static void VerifySdkWorldBuilderBatch()
     {
@@ -282,11 +282,13 @@ public static class GaussianExhibitionVerification
         string prefabDirectory = "Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs";
         string[] sourceFiles = System.IO.Directory.GetFiles(sourceDirectory, "*.ply", System.IO.SearchOption.TopDirectoryOnly);
         string[] importedFiles = System.IO.Directory.GetFiles(prefabDirectory, "*", System.IO.SearchOption.AllDirectories);
+        int registered = CountRegisteredSources();
+        int exhibits = CountNamed(scene, "Exhibit_");
         var evidence = new PerformanceEvidence
         {
             activeScene = scene.path,
-            registered = CountRegisteredSources(),
-            exhibits = CountNamed(scene, "Exhibit_"),
+            registered = registered,
+            exhibits = exhibits,
             renderers = CountSceneComponents(FindType(GaussianSplatRendererTypeName), scene),
             videoPlayers = GameObject.Find("SourceVideoPlayer") == null ? 0 : 1,
             sourcePlyFiles = sourceFiles.Length,
@@ -294,7 +296,7 @@ public static class GaussianExhibitionVerification
             importedAssetFiles = CountNonMetaFiles(importedFiles),
             importedAssetBytes = SumNonMetaFiles(importedFiles),
             sceneBytes = new System.IO.FileInfo(ScenePath).Length,
-            status = CountRegisteredSources() == 20 ? "MEASURED_FINAL_COUNT" : "BLOCKED_FINAL_COUNT"
+            status = registered > 0 && exhibits == registered && sourceFiles.Length == registered ? "MEASURED_REGISTRY_COMPLETE" : "BLOCKED_REGISTRY_MISMATCH"
         };
         string evidencePath = "Library/VRMine/gaussian-performance-evidence.json";
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(evidencePath));
@@ -346,6 +348,7 @@ public static class GaussianExhibitionVerification
 
     static int CountSceneComponents(Type componentType, Scene scene)
     {
+        if (componentType == null) return 0;
         int count = 0;
         foreach (UnityEngine.Object value in Resources.FindObjectsOfTypeAll(componentType))
         {

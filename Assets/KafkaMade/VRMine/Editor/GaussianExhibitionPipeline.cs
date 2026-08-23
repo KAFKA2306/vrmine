@@ -12,10 +12,10 @@ public static class GaussianExhibitionPipeline
     static void QueuePreparedOpen()
     {
         if (!File.Exists(PrepareOnOpenMarker)) return;
-        EditorApplication.delayCall += PrepareRequestedLocalScene;
+        EditorApplication.delayCall += PrepareRequestedScene;
     }
 
-    static void PrepareRequestedLocalScene()
+    static void PrepareRequestedScene()
     {
         if (!File.Exists(PrepareOnOpenMarker)) return;
         try
@@ -29,55 +29,49 @@ public static class GaussianExhibitionPipeline
             Debug.LogException(exception);
             EditorUtility.DisplayDialog(
                 "VRMine Gaussian preparation failed",
-                exception.Message + "\n\nThe preparation marker was preserved. Fix the reported input and reopen the project (or use VRMine/Prepare Registered Gaussian Exhibition) to retry.",
+                exception.Message + "\n\nThe preparation marker was preserved. Fix the reported input and reopen the project (or use VRMine/Prepare Gaussian Exhibition) to retry.",
                 "OK");
         }
     }
 
-    [MenuItem("VRMine/Prepare Registered Gaussian Exhibition")]
-    public static void PrepareLocal()
+    [MenuItem("VRMine/Prepare Gaussian Exhibition")]
+    public static void Prepare()
     {
-        Debug.Log("VRMine 3DGS local pipeline: importing registered Gaussian Splats...");
+        Debug.Log("VRMine 3DGS pipeline: importing every registered Gaussian Splat...");
         GaussianSplatBatchImporter.ImportRegistered();
 
-        Debug.Log("VRMine 3DGS local pipeline: building canonical scene from all registered sources...");
-        GaussianExhibitionBuilder.BuildLocalPreview();
+        Debug.Log("VRMine 3DGS pipeline: building canonical scene from the current registry...");
+        GaussianExhibitionBuilder.Build();
         GaussianExhibitionPresentation.Apply();
         ConfigureBakedLighting();
         EditorSceneManager.SaveOpenScenes();
 
-        Debug.Log("VRMine 3DGS local scene ready. Registered PLYs, configured presentation scale, floor/world shell, spawn, labels, lighting configuration and one Gaussian renderer are wired in GaussianSplatExhibition.unity.");
+        Debug.Log("VRMine 3DGS scene ready. Registered PLYs, presentation scale, floor/world shell, spawn, labels, playback controls, lighting configuration and one Gaussian renderer are wired in GaussianSplatExhibition.unity.");
     }
 
-    [MenuItem("VRMine/Prepare Final Gaussian Exhibition For SDK")]
+    public static void PrepareLocal() => Prepare();
+
+    [MenuItem("VRMine/Build And Verify Gaussian Exhibition For SDK")]
     public static void BuildAndVerify()
     {
-        Debug.Log("VRMine 3DGS final pipeline: importing registered Gaussian Splats...");
-        GaussianSplatBatchImporter.ImportRegistered();
+        Prepare();
 
-        Debug.Log("VRMine 3DGS final pipeline: requiring final product count and playlist...");
-        GaussianExhibitionBuilder.BuildFinal();
-        GaussianExhibitionPresentation.Apply();
-        ConfigureBakedLighting();
-        EditorSceneManager.SaveOpenScenes();
-
-        Debug.Log("VRMine 3DGS final pipeline: baking static shell lighting...");
+        Debug.Log("VRMine 3DGS pipeline: baking static shell lighting...");
         if (!Lightmapping.Bake())
             throw new InvalidOperationException("Unity failed to complete the synchronous baked-lighting job.");
         EditorSceneManager.SaveOpenScenes();
 
-        Debug.Log("VRMine 3DGS final pipeline: verifying upload-readiness scene contract...");
+        Debug.Log("VRMine 3DGS pipeline: verifying upload-readiness scene contract against the current registry...");
         GaussianExhibitionVerification.Verify();
 
-        Debug.Log("VRMine 3DGS final pipeline PASS. Repository-side preparation is complete; continue with the canonical VRChat SDK Build & Test / Publish flow.");
+        Debug.Log("VRMine 3DGS pipeline PASS. Repository-side preparation is complete; continue with the canonical VRChat SDK Build & Test / Publish flow.");
     }
 
     // Unity command-line entry point:
     // Unity.exe -batchmode -quit -projectPath <repo> -executeMethod GaussianExhibitionPipeline.BuildAndVerifyBatch
     public static void BuildAndVerifyBatch() => BuildAndVerify();
 
-    // Optional local batch entry point when only currently registered sources are needed.
-    public static void PrepareLocalBatch() => PrepareLocal();
+    public static void PrepareBatch() => Prepare();
 
     static void ConfigureBakedLighting()
     {

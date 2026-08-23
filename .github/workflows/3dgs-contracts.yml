@@ -166,7 +166,7 @@ jobs:
           PY
             echo "::warning::Private Gaussian artifact verification is BLOCKED: no matching HF Trusted Publisher. Contract CI remains green; artifact bytes are not claimed verified."
             echo "### 3DGS private artifact verification" >> "$GITHUB_STEP_SUMMARY"
-            echo "BLOCKED: configure Hugging Face Trusted Publisher for buckets/k4fka/kafka-data-lake. 20/20 orientation decisions remain explicit without pretending private bytes were read." >> "$GITHUB_STEP_SUMMARY"
+            echo "BLOCKED: configure Hugging Face Trusted Publisher for buckets/k4fka/kafka-data-lake. Registered orientation decisions remain explicit without pretending private bytes were read." >> "$GITHUB_STEP_SUMMARY"
           fi
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         if: steps.access.outputs.available == 'true'

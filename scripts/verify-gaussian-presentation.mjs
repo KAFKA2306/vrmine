@@ -9,12 +9,12 @@ assert.equal(config.target_extent_m, 1, 'reusable imported prefabs must remain n
 assert.equal(config.presentation_scale_multiplier, 2, 'canonical exhibition presentation multiplier must be exactly 2x');
 assert.equal(config.target_extent_m * config.presentation_scale_multiplier, 2, 'canonical presented extent must target approximately 2 m');
 
-const localBuild = pipelineSource.indexOf('GaussianExhibitionBuilder.BuildLocalPreview();');
-const finalBuild = pipelineSource.indexOf('GaussianExhibitionBuilder.BuildFinal();');
+const buildCall = pipelineSource.indexOf('GaussianExhibitionBuilder.Build();');
 const presentationCalls = [...pipelineSource.matchAll(/GaussianExhibitionPresentation\.Apply\(\);/g)].map((match) => match.index);
-assert.equal(presentationCalls.length, 2, 'both local and final build paths must apply presentation scaling exactly once');
-assert.ok(localBuild >= 0 && presentationCalls[0] > localBuild, 'local presentation scaling must run after scene generation');
-assert.ok(finalBuild >= 0 && presentationCalls[1] > finalBuild, 'final presentation scaling must run after scene generation');
+assert.ok(buildCall >= 0, 'canonical pipeline must build the scene from the registry');
+assert.equal(presentationCalls.length, 1, 'the single canonical build path must apply presentation scaling exactly once');
+assert.ok(presentationCalls[0] > buildCall, 'presentation scaling must run after registry-driven scene generation');
+assert.doesNotMatch(pipelineSource, /BuildLocalPreview|BuildFinal/, 'count-specific preview/final builder paths must not return');
 
 assert.match(presentationSource, /exhibit\.localScale\s*=\s*exhibit\.localScale\s*\*\s*config\.presentation_scale_multiplier/, 'presentation must scale each exhibit from its prefab-derived scene transform');
 assert.match(presentationSource, /exhibit\.position\s*\+=\s*Vector3\.up\s*\*\s*-bounds\.min\.y/, 'scaled exhibits must be realigned to the floor from measured world bounds');
