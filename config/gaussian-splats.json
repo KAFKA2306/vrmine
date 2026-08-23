@@ -1,7 +1,8 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "source_repository": "KAFKA2306/AutoPhotogrammetry",
-  "source_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742",
+  "source_commit": "6f47684aa9a1b46cf2cd75cbef3c36031f220c59",
+  "source_catalog": "sources/videos.json",
   "renderers": {
     "browser": "@playcanvas/supersplat-viewer@1.28.0",
     "unity_vrchat": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa"
@@ -9,480 +10,223 @@
   "environments": [
     {
       "id": "avenida-gomez-morin",
+      "display_index": 1,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/avenida-gomez-morin/runs/splatfacto/20260820T003836Z-ddead145/export/splat.ply",
-        "artifact_id": "autophotogrammetry/avenida-gomez-morin/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 65410105,
-        "sha256": "0a04b7fe901856a1d121ea02b572188e1223ce40904bdd518257f10ea4fce628",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Avenida Gómez Morín, Museo ferrocarrilero y Complejo Tres centurias desde un dron",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Avenida_Gómez_Morín,_Museo_ferrocarrilero_y_Complejo_Tres_centurias_desde_un_dron.webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "avenida-gomez-morin"},
+      "source": {"path": "output/avenida-gomez-morin/runs/splatfacto/20260820T003836Z-ddead145/export/splat.ply", "artifact_id": "autophotogrammetry/avenida-gomez-morin/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 65410105, "sha256": "0a04b7fe901856a1d121ea02b572188e1223ce40904bdd518257f10ea4fce628"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/d/db/Avenida_G%C3%B3mez_Mor%C3%ADn%2C_Museo_ferrocarrilero_y_Complejo_Tres_centurias_desde_un_dron.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "baluarte-san-pedro",
+      "display_index": 2,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/baluarte-san-pedro/runs/splatfacto/20260820T004913Z-220d8fdb/export/splat.ply",
-        "artifact_id": "autophotogrammetry/baluarte-san-pedro/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 36862577,
-        "sha256": "a8ab4e51f0713cd0886ece3088cb033db230b6d155e51780a910e7f8fb5f603d",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Baluarte de San Pedro",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Baluarte_de_San_Pedro.webm",
-          "author": null,
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "baluarte-san-pedro"},
+      "source": {"path": "output/baluarte-san-pedro/runs/splatfacto/20260820T004913Z-220d8fdb/export/splat.ply", "artifact_id": "autophotogrammetry/baluarte-san-pedro/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 36862577, "sha256": "a8ab4e51f0713cd0886ece3088cb033db230b6d155e51780a910e7f8fb5f603d"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Baluarte_de_San_Pedro.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "calvillo-centro",
+      "display_index": 3,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/calvillo-centro/runs/splatfacto/20260820T002756Z-272b4140/export/splat.ply",
-        "artifact_id": "autophotogrammetry/calvillo-centro/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 43457145,
-        "sha256": "0ef3783257d41b53d0359e1c51a69dfdec6ed214387696bf0a7466444e43f554",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Calvillo desde un dron (plaza principal, Santa Cruz, centro)",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Calvillo_desde_un_dron_(plaza_principal,_Santa_Cruz,_centro).webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "calvillo-centro"},
+      "source": {"path": "output/calvillo-centro/runs/splatfacto/20260820T002756Z-272b4140/export/splat.ply", "artifact_id": "autophotogrammetry/calvillo-centro/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 43457145, "sha256": "0ef3783257d41b53d0359e1c51a69dfdec6ed214387696bf0a7466444e43f554"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Calvillo_desde_un_dron_%28plaza_principal%2C_Santa_Cruz%2C_centro%29.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "huejotzingo",
+      "display_index": 4,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/huejotzingo/runs/splatfacto/20260820T001159Z-e3dabe8b/export/splat.ply",
-        "artifact_id": "autophotogrammetry/huejotzingo/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 38555673,
-        "sha256": "1b63330848e6de7ef15f817a292876592c6b6cbd2527fe93fc8d9129cf04012d",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Vista del Ex Convento de San Miguel Arcángel, Huejotzingo, desde un dron",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Vista_del_Ex_Convento_de_San_Miguel_Arc%C3%A1ngel,_Huejotzingo,_desde_un_dron.webm",
-          "author": "Luisalvaz",
-          "license_status": "verified",
-          "license": "CC0 1.0 Universal",
-          "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "huejotzingo"},
+      "source": {"path": "output/huejotzingo/runs/splatfacto/20260820T001159Z-e3dabe8b/export/splat.ply", "artifact_id": "autophotogrammetry/huejotzingo/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 38555673, "sha256": "1b63330848e6de7ef15f817a292876592c6b6cbd2527fe93fc8d9129cf04012d"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/34/Vista_del_Ex_Convento_de_San_Miguel_Arc%C3%A1ngel%2C_Huejotzingo%2C_desde_un_dron.webm/Vista_del_Ex_Convento_de_San_Miguel_Arc%C3%A1ngel%2C_Huejotzingo%2C_desde_un_dron.webm.1080p.vp9.webm", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "puente-san-ignacio-01",
+      "display_index": 5,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/puente-san-ignacio-01/runs/splatfacto/20260820T014116Z-151ce4ce/export/splat.ply",
-        "artifact_id": "autophotogrammetry/puente-san-ignacio-01/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 29579065,
-        "sha256": "8a845b437e58792f92ee71b229844bba4976b32f9037806aebb4cdbd07ed70a3",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Puente de San Ignacio desde un dron 01",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Puente_de_San_Ignacio_desde_un_dron_01.webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "puente-san-ignacio-01"},
+      "source": {"path": "output/puente-san-ignacio-01/runs/splatfacto/20260820T014116Z-151ce4ce/export/splat.ply", "artifact_id": "autophotogrammetry/puente-san-ignacio-01/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 29579065, "sha256": "8a845b437e58792f92ee71b229844bba4976b32f9037806aebb4cdbd07ed70a3"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/0/05/Puente_de_San_Ignacio_desde_un_dron_01.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "puente-san-ignacio-03",
+      "display_index": 6,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/puente-san-ignacio-03/runs/splatfacto/20260820T003151Z-f3ce6569/export/splat.ply",
-        "artifact_id": "autophotogrammetry/puente-san-ignacio-03/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 57474353,
-        "sha256": "65d9f2d3744e11a6cbbe610fbcdc46407423c9c742292358462844ef8c67161c",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Puente de San Ignacio desde un dron 03",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Puente_de_San_Ignacio_desde_un_dron_03.webm",
-          "author": "Luisalvaz",
-          "license_status": "verified",
-          "license": "CC0 1.0 Universal",
-          "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "puente-san-ignacio-03"},
+      "source": {"path": "output/puente-san-ignacio-03/runs/splatfacto/20260820T003151Z-f3ce6569/export/splat.ply", "artifact_id": "autophotogrammetry/puente-san-ignacio-03/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 57474353, "sha256": "65d9f2d3744e11a6cbbe610fbcdc46407423c9c742292358462844ef8c67161c"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/9/97/Puente_de_San_Ignacio_desde_un_dron_03.webm", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "san-francisco-nayarit-01",
+      "display_index": 7,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/san-francisco-nayarit-01/runs/splatfacto/20260820T004353Z-1c07f1c9/export/splat.ply",
-        "artifact_id": "autophotogrammetry/san-francisco-nayarit-01/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 37524737,
-        "sha256": "0b236b57a0649f5c07e34ec6469251ccac015519a25817bbf3e60d8b00d56ea8",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "San Francisco, Nayarit, desde un dron 01",
-          "source_page": "https://commons.wikimedia.org/wiki/File:San_Francisco,_Nayarit,_desde_un_dron_01.webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "san-francisco-nayarit-01"},
+      "source": {"path": "output/san-francisco-nayarit-01/runs/splatfacto/20260820T004353Z-1c07f1c9/export/splat.ply", "artifact_id": "autophotogrammetry/san-francisco-nayarit-01/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 37524737, "sha256": "0b236b57a0649f5c07e34ec6469251ccac015519a25817bbf3e60d8b00d56ea8"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/4/47/San_Francisco%2C_Nayarit%2C_desde_un_dron_01.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "templo-san-marcos",
+      "display_index": 8,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/templo-san-marcos/runs/splatfacto/20260820T002338Z-818d82fd/export/splat.ply",
-        "artifact_id": "autophotogrammetry/templo-san-marcos/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 35077721,
-        "sha256": "978dfc0909e5b615aceddcbe238ec9c20bf674dcb64aa7296f21320b4a2bb461",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Fachada del Templo de San Marcos desde un dron",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Fachada_del_Templo_de_San_Marcos_desde_un_dron.webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "templo-san-marcos"},
+      "source": {"path": "output/templo-san-marcos/runs/splatfacto/20260820T002338Z-818d82fd/export/splat.ply", "artifact_id": "autophotogrammetry/templo-san-marcos/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 35077721, "sha256": "978dfc0909e5b615aceddcbe238ec9c20bf674dcb64aa7296f21320b4a2bb461"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Fachada_del_Templo_de_San_Marcos_desde_un_dron.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "tepotzotlan-virreinato",
+      "display_index": 9,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/tepotzotlan-virreinato/runs/splatfacto/20260820T001932Z-34f5f41e/export/splat.ply",
-        "artifact_id": "autophotogrammetry/tepotzotlan-virreinato/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 39604217,
-        "sha256": "d9635fe47a2af9f70c9e9a6e8500d10186f1bacc2bce872f2e0070579185c862",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Panorámica del Museo Nacional del Virreinato y Templo de San Francisco Javier desde un dron",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Panorámica_del_Museo_Nacional_del_Virreinato_y_Templo_de_San_Francisco_Javier_desde_un_dron.webm",
-          "author": "Luisalvaz",
-          "license_status": "verified",
-          "license": "CC0 1.0 Universal",
-          "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "tepotzotlan-virreinato"},
+      "source": {"path": "output/tepotzotlan-virreinato/runs/splatfacto/20260820T001932Z-34f5f41e/export/splat.ply", "artifact_id": "autophotogrammetry/tepotzotlan-virreinato/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 39604217, "sha256": "d9635fe47a2af9f70c9e9a6e8500d10186f1bacc2bce872f2e0070579185c862"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/5/57/Panor%C3%A1mica_del_Museo_Nacional_del_Virreinato_y_Templo_de_San_Francisco_Javier_desde_un_dron.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "herstmonceux-castle",
+      "display_index": 10,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/herstmonceux-castle/runs/splatfacto/20260820T014601Z-7dc5182d/export/splat.ply",
-        "artifact_id": "autophotogrammetry/herstmonceux-castle/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 28159017,
-        "sha256": "d36460210020b039bcc7f43598ed94d50a6a88ad617b1f3aebd08695812f413d",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Aerial video of Herstmonceux Castle",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Aerial_video_of_Herstmonceux_Castle.webm",
-          "author": "Beautiful Landmarks",
-          "license_status": "verified",
-          "license": "CC BY 3.0",
-          "license_url": "https://creativecommons.org/licenses/by/3.0/",
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "herstmonceux-castle"},
+      "source": {"path": "output/herstmonceux-castle/runs/splatfacto/20260820T014601Z-7dc5182d/export/splat.ply", "artifact_id": "autophotogrammetry/herstmonceux-castle/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 28159017, "sha256": "d36460210020b039bcc7f43598ed94d50a6a88ad617b1f3aebd08695812f413d"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/7/72/Aerial_video_of_Herstmonceux_Castle.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "fachada-san-francisco-javier",
+      "display_index": 11,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/fachada-san-francisco-javier/runs/splatfacto/20260820T014953Z-43148c7b/export/splat.ply",
-        "artifact_id": "autophotogrammetry/fachada-san-francisco-javier/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 29423073,
-        "sha256": "fa6e8dfa586a5ab584bbccfebbbc865ddaae0337b9f42a4261189cdef8a8bf0b",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Fachada del Templo de San Francisco Javier, Tepotzotlán, desde un dron",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Fachada_del_Templo_de_San_Francisco_Javier,_Tepotzotlán,_desde_un_dron.webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "fachada-san-francisco-javier"},
+      "source": {"path": "output/fachada-san-francisco-javier/runs/splatfacto/20260820T014953Z-43148c7b/export/splat.ply", "artifact_id": "autophotogrammetry/fachada-san-francisco-javier/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 29423073, "sha256": "fa6e8dfa586a5ab584bbccfebbbc865ddaae0337b9f42a4261189cdef8a8bf0b"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/7/72/Fachada_del_Templo_de_San_Francisco_Javier%2C_Tepotzotl%C3%A1n%2C_desde_un_dron.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "panoramica-puebla-centro",
+      "display_index": 12,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/panoramica-puebla-centro/runs/splatfacto/20260820T015305Z-aa5bdd4a/export/splat.ply",
-        "artifact_id": "autophotogrammetry/panoramica-puebla-centro/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 36215793,
-        "sha256": "137ddd848a3ca8c230b57fbb968549a2c266f36f35d38869a35fe951dafb26a7",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Panorámica del centro histórico, catedral y zócalo de Puebla desde un dron",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Panorámica_del_centro_histórico,_catedral_y_zócalo_de_Puebla_desde_un_dron.webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "panoramica-puebla-centro"},
+      "source": {"path": "output/panoramica-puebla-centro/runs/splatfacto/20260820T015305Z-aa5bdd4a/export/splat.ply", "artifact_id": "autophotogrammetry/panoramica-puebla-centro/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 36215793, "sha256": "137ddd848a3ca8c230b57fbb968549a2c266f36f35d38869a35fe951dafb26a7"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Panor%C3%A1mica_del_centro_hist%C3%B3rico%2C_catedral_y_z%C3%B3calo_de_Puebla_desde_un_dron.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "centro-aguascalientes",
+      "display_index": 13,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/centro-aguascalientes/runs/splatfacto/20260820T015757Z-4de6b159/export/splat.ply",
-        "artifact_id": "autophotogrammetry/centro-aguascalientes/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 53207513,
-        "sha256": "e6b24c9e4e71b9e8a6a6d09e1d09dc34eb9303ea4048adb117264b26469b4408",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Centro de Aguascalientes desde un dron",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Centro_de_Aguascalientes_desde_un_dron.webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "centro-aguascalientes"},
+      "source": {"path": "output/centro-aguascalientes/runs/splatfacto/20260820T015757Z-4de6b159/export/splat.ply", "artifact_id": "autophotogrammetry/centro-aguascalientes/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 53207513, "sha256": "e6b24c9e4e71b9e8a6a6d09e1d09dc34eb9303ea4048adb117264b26469b4408"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/5/55/Centro_de_Aguascalientes_desde_un_dron.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "barco-la-pona-01",
+      "display_index": 14,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/barco-la-pona-01/runs/splatfacto/20260820T020510Z-b631a69e/export/splat.ply",
-        "artifact_id": "autophotogrammetry/barco-la-pona-01/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 48526017,
-        "sha256": "adcfc54215a5b287f2e547cc816ca466076a51f9d4536c7f9eb9373d4339e988",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Barco en La Pona desde un dron 01",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Barco_en_La_Pona_desde_un_dron_01.webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "barco-la-pona-01"},
+      "source": {"path": "output/barco-la-pona-01/runs/splatfacto/20260820T020510Z-b631a69e/export/splat.ply", "artifact_id": "autophotogrammetry/barco-la-pona-01/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 48526017, "sha256": "adcfc54215a5b287f2e547cc816ca466076a51f9d4536c7f9eb9373d4339e988"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Barco_en_La_Pona_desde_un_dron_01.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "presa-san-blas",
+      "display_index": 15,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/presa-san-blas/runs/splatfacto/20260820T021217Z-cc7b9276/export/splat.ply",
-        "artifact_id": "autophotogrammetry/presa-san-blas/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 37857305,
-        "sha256": "3ced7a168e68ebcf3ecd5014d130db91823310c4ac3c10d0af826ace78ae9b7c",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Presa de San Blas, Pabellón de Hidalgo, desde un dron",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Presa_de_San_Blas,_Pabellón_de_Hidalgo,_desde_un_dron.webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "presa-san-blas"},
+      "source": {"path": "output/presa-san-blas/runs/splatfacto/20260820T021217Z-cc7b9276/export/splat.ply", "artifact_id": "autophotogrammetry/presa-san-blas/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 37857305, "sha256": "3ced7a168e68ebcf3ecd5014d130db91823310c4ac3c10d0af826ace78ae9b7c"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Presa_de_San_Blas%2C_Pabell%C3%B3n_de_Hidalgo%2C_desde_un_dron.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "playa-guayabitos-region",
+      "display_index": 16,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/playa-guayabitos-region/runs/splatfacto/20260820T021621Z-93883f8f/export/splat.ply",
-        "artifact_id": "autophotogrammetry/playa-guayabitos-region/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 22480312,
-        "sha256": "aa528562c007152039f657edbc11e35492a9ac3601f28b8f23b79dc152dc49b3",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Playa de Guayabitos, Rincón de Guayabitos e Islas desde un dron",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Playa_de_Guayabitos,_Rincón_de_Guayabitos_e_Islas_desde_un_dron.webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "playa-guayabitos-region"},
+      "source": {"path": "output/playa-guayabitos-region/runs/splatfacto/20260820T021621Z-93883f8f/export/splat.ply", "artifact_id": "autophotogrammetry/playa-guayabitos-region/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 22480312, "sha256": "aa528562c007152039f657edbc11e35492a9ac3601f28b8f23b79dc152dc49b3"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Playa_de_Guayabitos%2C_Rinc%C3%B3n_de_Guayabitos_e_Islas_desde_un_dron.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "cascadas-agua-azul",
+      "display_index": 17,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/cascadas-agua-azul/runs/splatfacto/20260820T022216Z-7552e547/export/splat.ply",
-        "artifact_id": "autophotogrammetry/cascadas-agua-azul/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 44325641,
-        "sha256": "a73611f1a733b2c7259e240857e8ecafee6d712338c60e2b7208992de2e7b446",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Cascadas de Agua Azul",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Cascadas_de_Agua_Azul.webm",
-          "author": null,
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "cascadas-agua-azul"},
+      "source": {"path": "output/cascadas-agua-azul/runs/splatfacto/20260820T022216Z-7552e547/export/splat.ply", "artifact_id": "autophotogrammetry/cascadas-agua-azul/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 44325641, "sha256": "a73611f1a733b2c7259e240857e8ecafee6d712338c60e2b7208992de2e7b446"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Cascadas_de_Agua_Azul.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "los-cabos-sunset",
+      "display_index": 18,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/los-cabos-sunset/runs/splatfacto/20260820T025919Z-83e79dd5/export/splat.ply",
-        "artifact_id": "autophotogrammetry/los-cabos-sunset/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 19791992,
-        "sha256": "2af0d44ab7aa29d3da8a2538dbd0f4ae511ec247bd8375f72e023e33b4c7c806",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Aerial views of Los Cabo, San Lucas, Mexico at sunset including El Arco, Lands End and ocean views",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Aerial_views_of_Los_Cabo,_San_Lucas,_Mexico_at_sunset_including_El_Arco,_Lands_End_and_ocean_views.webm",
-          "author": null,
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "los-cabos-sunset"},
+      "source": {"path": "output/los-cabos-sunset/runs/splatfacto/20260820T025919Z-83e79dd5/export/splat.ply", "artifact_id": "autophotogrammetry/los-cabos-sunset/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 19791992, "sha256": "2af0d44ab7aa29d3da8a2538dbd0f4ae511ec247bd8375f72e023e33b4c7c806"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/7/74/Aerial_views_of_Los_Cabo%2C_San_Lucas%2C_Mexico_at_sunset_including_El_Arco%2C_Lands_End_and_ocean_views.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "la-pona-fire-2025",
+      "display_index": 19,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/la-pona-fire-2025/runs/splatfacto/20260820T031006Z-fa117497/export/splat.ply",
-        "artifact_id": "autophotogrammetry/la-pona-fire-2025/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 60246249,
-        "sha256": "ee8b4a6042bb3da497e979c7abdcce8bec57880850225c00a99c040fa6a33723",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Registro en dron de incendios en La Pona (11 de abril de 2025)",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Registro_en_dron_de_incendios_en_La_Pona_(11_de_abril_de_2025).webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "la-pona-fire-2025"},
+      "source": {"path": "output/la-pona-fire-2025/runs/splatfacto/20260820T031006Z-fa117497/export/splat.ply", "artifact_id": "autophotogrammetry/la-pona-fire-2025/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 60246249, "sha256": "ee8b4a6042bb3da497e979c7abdcce8bec57880850225c00a99c040fa6a33723"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/8/82/Registro_en_dron_de_incendios_en_La_Pona_%2811_de_abril_de_2025%29.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     },
     {
       "id": "cadena-humana-la-pona",
+      "display_index": 20,
       "type": "gaussian-splat",
       "format": "ply",
-      "source": {
-        "path": "output/cadena-humana-la-pona/runs/splatfacto/20260820T031530Z-2497f993/export/splat.ply",
-        "artifact_id": "autophotogrammetry/cadena-humana-la-pona/splat",
-        "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 77351305,
-        "sha256": "d9e3e4a15eba0dc4a3d790f14625a2c9854add42b73ca26bc4b744e38ecc35ef",
-        "provenance": {
-          "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
-          "title": "Cadena humana por La Pona (video en dron) - 1",
-          "source_page": "https://commons.wikimedia.org/wiki/File:Cadena_humana_por_La_Pona_(video_en_dron)_-_1.webm",
-          "author": "Luisalvaz",
-          "license_status": "needs_review",
-          "license": null,
-          "license_url": null,
-          "artifact_repository_commit": "1d48110c8abd891d7b0a19f9e6ce793901758742"
-        }
-      }
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "cadena-humana-la-pona"},
+      "source": {"path": "output/cadena-humana-la-pona/runs/splatfacto/20260820T031530Z-2497f993/export/splat.ply", "artifact_id": "autophotogrammetry/cadena-humana-la-pona/splat", "artifact_manifest": "config/gaussian-artifacts.yaml", "size_bytes": 77351305, "sha256": "d9e3e4a15eba0dc4a3d790f14625a2c9854add42b73ca26bc4b744e38ecc35ef"},
+      "playback": {"url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Cadena_humana_por_La_Pona_%28video_en_dron%29_-_1.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original", "requires_untrusted_urls": true, "status": "ready_untrusted"},
+      "targets": {"browser": {"status": "UNVERIFIED", "renderer": "browser"}, "unity": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}, "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}}
     }
-  ],
-  "defaults": {
-    "transform": {
-      "position": [
-        0,
-        0,
-        0
-      ],
-      "rotation_euler_degrees": [
-        0,
-        0,
-        0
-      ],
-      "scale": [
-        1,
-        1,
-        1
-      ]
-    },
-    "targets": {
-      "browser": {
-        "status": "UNVERIFIED",
-        "renderer": "browser"
-      },
-      "unity": {
-        "status": "UNVERIFIED",
-        "renderer": "unity_vrchat"
-      },
-      "vrchat_pc": {
-        "status": "UNVERIFIED",
-        "renderer": "unity_vrchat"
-      },
-      "vrchat_android": {
-        "status": "UNVERIFIED",
-        "renderer": "unity_vrchat"
-      }
-    }
-  }
+  ]
 }
