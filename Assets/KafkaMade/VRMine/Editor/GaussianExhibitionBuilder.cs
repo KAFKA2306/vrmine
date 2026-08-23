@@ -9,10 +9,10 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using VRC.Core;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
 using VRC.Udon;
-using VRC.Core;
 
 public static class GaussianExhibitionBuilder
 {
@@ -25,7 +25,6 @@ public static class GaussianExhibitionBuilder
     {
         public int schema_version;
         public string scene_path;
-        public int final_expected_exhibits;
         public string canonical_platform;
         public string source_registry;
         public string renderer;
@@ -45,28 +44,19 @@ public static class GaussianExhibitionBuilder
     }
 
     [Serializable] sealed class CameraConfig { public float field_of_view; }
-    [Serializable] sealed class VideoPlayerConfig { public string prefab_path; public string playlist_manifest; }
-
+    [Serializable] sealed class VideoPlayerConfig { public string prefab_path; }
     [Serializable] sealed class Registry { public EnvironmentEntry[] environments; }
-    [Serializable] sealed class EnvironmentEntry { public string id; public SourceEntry source; }
-    [Serializable] sealed class SourceEntry { public Provenance provenance; }
-    [Serializable] sealed class Provenance { public string title; }
 
-    [Serializable] sealed class PlaylistConfig
+    [Serializable] sealed class EnvironmentEntry
     {
-        public int schema_version;
-        public int expected_entries;
-        public string player_prefab_path;
-        public float rate_limit_seconds;
-        public string status;
-        public PlaylistEntry[] entries;
+        public string id;
+        public int display_index;
+        public PlaybackEntry playback;
     }
 
-    [Serializable] sealed class PlaylistEntry
+    [Serializable] sealed class PlaybackEntry
     {
-        public int display_index;
-        public string source_id;
-        public string playback_url;
+        public string url;
         public bool requires_untrusted_urls;
         public string status;
     }
@@ -81,21 +71,15 @@ public static class GaussianExhibitionBuilder
         public Quaternion rotation;
     }
 
-    [MenuItem("VRMine/Build Gaussian Splat Exhibition (Registered Sources)")]
-    public static void BuildLocalPreview() => Build(false);
+    [MenuItem("VRMine/Build Gaussian Splat Exhibition")]
+    public static void Build() => BuildFromRegistry();
 
-    [MenuItem("VRMine/Build Final 20 Gaussian Splat Exhibition")]
-    public static void BuildFinal() => Build(true);
-
-    static void Build(bool requireFinalProduct)
+    static void BuildFromRegistry()
     {
         ExhibitionConfig config = LoadJson<ExhibitionConfig>(ConfigPath, "Gaussian exhibition config");
         ValidateConfig(config);
         Registry registry = LoadJson<Registry>(config.source_registry, "Gaussian source registry");
-        if (registry.environments == null || registry.environments.Length == 0)
-            throw new InvalidDataException("Gaussian source registry must contain at least one registered source.");
-        if (requireFinalProduct && registry.environments.Length != config.final_expected_exhibits)
-            throw new InvalidOperationException("Final exhibition requires exactly " + config.final_expected_exhibits + " registered sources; found " + registry.environments.Length + ".");
+        ValidateRegistry(registry);
 
         List<Exhibit> exhibits = BuildExhibitLayout(config, registry);
         var prefabs = new Dictionary<string, GameObject>();
@@ -126,11 +110,11 @@ public static class GaussianExhibitionBuilder
             AlignExhibitToFloor(instance);
             instance.SetActive(true);
             CreatePad(config, exhibit);
-            CreateLabel(config, exhibit);
+            CreateLabel(exhibit);
         }
 
         EnsureGaussianRuntimeTopology(scene, exhibits.Count);
-        CreateVideoArea(config, registry, floorSize, requireFinalProduct);
+        CreateVideoArea(config, registry, floorSize);
 
         EnsureAssetFolder(Path.GetDirectoryName(config.scene_path)?.Replace('\\', '/'));
         EditorSceneManager.SaveScene(scene, config.scene_path);
@@ -139,7 +123,7 @@ public static class GaussianExhibitionBuilder
         AssetDatabase.Refresh();
         Selection.activeObject = AssetDatabase.LoadAssetAtPath<SceneAsset>(config.scene_path);
 
-        Debug.Log("Gaussian exhibition scene ready: sources=" + exhibits.Count + ", final=" + requireFinalProduct + ", scene=" + config.scene_path);
+        Debug.Log("Gaussian exhibition scene ready: registered=" + exhibits.Count + ", scene=" + config.scene_path);
     }
 
     static List<Exhibit> BuildExhibitLayout(ExhibitionConfig config, Registry registry)
@@ -148,25 +132,19 @@ public static class GaussianExhibitionBuilder
         int firstRowCount = (count + 1) / 2;
         int secondRowCount = count - firstRowCount;
         var result = new List<Exhibit>(count);
-        var ids = new HashSet<string>();
         for (int i = 0; i < count; i++)
         {
             EnvironmentEntry source = registry.environments[i];
-            if (source == null || string.IsNullOrEmpty(source.id) || source.source == null || !ids.Add(source.id))
-                throw new InvalidDataException("Gaussian source registry contains a missing or duplicate id at index " + i + ".");
             bool secondRow = i >= firstRowCount;
             int rowIndex = secondRow ? i - firstRowCount : i;
             int rowCount = secondRow ? secondRowCount : firstRowCount;
             float x = (rowIndex - (rowCount - 1) * 0.5f) * config.layout.center_spacing_m;
             float z = (config.layout.aisle_width_m * 0.5f + config.layout.pad_size_m * 0.5f) * (secondRow ? 1f : -1f);
-            string title = source.source.provenance != null && !string.IsNullOrEmpty(source.source.provenance.title)
-                ? source.source.provenance.title
-                : source.id;
             result.Add(new Exhibit
             {
-                index = i + 1,
+                index = source.display_index,
                 id = source.id,
-                title = title,
+                title = source.id,
                 prefabPath = PrefabDirectory + "/" + source.id + ".prefab",
                 position = new Vector3(x, config.target_extent_m * 0.5f, z),
                 rotation = Quaternion.Euler(0f, secondRow ? 180f : 0f, 0f),
@@ -187,8 +165,11 @@ public static class GaussianExhibitionBuilder
     {
         Type splatType = FindType(GaussianSplatObjectTypeName);
         Component splat = instance.GetComponentInChildren(splatType, true);
+        if (splat == null) throw new InvalidOperationException("GaussianSplatObject is missing: " + instance.name);
         object[] args = new object[] { new Bounds() };
-        bool valid = (bool)splatType.GetMethod("TryGetLocalBounds").Invoke(splat, args);
+        MethodInfo boundsMethod = splatType.GetMethod("TryGetLocalBounds");
+        if (boundsMethod == null) throw new MissingMethodException(GaussianSplatObjectTypeName, "TryGetLocalBounds");
+        bool valid = (bool)boundsMethod.Invoke(splat, args);
         if (!valid) throw new InvalidOperationException("Gaussian bounds are unavailable: " + instance.name);
         Bounds world = TransformBounds(splat.transform, (Bounds)args[0]);
         instance.transform.position += Vector3.up * -world.min.y;
@@ -215,7 +196,6 @@ public static class GaussianExhibitionBuilder
     static void ValidateConfig(ExhibitionConfig config)
     {
         if (config.schema_version != 3) throw new InvalidDataException("Unsupported Gaussian exhibition schema.");
-        if (config.final_expected_exhibits <= 0) throw new InvalidDataException("final_expected_exhibits must be positive.");
         if (config.scene_path != "Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity")
             throw new InvalidDataException("Unexpected canonical Gaussian exhibition scene path.");
         if (config.canonical_platform != "windows") throw new InvalidDataException("Canonical first target must be Windows.");
@@ -225,8 +205,29 @@ public static class GaussianExhibitionBuilder
             throw new InvalidDataException("Gaussian exhibition layout values are invalid.");
         if (config.reference_camera == null || config.reference_camera.field_of_view <= 0)
             throw new InvalidDataException("Reference camera configuration is invalid.");
-        if (config.video_player == null || string.IsNullOrEmpty(config.video_player.prefab_path) || string.IsNullOrEmpty(config.video_player.playlist_manifest))
+        if (config.video_player == null || string.IsNullOrEmpty(config.video_player.prefab_path))
             throw new InvalidDataException("Video player configuration is incomplete.");
+    }
+
+    static void ValidateRegistry(Registry registry)
+    {
+        if (registry.environments == null || registry.environments.Length == 0)
+            throw new InvalidDataException("Gaussian source registry must contain at least one registered source.");
+        var ids = new HashSet<string>();
+        for (int i = 0; i < registry.environments.Length; i++)
+        {
+            EnvironmentEntry entry = registry.environments[i];
+            if (entry == null || string.IsNullOrEmpty(entry.id) || !ids.Add(entry.id))
+                throw new InvalidDataException("Gaussian source registry contains a missing or duplicate id at index " + i + ".");
+            if (entry.display_index != i + 1)
+                throw new InvalidDataException("Gaussian source registry display_index must be contiguous at " + entry.id + ".");
+            if (entry.playback == null || string.IsNullOrEmpty(entry.playback.url) || !entry.playback.url.StartsWith("https://", StringComparison.Ordinal))
+                throw new InvalidDataException("Registered source is missing an HTTPS playback URL: " + entry.id);
+            if (entry.playback.status != "ready_untrusted" && entry.playback.status != "ready_allowlisted")
+                throw new InvalidDataException("Registered source playback is not ready: " + entry.id);
+            if ((entry.playback.status == "ready_untrusted") != entry.playback.requires_untrusted_urls)
+                throw new InvalidDataException("Registered source playback trust state is inconsistent: " + entry.id);
+        }
     }
 
     static void CreateFloorAndShell(ExhibitionConfig config, Vector2 floorSize)
@@ -259,7 +260,7 @@ public static class GaussianExhibitionBuilder
             new Vector3(config.layout.pad_size_m, 0.1f, config.layout.pad_size_m), true);
     }
 
-    static void CreateLabel(ExhibitionConfig config, Exhibit exhibit)
+    static void CreateLabel(Exhibit exhibit)
     {
         Type tmpType = FindType("TMPro.TextMeshPro");
         if (tmpType == null) throw new InvalidOperationException("TextMesh Pro is required for Gaussian exhibition labels.");
@@ -318,43 +319,16 @@ public static class GaussianExhibitionBuilder
         descriptor.ReferenceCamera = cameraObject;
     }
 
-    static void CreateVideoArea(ExhibitionConfig config, Registry registry, Vector2 floorSize, bool requireFinalProduct)
+    static void CreateVideoArea(ExhibitionConfig config, Registry registry, Vector2 floorSize)
     {
         Vector3 position = new Vector3(floorSize.x * 0.5f - 1f, 1.6f, 0f);
-        if (!requireFinalProduct)
-        {
-            GameObject anchor = new GameObject("SourceVideoPlayerAnchor");
-            anchor.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, -90f, 0f));
-            return;
-        }
-
-        PlaylistConfig playlist = LoadJson<PlaylistConfig>(config.video_player.playlist_manifest, "Gaussian source-video playlist");
-        ValidateFinalPlaylist(config, registry, playlist);
         GameObject videoPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(config.video_player.prefab_path);
         if (videoPrefab == null) throw new InvalidOperationException("Canonical SDK video player prefab is missing: " + config.video_player.prefab_path);
         EnsureProgramAsset<GaussianVideoPlaylist>();
         EnsureProgramAsset<GaussianVideoPlaylistAction>();
         UdonSharpProgramAsset.UdonSharpCheckAbsent();
         UdonSharpProgramAsset.CompileAllCsPrograms(true);
-        CreateVideoPlayer(config, registry, playlist, videoPrefab, position);
-    }
-
-    static void ValidateFinalPlaylist(ExhibitionConfig config, Registry registry, PlaylistConfig playlist)
-    {
-        if (playlist.schema_version != 1 || playlist.status != "ready" || playlist.entries == null || playlist.entries.Length != config.final_expected_exhibits)
-            throw new InvalidOperationException("Final source-video playlist is not ready for all exhibits.");
-        if (playlist.player_prefab_path != config.video_player.prefab_path) throw new InvalidDataException("Playlist and exhibition disagree on the canonical video-player prefab.");
-        if (playlist.rate_limit_seconds < 5f) throw new InvalidDataException("Video URL rate limit must be at least 5 seconds.");
-        for (int i = 0; i < registry.environments.Length; i++)
-        {
-            PlaylistEntry entry = playlist.entries[i];
-            if (entry.display_index != i + 1 || entry.source_id != registry.environments[i].id)
-                throw new InvalidDataException("Playlist/source mismatch at display index " + (i + 1) + ".");
-            if (string.IsNullOrEmpty(entry.playback_url) || !entry.playback_url.StartsWith("https://", StringComparison.Ordinal))
-                throw new InvalidDataException("Playlist entry is not playback-ready: " + entry.source_id);
-            if (entry.status != "ready_allowlisted" && entry.status != "ready_untrusted") throw new InvalidDataException("Playlist entry has invalid status: " + entry.source_id);
-            if ((entry.status == "ready_untrusted") != entry.requires_untrusted_urls) throw new InvalidDataException("Playlist trust-state mismatch: " + entry.source_id);
-        }
+        CreateVideoPlayer(registry, videoPrefab, position);
     }
 
     static void EnsureGaussianRuntimeTopology(Scene scene, int expectedExhibits)
@@ -383,7 +357,7 @@ public static class GaussianExhibitionBuilder
         return count;
     }
 
-    static void CreateVideoPlayer(ExhibitionConfig config, Registry registry, PlaylistConfig playlist, GameObject videoPrefab, Vector3 position)
+    static void CreateVideoPlayer(Registry registry, GameObject videoPrefab, Vector3 position)
     {
         GameObject videoPlayer = (GameObject)PrefabUtility.InstantiatePrefab(videoPrefab);
         videoPlayer.name = "SourceVideoPlayer";
@@ -395,19 +369,20 @@ public static class GaussianExhibitionBuilder
         GaussianVideoPlaylist controller = AddUdon<GaussianVideoPlaylist>(new GameObject("GaussianVideoPlaylist"));
         controller.transform.SetParent(controlsRoot.transform, false);
         controller.syncPlayer = syncPlayer;
-        controller.rateLimitSeconds = Mathf.Max(5f, playlist.rate_limit_seconds);
-        controller.urls = new VRCUrl[playlist.entries.Length];
-        controller.titles = new string[playlist.entries.Length];
-        controller.requiresUntrustedUrls = new bool[playlist.entries.Length];
-        for (int i = 0; i < playlist.entries.Length; i++)
+        controller.rateLimitSeconds = Mathf.Max(5f, controller.rateLimitSeconds);
+        controller.urls = new VRCUrl[registry.environments.Length];
+        controller.titles = new string[registry.environments.Length];
+        controller.requiresUntrustedUrls = new bool[registry.environments.Length];
+        for (int i = 0; i < registry.environments.Length; i++)
         {
-            controller.urls[i] = new VRCUrl(playlist.entries[i].playback_url);
-            controller.titles[i] = registry.environments[i].source.provenance != null ? registry.environments[i].source.provenance.title : registry.environments[i].id;
-            controller.requiresUntrustedUrls[i] = playlist.entries[i].requires_untrusted_urls;
+            EnvironmentEntry entry = registry.environments[i];
+            controller.urls[i] = new VRCUrl(entry.playback.url);
+            controller.titles[i] = entry.id;
+            controller.requiresUntrustedUrls[i] = entry.playback.requires_untrusted_urls;
         }
         controller.statusText = CreateWorldText(controlsRoot.transform, "VideoStatus", new Vector3(0f, 1.25f, 0.45f), new Vector2(900f, 120f), 34, "Source video playlist");
-        int columns = Mathf.Min(5, Mathf.Max(1, playlist.entries.Length));
-        for (int i = 0; i < playlist.entries.Length; i++)
+        int columns = Mathf.Min(5, Mathf.Max(1, registry.environments.Length));
+        for (int i = 0; i < registry.environments.Length; i++)
         {
             int column = i % columns;
             int row = i / columns;
@@ -415,7 +390,7 @@ public static class GaussianExhibitionBuilder
             float y = 0.75f - row * 0.42f;
             CreatePlaylistAction(controlsRoot.transform, "SelectVideo_" + (i + 1).ToString("00"), new Vector3(x, y, 0.45f), new Vector3(0.5f, 0.12f, 0.18f), controller, 0, i, (i + 1).ToString("00"));
         }
-        float controlsY = 0.75f - Mathf.CeilToInt((float)playlist.entries.Length / columns) * 0.42f - 0.35f;
+        float controlsY = 0.75f - Mathf.CeilToInt((float)registry.environments.Length / columns) * 0.42f - 0.35f;
         CreatePlaylistAction(controlsRoot.transform, "PreviousVideo", new Vector3(-0.75f, controlsY, 0.45f), new Vector3(0.65f, 0.12f, 0.18f), controller, 1, 0, "PREV");
         CreatePlaylistAction(controlsRoot.transform, "ReplayVideo", new Vector3(0f, controlsY, 0.45f), new Vector3(0.65f, 0.12f, 0.18f), controller, 3, 0, "REPLAY");
         CreatePlaylistAction(controlsRoot.transform, "NextVideo", new Vector3(0.75f, controlsY, 0.45f), new Vector3(0.65f, 0.12f, 0.18f), controller, 2, 0, "NEXT");
