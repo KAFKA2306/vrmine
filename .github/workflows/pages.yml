@@ -147,17 +147,45 @@ jobs:
       - name: Install artifact resolver dependencies
         run: python -m pip install "PyYAML>=6.0,<7" "huggingface-hub>=1.19,<2" "filelock>=3.0"
 
-      - name: Materialize hash-verified real PLY for runtime proof
+      - name: Resolve private artifact authentication
+        id: artifact-access
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
+          HF_TOKEN_FALLBACK: ${{ secrets.HF_TOKEN }}
+        run: |
+          set +e
+          oidc_token="$(hf auth token 2>/tmp/vrmine-hf-oidc-error.txt)"
+          oidc_status=$?
+          set -e
+          if [ "$oidc_status" -eq 0 ] && [ -n "$oidc_token" ]; then
+            echo "::add-mask::$oidc_token"
+            printf 'HF_TOKEN=%s\n' "$oidc_token" >> "$GITHUB_ENV"
+            echo "available=true" >> "$GITHUB_OUTPUT"
+            echo "method=trusted_publisher_oidc" >> "$GITHUB_OUTPUT"
+          elif [ -n "${HF_TOKEN_FALLBACK:-}" ]; then
+            echo "::add-mask::$HF_TOKEN_FALLBACK"
+            printf 'HF_TOKEN=%s\n' "$HF_TOKEN_FALLBACK" >> "$GITHUB_ENV"
+            echo "available=true" >> "$GITHUB_OUTPUT"
+            echo "method=github_actions_secret" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "method=none" >> "$GITHUB_OUTPUT"
+            echo "::warning::Real 3DGS browser runtime proof is BLOCKED in this PR: no Hugging Face bucket credential is available. Static Pages and 3DGS contracts continue; no runtime PASS is claimed."
+            echo "### 3DGS browser runtime proof" >> "$GITHUB_STEP_SUMMARY"
+            echo "BLOCKED in PR: neither a matching Hugging Face Trusted Publisher nor HF_TOKEN is available. The private PLY was not read and browser runtime PASS is not claimed." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No Hugging Face credential is available for the private Gaussian artifact bucket; refusing Pages deployment without real-Ply browser proof." >&2
+            cat /tmp/vrmine-hf-oidc-error.txt >&2 || true
+            exit 1
+          fi
+
+      - name: Materialize hash-verified real PLY for runtime proof
+        if: steps.artifact-access.outputs.available == 'true'
+        env:
           HF_HOME: ${{ runner.temp }}/hf-cache
           HF_CACHE_HUB_ROOT: ${{ github.workspace }}/.hf-cache-hub
         run: |
           set -euo pipefail
-          if [ -z "${HF_TOKEN:-}" ]; then
-            echo "HF_TOKEN is required to read the private Gaussian artifact bucket" >&2
-            exit 1
-          fi
           node scripts/materialize-browser-smoke-source.mjs \
             huejotzingo \
             _site/3dgs/ci/huejotzingo.ply \
@@ -166,6 +194,7 @@ jobs:
           test -s _site/3dgs/ci/settings.json
 
       - name: Render real 3DGS first frame in headless Chrome
+        if: steps.artifact-access.outputs.available == 'true'
         run: |
           set -euo pipefail
           if command -v google-chrome >/dev/null 2>&1; then
