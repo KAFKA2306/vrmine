@@ -3,7 +3,6 @@ import { readFile } from 'node:fs/promises';
 
 const exhibition = JSON.parse(await readFile(new URL('../config/gaussian-exhibition.json', import.meta.url), 'utf8'));
 const sources = JSON.parse(await readFile(new URL('../config/gaussian-splats.json', import.meta.url), 'utf8'));
-const playlist = JSON.parse(await readFile(new URL('../config/gaussian-video-playlist.json', import.meta.url), 'utf8'));
 const importerSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianSplatBatchImporter.cs', import.meta.url), 'utf8');
 const importOverridesSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianImportOverrides.cs', import.meta.url), 'utf8');
 const pipelineSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianExhibitionPipeline.cs', import.meta.url), 'utf8');
@@ -36,8 +35,8 @@ for (const key of ['center_spacing_m', 'aisle_width_m', 'pad_size_m', 'wall_heig
 }
 assert.ok(Number.isFinite(exhibition.layout?.margin_m) && exhibition.layout.margin_m >= 0, 'margin_m must be non-negative');
 assert.ok(Number.isFinite(exhibition.reference_camera?.field_of_view) && exhibition.reference_camera.field_of_view > 0, 'reference camera FOV must be positive');
-assert.equal(exhibition.video_player?.prefab_path, playlist.player_prefab_path, 'scene and playlist must use the same canonical SDK player prefab');
-assert.equal(exhibition.video_player?.playlist_manifest, 'config/gaussian-video-playlist.json');
+assert.ok(typeof exhibition.video_player?.prefab_path === 'string' && exhibition.video_player.prefab_path.length > 0, 'scene must define the SDK video player prefab');
+assert.equal(Object.hasOwn(exhibition.video_player ?? {}, 'playlist_manifest'), false, 'scene must read playback metadata from the canonical source registry');
 
 assert.ok(Array.isArray(sources.environments) && sources.environments.length >= 1, 'local pipeline requires at least one registered source');
 const ids = new Set();
@@ -49,6 +48,9 @@ for (const [index, source] of sources.environments.entries()) {
   assert.match(source.source?.sha256 ?? '', /^[0-9a-f]{64}$/, `${source.id}: sha256 missing or invalid`);
   assert.ok(typeof source.source?.artifact_id === 'string' && source.source.artifact_id.length > 0, `${source.id}: artifact_id is required`);
   assert.equal(Object.hasOwn(source.source, 'download_url'), false, `${source.id}: direct download source is not permitted`);
+  assert.ok(typeof source.playback?.url === 'string' && source.playback.url.startsWith('https://'), `${source.id}: playback url must be HTTPS`);
+  assert.equal(source.playback?.status, 'ready_untrusted', `${source.id}: playback must be ready_untrusted`);
+  assert.equal(source.playback?.requires_untrusted_urls, true, `${source.id}: Wikimedia playback must require untrusted URLs`);
 }
 
 const finiteVector = (value) => value && ['x', 'y', 'z'].every((key) => Number.isFinite(value[key]));
@@ -72,8 +74,6 @@ for (const override of exhibition.import_overrides) {
     if (override.alignment.pivot) assert.ok(finiteVector(override.alignment.pivot), `${override.id}: alignment pivot must be finite`);
   }
 }
-
-assert.equal(playlist.expected_entries, exhibition.final_expected_exhibits, 'final playlist count must follow the final product count');
 
 assert.doesNotMatch(importerSource, /const\s+float\s+TargetExtentMeters/, 'target extent must have one authority in gaussian-exhibition.json');
 assert.match(importerSource, /exhibition\.target_extent_m/, 'Unity importer must read target_extent_m from gaussian-exhibition.json');
@@ -115,4 +115,4 @@ assert.match(launcherSource, /detached: true/, 'native Linux launcher must retur
 assert.match(windowsLauncherSource, /Start-Process/, 'Windows launcher must start Unity through PowerShell');
 assert.match(windowsLauncherSource, /Restart Unity as a standard user/, 'Windows launcher must handle Unity administrator warning');
 
-console.log(`Validated Gaussian exhibition contract: registered=${sources.environments.length}, import_overrides=${exhibition.import_overrides.length}, final_required=${exhibition.final_expected_exhibits}, renderer=1`);
+console.log(`Validated Gaussian exhibition contract: registered=${sources.environments.length}, import_overrides=${exhibition.import_overrides.length}, final_required=${exhibition.final_expected_exhibits}, renderer=1, playback=${sources.environments.length}`);
