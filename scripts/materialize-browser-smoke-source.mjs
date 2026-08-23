@@ -6,10 +6,20 @@ const id = process.argv[2] ?? 'huejotzingo';
 const output = path.resolve(process.argv[3] ?? `_site/3dgs/ci/${id}.ply`);
 const settingsOutput = path.resolve(process.argv[4] ?? '_site/3dgs/ci/settings.json');
 const contract = JSON.parse(await readFile(new URL('../config/gaussian-splats.json', import.meta.url), 'utf8'));
+const basisContract = JSON.parse(await readFile(new URL('../config/gaussian-basis-contract.json', import.meta.url), 'utf8'));
 const entry = contract.environments.find((candidate) => candidate.id === id);
 if (!entry) throw new Error(`unknown Gaussian source id: ${id}`);
+if (basisContract.producer?.repository !== contract.source_repository) {
+  throw new Error(`${id}: artifact producer repository does not match source registry`);
+}
+if (typeof basisContract.producer?.revision !== 'string' || !/^[0-9a-f]{40}$/.test(basisContract.producer.revision)) {
+  throw new Error(`${id}: artifact producer revision must be an immutable commit SHA`);
+}
+if (entry.source?.artifact_manifest !== basisContract.artifact_manifest) {
+  throw new Error(`${id}: source artifact manifest does not match artifact-set basis contract`);
+}
 
-const sourceUrl = `https://raw.githubusercontent.com/${contract.source_repository}/${contract.source_commit}/${entry.source.path}`;
+const sourceUrl = `https://raw.githubusercontent.com/${basisContract.producer.repository}/${basisContract.producer.revision}/${entry.source.path}`;
 const response = await fetch(sourceUrl, { redirect: 'follow' });
 if (!response.ok) throw new Error(`${id}: source PLY HTTP ${response.status}`);
 const bytes = Buffer.from(await response.arrayBuffer());
@@ -43,4 +53,4 @@ await mkdir(path.dirname(output), { recursive: true });
 await mkdir(path.dirname(settingsOutput), { recursive: true });
 await writeFile(output, bytes);
 await writeFile(settingsOutput, `${JSON.stringify(settings, null, 2)}\n`, 'utf8');
-console.log(`Materialized browser smoke source ${id}: bytes=${bytes.length}, sha256=${digest}`);
+console.log(`Materialized browser smoke source ${id}: producer_revision=${basisContract.producer.revision}, bytes=${bytes.length}, sha256=${digest}`);
