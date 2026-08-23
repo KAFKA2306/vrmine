@@ -5,6 +5,7 @@ import { compileProducerOrientation } from './compile-gaussian-producer-orientat
 const sha = 'a'.repeat(64);
 const sqrtHalf = Math.sqrt(0.5);
 const producerRevision = '1d48110c8abd891d7b0a19f9e6ce793901758742';
+const artifactManifest = 'config/gaussian-artifacts.yaml';
 const rendererRevision = 'f96c0117cba518ff84d059d36f16909b873e23aa';
 const renderer = `MichaelMoroz/VRChatGaussianSplatting@${rendererRevision}`;
 const acceptedBasisOrientation = {
@@ -39,6 +40,7 @@ const basisContract = {
     nerfstudio_revision: '50e0e3c70c775e89333256213363badbf074f29d',
     coordinate_frame: 'nerfstudio-model-basis',
   },
+  artifact_manifest: artifactManifest,
   canonical_frame: { name: 'unity-basis-y-up', physical_gravity_claimed: false },
   physical_up: {
     status: 'review_required',
@@ -55,17 +57,17 @@ function registry(orientation = acceptedBasisOrientation) {
   };
 }
 
-function contractedRegistry({ revision = producerRevision, artifactRevision = producerRevision } = {}) {
+function contractedRegistry({ sourceArtifactManifest = artifactManifest } = {}) {
   return {
-    schema_version: 1,
+    schema_version: 2,
     source_repository: 'KAFKA2306/AutoPhotogrammetry',
-    source_commit: revision,
+    source_commit: '6f47684aa9a1b46cf2cd75cbef3c36031f220c59',
     environments: [
       {
         id: 'contract-fixture',
         source: {
           sha256: sha,
-          provenance: { artifact_repository_commit: artifactRevision },
+          artifact_manifest: sourceArtifactManifest,
         },
       },
     ],
@@ -115,13 +117,17 @@ const exhibition = {
 
 {
   const contractedExhibition = { ...exhibition, import_overrides: [] };
+  const invalidRevisionContract = {
+    ...basisContract,
+    producer: { ...basisContract.producer, revision: 'not-a-commit' },
+  };
   assert.throws(
-    () => compileProducerOrientation(contractedRegistry({ revision: '0'.repeat(40) }), contractedExhibition, { basisContract }),
-    /producer revision does not match registry/,
+    () => compileProducerOrientation(contractedRegistry(), contractedExhibition, { basisContract: invalidRevisionContract }),
+    /immutable commit SHA/,
   );
   assert.throws(
-    () => compileProducerOrientation(contractedRegistry({ artifactRevision: '0'.repeat(40) }), contractedExhibition, { basisContract }),
-    /basis unresolved/,
+    () => compileProducerOrientation(contractedRegistry({ sourceArtifactManifest: 'config/other-artifacts.yaml' }), contractedExhibition, { basisContract }),
+    /artifact manifest/,
   );
   assert.throws(
     () => compileProducerOrientation(contractedRegistry(), contractedExhibition),
