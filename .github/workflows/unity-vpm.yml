@@ -10,6 +10,7 @@ on:
       - "config/quality-gates.json"
       - "config/perspective-cage.json"
       - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
+      - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
       - "docs/QUALITY_GATES.md"
       - ".github/PULL_REQUEST_TEMPLATE.md"
       - "scripts/install-vrc-get.mjs"
@@ -17,6 +18,7 @@ on:
       - "scripts/verify-quality-gates.mjs"
       - "scripts/verify-perspective-cage.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
+      - "scripts/run-glb-consumer-unity.mjs"
       - "Taskfile.yml"
       - ".github/workflows/unity-vpm.yml"
   pull_request:
@@ -27,6 +29,7 @@ on:
       - "config/quality-gates.json"
       - "config/perspective-cage.json"
       - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
+      - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
       - "docs/QUALITY_GATES.md"
       - ".github/PULL_REQUEST_TEMPLATE.md"
       - "scripts/install-vrc-get.mjs"
@@ -34,6 +37,7 @@ on:
       - "scripts/verify-quality-gates.mjs"
       - "scripts/verify-perspective-cage.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
+      - "scripts/run-glb-consumer-unity.mjs"
       - "Taskfile.yml"
       - ".github/workflows/unity-vpm.yml"
   workflow_dispatch:
@@ -63,8 +67,10 @@ jobs:
       - name: Verify Perspective Cage contract and implementation shape
         run: node scripts/verify-perspective-cage.mjs
 
-      - name: Syntax-check Perspective Cage Unity runner
-        run: node --check scripts/run-perspective-cage-unity.mjs
+      - name: Syntax-check Unity runners
+        run: |
+          node --check scripts/run-perspective-cage-unity.mjs
+          node --check scripts/run-glb-consumer-unity.mjs
 
       - name: Install pinned vrc-get
         run: node scripts/install-vrc-get.mjs
