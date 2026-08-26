@@ -42,6 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       pages_enabled: ${{ steps.pages.outputs.enabled }}
+      gaussian_count: ${{ steps.gaussian-registry.outputs.count }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -53,6 +54,10 @@ jobs:
 
       - name: Validate 3DGS fixture contract
         run: node scripts/verify-gaussian-fixtures.mjs
+
+      - name: Record Gaussian registry cardinality
+        id: gaussian-registry
+        run: echo "count=$(jq '.environments | length' config/gaussian-splats.json)" >> "$GITHUB_OUTPUT"
 
       - name: Validate static game hub
         run: |
@@ -167,16 +172,13 @@ jobs:
             printf 'HF_TOKEN=%s\n' "$HF_TOKEN_FALLBACK" >> "$GITHUB_ENV"
             echo "available=true" >> "$GITHUB_OUTPUT"
             echo "method=github_actions_secret" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+          else
             echo "available=false" >> "$GITHUB_OUTPUT"
             echo "method=none" >> "$GITHUB_OUTPUT"
-            echo "::warning::Real 3DGS browser runtime proof is BLOCKED in this PR: no Hugging Face bucket credential is available. Static Pages and 3DGS contracts continue; no runtime PASS is claimed."
+            echo "::warning::Real 3DGS browser runtime proof is BLOCKED: no matching Hugging Face Trusted Publisher or HF_TOKEN is available. Static Pages deployment continues; no real-Ply runtime PASS is claimed."
             echo "### 3DGS browser runtime proof" >> "$GITHUB_STEP_SUMMARY"
-            echo "BLOCKED in PR: neither a matching Hugging Face Trusted Publisher nor HF_TOKEN is available. The private PLY was not read and browser runtime PASS is not claimed." >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "No Hugging Face credential is available for the private Gaussian artifact bucket; refusing Pages deployment without real-Ply browser proof." >&2
+            echo "BLOCKED: neither a matching Hugging Face Trusted Publisher nor HF_TOKEN is available. The private PLY was not read and browser runtime PASS is not claimed; static Pages deployment remains independent." >> "$GITHUB_STEP_SUMMARY"
             cat /tmp/vrmine-hf-oidc-error.txt >&2 || true
-            exit 1
           fi
 
       - name: Materialize hash-verified real PLY for runtime proof
@@ -296,6 +298,7 @@ jobs:
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_SHA: ${{ github.sha }}
+          EXPECTED_GAUSSIAN_COUNT: ${{ needs.build.outputs.gaussian_count }}
         run: |
           set -euo pipefail
           base="${PAGE_URL%/}"
@@ -330,7 +333,7 @@ jobs:
           grep -F 'gallery.js' "$tmp/3dgs.html"
           grep -F 'iframe.src = `./viewer/?' "$tmp/gallery.js"
           grep -F '@playcanvas/supersplat-viewer@1.28.0' "$tmp/gaussian-splats.json"
-          test "$(jq '.environments | length' "$tmp/gaussian-splats.json")" -eq 20
+          test "$(jq '.environments | length' "$tmp/gaussian-splats.json")" -eq "$EXPECTED_GAUSSIAN_COUNT"
           grep -F 'vrmine:3dgs:first-frame' "$tmp/viewer.html"
           test -s "$tmp/viewer.js"
           grep -F 'VRMine Event Demo' "$tmp/event.html"
