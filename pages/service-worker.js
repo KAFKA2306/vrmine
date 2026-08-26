@@ -1,4 +1,4 @@
-const CACHE = 'vrmine-game-hub-v3';
+const CACHE = 'vrmine-game-hub-v4';
 const scope = self.registration.scope;
 const fallback = new URL('./index.html', scope).href;
 const assets = [
@@ -9,6 +9,8 @@ const assets = [
   './assets/app.js',
   './assets/platform.js',
   './games/registry.js',
+  './games/perspective-cage/',
+  './games/perspective-cage/index.html',
   './games/stich-meister/',
   './games/stich-meister/index.html',
   './games/answer-impostor/',
