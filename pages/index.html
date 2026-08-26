@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f5f0">
   <meta name="app-build" content="vrmine-game-hub-2026-08-15-1">
-  <meta name="description" content="深淵侵蝕、Answer Impostor、Stich-Meisterに加え、VRChat向けの実装・検証途中の成果も状態付きで確認できるVRMineゲームハブ。">
+  <meta name="description" content="深淵侵蝕、Answer Impostor、Stich-Meister、VRChat謎解き『視点の檻』を状態付きで確認できるVRMineゲームハブ。">
   <title>VRMine Game Hub</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./assets/styles.css">
@@ -26,17 +26,17 @@
     <section class="hero">
       <p class="eyebrow">Local-first tabletop platform</p>
       <h1>ひとつの場所で、<br>何度でも遊ぶ。</h1>
-      <p class="lead">深淵侵蝕を起点に、複数のボードゲームや会話ゲームを同じ設計で追加できる静的ゲーム基盤です。インストール不要、アカウント不要。ゲーム状態はこのブラウザに保存されます。VRChat向けの実装途中の成果も、完成済みと混同しない状態表示付きで公開します。</p>
+      <p class="lead">ブラウザで遊べるゲームとVRChat向け空間体験を同じ公開ハブから辿れます。インストール不要の作品はその場で遊べ、VRChat向けの成果は実装済み・実機未検証などの状態を分けて公開します。</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="./games/answer-impostor/">Answer Impostorを遊ぶ</a>
+        <a class="btn" href="./games/perspective-cage/">視点の檻を見る</a>
         <a class="btn" href="./organizers/">イベントで使う</a>
-        <a class="btn" href="#development">VR開発状況を見る</a>
       </div>
     </section>
 
     <section class="section" id="games">
       <div class="section-head">
-        <div><p class="eyebrow">Game library</p><h2>ゲーム一覧 <span class="badge"><span data-game-count>3</span> titles</span></h2></div>
+        <div><p class="eyebrow">Game library</p><h2>ゲーム一覧 <span class="badge"><span data-game-count>4</span> titles</span></h2></div>
         <p>各ゲームは独立したモジュールです。共通のデザイン、保存方式、公開経路を使いながら、ゲーム固有の進行ロジックを分離しています。</p>
       </div>
       <div class="game-grid" data-game-grid></div>
@@ -48,6 +48,12 @@
         <p>ここでは「プレイ可能」と「開発・検証中」を分けて表示します。途中成果を隠さず、どの証拠レベルまで到達しているかを確認できます。</p>
       </div>
       <div class="feature-grid">
+        <article class="feature-card">
+          <div class="badges"><span class="badge">実装済み</span><span class="badge">VRChat実機未検証</span></div>
+          <h3>視点の檻</h3>
+          <p>見る位置・順序・対応・不在を手掛かりに進む15〜30分の空間謎解き。world runtimeとdeterministic builderはmainへ統合済みで、actual-client release gateを分離して管理しています。</p>
+          <p><a class="btn" href="./games/perspective-cage/">作品を見る</a></p>
+        </article>
         <article class="feature-card">
           <div class="badges"><span class="badge">browser検証中</span><span class="badge">3DGS</span></div>
           <h3>Huejotzingo Gaussian Splat</h3>
@@ -65,12 +71,6 @@
           <h3>Unity / VRChat 自動検証</h3>
           <p>VPM解決からUnity compile、ClientSim、実VRChat 2-client検証までを証拠レベル別に自動化するworkstreamです。</p>
           <p><a class="btn" href="https://github.com/KAFKA2306/vrmine/issues/54">Issue #54 を見る</a></p>
-        </article>
-        <article class="feature-card">
-          <div class="badges"><span class="badge">設計・実装中</span><span class="badge">Blender → Unity</span></div>
-          <h3>VRChatアセット変換パイプライン</h3>
-          <p>Blender headlessからFBX export、Unity import、VRChat evidenceまでを再現可能にし、GUI手作業を通常経路から外すための実装です。</p>
-          <p><a class="btn" href="https://github.com/KAFKA2306/vrmine/issues/58">Issue #58 を見る</a></p>
         </article>
       </div>
     </section>

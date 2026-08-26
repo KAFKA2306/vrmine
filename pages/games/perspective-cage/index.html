@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f5f0">
+  <meta name="description" content="VRChat謎解きワールド『視点の檻 / CAGE OF PERSPECTIVE』の内容と現在の検証状態。">
+  <title>視点の檻 | VRMine Game Hub</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body class="game-page">
+  <a class="skip-link" href="#main">本文へ移動</a>
+  <header class="site-header">
+    <a class="brand" href="../../"><span class="brand-mark" aria-hidden="true">◇</span><span>VRMine Game Hub</span></a>
+    <div class="header-actions"><a class="btn btn-small" href="https://github.com/KAFKA2306/vrmine/issues/141">開発状況</a></div>
+  </header>
+  <main class="shell" id="main">
+    <section class="game-hero">
+      <div>
+        <p class="eyebrow">VRChat PC · Spatial puzzle world</p>
+        <h1>視点の檻</h1>
+        <p class="lead">同じ空間でも、見る位置・順序・関係によって意味が変わる。観察し、仮説を立て、空間を操作して進む15〜30分の短編VR謎解き。</p>
+        <div class="game-meta"><span class="badge">1〜4人</span><span class="badge">15〜30分</span><span class="badge">実装済み・実機未検証</span></div>
+      </div>
+      <a class="btn" href="https://github.com/KAFKA2306/vrmine/issues/141">Issue #141</a>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading"><div><p class="eyebrow">Experience</p><h2>空間を読む5つの段階</h2></div></div>
+      <div class="feature-grid">
+        <article class="feature-card"><h3>視点</h3><p>離れた形が一つに重なる観測位置を探す。</p></article>
+        <article class="feature-card"><h3>順序</h3><p>空間に残された対応関係から操作順を導く。</p></article>
+        <article class="feature-card"><h3>対応</h3><p>見た目だけでなく形状と向きの関係を合わせる。</p></article>
+        <article class="feature-card"><h3>不在 → 再解釈</h3><p>欠けているものを見抜き、それまでの結果を入口の規則で読み替える。</p></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading"><div><p class="eyebrow">Product contract</p><h2>VRで成立する謎として実装</h2></div></div>
+      <div class="score-list">
+        <div class="score-row"><span><strong>対象</strong><br><span class="help">VRChat PC / Windows、1〜4人</span></span><span class="badge">VRChat</span></div>
+        <div class="score-row"><span><strong>進行</strong><br><span class="help">intro → 4 rooms → final → clear → reset</span></span><span class="badge">15–30 min</span></div>
+        <div class="score-row"><span><strong>再挑戦</strong><br><span class="help">instanceを作り直さずresetして再開できる設計</span></span><span class="badge">RESET</span></div>
+        <div class="score-row"><span><strong>アクセシビリティ</strong><br><span class="help">色・音・細かい文字だけを唯一の情報経路にしない</span></span><span class="badge">MULTI-CUE</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading"><div><p class="eyebrow">Evidence</p><h2>現在確認できている範囲</h2></div></div>
+      <div class="feature-grid">
+        <article class="feature-card"><h3>設計 authority</h3><p><code>config/perspective-cage.json</code> に5謎、hint、wrong-input、reset、multiplayer scopeを固定しています。</p></article>
+        <article class="feature-card"><h3>Unity implementation</h3><p>world固有runtimeとdeterministic builderはmainへ統合済みです。</p></article>
+        <article class="feature-card"><h3>Repository gate</h3><p>static contractとrepository merge gateは実装済み。下位evidenceをactual-client PASSへ昇格しません。</p></article>
+        <article class="feature-card"><h3>未検証</h3><p>Unity/SDK release candidateとactual VRChat clientの1人通し・2-client同期はIssue #145の実機gateです。</p></article>
+      </div>
+      <div class="hero-actions" style="margin-top:20px">
+        <a class="btn btn-primary" href="https://github.com/KAFKA2306/vrmine/issues/145">Release Gate #145</a>
+        <a class="btn" href="https://github.com/KAFKA2306/vrmine/blob/main/config/perspective-cage.json">Canonical spec</a>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><a href="../../">ゲーム一覧へ戻る</a></footer>
+  <script type="module">import { registerServiceWorker } from '../../assets/platform.js'; registerServiceWorker();</script>
+</body>
+</html>
