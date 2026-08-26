@@ -3,6 +3,7 @@
     "com.vrchat.base": "3.9.0",
     "com.vrchat.worlds": "3.9.0",
     "com.vrmine.bootstrap": "file:com.vrmine.bootstrap",
+    "org.khronos.unitygltf": "https://github.com/KhronosGroup/UnityGLTF.git#6d7980522323ab2587b9a3a0a102d922423a1c74",
     "com.unity.modules.androidjni": "1.0.0"
   }
 }
