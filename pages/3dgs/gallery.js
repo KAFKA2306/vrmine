@@ -50,7 +50,7 @@ const updateNavigation = () => {
   previous.disabled = selectedIndex <= 0;
   next.disabled = selectedIndex < 0 || selectedIndex >= entries.length - 1;
   select.value = selectedIndex >= 0 ? entries[selectedIndex].id : '';
-  count.textContent = `${entries.length} / 20 upstream entries available`;
+  count.textContent = `${entries.length} upstream entries available`;
   document.documentElement.dataset.splatEntries = String(entries.length);
 };
 
