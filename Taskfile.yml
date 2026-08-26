@@ -17,6 +17,7 @@ tasks:
       - node scripts/verify-quality-gates.mjs
       - node scripts/verify-perspective-cage.mjs
       - node --check scripts/run-perspective-cage-unity.mjs
+      - node --check scripts/run-glb-consumer-unity.mjs
       - node --check scripts/run-gaussian-unity.mjs
       - node --check scripts/open-gaussian-project.mjs
       - node scripts/verify-gaussian-fixtures.mjs
@@ -36,6 +37,11 @@ tasks:
   release:perspective-cage:u2:
     desc: Release Candidate Gate — run exact-Unity Perspective Cage scene verification
     deps: [perspective-cage:verify-unity]
+
+  glb:verify-u2:
+    desc: Import a materialized GLB with UnityGLTF in exact Unity and persist consumer evidence
+    cmds:
+      - node scripts/run-glb-consumer-unity.mjs
 
   gaussian:renderer:
     desc: Materialize the exact pinned VRChatGaussianSplatting Unity assets without example splats/scenes
