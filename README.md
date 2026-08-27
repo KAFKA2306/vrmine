@@ -7,7 +7,28 @@
 
 ブラウザ版とVRChat版を同じrepositoryで育てながら、**どの実行環境で何が検証済みかを混同せず、公開可能な状態まで進められること**を目標にします。ブラウザで動いたことをUnity/UdonSharp/VRChat上の動作証拠として扱いません。
 
-**公開ゲームハブ:** https://kafka2306.github.io/vrmine/
+## 公開Pages
+
+公開中のPages URLは、コピーしやすいようにURLをそのまま記載します。
+
+https://kafka2306.github.io/vrmine/
+https://kafka2306.github.io/vrmine/games/perspective-cage/
+https://kafka2306.github.io/vrmine/games/stich-meister/
+https://kafka2306.github.io/vrmine/games/answer-impostor/
+https://kafka2306.github.io/vrmine/games/abyss-invasion/
+https://kafka2306.github.io/vrmine/3dgs/
+https://kafka2306.github.io/vrmine/organizers/
+https://kafka2306.github.io/vrmine/events/demo/
+
+Pagesへの公開は、Unity Editor・ClientSim・実VRChat clientでの動作確認を意味しません。
+
+- Answer Impostor — 4〜8人、1端末の擬態クイズ
+- 深淵侵蝕 — 4人用の領域支配・進行補助
+- Stich-Meister — VRChat版の設計・実装状況を公開中。実VRChatでの通し対局は未検証（Issue #68）
+- 視点の檻 / CAGE OF PERSPECTIVE — 1〜4人向けVRChat空間謎解き。実機releaseはIssue #145で検証する
+- 3DGS — Gaussian Splatのブラウザ展示
+- Organizers — イベント主催者向け案内
+- Event Demo — イベント用Hubのデモ
 
 ## Design philosophy
 
@@ -37,14 +58,6 @@ VRMineの差分はUnity、UdonSharp、PWA、WebSocketそのものではなく、
 - **Unity version:** `ProjectSettings/ProjectVersion.txt`
 - **VRChat toolchain:** `config/vrchat-toolchain.json`
 
-## 公開Pages
-
-以下はGitHub Pagesで公開しているブラウザ画面です。Pagesへの公開は、Unity Editor・ClientSim・実VRChat clientでの動作確認を意味しません。
-
-- [Answer Impostor](https://kafka2306.github.io/vrmine/games/answer-impostor/) — 4〜8人、1端末の擬態クイズ
-- [深淵侵蝕](https://kafka2306.github.io/vrmine/games/abyss-invasion/) — 4人用の領域支配・進行補助
-- [Stich-Meister](https://kafka2306.github.io/vrmine/games/stich-meister/) — VRChat版の設計・実装状況を公開中。実VRChatでの通し対局は未検証（[#68](https://github.com/KAFKA2306/vrmine/issues/68)）
-
 ### Answer Impostor
 
 - 擬態者と擬態対象のランダム選出
@@ -65,7 +78,7 @@ VRMineの差分はUnity、UdonSharp、PWA、WebSocketそのものではなく、
 - 最終順位の自動計算
 - WebSocketを使った4端末同期
 
-ネットワーク手順は[docs/abyss-invasion-network.md](docs/abyss-invasion-network.md)を参照してください。
+ネットワーク手順は `docs/abyss-invasion-network.md` を参照してください。
 
 ### VRChat版 Stich-Meister
 
@@ -77,15 +90,15 @@ VRChat SDK3 / UdonSharpを使用し、盤面生成、オブジェクト配線、
 
 関連資料:
 
-- [Rulebook](docs/Rulebook.md)
-- [STATE](docs/STATE.md)
-- [ARCHITECTURE_RULES](docs/ARCHITECTURE_RULES.md)
+- `docs/Rulebook.md`
+- `docs/STATE.md`
+- `docs/ARCHITECTURE_RULES.md`
 
 ## Perspective Cage
 
 短編VRChat謎解きWorld **「視点の檻 / CAGE OF PERSPECTIVE」** は、5つの空間パズルを `config/perspective-cage.json` で定義し、同じUnity project内の `Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/` にruntimeとdeterministic builderを持ちます。
 
-Repository側では、scene shell生成、UdonSharpによる公開状態同期、3段階hint、reset、late-join時のpresentation再構築まで実装済みです。これはUnity Editorやactual VRChat clientでの成功を意味しません。製品release判定は [#145](https://github.com/KAFKA2306/vrmine/issues/145) がauthorityです。
+Repository側では、scene shell生成、UdonSharpによる公開状態同期、3段階hint、reset、late-join時のpresentation再構築まで実装済みです。これはUnity Editorやactual VRChat clientでの成功を意味しません。製品release判定はIssue #145がauthorityです。
 
 ローカルのrepository-level / Unity-level入口:
 
@@ -138,7 +151,7 @@ N PLY
 
 通常経路では、**手動PLY download、手動hash確認、`Gaussian Splatting / Import Splats...`、prefab手配置、床・spawn・material・lightingの手修正は不要**にします。UdonSharpはVRChat内で必要なruntime挙動（最終動画playlist、同期、操作UI）だけに使い、PLY取得・hash・import・scene authoringには使いません。
 
-現在のdownstream registryは20件です。ただし、20件が登録されていることとprivate artifact bytesが20/20検証済みであることは別です。現時点の残件は [#138](https://github.com/KAFKA2306/vrmine/issues/138) のprivate bucket exact-hash readback、[#132](https://github.com/KAFKA2306/vrmine/issues/132) のphysical-up evidence、[#139](https://github.com/KAFKA2306/vrmine/issues/139) のUnity / SDK / actual VRChat client検証です。これらが揃うまで20展示worldをruntime完成扱いしません。
+現在のdownstream registryは20件です。ただし、20件が登録されていることとprivate artifact bytesが20/20検証済みであることは別です。現時点の残件はIssue #138のprivate bucket exact-hash readback、Issue #132のphysical-up evidence、Issue #139のUnity / SDK / actual VRChat client検証です。これらが揃うまで20展示worldをruntime完成扱いしません。
 
 ## Unity / VRChat の検証
 
@@ -192,6 +205,8 @@ python3 -m http.server 8000 --directory pages
 
 Pages全体の検証は `task pages:test`、深淵侵蝕のserverは `task abyss:server` です。
 
-## 検証方針
+## CI/CD
 
-ブラウザのtestだけでUnity、UdonSharp、VRChat client上の動作を証明したことにはしません。コード・tests・実行結果を文書より優先し、未実行の環境は未検証として扱います。
+変更はPull RequestでCIを通してからmergeします。`main` へ反映されたPages関連変更は `.github/workflows/pages.yml` から自動公開し、workflow内で公開URLを確認します。
+
+CI成功だけでUnity、UdonSharp、実VRChat client上の動作を証明したことにはしません。コード・tests・実行結果を文書より優先し、未実行の環境は未検証として扱います。
