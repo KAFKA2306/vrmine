@@ -92,7 +92,13 @@ const publicPages = [
   'https://kafka2306.github.io/vrmine/organizers/',
   'https://kafka2306.github.io/vrmine/events/demo/',
 ];
-const readmeLines = new Set(fs.readFileSync(readmePath, 'utf8').split(/\r?\n/).map((line) => line.trim()));
+const readme = fs.readFileSync(readmePath, 'utf8');
+const readmeRows = readme.split(/\r?\n/);
+const firstNonEmptyReadmeLine = readmeRows.find((line) => line.trim().length > 0)?.trim();
+if (firstNonEmptyReadmeLine !== publicPages[0]) {
+  fail(`README.md first non-empty line must be canonical production URL: ${publicPages[0]}`);
+}
+const readmeLines = new Set(readmeRows.map((line) => line.trim()));
 for (const publicUrl of publicPages) {
   if (!readmeLines.has(publicUrl)) fail(`README.md must contain the public Pages URL as its own plain-text line: ${publicUrl}`);
 }
@@ -106,5 +112,6 @@ console.log(JSON.stringify({
   productReleaseRequired: [...releaseRequired],
   repositoryGuide: 'AGENTS.md',
   retiredRepoLocalSkillPathsAbsent: true,
+  canonicalProductionUrlFirstInReadme: true,
   publicPagesPlainTextUrls: publicPages,
 }, null, 2));

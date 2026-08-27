@@ -1,3 +1,5 @@
+https://kafka2306.github.io/vrmine/
+
 # VRMine — VRChat・3D spatial project
 
 [![Build and deploy VRMine Pages](https://github.com/KAFKA2306/vrmine/actions/workflows/pages.yml/badge.svg)](https://github.com/KAFKA2306/vrmine/actions/workflows/pages.yml)
