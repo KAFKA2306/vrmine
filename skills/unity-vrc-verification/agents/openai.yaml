@@ -1,4 +1,0 @@
-interface:
-  display_name: "Unity VRChat Verification"
-  short_description: "Verify Unity and VRChat worlds with reproducible release gates"
-  default_prompt: "Use $unity-vrc-verification to classify the playable scenes, run the next failing verification gate, and preserve reproducible evidence."
