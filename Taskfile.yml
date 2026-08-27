@@ -32,8 +32,10 @@ tasks:
       - node scripts/run-perspective-cage-unity.mjs
 
   release:perspective-cage:u2:
-    desc: Release Candidate Gate — run exact-Unity Perspective Cage scene verification
-    deps: [perspective-cage:verify-unity]
+    desc: Release Candidate Gate — verify pinned VRChat packages, then run exact-Unity Perspective Cage scene verification
+    deps: [vpm:check]
+    cmds:
+      - task: perspective-cage:verify-unity
 
   glb:verify-u2:
     desc: Import a materialized GLB with UnityGLTF in exact Unity and persist consumer evidence
