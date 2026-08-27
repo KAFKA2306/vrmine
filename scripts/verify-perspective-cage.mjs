@@ -38,7 +38,8 @@ if (spec.world?.primary_target !== 'vrchat_pc') fail('primary_target must be vrc
 if (spec.world?.canonical_scene !== 'Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Scenes/PerspectiveCage.unity') fail('canonical_scene changed unexpectedly');
 if (spec.world?.players?.min !== 1 || spec.world?.players?.max !== 4) fail('players must be exactly 1..4');
 if (spec.world?.target_playtime_minutes?.min !== 15 || spec.world?.target_playtime_minutes?.max !== 30) fail('target playtime must be exactly 15..30 minutes');
-if (!nonEmpty(spec.intro_rule?.description_ja)) fail('intro_rule.description_ja is required');
+for (const field of ['title_ja', 'title_en', 'summary_ja', 'summary_en']) if (!nonEmpty(spec.world?.[field])) fail(`world.${field} is required`);
+for (const field of ['description_ja', 'description_en', 'quick_start_ja', 'quick_start_en']) if (!nonEmpty(spec.intro_rule?.[field])) fail(`intro_rule.${field} is required`);
 
 const puzzles = spec.puzzles;
 if (!Array.isArray(puzzles) || puzzles.length !== 5) fail('puzzles must contain exactly 5 entries');
@@ -46,13 +47,18 @@ const expectedIds = ['p01', 'p02', 'p03', 'p04', 'p05'];
 if (JSON.stringify(puzzles.map((p) => p.id)) !== JSON.stringify(expectedIds)) fail(`puzzle ids/order must be ${expectedIds.join(', ')}`);
 if (JSON.stringify(puzzles.map((p) => p.room)) !== JSON.stringify([1, 2, 3, 4, 5])) fail('rooms must be 1..5 in order');
 
-const requiredStrings = ['title_ja', 'goal', 'interaction_type', 'wrong_input_behavior', 'completion_effect', 'reset_state', 'multiplayer_scope', 'accessibility_fallback'];
+const requiredStrings = [
+  'title_ja', 'title_en', 'goal', 'goal_en', 'interaction_type', 'wrong_input_behavior',
+  'wrong_feedback_ja', 'wrong_feedback_en', 'completion_effect', 'success_feedback_ja', 'success_feedback_en',
+  'reset_state', 'multiplayer_scope', 'accessibility_fallback',
+];
 for (const puzzle of puzzles) {
   for (const field of requiredStrings) if (!nonEmpty(puzzle[field])) fail(`${puzzle.id}.${field} is required`);
   if (!['choice', 'sequence', 'mapping'].includes(puzzle.interaction_type)) fail(`${puzzle.id}.interaction_type is unsupported`);
   if (puzzle.multiplayer_scope !== 'public_instance') fail(`${puzzle.id}.multiplayer_scope must be public_instance`);
   if (!Array.isArray(puzzle.observable_clues) || puzzle.observable_clues.length < 2 || puzzle.observable_clues.some((v) => !nonEmpty(v))) fail(`${puzzle.id}.observable_clues is invalid`);
   if (!Array.isArray(puzzle.hints) || puzzle.hints.length !== 3 || puzzle.hints.some((v) => !nonEmpty(v))) fail(`${puzzle.id}.hints must contain exactly 3 non-empty levels`);
+  if (!Array.isArray(puzzle.hints_en) || puzzle.hints_en.length !== 3 || puzzle.hints_en.some((v) => !nonEmpty(v))) fail(`${puzzle.id}.hints_en must contain exactly 3 non-empty levels`);
   if (!puzzle.solution || !nonEmpty(puzzle.solution.output)) fail(`${puzzle.id}.solution is incomplete`);
 }
 
@@ -83,6 +89,8 @@ const files = {
   interactableMeta: 'Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Runtime/PerspectiveCageInteractable.cs.meta',
   builder: 'Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Editor/PerspectiveCageBuilder.cs',
   builderMeta: 'Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Editor/PerspectiveCageBuilder.cs.meta',
+  experience: 'Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Editor/PerspectiveCageExperienceBuilder.cs',
+  experienceMeta: 'Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Editor/PerspectiveCageExperienceBuilder.cs.meta',
   verification: 'Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Editor/PerspectiveCageVerification.cs',
   verificationMeta: 'Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/Editor/PerspectiveCageVerification.cs.meta',
   runner: 'scripts/run-perspective-cage-unity.mjs',
@@ -141,17 +149,35 @@ requireTokens(source.builder, files.builder, [
   'Anchor("ReferenceCamera",',
 ]);
 
+requireTokens(source.experience, files.experience, [
+  'public static class PerspectiveCageExperienceBuilder',
+  'JsonUtility.FromJson<ExperienceSpec>',
+  'PerspectiveCageExperience',
+  'QuickStart',
+  'P01ViewpointGuide',
+  'hints_en',
+  'wrong_feedback_en',
+  'success_feedback_en',
+  'EditorSceneManager.SaveScene(scene, PerspectiveCageBuilder.ScenePath)',
+]);
+
 requireTokens(source.verification, files.verification, [
   'PerspectiveCageBuilder.Build();',
+  'PerspectiveCageExperienceBuilder.Apply();',
   'InteractionCount',
   'DeterministicPuzzleLogic',
   'UdonPrograms',
+  'ExperienceRoot',
+  'QuickStart',
+  'BilingualHints',
+  'P01ViewpointGuide',
   'MissingScripts',
   'BuildSettings',
   'Perspective Cage verification PASS',
   'Library/VRMine/PerspectiveCageVerification.txt',
 ]);
 if ((source.verification.match(/PerspectiveCageBuilder\.Build\(\);/g) ?? []).length < 4) fail('verification must exercise builder rerun in both interactive and batch paths');
+if ((source.verification.match(/PerspectiveCageExperienceBuilder\.Apply\(\);/g) ?? []).length < 4) fail('verification must exercise experience presentation after every canonical scene build');
 
 requireTokens(source.runner, files.runner, [
   "projectVersion !== '2022.3.22f1'",
@@ -161,23 +187,25 @@ requireTokens(source.runner, files.runner, [
   "path.join(evidenceDir, 'PerspectiveCageVerification.txt')",
 ]);
 
-const metas = [source.controllerMeta, source.interactableMeta, source.builderMeta, source.verificationMeta];
+const metas = [source.controllerMeta, source.interactableMeta, source.builderMeta, source.experienceMeta, source.verificationMeta];
 const guids = metas.map((meta, index) => {
   const match = meta.match(/^guid:\s*([0-9a-f]{32})$/m);
   if (!match) fail(`invalid Unity meta GUID at index ${index}`);
   return match[1];
 });
 if (new Set(guids).size !== guids.length) fail('Perspective Cage Unity source meta GUIDs must be unique');
-if (/GaussianSplat|VRChatGaussianSplatting/.test(source.builder + source.controller)) fail('Perspective Cage core must not depend on Gaussian Splatting');
+if (/GaussianSplat|VRChatGaussianSplatting/.test(source.builder + source.experience + source.controller)) fail('Perspective Cage core must not depend on Gaussian Splatting');
 
 console.log(JSON.stringify({
   status: 'PASS',
   world: spec.world.id,
   puzzles: puzzles.length,
-  hints: puzzles.reduce((sum, p) => sum + p.hints.length, 0),
+  hintsJa: puzzles.reduce((sum, p) => sum + p.hints.length, 0),
+  hintsEn: puzzles.reduce((sum, p) => sum + p.hints_en.length, 0),
   finalSequence: expectedFinalSequence,
   vrchatWorldsSdk: vpm.dependencies['com.vrchat.worlds'].version,
   solutionAuthority: 'config/perspective-cage.json -> builder serialized fields -> runtime',
+  presentationAuthority: 'config/perspective-cage.json -> experience builder -> canonical scene',
   networkingAuthority: 'single-current-owner',
   implementationFiles: Object.keys(files).length,
   unityRuntimeEvidence: 'requires exact Unity 2022.3.22f1 execution',
