@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f5f0">
-  <meta name="description" content="VRChat謎解きワールド『視点の檻 / CAGE OF PERSPECTIVE』の内容と現在の検証状態。">
-  <title>視点の檻 | VRMine Game Hub</title>
+  <meta name="description" content="VRChat謎解きワールド『視点の檻 / CAGE OF PERSPECTIVE』。1〜4人、15〜30分の空間謎解き。">
+  <title>視点の檻 / CAGE OF PERSPECTIVE | VRMine Game Hub</title>
   <link rel="stylesheet" href="../../assets/styles.css">
 </head>
 <body class="game-page">
@@ -18,20 +18,31 @@
     <section class="game-hero">
       <div>
         <p class="eyebrow">VRChat PC · Spatial puzzle world</p>
-        <h1>視点の檻</h1>
-        <p class="lead">同じ空間でも、見る位置・順序・関係によって意味が変わる。観察し、仮説を立て、空間を操作して進む15〜30分の短編VR謎解き。</p>
-        <div class="game-meta"><span class="badge">1〜4人</span><span class="badge">15〜30分</span><span class="badge">実装済み・実機未検証</span></div>
+        <h1>視点の檻 <span class="help">/ CAGE OF PERSPECTIVE</span></h1>
+        <p class="lead">同じ空間でも、見る位置・順序・関係によって意味が変わる。観察し、移動し、空間を操作して進む15〜30分の短編VR謎解き。</p>
+        <p class="help">A short VR spatial puzzle about observing, moving, and changing how you read the room.</p>
+        <div class="game-meta"><span class="badge">1〜4人</span><span class="badge">15〜30分</span><span class="badge">VRChat PC</span><span class="badge">実装済み・実機release未検証</span></div>
       </div>
-      <a class="btn" href="https://github.com/KAFKA2306/vrmine/issues/141">Issue #141</a>
+      <a class="btn" href="https://github.com/KAFKA2306/vrmine/issues/145">Release Gate #145</a>
     </section>
 
     <section class="panel">
       <div class="panel-heading"><div><p class="eyebrow">Experience</p><h2>空間を読む5つの段階</h2></div></div>
       <div class="feature-grid">
-        <article class="feature-card"><h3>視点</h3><p>離れた形が一つに重なる観測位置を探す。</p></article>
-        <article class="feature-card"><h3>順序</h3><p>空間に残された対応関係から操作順を導く。</p></article>
-        <article class="feature-card"><h3>対応</h3><p>見た目だけでなく形状と向きの関係を合わせる。</p></article>
-        <article class="feature-card"><h3>不在 → 再解釈</h3><p>欠けているものを見抜き、それまでの結果を入口の規則で読み替える。</p></article>
+        <article class="feature-card"><h3>視点 / Viewpoint</h3><p>離れた形が一つに重なる観測位置を探す。</p></article>
+        <article class="feature-card"><h3>順序 / Order</h3><p>空間に残された対応関係から操作順を導く。</p></article>
+        <article class="feature-card"><h3>対応 / Mapping</h3><p>見た目だけでなく形状と向きの関係を合わせる。</p></article>
+        <article class="feature-card"><h3>不在 → 再解釈 / Absence → Reinterpretation</h3><p>欠けているものを見抜き、それまでの結果を入口の規則で読み替える。</p></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading"><div><p class="eyebrow">First-run UX</p><h2>説明を読ませるより、すぐ観察へ入れる</h2></div></div>
+      <div class="score-list">
+        <div class="score-row"><span><strong>開始</strong><br><span class="help">spawn地点で「観察 → 移動 → 操作」と所要時間・人数を日英併記</span></span><span class="badge">QUICK START</span></div>
+        <div class="score-row"><span><strong>Hint</strong><br><span class="help">各room 3段階。日本語・英語を同じcanonical puzzle stateへ対応</span></span><span class="badge">3 LEVELS</span></div>
+        <div class="score-row"><span><strong>Feedback</strong><br><span class="help">不正解・解決・次room openを明示し、state correctnessとpresentationを分離</span></span><span class="badge">BILINGUAL</span></div>
+        <div class="score-row"><span><strong>Reset</strong><br><span class="help">instanceを作り直さず再挑戦できる既存contractを維持</span></span><span class="badge">REPLAY</span></div>
       </div>
     </section>
 
@@ -46,16 +57,27 @@
     </section>
 
     <section class="panel">
+      <div class="panel-heading"><div><p class="eyebrow">Release path</p><h2>実装完了と公開完了を混同しない</h2></div></div>
+      <div class="feature-grid">
+        <article class="feature-card"><h3>1. Release candidate</h3><p>Unity 2022.3.22f1でscene生成、compile、reference、SDK Builderを検証する。<br><a href="https://github.com/KAFKA2306/vrmine/issues/145">Issue #145</a></p></article>
+        <article class="feature-card"><h3>2. First-time playtest</h3><p>作者以外の初見playerで15〜30分、hint、離脱点、multiplayer参加性を実測する。<br><a href="https://github.com/KAFKA2306/vrmine/issues/168">Issue #168</a> · <a href="https://github.com/KAFKA2306/vrmine/issues/171">#171</a></p></article>
+        <article class="feature-card"><h3>3. Actual-client usability</h3><p>avatar eye-height、Desktop/VRなど、空間謎固有の成立条件をactual clientで確認する。<br><a href="https://github.com/KAFKA2306/vrmine/issues/172">Issue #172</a></p></article>
+        <article class="feature-card"><h3>4. Publish</h3><p>検証済みWorldだけをCommunity Labsへ公開し、このページから実Worldへ直結する。<br><a href="https://github.com/KAFKA2306/vrmine/issues/165">Issue #165</a></p></article>
+      </div>
+    </section>
+
+    <section class="panel">
       <div class="panel-heading"><div><p class="eyebrow">Evidence</p><h2>現在確認できている範囲</h2></div></div>
       <div class="feature-grid">
-        <article class="feature-card"><h3>設計 authority</h3><p><code>config/perspective-cage.json</code> に5謎、hint、wrong-input、reset、multiplayer scopeを固定しています。</p></article>
-        <article class="feature-card"><h3>Unity implementation</h3><p>world固有runtimeとdeterministic builderはmainへ統合済みです。</p></article>
+        <article class="feature-card"><h3>設計 authority</h3><p><code>config/perspective-cage.json</code> に5謎、日英presentation、hint、wrong-input、reset、multiplayer scopeを固定しています。</p></article>
+        <article class="feature-card"><h3>Unity implementation</h3><p>world固有runtime、deterministic builder、product experience builderを同一canonical sceneへ適用します。</p></article>
         <article class="feature-card"><h3>Repository gate</h3><p>static contractとrepository merge gateは実装済み。下位evidenceをactual-client PASSへ昇格しません。</p></article>
-        <article class="feature-card"><h3>未検証</h3><p>Unity/SDK release candidateとactual VRChat clientの1人通し・2-client同期はIssue #145の実機gateです。</p></article>
+        <article class="feature-card"><h3>未検証</h3><p>Unity/SDK release candidate、actual VRChat client通し、初見playtest、公開World IDは未取得です。</p></article>
       </div>
       <div class="hero-actions" style="margin-top:20px">
         <a class="btn btn-primary" href="https://github.com/KAFKA2306/vrmine/issues/145">Release Gate #145</a>
         <a class="btn" href="https://github.com/KAFKA2306/vrmine/blob/main/config/perspective-cage.json">Canonical spec</a>
+        <a class="btn" href="https://github.com/KAFKA2306/vrmine/issues/165">Publish #165</a>
       </div>
     </section>
   </main>
