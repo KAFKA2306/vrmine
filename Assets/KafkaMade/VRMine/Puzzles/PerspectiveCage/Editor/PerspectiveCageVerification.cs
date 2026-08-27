@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using VRC.SDK3.Components;
 using Object = UnityEngine.Object;
 
@@ -18,7 +19,9 @@ public static class PerspectiveCageVerification
     public static void BuildAndVerify()
     {
         PerspectiveCageBuilder.Build();
+        PerspectiveCageExperienceBuilder.Apply();
         PerspectiveCageBuilder.Build();
+        PerspectiveCageExperienceBuilder.Apply();
         RunGate();
     }
 
@@ -35,7 +38,9 @@ public static class PerspectiveCageVerification
         try
         {
             PerspectiveCageBuilder.Build();
+            PerspectiveCageExperienceBuilder.Apply();
             PerspectiveCageBuilder.Build();
+            PerspectiveCageExperienceBuilder.Apply();
             int failures = Verify(out string report);
             if (failures == 0)
             {
@@ -110,6 +115,26 @@ public static class PerspectiveCageVerification
         failures += Check(report, "UdonPrograms", behaviours.Length > 0 && validPrograms == behaviours.Length, validPrograms + "/" + behaviours.Length);
 
         for (int zone = 0; zone < 7; zone++) failures += Check(report, "Floor_" + zone, GameObject.Find("Floor_" + zone) != null, GameObject.Find("Floor_" + zone) == null ? "missing" : "present");
+
+        GameObject experienceRoot = GameObject.Find("PerspectiveCageExperience");
+        failures += Check(report, "ExperienceRoot", experienceRoot != null, experienceRoot == null ? "missing" : "present");
+        Text quickStart = FindSceneText("QuickStartText");
+        failures += Check(report, "QuickStart", quickStart != null && quickStart.text.Contains("OBSERVE") && quickStart.text.Contains("観察"), quickStart == null ? "missing" : "bilingual");
+        Text introRule = FindSceneText("IntroRuleText");
+        failures += Check(report, "BilingualIntroRule", introRule != null && introRule.text.Contains("ENTRANCE RULE") && introRule.text.Contains("入口の規則"), introRule == null ? "missing" : "bilingual");
+        Text p01Guide = FindSceneText("P01ViewpointGuideText");
+        failures += Check(report, "P01ViewpointGuide", p01Guide != null && p01Guide.text.Contains("断片") && p01Guide.text.Contains("FRAGMENTS"), p01Guide == null ? "missing" : "bilingual");
+        int bilingualHints = 0;
+        for (int puzzle = 1; puzzle <= 5; puzzle++)
+        {
+            for (int hint = 1; hint <= 3; hint++)
+            {
+                Text label = FindSceneText("Hint_P0" + puzzle + "_" + hint + "Text");
+                if (label != null && label.text.Contains("HINT") && label.text.Contains("ヒント")) bilingualHints++;
+            }
+        }
+        failures += Check(report, "BilingualHints", bilingualHints == 15, bilingualHints + "/15");
+
         failures += Check(report, "MissingScripts", CountMissingScripts(scene) == 0, CountMissingScripts(scene).ToString());
         failures += Check(report, "BuildSettings", IsRegisteredBuildScene(), PerspectiveCageBuilder.ScenePath);
 
@@ -119,6 +144,17 @@ public static class PerspectiveCageVerification
         File.WriteAllText(ReportPath, report.ToString(), Encoding.UTF8);
         reportText = report.ToString();
         return failures;
+    }
+
+    static Text FindSceneText(string name)
+    {
+        Text[] labels = Resources.FindObjectsOfTypeAll<Text>();
+        for (int i = 0; i < labels.Length; i++)
+        {
+            Text label = labels[i];
+            if (label != null && label.gameObject.name == name && label.gameObject.scene.path == PerspectiveCageBuilder.ScenePath) return label;
+        }
+        return null;
     }
 
     static int CountMissingScripts(Scene scene)
