@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
     paths:
+      - "AGENTS.md"
+      - "README.md"
       - "Packages/**"
       - "ProjectSettings/ProjectVersion.txt"
       - "config/vrchat-toolchain.json"
@@ -20,9 +22,14 @@ on:
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
       - "Taskfile.yml"
+      - "skills/**"
+      - "agr.toml"
+      - "agr.lock"
       - ".github/workflows/unity-vpm.yml"
   pull_request:
     paths:
+      - "AGENTS.md"
+      - "README.md"
       - "Packages/**"
       - "ProjectSettings/ProjectVersion.txt"
       - "config/vrchat-toolchain.json"
@@ -39,6 +46,9 @@ on:
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
       - "Taskfile.yml"
+      - "skills/**"
+      - "agr.toml"
+      - "agr.lock"
       - ".github/workflows/unity-vpm.yml"
   workflow_dispatch:
 
@@ -61,7 +71,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Verify merge/release gate separation
+      - name: Verify repository and quality gate contracts
         run: node scripts/verify-quality-gates.mjs
 
       - name: Verify Perspective Cage contract and implementation shape
