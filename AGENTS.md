@@ -1,189 +1,180 @@
-# Repository Guidelines
+# VRMine 作業ルール
 
-## Project Structure
-Unity/VRChat assets live under `Assets/`, with VRMine-owned code under `Assets/KafkaMade/VRMine/`. Browser games live under `pages/`. VPM and Unity package declarations live under `Packages/`; Unity version is fixed by `ProjectSettings/ProjectVersion.txt`. Do not add generated verification reports, screenshots, `Library/`, downloaded packages, repo-local `.tools/`, or `.artifacts/` evidence to Git.
+このファイルを、VRMineで作業するエージェント向けルールの正準とする。
+同じ内容を別の `SKILL.md` や別の指示ファイルへ複製しない。
 
-## Verification Contract
-Browser success and VRChat success are separate evidence classes. The verification architecture is tracked by #54:
+## 1. まず確認するもの
 
-- U1: VPM/package resolution (`vrc-get`) — automated by `task vpm:check` / `.github/workflows/unity-vpm.yml`
-- U2: exact Unity compile + EditMode tests
-- U3: PlayMode + ClientSim-supported local semantics
-- U4: Windows + actual VRChat Build & Test / multi-client
-- U5: private-world release smoke
+作業を始める前に、次を確認する。
 
-Do not claim a higher evidence level from a lower one. ClientSim does not certify real VRChat networking, ownership transfer, late join, PC/Quest parity, or uploaded-world behavior.
+- 現在の `main`
+- 関係するIssueとPull Request
+- 現在のCI結果
+- 実際に使われている設定ファイル、scene、script
+- すでに同じ目的を持つ実装や作業ブランチがないか
 
-Legacy Unity MenuItem verification remains only as a temporary local fallback while #49–#53 replace it. Do not add new automation through the removed local MCP PowerShell/request-file path. New verification work belongs in the U1–U4 pipeline and must emit machine-readable evidence.
+READMEやIssue本文だけを見て、現在の実装状態を決めつけない。
+同じ目的のIssueや実装がすでにある場合は、それを続ける。
 
-## Goal Contract
-For non-trivial work define before editing:
+## 2. ディレクトリの役割
 
-- **Goal** — the player/developer outcome that must exist at the end;
-- **Contract** — what may change and what must remain unchanged;
-- **Required Evidence Level** — the minimum U1–U5 level that can actually falsify the changed behavior;
-- **Acceptance Criteria** — deterministic conditions for completion at that evidence level;
-- **Evidence** — files, tests, workflow runs, runtime artifacts, screenshots only when they are legitimate evidence, or release receipts;
-- **Stopping Condition** — the fixed point after which further work is a separate outcome.
+- `Assets/`: Unity / VRChatのassetとcode
+- `Assets/KafkaMade/VRMine/`: VRMineが管理するUnity code
+- `pages/`: GitHub Pagesで公開するブラウザ画面
+- `Packages/`: Unity / VPM package設定
+- `ProjectSettings/ProjectVersion.txt`: Unity versionの正準
+- `config/`: 機械が読む正準設定
+- `scripts/`: 検証や自動処理
+- `Taskfile.yml`: 人とCIが使う操作入口
 
-The Contract is both the minimum required result and the maximum allowed scope. Do not broaden a browser-game change into Unity work or a package-resolution change into VRChat runtime work unless the acceptance criteria require it.
+`Library/`、downloadしたpackage、生成した一時report、実行時のartifactをGitへ追加しない。
+検証結果はGitHub Actionsのsummaryやartifactへ残す。
 
-## Complexity Ratchet
-For the same user-visible capability, UX, and required evidence level, prefer the implementation with fewer production responsibilities, files, lines, settings, dependencies, adapters, and execution paths.
+## 3. 検証は5段階に分ける
 
-- Reuse an existing canonical component before adding a new abstraction.
-- A new production file or dependency must own a responsibility that cannot be cleanly absorbed by an existing canonical path.
-- Replacing a path means deleting the superseded path in the same workline; Git history is the archive.
-- Do not reduce tests, observability, fail-fast behavior, or U1–U5 evidence merely to reduce LOC.
-- Keep retry/recovery policy in the execution/workflow layer when possible; domain logic should fail visibly instead of converting invalid state into plausible defaults.
-- Use the existing `Taskfile.yml` interface rather than adding parallel shell/PowerShell/npm command surfaces for the same intent.
-- Before/after reports for non-trivial refactors must include production file/line delta and user-visible capability/evidence delta. A larger implementation requires an explicit reason.
-- Net-new framework code with no new verified player/developer outcome is a regression.
+ブラウザで動いたことと、UnityやVRChatで動いたことを混同しない。
 
-## Goal-Driven Execution Loop
-For work that cannot be completed in one edit, keep one Goal active and iterate:
+- **U1**: package、設定、静的な契約の検証
+- **U2**: 指定UnityでのcompileとEditMode検証
+- **U3**: PlayModeとClientSimで確認できるローカル挙動
+- **U4**: 実際のVRChat clientでのBuild & Test、複数client確認
+- **U5**: uploadしたprivate/public worldでの最終確認
 
-```text
-inspect current repository + workline
-  -> identify minimum required evidence level
-  -> implement smallest coherent change
-  -> run cheapest relevant verifier
-  -> inspect actual evidence
-  -> repair if falsified
-  -> escalate toward the required U-level only when necessary
-  -> stop at the fixed point
-```
+低い段階の成功を、高い段階の成功として報告しない。
 
-A failed check is input to repair, not permission to weaken the gate. A lower-level PASS does not compensate for missing higher-level evidence when the changed surface requires it.
+特にClientSimだけでは、次を証明できない。
 
-## Durable Continuation
-Before creating work:
+- 実client間の同期
+- ownership移行
+- late join
+- owner離脱後の挙動
+- PCとAndroidの同等性
+- upload後のworld挙動
 
-1. inspect current `main`, relevant Issues, open PRs, branches, CI, canonical manifests, and existing U1–U5 evidence;
-2. continue the existing canonical Issue/branch/PR when it already owns the same Goal;
-3. otherwise create one bounded workline;
-4. do not create competing branches, duplicate verification pipelines, alternate manifests, or replacement implementations for the same outcome.
+実行していない検証は `PASS` にしない。
 
-When work cannot finish, leave the canonical workline resumable. Record in the owning Issue/PR or existing machine-readable evidence surface:
+## 4. 目的と完了条件を先に決める
 
-- last verified commit/revision;
-- Goal and remaining acceptance criteria;
-- highest evidence level actually achieved;
-- failing stage or missing environment/evidence;
-- exact next action required to advance one evidence level or reach the fixed point.
+大きな作業では、編集前に最低限次を決める。
 
-Do not invent a second state database merely for agent memory. Repository state, canonical Issue/PR state, workflow artifacts, and the U1–U5 evidence model are the continuation authority.
+- 何を完成させるか
+- 何を変更してよいか
+- 何を変更してはいけないか
+- どの検証段階まで必要か
+- 何を満たせば完了か
 
-## Build and Test
-Canonical bootstrap and fast check:
+作業中に別の目的を見つけても、現在の目的に不要なら同じ変更へ混ぜない。
+
+## 5. 実装は1責務1経路にする
+
+同じ責務の実装、設定、状態管理、検証経路を並立させない。
+
+- 既存の正準実装を先に再利用する
+- 新しいframeworkやdependencyは、既存経路へ入れられない理由がある場合だけ追加する
+- 新経路へ置き換えたら、不要になった旧経路を同じ作業で削除する
+- 履歴保存のためにdead codeを残さない。履歴はGitにある
+- 不正な状態をもっともらしいdefault値へ変換して成功扱いしない
+- retryやrecoveryは、できるだけworkflowや実行側へ置く
+
+repository固有の作業ルールはこの `AGENTS.md` に置く。
+現在、repo内Skillを必須の実行経路にはしない。
+
+## 6. 操作入口はTaskfileへ集約する
+
+通常の入口は次とする。
 
 ```text
 task setup
 task check
 ```
 
-Useful focused checks:
+主な個別入口:
 
 ```text
 task vpm:check
-node --test pages/games/answer-impostor/engine.test.mjs
+task release:perspective-cage:u2
+task gaussian:open
+task gaussian:verify-u2
+task gaussian:verify-sdk
+task pages:test
 ```
 
-`task setup` installs the pinned `vrc-get` release asset after SHA-256 verification. U1 validates the exact Unity policy, VPM SDK target consistency, `vrc-get resolve` reproducibility, canonical manifest non-mutation, and `vrc-get outdated`; evidence belongs in CI Job Summary / runtime artifacts, not the repository.
+同じ目的のshell、PowerShell、npm、独自wrapperを増やさない。
+Unity自動実行は `ProjectSettings/ProjectVersion.txt` の指定versionを使う。
 
-Unity automation must use the exact version from `ProjectSettings/ProjectVersion.txt`. VPM dependencies must be reproducible from the canonical manifests. Runtime evidence belongs in CI/workflow artifacts, not committed `Latest*.txt` or dated screenshots.
+## 7. CI/CDは必須
 
-## Evidence-Driven Completion
-Do not equate code written, files generated, browser CI green, or a successful Unity import with completion.
+変更を手元で確認しただけでは完了にしない。
 
-Completion evidence must match the changed surface:
+### Pull Request
 
-- browser-only behavior may be proven with the relevant browser/static/unit path;
-- VPM/package integrity requires U1 evidence;
-- Unity compile/editor semantics require U2;
-- ClientSim/local runtime semantics require U3;
-- actual networking/build behavior requires U4 when the contract claims it;
-- uploaded/private-world release behavior requires U5 when the contract claims it.
+- 変更はPull Requestで確認する
+- 関係するGitHub Actionsを実行する
+- `task check` 相当のrepository検証を通す
+- 変更箇所専用の検証がある場合はそれも通す
+- CIが失敗した状態ではmergeしない
 
-Treat material claims as:
+### mainへ反映した後
 
-- **VERIFIED** — directly supported by current repository/test/CI/runtime evidence at the required level;
-- **OBSERVED** — explicitly supplied observation;
-- **INFERRED** — derived from evidence and reported as inference;
-- **UNVERIFIED** — not inspected and never stated as fact;
-- **FABRICATED** — forbidden.
+- exact `main` commitに対するCI結果を確認する
+- Pagesを変更した場合はPagesのdeploy成功を確認する
+- Pagesを変更した場合は公開URLへ実際にアクセスして確認する
 
-A verifier that did not run is not PASS. A screenshot cannot prove networking semantics that require U4/U5. ClientSim cannot be promoted into actual VRChat evidence.
+CI成功だけでUnity / VRChat実機成功とはみなさない。
+Unity / VRChat挙動を変更した場合は、その主張に必要なU2〜U5の証拠も別に確認する。
 
-## Tooling Applicability
-Do not add generic tooling merely because it is part of a cross-repository baseline. For the current repository state:
+## 8. Pagesの扱い
 
-- Unity/VRChat/VPM: native Unity + VRChat/VPM verification is authoritative.
-- Browser JavaScript: Node syntax/unit/static checks are authoritative; there is no package-managed TypeScript application here.
-- Python / Pyrefly / Ruff / Pydantic: N/A unless maintained Python code is introduced.
-- TypeScript / Biome / Oxlint / `tsc` / Zod: N/A for the current app surface.
-- Nx/Turborepo: N/A; there is no independently buildable JS/TS monorepo graph requiring orchestration.
-- `prek`: N/A; do not introduce a Python hook runtime solely to wrap the existing native checks.
-- Blender: no `.blend` or Blender automation is canonical in current main; future DCC headless verification is tracked by #58 and must remain a separate evidence class from Unity/VRChat success.
+公開Pagesの入口はREADMEへURLそのものが見える形で書く。
+公開ページを追加・削除した場合はREADMEも同じ変更で直す。
 
-## Coding Style
-Use four-space indentation and UTF-8 for C#/UdonSharp. Preserve serialized inspector references and GUIDs. Prefer the smallest implementation that fixes the root cause. Keep networking behavior explicit: ownership, serialization, synced state, and late-join behavior must be testable rather than implied.
+ブラウザの検証結果をUnity / VRChatの検証結果として使わない。
 
-## Change Rules
-- One canonical implementation per responsibility; delete superseded adapters and temporary shims after replacement.
-- Do not preserve dead structures for history; Git history is the archive.
-- Do not introduce machine-specific absolute paths into canonical tasks or docs.
-- Do not commit generated verification output.
-- Do not make third-party Unity MCP transport a required CI or release dependency.
-- Do not attach credential-bearing Windows execution directly to public-repository pull-request code.
-- Changes affecting Unity/VRChat behavior must identify the minimum required evidence level (U1–U5).
-- SDK upgrades must be coupled to the lowest Unity/VRChat execution evidence required to prove compatibility; U1 drift reporting alone is not permission to auto-upgrade.
+## 9. Unity / VRChat変更の注意
 
-## Builder / Auditor Separation
-Treat implementation and acceptance as separate phases even when one agent performs both sequentially.
+- C# / UdonSharpはUTF-8、4-space indentを基本とする
+- serialized referenceとGUIDを壊さない
+- ownership、serialization、synced state、late joinを暗黙にしない
+- SDK更新はversion番号だけ変更して完了にしない
+- SDK更新後に必要なUnity / SDK / client検証を行う
+- third-party Unity MCPを必須CIやrelease依存にしない
+- public repositoryのPR codeへcredential付きWindows実行を直接つながない
 
-### Builder
-May modify code, scenes, prefabs, manifests, workflows, tests, browser content, and documentation within the bounded Goal Contract.
+## 10. 証拠の扱い
 
-### Auditor
-Independently verifies:
+重要な主張は次のどれかとして扱う。
 
-- the requested player/developer outcome exists;
-- the claimed U-level is actually supported by evidence from that level;
-- lower evidence was not promoted into a stronger runtime claim;
-- exact-head CI belongs to the reviewed revision;
-- required runtime artifacts/release receipts correspond to the intended commit/build;
-- no serialized GUID/reference or canonical manifest boundary was silently broken;
-- task-created residue and duplicate worklines are removed.
+- **確認済み**: 必要な検証を実際に実行して確認した
+- **観察**: 人が実際に見た結果
+- **推定**: 証拠から推測したもの
+- **未確認**: まだ確認していない
 
-Implementation intent is never acceptance evidence.
+未確認を確認済みとして書かない。
+screenshotだけでnetwork同期を証明したことにしない。
 
-## Pull Requests
-Describe player/developer impact, changed scenes/prefabs/scripts, required evidence level, and produced evidence. A PR is not complete merely because browser/static CI passes when the changed surface requires Unity or VRChat execution.
+## 11. 作業を途中で止める場合
 
-## Fixed Point
-Stop when all are true:
+IssueまたはPull Requestへ次を残す。
 
-- the requested Goal exists;
-- the minimum required U1–U5 evidence level has been reached and inspected, or an exact external-environment blocker is recorded;
-- all acceptance criteria that can be proven in the available environment are satisfied without overstating unavailable runtime evidence;
-- exact-head CI is verified when applicable;
-- owning Issue/PR state is correct;
-- superseded temporary code, duplicate branches/PRs, and task-created residue are removed;
-- additional ideas would not change the current Goal or required evidence and therefore belong to a separate workline.
+- 最後に確認したcommit
+- 完成させる目的
+- どこまで確認できたか
+- 何が失敗または不足しているか
+- 次に実行する具体的な操作
 
-At the fixed point, stop. Do not keep expanding the task merely because adjacent Unity/VRChat work is possible.
+エージェント用の第二の状態databaseは作らない。
+Git、Issue、Pull Request、CI artifactを正準とする。
 
-## Final Report Contract
-Report verified state rather than activity. Include as applicable:
+## 12. 完了条件
 
-- Goal and player/developer impact;
-- Issue/PR/commit URL;
-- required and achieved evidence level (U1–U5);
-- exact tests/CI/runtime evidence;
-- merge/release result when in scope;
-- cleanup result;
-- production file/line delta and user-visible capability/evidence delta for non-trivial refactors;
-- blocker and exact next action when unfinished.
+次をすべて満たしたときに完了とする。
 
-Never claim a Unity/VRChat behavior at a stronger evidence level than was actually executed.
+- 求められた結果が実装されている
+- 必要な段階の検証を実行している
+- Pull RequestのCIを確認している
+- merge後のexact `main` CIを確認している
+- Pages変更ではdeployと公開URLを確認している
+- 不要になった旧実装、一時file、重複経路を残していない
+- Issue / Pull Requestの状態が実際の結果と一致している
+
+完了後に別の改善案が出ても、現在の目的に不要ならそこで止める。
