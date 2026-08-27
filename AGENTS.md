@@ -125,7 +125,7 @@ Unity / VRChat挙動を変更した場合は、その主張に必要なU2〜U5�
 
 ## 8. Pagesの扱い
 
-公開Pagesの入口はREADMEへURLそのものが見える形で書く。
+canonical production URL `https://kafka2306.github.io/vrmine/` をREADMEの先頭行に装飾なしの平文で置く。
 公開ページを追加・削除した場合はREADMEも同じ変更で直す。
 
 ブラウザの検証結果をUnity / VRChatの検証結果として使わない。
