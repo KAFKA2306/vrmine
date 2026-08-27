@@ -1,8 +1,5 @@
 version: '3'
 
-env:
-  UV_CACHE_DIR: '{{.ROOT_DIR}}/Library/uv-cache'
-
 tasks:
   setup:
     desc: Install pinned repo verification tools
@@ -91,18 +88,6 @@ tasks:
     deps: [setup]
     cmds:
       - node scripts/verify-vpm.mjs
-
-  skills:init:
-    cmds:
-      - uvx agr init
-
-  skills:add:
-    cmds:
-      - uvx agr add ./skills/unity-vrc-verification
-
-  skills:sync:
-    cmds:
-      - uvx agr sync
 
   pages:test:
     cmds:
