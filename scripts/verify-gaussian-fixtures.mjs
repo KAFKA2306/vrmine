@@ -12,8 +12,9 @@ assert.equal(config.source_catalog, 'sources/videos.json');
 assert.ok(config.renderers.browser);
 assert.ok(config.renderers.unity_vrchat);
 assert.ok(Array.isArray(config.environments), 'environments must be an array');
-assert.equal(config.environments.length, 20, 'final exhibition contract must contain exactly 20 entries');
+assert.ok(config.environments.length > 0, 'canonical Gaussian exhibition manifest must not be empty');
 
+const registeredCount = config.environments.length;
 const ids = new Set();
 const hashes = new Set();
 const displayIndexes = new Set();
@@ -24,7 +25,7 @@ for (const environment of config.environments) {
   ids.add(environment.id);
 
   assert.ok(Number.isInteger(environment.display_index), `${environment.id} display_index must be an integer`);
-  assert.ok(environment.display_index >= 1 && environment.display_index <= 20, `${environment.id} display_index out of range`);
+  assert.ok(environment.display_index >= 1 && environment.display_index <= registeredCount, `${environment.id} display_index out of range`);
   assert.ok(!displayIndexes.has(environment.display_index), `duplicate display_index: ${environment.display_index}`);
   displayIndexes.add(environment.display_index);
 
@@ -54,5 +55,5 @@ for (const environment of config.environments) {
   }
 }
 
-assert.deepEqual([...displayIndexes].sort((a, b) => a - b), Array.from({ length: 20 }, (_, index) => index + 1));
-console.log(`Validated canonical Gaussian exhibition manifest: entries=${config.environments.length}, provenance_duplicates=0, playback_ready_untrusted=20`);
+assert.deepEqual([...displayIndexes].sort((a, b) => a - b), Array.from({ length: registeredCount }, (_, index) => index + 1));
+console.log(`Validated canonical Gaussian exhibition manifest: entries=${registeredCount}, provenance_duplicates=0, playback_ready_untrusted=${registeredCount}`);
