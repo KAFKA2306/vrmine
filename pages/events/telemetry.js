@@ -5,12 +5,23 @@ function storageKey(slug) {
 }
 
 export function loadEventCounts(slug) {
-  try {
-    const value = JSON.parse(localStorage.getItem(storageKey(slug)) ?? '{}');
-    return Object.fromEntries([...ALLOWED_EVENTS].map((name) => [name, Number(value[name] ?? 0)]));
-  } catch {
+  const raw = localStorage.getItem(storageKey(slug));
+  if (raw === null) {
     return Object.fromEntries([...ALLOWED_EVENTS].map((name) => [name, 0]));
   }
+
+  const value = JSON.parse(raw);
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error(`invalid event counts for ${slug}`);
+  }
+
+  return Object.fromEntries([...ALLOWED_EVENTS].map((name) => {
+    const count = value[name] ?? 0;
+    if (!Number.isInteger(count) || count < 0) {
+      throw new Error(`invalid ${name} count for ${slug}`);
+    }
+    return [name, count];
+  }));
 }
 
 export async function trackEvent(slug, name, endpoint = null) {
