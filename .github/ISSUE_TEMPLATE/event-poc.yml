@@ -1,0 +1,67 @@
+name: イベント向けゲームHub 有償PoCの相談
+description: VRMineのイベント向けブラウザゲームHubを使いたい主催者向けの相談フォームです。
+title: "[イベントPoC] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ご相談ありがとうございます。公開Issueとして作成されます。氏名、電話番号、メールアドレスなどの個人情報や非公開情報は記載しないでください。
+
+  - type: input
+    id: event_date
+    attributes:
+      label: 開催予定日
+      description: 未定の場合は「未定」と記載してください。
+      placeholder: 2026-09-20
+    validations:
+      required: true
+
+  - type: input
+    id: participants
+    attributes:
+      label: 想定参加人数
+      placeholder: 30人
+    validations:
+      required: true
+
+  - type: dropdown
+    id: event_type
+    attributes:
+      label: イベント種別
+      options:
+        - VRコミュニティ交流会
+        - ボードゲーム会
+        - オフライン交流会
+        - カフェ・コワーキングイベント
+        - その他
+    validations:
+      required: true
+
+  - type: textarea
+    id: theme
+    attributes:
+      label: イベントのテーマ・使い方
+      description: 質問パックやイベント専用表示を検討するため、公開可能な範囲で教えてください。
+      placeholder: 参加者同士の交流を促すため、開始30分後にAnswer Impostorを使いたい。
+    validations:
+      required: true
+
+  - type: textarea
+    id: organizer_link
+    attributes:
+      label: 主催者・イベントの公開URL
+      description: Webサイト、イベント告知、SNSなど公開情報があれば記載してください。未定・なしでも構いません。
+      placeholder: https://example.com/event
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: 確認
+      options:
+        - label: 現在の有償PoCはブラウザ版が対象で、VRChat実機版は提供保証に含まれないことを確認しました。
+          required: true
+        - label: このIssueが公開されるため、個人情報や非公開情報を記載していないことを確認しました。
+          required: true
