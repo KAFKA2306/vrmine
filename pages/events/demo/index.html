@@ -23,6 +23,12 @@
       </div>
     </section>
     <section class="section">
+      <div class="section-head"><div><p class="eyebrow">Join</p><h2>参加者はQRから開けます</h2></div></div>
+      <p>会場の画面や印刷物にこのQRを表示してください。読み取り先は、このdemoの公開URLです。</p>
+      <p><img src="./qr.svg" width="246" height="246" alt="VRMine Event Demoを開くQRコード"></p>
+      <p><a href="https://kafka2306.github.io/vrmine/events/demo/">https://kafka2306.github.io/vrmine/events/demo/</a></p>
+    </section>
+    <section class="section">
       <div class="section-head"><div><p class="eyebrow">Privacy</p><h2>計測するのは4つの集計イベントだけ</h2></div></div>
       <p><code>view_hub</code> / <code>start_game</code> / <code>complete_game</code> / <code>cta_click</code> の回数だけを扱います。氏名、回答内容、端末識別子は送信しません。集計endpointが設定されていないdemoでは、この端末のlocalStorageにのみ記録します。</p>
       <p><button class="btn btn-small" type="button" data-export-events>この端末の集計をJSONで保存</button></p>
