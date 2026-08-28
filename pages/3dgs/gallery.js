@@ -14,6 +14,7 @@ const rendererLink = document.getElementById('renderer-link');
 
 let contract;
 let entries = [];
+let sourcesById = new Map();
 let selectedIndex = -1;
 let requestToken = 0;
 
@@ -54,17 +55,17 @@ const updateNavigation = () => {
   document.documentElement.dataset.splatEntries = String(entries.length);
 };
 
-const updateMetadata = (entry) => {
+const updateMetadata = (entry, source) => {
   sourceCommit.href = `https://github.com/${contract.source_repository}/commit/${contract.source_commit}`;
   sourceCommit.textContent = `${contract.source_repository} ${contract.source_commit.slice(0, 8)}`;
   fixtureId.textContent = entry.id;
   sourceSha.textContent = entry.source.sha256;
-  sourcePage.href = entry.source.provenance.source_page;
-  sourcePage.textContent = entry.source.provenance.title;
-  sourceAuthor.textContent = entry.source.provenance.author || 'author未確認';
-  if (entry.source.provenance.license_status === 'verified') {
-    sourceLicense.href = entry.source.provenance.license_url;
-    sourceLicense.textContent = entry.source.provenance.license;
+  sourcePage.href = source.source_page;
+  sourcePage.textContent = source.title;
+  sourceAuthor.textContent = source.author || 'author未確認';
+  if (source.license?.status === 'verified') {
+    sourceLicense.href = source.license.url;
+    sourceLicense.textContent = source.license.name;
     sourceLicense.removeAttribute('aria-disabled');
   } else {
     sourceLicense.removeAttribute('href');
@@ -76,14 +77,28 @@ const updateMetadata = (entry) => {
 const selectEntry = (index, { updateHash = true } = {}) => {
   if (index < 0 || index >= entries.length) return;
   const entry = entries[index];
+  const source = sourcesById.get(entry.upstream.video_id);
   selectedIndex = index;
   updateNavigation();
-  updateMetadata(entry);
+
+  if (!source) {
+    iframe.removeAttribute('src');
+    fail(`${entry.id}: upstream source metadata is missing.`);
+    return;
+  }
+  updateMetadata(entry, source);
   if (updateHash) history.replaceState(null, '', `#${encodeURIComponent(entry.id)}`);
 
-  if (entry.source.provenance.license_status !== 'verified') {
+  if (source.license?.status !== 'verified') {
     iframe.removeAttribute('src');
     fail(`${entry.id}: exact source license is unverified; browser rendering is blocked.`);
+    return;
+  }
+
+  const runtimePlyUrl = entry.runtime_ply_url;
+  if (!runtimePlyUrl) {
+    iframe.removeAttribute('src');
+    fail(`${entry.id}: 実PLYの公開配信URLが未設定です。`);
     return;
   }
 
@@ -92,9 +107,8 @@ const selectEntry = (index, { updateHash = true } = {}) => {
   status.textContent = `${entry.id}: 実PLYを読み込み、first frameを待っています…`;
   status.dataset.state = 'loading';
   delete document.documentElement.dataset.splatRender;
-  const source = `https://raw.githubusercontent.com/${contract.source_repository}/${contract.source_commit}/${entry.source.path}`;
   const params = new URLSearchParams({
-    content: source,
+    content: runtimePlyUrl,
     settings: settingsUrl,
     vrmine_id: entry.id,
     vrmine_token: String(token)
@@ -134,6 +148,12 @@ try {
   entries = Array.isArray(contract.environments) ? contract.environments : [];
   if (!entries.length) throw new Error('no Gaussian Splat entries are available');
 
+  const sourceCatalogUrl = `https://raw.githubusercontent.com/${contract.source_repository}/${contract.source_commit}/${contract.source_catalog}`;
+  const sourceCatalogResponse = await fetch(sourceCatalogUrl, { cache: 'no-store' });
+  if (!sourceCatalogResponse.ok) throw new Error(`upstream source catalog HTTP ${sourceCatalogResponse.status}`);
+  const sourceCatalog = await sourceCatalogResponse.json();
+  sourcesById = new Map((sourceCatalog.videos ?? []).map((source) => [source.id, source]));
+
   const browserRenderer = contract.renderers?.browser;
   if (browserRenderer !== '@playcanvas/supersplat-viewer@1.28.0') {
     throw new Error(`unsupported browser renderer pin: ${browserRenderer ?? 'missing'}`);
@@ -144,17 +164,19 @@ try {
   if (!navigator.gpu && !canvas.getContext('webgl2')) throw new Error('WebGPU and WebGL 2 are unavailable');
 
   for (const [index, entry] of entries.entries()) {
+    const source = sourcesById.get(entry.upstream.video_id);
+    if (!source) throw new Error(`upstream source metadata is missing: ${entry.upstream.video_id}`);
     const option = document.createElement('option');
     option.value = entry.id;
     const order = String(index + 1).padStart(2, '0');
-    const licenseSuffix = entry.source.provenance.license_status === 'verified' ? '' : ' — license review required';
-    option.textContent = `${order}. ${entry.source.provenance.title}${licenseSuffix}`;
+    const licenseSuffix = source.license?.status === 'verified' ? '' : ' — license review required';
+    option.textContent = `${order}. ${source.title}${licenseSuffix}`;
     select.append(option);
   }
 
   const requested = decodeURIComponent(location.hash.slice(1));
   const requestedIndex = entries.findIndex((entry) => entry.id === requested);
-  const firstVerifiedIndex = entries.findIndex((entry) => entry.source.provenance.license_status === 'verified');
+  const firstVerifiedIndex = entries.findIndex((entry) => sourcesById.get(entry.upstream.video_id)?.license?.status === 'verified');
   selectEntry(requestedIndex >= 0 ? requestedIndex : Math.max(firstVerifiedIndex, 0), { updateHash: requestedIndex < 0 });
 } catch (error) {
   fail(`galleryの読み込みに失敗しました: ${error.message}`);

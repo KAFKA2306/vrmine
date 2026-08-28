@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 const allowedStatuses = new Set(['UNVERIFIED', 'PASS', 'FAIL', 'BLOCKED']);
 const requiredTargets = ['browser', 'unity', 'vrchat_pc', 'vrchat_android'];
 const config = JSON.parse(await readFile(new URL('../config/gaussian-splats.json', import.meta.url), 'utf8'));
+const gallerySource = await readFile(new URL('../pages/3dgs/gallery.js', import.meta.url), 'utf8');
 
 assert.equal(config.schema_version, 2, 'unsupported gaussian fixture schema');
 assert.equal(config.source_repository, 'KAFKA2306/AutoPhotogrammetry');
@@ -13,6 +14,10 @@ assert.ok(config.renderers.browser);
 assert.ok(config.renderers.unity_vrchat);
 assert.ok(Array.isArray(config.environments), 'environments must be an array');
 assert.ok(config.environments.length > 0, 'canonical Gaussian exhibition manifest must not be empty');
+assert.ok(gallerySource.includes('entry.runtime_ply_url'), 'browser gallery must require an explicit public runtime PLY URL');
+assert.ok(gallerySource.includes('contract.source_catalog'), 'browser gallery must read provenance from the pinned upstream source catalog');
+assert.ok(!gallerySource.includes('entry.source.provenance'), 'browser gallery must not depend on duplicated provenance');
+assert.ok(!gallerySource.includes('entry.source.path}`'), 'browser gallery must not infer public delivery from the private artifact source path');
 
 const registeredCount = config.environments.length;
 const ids = new Set();
