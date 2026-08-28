@@ -47,6 +47,16 @@ for (const environment of config.environments) {
   assert.ok(environment.source.path.endsWith('.ply'));
   assert.equal(environment.source.artifact_id, `autophotogrammetry/${environment.id}/splat`);
 
+  if (Object.hasOwn(environment, 'runtime_ply_url')) {
+    assert.equal(typeof environment.runtime_ply_url, 'string', `${environment.id} runtime_ply_url must be a string`);
+    assert.match(
+      environment.runtime_ply_url,
+      /^https:\/\/github\.com\/KAFKA2306\/vrmine\/releases\/download\/[^/?#]+\/[^/?#]+\.ply$/,
+      `${environment.id} runtime_ply_url must be an immutable GitHub Release asset URL for KAFKA2306/vrmine`,
+    );
+    assert.ok(!environment.runtime_ply_url.includes('/latest/'), `${environment.id} runtime_ply_url must not use a moving latest-release URL`);
+  }
+
   assert.equal(environment.playback?.status, 'ready_untrusted', `${environment.id} playback must be ready_untrusted`);
   assert.equal(environment.playback?.requires_untrusted_urls, true, `${environment.id} Wikimedia playback requires untrusted URLs`);
   assert.match(environment.playback?.url ?? '', /^https:\/\/upload\.wikimedia\.org\//, `${environment.id} playback URL must be a Wikimedia HTTPS media URL`);
