@@ -156,7 +156,6 @@ jobs:
         id: artifact-access
         env:
           HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
-          HF_TOKEN_FALLBACK: ${{ secrets.HF_TOKEN }}
         run: |
           set +e
           oidc_token="$(hf auth token 2>/tmp/vrmine-hf-oidc-error.txt)"
@@ -167,17 +166,12 @@ jobs:
             printf 'HF_TOKEN=%s\n' "$oidc_token" >> "$GITHUB_ENV"
             echo "available=true" >> "$GITHUB_OUTPUT"
             echo "method=trusted_publisher_oidc" >> "$GITHUB_OUTPUT"
-          elif [ -n "${HF_TOKEN_FALLBACK:-}" ]; then
-            echo "::add-mask::$HF_TOKEN_FALLBACK"
-            printf 'HF_TOKEN=%s\n' "$HF_TOKEN_FALLBACK" >> "$GITHUB_ENV"
-            echo "available=true" >> "$GITHUB_OUTPUT"
-            echo "method=github_actions_secret" >> "$GITHUB_OUTPUT"
           else
             echo "available=false" >> "$GITHUB_OUTPUT"
             echo "method=none" >> "$GITHUB_OUTPUT"
-            echo "::warning::Real 3DGS browser runtime proof is BLOCKED: no matching Hugging Face Trusted Publisher or HF_TOKEN is available. Static Pages deployment continues; no real-Ply runtime PASS is claimed."
+            echo "::warning::Real 3DGS browser runtime proof is BLOCKED: no matching Hugging Face Trusted Publisher is available. Static Pages deployment continues; no real-Ply runtime PASS is claimed."
             echo "### 3DGS browser runtime proof" >> "$GITHUB_STEP_SUMMARY"
-            echo "BLOCKED: neither a matching Hugging Face Trusted Publisher nor HF_TOKEN is available. The private PLY was not read and browser runtime PASS is not claimed; static Pages deployment remains independent." >> "$GITHUB_STEP_SUMMARY"
+            echo "BLOCKED: no matching Hugging Face Trusted Publisher is available. The private PLY was not read and browser runtime PASS is not claimed; static Pages deployment remains independent." >> "$GITHUB_STEP_SUMMARY"
             cat /tmp/vrmine-hf-oidc-error.txt >&2 || true
           fi
 
