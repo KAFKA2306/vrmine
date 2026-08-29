@@ -1,96 +1,54 @@
-# VRMine 作業ルール
+# VRMine Agent Contract
 
 このファイルを、VRMineで作業するエージェント向けルールの正準とする。
-同じ内容を別の `SKILL.md` や別の指示ファイルへ複製しない。
+CI/CDは必須。変更したsurfaceのexact headを既存gateで検証する。
 
-## 1. まず確認するもの
+## Short-context start
 
-作業を始める前に、次を確認する。
+Read this file, then only the files that own the current task. Do not preload all scenes, scripts, Pages, Issues, PR history, or docs.
 
-- 現在の `main`
-- 関係するIssueとPull Request
-- 現在のCI結果
-- 実際に使われている設定ファイル、scene、script
-- すでに同じ目的を持つ実装や作業ブランチがないか
+Before editing, identify:
 
-READMEやIssue本文だけを見て、現在の実装状態を決めつけない。
-同じ目的のIssueや実装がすでにある場合は、それを続ける。
+1. requested outcome
+2. affected runtime: browser / Unity / ClientSim / VRChat client / uploaded world
+3. canonical implementation/config
+4. smallest verifier required for that claim
+5. existing Issue/PR/workline, if any
 
-## 2. ディレクトリの役割
+Continue an existing workline when it owns the same outcome. README/Issue prose does not override current code, config, CI, or runtime evidence.
 
-- `Assets/`: Unity / VRChatのassetとcode
-- `Assets/KafkaMade/VRMine/`: VRMineが管理するUnity code
-- `pages/`: GitHub Pagesで公開するブラウザ画面
-- `Packages/`: Unity / VPM package設定
-- `ProjectSettings/ProjectVersion.txt`: Unity versionの正準
-- `config/`: 機械が読む正準設定
-- `scripts/`: 検証や自動処理
-- `Taskfile.yml`: 人とCIが使う操作入口
+## Canonical surfaces
 
-`Library/`、downloadしたpackage、生成した一時report、実行時のartifactをGitへ追加しない。
-検証結果はGitHub Actionsのsummaryやartifactへ残す。
+- Unity/VRChat assets: `Assets/`
+- VRMine-owned Unity code: `Assets/KafkaMade/VRMine/`
+- browser surface: `pages/`
+- package config: `Packages/`
+- Unity version: `ProjectSettings/ProjectVersion.txt`
+- machine-readable config: `config/`
+- verification/automation: `scripts/`
+- operator entry point: `Taskfile.yml`
 
-## 3. 検証は5段階に分ける
+Do not commit `Library/`, downloaded packages, temporary reports, or runtime artifacts.
 
-ブラウザで動いたことと、UnityやVRChatで動いたことを混同しない。
+## Verification levels
 
-- **U1**: package、設定、静的な契約の検証
-- **U2**: 指定UnityでのcompileとEditMode検証
-- **U3**: PlayModeとClientSimで確認できるローカル挙動
-- **U4**: 実際のVRChat clientでのBuild & Test、複数client確認
-- **U5**: uploadしたprivate/public worldでの最終確認
+Never promote evidence from a lower runtime to a higher one.
 
-低い段階の成功を、高い段階の成功として報告しない。
+- **U1** — package/config/static contract
+- **U2** — specified Unity compile/EditMode
+- **U3** — PlayMode/ClientSim
+- **U4** — real VRChat Build & Test / multi-client
+- **U5** — uploaded private/public world
 
-特にClientSimだけでは、次を証明できない。
+ClientSim does not prove real-client sync, ownership transfer, late join, owner departure behavior, PC/Android parity, or uploaded-world behavior. Unrun verification is not PASS.
 
-- 実client間の同期
-- ownership移行
-- late join
-- owner離脱後の挙動
-- PCとAndroidの同等性
-- upload後のworld挙動
+## Commands
 
-実行していない検証は `PASS` にしない。
-
-## 4. 目的と完了条件を先に決める
-
-大きな作業では、編集前に最低限次を決める。
-
-- 何を完成させるか
-- 何を変更してよいか
-- 何を変更してはいけないか
-- どの検証段階まで必要か
-- 何を満たせば完了か
-
-作業中に別の目的を見つけても、現在の目的に不要なら同じ変更へ混ぜない。
-
-## 5. 実装は1責務1経路にする
-
-同じ責務の実装、設定、状態管理、検証経路を並立させない。
-
-- 既存の正準実装を先に再利用する
-- 新しいframeworkやdependencyは、既存経路へ入れられない理由がある場合だけ追加する
-- 新経路へ置き換えたら、不要になった旧経路を同じ作業で削除する
-- 履歴保存のためにdead codeを残さない。履歴はGitにある
-- 不正な状態をもっともらしいdefault値へ変換して成功扱いしない
-- retryやrecoveryは、できるだけworkflowや実行側へ置く
-
-repository固有の作業ルールはこの `AGENTS.md` に置く。
-現在、repo内Skillを必須の実行経路にはしない。
-
-## 6. 操作入口はTaskfileへ集約する
-
-通常の入口は次とする。
+Use existing Taskfile entries instead of adding parallel wrappers.
 
 ```text
 task setup
 task check
-```
-
-主な個別入口:
-
-```text
 task vpm:check
 task release:perspective-cage:u2
 task gaussian:open
@@ -99,82 +57,29 @@ task gaussian:verify-sdk
 task pages:test
 ```
 
-同じ目的のshell、PowerShell、npm、独自wrapperを増やさない。
-Unity自動実行は `ProjectSettings/ProjectVersion.txt` の指定versionを使う。
+Read `Taskfile.yml` only as needed for the current surface.
 
-## 7. CI/CDは必須
+## Change rules
 
-変更を手元で確認しただけでは完了にしない。
+- one responsibility, one implementation/config/state/verification path.
+- `DELETE > MERGE > REPLACE > ADD`; remove superseded paths after current references prove them unused.
+- prefer existing standard APIs/frameworks and canonical implementations.
+- do not hide invalid state with plausible defaults, silent fallback, broad exception handling, or unverified success.
+- keep retries/recovery at the execution/workflow boundary when possible.
+- preserve Unity serialized references and GUIDs; do not change tracked `.meta` files unintentionally.
+- make ownership, serialization, synced state, and late-join behavior explicit when relevant.
+- comments should explain non-obvious rationale/external constraints, not narrate code.
 
-### Pull Request
+## CI, Pages, and release
 
-- 変更はPull Requestで確認する
-- 関係するGitHub Actionsを実行する
-- `task check` 相当のrepository検証を通す
-- 変更箇所専用の検証がある場合はそれも通す
-- CIが失敗した状態ではmergeしない
+Use a reviewable PR and verify the exact head with the checks required by the changed surface. `task check` is the repository-level gate when applicable.
 
-### mainへ反映した後
+After merge, read back exact `main`. Pages changes additionally require deployment success and direct verification of `https://kafka2306.github.io/vrmine/`. Browser evidence never proves Unity/VRChat behavior.
 
-- exact `main` commitに対するCI結果を確認する
-- Pagesを変更した場合はPagesのdeploy成功を確認する
-- Pagesを変更した場合は公開URLへ実際にアクセスして確認する
+CI, merge, Pages deployment, U2-U5 verification, and world release are separate claims. Report only the layer directly observed.
 
-CI成功だけでUnity / VRChat実機成功とはみなさない。
-Unity / VRChat挙動を変更した場合は、その主張に必要なU2〜U5の証拠も別に確認する。
+## Continuation and completion
 
-## 8. Pagesの扱い
+If work stops, update the existing Issue/PR with the last verified commit, outcome, achieved verification level, blocker/failure, and one exact next action. Do not create a second agent-state database.
 
-canonical production URL `https://kafka2306.github.io/vrmine/` をREADMEの先頭行に装飾なしの平文で置く。
-公開ページを追加・削除した場合はREADMEも同じ変更で直す。
-
-ブラウザの検証結果をUnity / VRChatの検証結果として使わない。
-
-## 9. Unity / VRChat変更の注意
-
-- C# / UdonSharpはUTF-8、4-space indentを基本とする
-- serialized referenceとGUIDを壊さない
-- ownership、serialization、synced state、late joinを暗黙にしない
-- SDK更新はversion番号だけ変更して完了にしない
-- SDK更新後に必要なUnity / SDK / client検証を行う
-- third-party Unity MCPを必須CIやrelease依存にしない
-- public repositoryのPR codeへcredential付きWindows実行を直接つながない
-
-## 10. 証拠の扱い
-
-重要な主張は次のどれかとして扱う。
-
-- **確認済み**: 必要な検証を実際に実行して確認した
-- **観察**: 人が実際に見た結果
-- **推定**: 証拠から推測したもの
-- **未確認**: まだ確認していない
-
-未確認を確認済みとして書かない。
-screenshotだけでnetwork同期を証明したことにしない。
-
-## 11. 作業を途中で止める場合
-
-IssueまたはPull Requestへ次を残す。
-
-- 最後に確認したcommit
-- 完成させる目的
-- どこまで確認できたか
-- 何が失敗または不足しているか
-- 次に実行する具体的な操作
-
-エージェント用の第二の状態databaseは作らない。
-Git、Issue、Pull Request、CI artifactを正準とする。
-
-## 12. 完了条件
-
-次をすべて満たしたときに完了とする。
-
-- 求められた結果が実装されている
-- 必要な段階の検証を実行している
-- Pull RequestのCIを確認している
-- merge後のexact `main` CIを確認している
-- Pages変更ではdeployと公開URLを確認している
-- 不要になった旧実装、一時file、重複経路を残していない
-- Issue / Pull Requestの状態が実際の結果と一致している
-
-完了後に別の改善案が出ても、現在の目的に不要ならそこで止める。
+Complete only when the requested outcome exists, the required verification level has direct evidence, exact-head CI/main read-back are complete when applicable, Pages production is checked when affected, and obsolete task-created paths are removed. Separate new ideas into new outcomes.
