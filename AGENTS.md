@@ -1,5 +1,7 @@
 # VRMine Agent Contract
 
+このファイルを、VRMineで作業するエージェント向けルールの正準とする。
+
 ## Short-context start
 
 Read this file, then only the files that own the current task. Do not preload all scenes, scripts, Pages, Issues, PR history, or docs.
