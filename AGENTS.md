@@ -1,6 +1,7 @@
 # VRMine Agent Contract
 
 このファイルを、VRMineで作業するエージェント向けルールの正準とする。
+CI/CDは必須。変更したsurfaceのexact headを既存gateで検証する。
 
 ## Short-context start
 
