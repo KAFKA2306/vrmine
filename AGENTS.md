@@ -16,6 +16,9 @@ Do not claim a higher evidence level from a lower one. ClientSim does not certif
 
 Legacy Unity MenuItem verification remains only as a temporary local fallback while #49–#53 replace it. Do not add new automation through the removed local MCP PowerShell/request-file path. New verification work belongs in the U1–U4 pipeline and must emit machine-readable evidence.
 
+## Unity MCP Connection
+The project uses `com.coplaydev.unity-mcp` from `Packages/manifest.json`. For local MCP inspection, use the HTTP fallback documented in `.agents/skills/unity-vrc-verification/references/mcp-http.md` when native Unity MCP tools are unavailable. Prove a connection with `status`, a connected Unity instance, and a read-only `scene active` or hierarchy query before issuing editor commands. After a Unity domain reload, reconnect the HTTP session before continuing. MCP health and successful tool calls are automation state, not Unity/VRChat runtime evidence.
+
 ## Goal Contract
 For non-trivial work define before editing:
 
@@ -92,6 +95,8 @@ node --test pages/games/answer-impostor/engine.test.mjs
 `task setup` installs the pinned `vrc-get` release asset after SHA-256 verification. U1 validates the exact Unity policy, VPM SDK target consistency, `vrc-get resolve` reproducibility, canonical manifest non-mutation, and `vrc-get outdated`; evidence belongs in CI Job Summary / runtime artifacts, not the repository.
 
 Unity automation must use the exact version from `ProjectSettings/ProjectVersion.txt`. VPM dependencies must be reproducible from the canonical manifests. Runtime evidence belongs in CI/workflow artifacts, not committed `Latest*.txt` or dated screenshots.
+
+The verified local MCP endpoint is `http://127.0.0.1:8080/mcp`. Use `mcp-for-unity` to serve HTTP and `unity-mcp` to query it; keep the server and Unity Editor on the same local project connection. Do not commit MCP server logs, generated package caches, or connection-trigger files.
 
 ## Evidence-Driven Completion
 Do not equate code written, files generated, browser CI green, or a successful Unity import with completion.

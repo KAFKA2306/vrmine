@@ -17,7 +17,7 @@ Treat MCP as an automation interface and test artifacts as evidence. A successfu
 
 1. Identify the VCC project, Unity version, active scene, installed SDK and UdonSharp versions, current VRChat client executable, MCP endpoint, verification assets, and Taskfile entry points.
 2. Inventory candidate scenes and classify each as `complete-game`, `human-enforced-tabletop`, `component-demo`, `sample`, or `archived`. Select one release candidate; never promote every discovered scene to the game list.
-3. Connect MCP and prove the connection with a read-only active-scene or hierarchy query.
+3. Connect MCP and prove the connection with `status`, a connected Unity instance, and a read-only active-scene or hierarchy query. If native MCP tools are unavailable, follow [mcp-http.md](references/mcp-http.md) and reconnect after every Unity domain reload.
 4. Run G0 through G4 in order. Stop at the first failure, preserve its exact report and Console output, apply the smallest root-cause fix, and rerun that gate.
 5. Leave Unity in Edit Mode with the target scene saved and reports updated.
 
@@ -28,6 +28,7 @@ Treat MCP as an automation interface and test artifacts as evidence. A successfu
 - Confirm VCC opened the intended project and Unity version.
 - Confirm MCP package/server compatibility and the active local connection.
 - Require a clean compile Console.
+- A healthy MCP server or successful tool call does not replace clean Console evidence.
 
 ### G1: Editor structure
 
@@ -65,6 +66,8 @@ For a named commercial game, run a rule-fidelity audit before assigning `complet
 ## Failure protocol
 
 Treat the first real failure as the only debugging target. Read the exact stack trace, identify the owning asset or lifecycle boundary, fix the smallest cause, and rerun the same gate. Do not suppress Console output or replace failed assertions with looser thresholds.
+
+When using the HTTP fallback, preserve the MCP session ID for each request. A Unity domain reload can invalidate the bridge; create a new session, re-check the Unity instance, and then repeat the read-only connection proof.
 
 If the SDK expects an executable absent from the installed client, record the configured path, SDK version, client directory, generated `.vrcw`, and launch exception. Update through VCC before adding launch wrappers, copies, symlinks, or registry changes.
 
