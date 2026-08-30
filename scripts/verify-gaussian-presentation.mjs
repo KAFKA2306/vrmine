@@ -6,8 +6,8 @@ const pipelineSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor
 const presentationSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianExhibitionPresentation.cs', import.meta.url), 'utf8');
 
 assert.equal(config.target_extent_m, 1, 'reusable imported prefabs must remain normalized to approximately 1 m');
-assert.equal(config.presentation_scale_multiplier, 2, 'canonical exhibition presentation multiplier must be exactly 2x');
-assert.equal(config.target_extent_m * config.presentation_scale_multiplier, 2, 'canonical presented extent must target approximately 2 m');
+assert.equal(config.presentation_scale_multiplier, 5, 'canonical exhibition presentation multiplier must be exactly 5x');
+assert.equal(config.target_extent_m * config.presentation_scale_multiplier, 5, 'canonical presented extent must target approximately 5 m');
 
 const localBuild = pipelineSource.indexOf('GaussianExhibitionBuilder.BuildLocalPreview();');
 const finalBuild = pipelineSource.indexOf('GaussianExhibitionBuilder.BuildFinal();');
@@ -17,6 +17,8 @@ assert.ok(localBuild >= 0 && presentationCalls[0] > localBuild, 'local presentat
 assert.ok(finalBuild >= 0 && presentationCalls[1] > finalBuild, 'final presentation scaling must run after scene generation');
 
 assert.match(presentationSource, /exhibit\.localScale\s*=\s*exhibit\.localScale\s*\*\s*config\.presentation_scale_multiplier/, 'presentation must scale each exhibit from its prefab-derived scene transform');
+assert.match(presentationSource, /PrefabUtility\.RecordPrefabInstancePropertyModifications\(exhibit\)/, 'presentation must persist prefab instance transform changes');
+assert.match(presentationSource, /EditorSceneManager\.MarkSceneDirty\(root\.scene\)/, 'presentation must mark the generated scene dirty before saving');
 assert.match(presentationSource, /exhibit\.position\s*\+=\s*Vector3\.up\s*\*\s*-bounds\.min\.y/, 'scaled exhibits must be realigned to the floor from measured world bounds');
 assert.match(presentationSource, /Mathf\.Max\(config\.layout\.pad_size_m, presentedExtent\)/, 'pad footprint must expand to at least the presented extent');
 assert.match(presentationSource, /Mathf\.Max\(0f, \(presentedExtent - config\.layout\.pad_size_m\) \* 0\.5f\)/, 'row offset must preserve the configured clear aisle after scaling');

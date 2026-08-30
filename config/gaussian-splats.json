@@ -386,11 +386,11 @@
       "type": "gaussian-splat",
       "format": "ply",
       "source": {
-        "path": "output/los-cabos-sunset/runs/splatfacto/20260820T025919Z-83e79dd5/export/splat.ply",
+        "path": "output/los-cabos-sunset/quality-ratio15-5k-export/splat.ply",
         "artifact_id": "autophotogrammetry/los-cabos-sunset/splat",
         "artifact_manifest": "config/gaussian-artifacts.yaml",
-        "size_bytes": 19791992,
-        "sha256": "2af0d44ab7aa29d3da8a2538dbd0f4ae511ec247bd8375f72e023e33b4c7c806",
+        "size_bytes": 42064625,
+        "sha256": "bf77a697a3c341e0e3e556635d94c38031d9c2b5a2d138a29fc0bdc339d3287f",
         "provenance": {
           "catalog": "KAFKA2306/AutoPhotogrammetry:sources/videos.json",
           "title": "Aerial views of Los Cabo, San Lucas, Mexico at sunset including El Arco, Lands End and ocean views",

@@ -4,12 +4,12 @@ VRMineはGaussian Splat PLYのconsumerです。PLY生成やStorage Bucket upload
 
 ## Source modes
 
-`config/gaussian-splats.json` の全20 entryは、現在は次の artifact source を正準経路にしています。
+`config/gaussian-splats.json` の全21 entryは、現在は次の artifact source を正準経路にしています。
 
 - `artifact_id`: hf-cache-hubのartifact manifestを正準sourceとして解決する方式
 - `download_url`: 既存のdirect URLを使うlegacy方式（新規 entryでは使用しない）
 
-`config/gaussian-artifacts.yaml` は、ユーザー確認済みの20件の remote readback（合計 `841,129,810` bytes）と同じサイズ/SHA-256、`k4fka/kafka-data-lake` の hash-addressed pathを記録しています。
+`config/gaussian-artifacts.yaml` は、ユーザー確認済みの21件の remote readback（合計 `1,026,546,124` bytes）と同じサイズ/SHA-256、`k4fka/kafka-data-lake` の hash-addressed pathを記録しています。
 
 ## Shared cache setup
 

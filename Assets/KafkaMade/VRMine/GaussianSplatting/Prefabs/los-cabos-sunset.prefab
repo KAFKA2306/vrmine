@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.17023629, y: 0.17023629, z: 0.17023629}
+  m_LocalScale: {x: 0.4567479, y: 0.4567479, z: 0.4567479}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -60,15 +60,15 @@ MonoBehaviour:
   description: Chunk LOD imported from Library/VRMine/GaussianSources/los-cabos-sunset.ply
   importMetadataJson: '{"sourcePath":"Library/VRMine/GaussianSources/los-cabos-sunset.ply","prefabPath":"Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/los-cabos-sunset.prefab","importAsLOD":true,"lodChunkSize":4096,"options":{"computeBoundingBox":false,"splatsPerPass":0,"standalone":false,"maxAlphaMaskCount":0,"useSRGB":false,"importSphericalHarmonics":true,"defaultSHBand":3,"compressColorAlphaToBC7":false,"startRenderQueue":0,"cropToBounds":false,"cropBounds":{"m_Center":{"x":0.0,"y":0.0,"z":0.0},"m_Extent":{"x":0.5,"y":0.5,"z":0.5}},"cropPadding":0.0,"applyHorizonAlignment":true,"horizonRotation":{"x":0.7071068286895752,"y":0.0,"z":0.0,"w":0.7071068286895752},"horizonPivot":{"x":0.0,"y":0.0,"z":0.0},"lodUsePackedPositions":true,"lodComputeSplats":false,"lodResamplePercent":0,"lodReusePercent":0,"normalizeSize":true,"normalizeTargetSize":1.0,"shCompression":0}}'
   chunkSize: 4096
-  chunkCount: 50
-  totalSplatCount: 79800
+  chunkCount: 103
+  totalSplatCount: 169609
   usePackedPositions: 1
   lodReusePercent: 50
   lodZeroOffset: 2
-  lodSplatRadius: 7.876923
-  smallestChunkSize: 0.008476036
-  boundsMin: {x: -3.9913244, y: -2.355997, z: 3.6845112}
-  boundsMax: {x: 1.882864, y: 2.2063322, z: 6.277768}
+  lodSplatRadius: 3.1030304
+  smallestChunkSize: 0.0043934006
+  boundsMin: {x: -3.2806973, y: -1.1417364, z: 4.289261}
+  boundsMax: {x: -1.0913057, y: 0.25694478, z: 5.986038}
   positions:
   - {fileID: 2800000, guid: 75cd3a0ea5061634c82d88177cf3b7f0, type: 2}
   colors:
@@ -79,17 +79,17 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 6beef328d89291d4d8a22eff95988e8f, type: 2}
   sh:
   - {fileID: 2800000, guid: f09aae9dc15f40241ab75c45cbf4789a, type: 2}
-  fileSplatCounts: b8370100
+  fileSplatCounts: 89960200
   fileShCoeffCounts: 0f000000
-  fileShCoeffStrides: b8370100
+  fileShCoeffStrides: 89960200
   fileShMins:
-  - {x: -0.22601104, y: -0.287296, z: -0.24367632, w: 0}
+  - {x: -0.84817356, y: -0.9840295, z: -0.58120054, w: 0}
   fileShRanges:
-  - {x: 0.45721292, y: 0.48370343, z: 0.46284395, w: 0}
+  - {x: 1.5157244, y: 1.6623819, z: 1.2736418, w: 0}
   chunkBoundsMinTexture: {fileID: 2800000, guid: 204aceb831f7bbc41a642e3620d18128, type: 2}
   chunkBoundsMaxTexture: {fileID: 2800000, guid: 316591b04d8cd994398488454fd85c14, type: 2}
   chunkRangeTexture: {fileID: 2800000, guid: 4c1cc04481d6316459dafbf20879728d, type: 2}
-  chunkTextureLayout: {x: 64, y: 0.015625, z: 50, w: 0}
+  chunkTextureLayout: {x: 128, y: 0.0078125, z: 103, w: 0}
 --- !u!114 &6445179778228038038
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -23,6 +23,8 @@ assert.equal(exhibition.renderer, sources.renderers.unity_vrchat, 'scene rendere
 assert.equal((artifactManifestSource.match(/^  - id:/gm) ?? []).length, sources.environments.length, 'artifact manifest must cover every registered source');
 assert.match(artifactManifestSource, /bucket: k4fka\/kafka-data-lake/, 'Gaussian artifacts must use the canonical shared Storage Bucket');
 assert.equal(exhibition.target_extent_m, 1, 'exhibits target an approximately 1 m normalized extent');
+assert.equal(exhibition.presentation_scale_multiplier, 5, 'exhibits must be presented in 5 m cubic bounds');
+assert.ok(exhibition.layout.center_spacing_m >= 5, '5 m exhibits must not overlap along their row');
 assert.equal(exhibition.scene_path, 'Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity');
 assert.ok(Array.isArray(exhibition.import_overrides), 'import_overrides must be an array');
 assert.ok(!Object.hasOwn(exhibition, 'exhibits'), 'scene config must not duplicate a fixed-count exhibit list');

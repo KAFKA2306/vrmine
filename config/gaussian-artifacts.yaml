@@ -227,13 +227,13 @@ artifacts:
     storage:
       type: huggingface-bucket
       bucket: k4fka/kafka-data-lake
-      path: autophotogrammetry/gaussian-splats/los-cabos-sunset/2af0d44ab7aa29d3da8a2538dbd0f4ae511ec247bd8375f72e023e33b4c7c806.ply
-    size_bytes: 19791992
-    sha256: 2af0d44ab7aa29d3da8a2538dbd0f4ae511ec247bd8375f72e023e33b4c7c806
+      path: autophotogrammetry/gaussian-splats/los-cabos-sunset/bf77a697a3c341e0e3e556635d94c38031d9c2b5a2d138a29fc0bdc339d3287f.ply
+    size_bytes: 42064625
+    sha256: bf77a697a3c341e0e3e556635d94c38031d9c2b5a2d138a29fc0bdc339d3287f
     provenance:
       repository: KAFKA2306/AutoPhotogrammetry
       revision: 1d48110c8abd891d7b0a19f9e6ce793901758742
-      source_path: output/los-cabos-sunset/runs/splatfacto/20260820T025919Z-83e79dd5/export/splat.ply
+      source_path: output/los-cabos-sunset/quality-ratio15-5k-export/splat.ply
   - id: autophotogrammetry/la-pona-fire-2025/splat
     kind: gaussian-splat
     format: ply

@@ -5,7 +5,7 @@
   "source_registry": "config/gaussian-splats.json",
   "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa",
   "target_extent_m": 1.0,
-  "presentation_scale_multiplier": 2.0,
+  "presentation_scale_multiplier": 5.0,
   "import_overrides": [
     {"id":"avenida-gomez-morin","alignment":{"enabled":true,"mode":"horizon","scope":"coordinate_basis_only","physicalUpStatus":"review_required","authority":"audited-legacy-basis","rotation":{"x":0.7071067811865476,"y":0,"z":0,"w":0.7071067811865476},"pivot":{"x":0,"y":0,"z":0}}},
     {"id":"baluarte-san-pedro","alignment":{"enabled":true,"mode":"horizon","scope":"coordinate_basis_only","physicalUpStatus":"review_required","authority":"audited-legacy-basis","rotation":{"x":0.7071067811865476,"y":0,"z":0,"w":0.7071067811865476},"pivot":{"x":0,"y":0,"z":0}}},
@@ -30,7 +30,7 @@
     {"id":"nordic","alignment":{"enabled":true,"mode":"horizon","scope":"coordinate_basis_only","physicalUpStatus":"review_required","authority":"producer-artifact-metadata","rotation":{"x":0.7071067811865476,"y":0,"z":0,"w":0.7071067811865476},"pivot":{"x":0,"y":0,"z":0}}}
   ],
   "layout": {
-    "center_spacing_m": 2.5,
+    "center_spacing_m": 5.0,
     "aisle_width_m": 4.0,
     "margin_m": 2.0,
     "pad_size_m": 1.4,
@@ -40,7 +40,7 @@
     "field_of_view": 55.0
   },
   "video_player": {
-    "prefab_path": "Packages/com.vrchat.worlds/Samples/UdonExampleScene/Prefabs/VideoPlayers/UdonSyncPlayer (Unity).prefab",
+    "prefab_path": "Packages/net.kwxxw.yama-stream/YamaPlayer.prefab",
     "playlist_manifest": "config/gaussian-video-playlist.json"
   }
 }

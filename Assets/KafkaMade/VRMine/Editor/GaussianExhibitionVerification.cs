@@ -55,6 +55,13 @@ public static class GaussianExhibitionVerification
     }
 
     [Serializable]
+    sealed class ExhibitionConfig
+    {
+        public float target_extent_m;
+        public float presentation_scale_multiplier;
+    }
+
+    [Serializable]
     sealed class PerformanceEvidence
     {
         public string activeScene;
@@ -77,6 +84,10 @@ public static class GaussianExhibitionVerification
         Type splatType = FindType(GaussianSplatObjectTypeName);
         Type rendererType = FindType(GaussianSplatRendererTypeName);
         if (splatType == null || rendererType == null) throw new InvalidOperationException("Gaussian runtime types are missing");
+        ExhibitionConfig exhibition = JsonUtility.FromJson<ExhibitionConfig>(System.IO.File.ReadAllText("config/gaussian-exhibition.json"));
+        if (exhibition == null || exhibition.target_extent_m <= 0f || exhibition.presentation_scale_multiplier <= 0f)
+            throw new InvalidOperationException("Gaussian exhibition presentation configuration is invalid");
+        float expectedPresentedExtent = exhibition.target_extent_m * exhibition.presentation_scale_multiplier;
 
         var evidence = new RegisteredEvidence
         {
@@ -105,6 +116,9 @@ public static class GaussianExhibitionVerification
 
         if (evidence.descriptors != 1 || evidence.pipelineManagers != 1)
             throw new InvalidOperationException("World bootstrap counts are invalid: descriptors=" + evidence.descriptors + ", pipelineManagers=" + evidence.pipelineManagers);
+        foreach (RegisteredMeasurement measurement in evidence.measurements)
+            if (Mathf.Abs(measurement.extent - expectedPresentedExtent) > 0.01f)
+                throw new InvalidOperationException(measurement.id + ": expected presented extent " + expectedPresentedExtent + " m, got " + measurement.extent + " m.");
 
         string evidencePath = "Library/VRMine/gaussian-u2-evidence.json";
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(evidencePath));

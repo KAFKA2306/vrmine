@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Reflection;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public static class GaussianExhibitionPresentation
@@ -82,11 +84,17 @@ public static class GaussianExhibitionPresentation
                 new Vector3(bounds.center.x, bounds.max.y + 0.2f, bounds.center.z) + towardAisle * (presentedExtent * 0.5f + 0.25f),
                 exhibit.rotation);
 
+            PrefabUtility.RecordPrefabInstancePropertyModifications(exhibit);
+            EditorUtility.SetDirty(pad);
+            EditorUtility.SetDirty(label);
+
             applied++;
         }
 
         if (applied == 0)
             throw new InvalidOperationException("No Gaussian exhibit roots were found for presentation scaling.");
+
+        EditorSceneManager.MarkSceneDirty(root.scene);
 
         Debug.Log("Gaussian exhibition presentation applied: exhibits=" + applied + ", multiplier=" + config.presentation_scale_multiplier + ", targetExtent=" + presentedExtent + " m.");
     }
