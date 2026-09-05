@@ -76,6 +76,8 @@ Use a reviewable PR and verify the exact head with the checks required by the ch
 
 After merge, read back exact `main`. Pages changes additionally require deployment success and direct verification of `https://kafka2306.github.io/vrmine/`. Browser evidence never proves Unity/VRChat behavior.
 
+When a workflow produces a PNG intended for review, the PNG must also have a stable public URL that opens the image itself in one click. GitHub Actions artifact ZIPs, workflow pages, or repository file pages are not substitutes. The public PNG must be verified after deployment; for generated assets, CI must also prove that the published PNG matches the current generated PNG.
+
 CI, merge, Pages deployment, U2-U5 verification, and world release are separate claims. Report only the layer directly observed.
 
 ## Continuation and completion
