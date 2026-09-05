@@ -1,0 +1,41 @@
+{
+  "id": "minimal-tissue-box-01",
+  "family": "Home / Office Basics",
+  "display_name": "Minimal Tissue Box",
+  "dimensions_m": [0.24, 0.13, 0.09],
+  "parts": [
+    {"component": "box", "name": "body", "size": [0.24, 0.13, 0.075], "position": [0.0, 0.0, 0.0375], "material": "warm_wood"},
+    {"component": "box", "name": "top_left", "size": [0.095, 0.13, 0.015], "position": [-0.0725, 0.0, 0.0825], "material": "warm_wood"},
+    {"component": "box", "name": "top_right", "size": [0.095, 0.13, 0.015], "position": [0.0725, 0.0, 0.0825], "material": "warm_wood"},
+    {"component": "box", "name": "tissue_sheet", "size": [0.075, 0.018, 0.075], "position": [0.0, 0.0, 0.125], "rotation_deg": [0.0, 12.0, 0.0], "material": "soft_white"}
+  ],
+  "materials": {
+    "warm_wood": {"base_color": [0.34, 0.19, 0.09], "roughness": 0.52, "metallic": 0.0},
+    "soft_white": {"base_color": [0.94, 0.93, 0.89], "roughness": 0.78, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "light-wood", "planned": true},
+    {"id": "charcoal", "planned": true},
+    {"id": "office-desk-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 explicitly lists tissue box in Home / Office Basics and ranks the family A priority",
+      "The SKU uses only the existing box component and is readable as a compact desktop prop",
+      "The body and top panels can be reused for future desk organizers and office mini-set variants"
+    ],
+    "expected_production_minutes": 6,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
