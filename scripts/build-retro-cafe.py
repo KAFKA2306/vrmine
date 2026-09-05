@@ -201,12 +201,13 @@ def main():
     placements = {
         'round-table': (0, 0, 0), 'stool': (.64, -.20, 0),
         'side-table': (-.70, .18, 0), 'table-lamp': (-.70, .18, .48),
-        'pendant-light': (0, 0, 1.30), 'wall-light': (-.73, .63, 1.22),
+        'pendant-light': (0, 0, 1.30), 'wall-light': (-.73, .6175, 1.22),
         'tray': (.04, 0, .72), 'saucer': (-.025, 0, .746),
         'cup': (-.025, 0, .754), 'vase': (.18, .15, .72)}
     for name, obj in props.items():
         obj.hide_set(False)
         obj.location = placements[name]
+    props['wall-light'].rotation_euler.z = math.pi
     floor = material('Backdrop', (.32, .38, .34), .85)
     box((2.8, 2.4, .06), (0, 0, -.035), floor)
     box((2.8, .06, 2.6), (0, .78, 1.27), floor)
