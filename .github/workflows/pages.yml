@@ -95,6 +95,7 @@ jobs:
             pages/events/demo/config.json
             pages/events/question-packs/demo.json
             pages/organizers/index.html
+            pages/3d/retro-cafe/pendant-light/index.html
             pages/service-worker.js
           )
           for file in "${required[@]}"; do test -s "$file"; done
@@ -122,6 +123,7 @@ jobs:
           grep -F 'VRMine Event Demo' pages/events/demo/config.json
           grep -F 'analytics_endpoint' pages/events/demo/config.json
           grep -F '5,000〜15,000円 / event' pages/organizers/index.html
+          grep -F 'Retro Cafe Pendant Light' pages/3d/retro-cafe/pendant-light/index.html
           grep -F "href: './games/answer-impostor/'" pages/games/registry.js
           grep -F "href: './games/abyss-invasion/'" pages/games/registry.js
           grep -F 'new WebSocket(server)' pages/games/abyss-invasion/tracker.js
@@ -168,7 +170,7 @@ jobs:
           cp config/gaussian-splats.json _site/3dgs/gaussian-splats.json
           mkdir -p _site/3d/retro-cafe
           cp .artifacts/retro-cafe/*.png _site/3d/retro-cafe/
-          cp pages/index.html _site/404.html
+          test ! -e _site/404.html
           touch _site/.nojekyll
 
       - name: Materialize pinned SuperSplat viewer
@@ -356,6 +358,7 @@ jobs:
           for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
             curl --fail --silent --show-error --location "$base/3d/retro-cafe/${image}.png?smoke=${EXPECTED_SHA}" -o "$tmp/${image}.png"
           done
+          curl --fail --silent --show-error --location "$base/3d/retro-cafe/pendant-light/?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-pendant.html"
           curl --fail --silent --show-error --location "$base/3dgs/gallery.js?smoke=${EXPECTED_SHA}" -o "$tmp/gallery.js"
           curl --fail --silent --show-error --location "$base/3dgs/gaussian-splats.json?smoke=${EXPECTED_SHA}" -o "$tmp/gaussian-splats.json"
           curl --fail --silent --show-error --location "$base/3dgs/viewer/?smoke=${EXPECTED_SHA}" -o "$tmp/viewer.html"
@@ -369,6 +372,7 @@ jobs:
           grep -F '深淵侵蝕' "$tmp/abyss.html"
           grep -F 'Stich-Meister' "$tmp/stich.html"
           grep -F 'gallery.js' "$tmp/3dgs.html"
+          grep -F 'Retro Cafe Pendant Light' "$tmp/retro-cafe-pendant.html"
           for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
             test "$(file --mime-type -b "$tmp/${image}.png")" = "image/png"
           done
@@ -391,4 +395,8 @@ jobs:
           grep -F '5,000〜15,000円 / event' "$tmp/organizers.html"
           grep -F 'scoreRound' "$tmp/engine.mjs"
           grep -F 'new WebSocket(server)' "$tmp/abyss.js"
+          broken_url="$base/3d/retro-cafe/organizers/3d/retro-cafe/pendant-light/3d/retro-cafe/pendant-light/?smoke=${EXPECTED_SHA}"
+          broken_status="$(curl --silent --show-error --location -o "$tmp/broken-route.html" -w '%{http_code}' "$broken_url")"
+          test "$broken_status" = "404"
+          ! grep -Fq 'vrmine-game-hub-2026-08-15-1' "$tmp/broken-route.html"
           echo "Live VRMine game hub verification passed: $base/"
