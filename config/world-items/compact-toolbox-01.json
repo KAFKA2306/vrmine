@@ -1,0 +1,43 @@
+{
+  "id": "compact-toolbox-01",
+  "family": "Storage / Industrial",
+  "display_name": "Compact Toolbox",
+  "dimensions_m": [0.42, 0.20, 0.24],
+  "parts": [
+    {"component": "box", "name": "body", "size": [0.42, 0.20, 0.13], "position": [0.0, 0.0, 0.065], "material": "tool_red"},
+    {"component": "box", "name": "lid", "size": [0.42, 0.20, 0.045], "position": [0.0, 0.0, 0.1525], "material": "tool_red"},
+    {"component": "box", "name": "latch", "size": [0.055, 0.018, 0.060], "position": [0.0, -0.109, 0.125], "material": "dark_metal"},
+    {"component": "box", "name": "handle_left", "size": [0.030, 0.030, 0.090], "position": [-0.105, 0.0, 0.205], "material": "dark_metal"},
+    {"component": "box", "name": "handle_right", "size": [0.030, 0.030, 0.090], "position": [0.105, 0.0, 0.205], "material": "dark_metal"},
+    {"component": "box", "name": "handle_bar", "size": [0.240, 0.035, 0.030], "position": [0.0, 0.0, 0.245], "material": "dark_metal"}
+  ],
+  "materials": {
+    "tool_red": {"base_color": [0.58, 0.08, 0.06], "roughness": 0.42, "metallic": 0.12},
+    "dark_metal": {"base_color": [0.10, 0.11, 0.12], "roughness": 0.36, "metallic": 0.58}
+  },
+  "variants": [
+    {"id": "safety-yellow", "planned": true},
+    {"id": "industrial-blue", "planned": true},
+    {"id": "maintenance-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH currently lists a toolbox 3D model for metaverse/game use at JPY 200 with FBX deliverable",
+      "BOOTH currently lists a VRChat/game toolbox at JPY 150 with color variants and openable-lid positioning",
+      "Issue #200 ranks Storage / Industrial as a target family; this design uses only the existing box component and can bundle with pallet/cabinet/maintenance props"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}

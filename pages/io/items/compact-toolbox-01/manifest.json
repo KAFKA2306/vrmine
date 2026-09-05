@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "compact-toolbox-01",
+  "source_spec": "config/world-items/compact-toolbox-01.json",
+  "spec_sha256": "f7a324ee98cc6bb4b17dc158ec5af22938252f7090ed1ce6273b9c944ed2868c",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.41999998688697815,
+    0.21799999475479126,
+    0.25999999046325684
+  ],
+  "triangles": 1128,
+  "parts_count": 6,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "compact-toolbox-01.blend": "92e93f1c31aae68605105c105c61dff1b128f1283816b121c1803ea4922b5e64",
+    "compact-toolbox-01.glb": "99c99f3bc67e5b75131ba926ec3233662efdd4bcdcf08f6d8324f4488465c863",
+    "compact-toolbox-01.fbx": "bbfb5487c2ddebfe7274cef7a9bf784fa3da90c4e83ce42e5eecb0f65642e5f8",
+    "thumbnail.png": "873ed074f8fa377563c563d05e1448e34b1b630b57dfc75388dab4c0a2eb8ed3",
+    "view-hero.png": "873ed074f8fa377563c563d05e1448e34b1b630b57dfc75388dab4c0a2eb8ed3",
+    "view-front.png": "21ec0382324425dc1f7e81c48378102544c91b10e4658e5cb98750a411972a87",
+    "view-rear.png": "cdf62253750645ed208cac992c514c39261cc3dba538c42bf091d605056721a1",
+    "view-left.png": "2b9ee154a26ebf0d99300a3ce4a37a134a3a38025bd55d124c406a91c88f03e2",
+    "view-right.png": "959278c1e0f4d88db2b031fe7c0ce9ad92a26e6d36a5e7b0cf31bf5602220427",
+    "view-top.png": "29c93a08004fe5facf3f70fd506c5464a5a7c4a9accf1fe2416c1efc68967a9f"
+  }
+}
