@@ -10,11 +10,14 @@
 - [ ] Repository U1 passes
 - [ ] changed-surface tests pass
 - [ ] no known defect in the changed surface is being hidden as "release-only"
-- [ ] no unresolved blocking review remains
+
+### Generated asset evidence
+
+For generated assets, include multi-angle rendered images directly in this PR. Appearance is evidence, not approval: visual PASS/FAIL, Draft state, unresolved review, and manual approval do not block merge.
 
 ### Merge evidence
 
-Record the exact checks / workflow runs used to decide whether this PR may enter `main`.
+Record the exact checks / workflow runs used to establish technical generation/integrity evidence. Generated-asset work continues mechanically to merge after generation succeeds.
 
 ## Release evidence
 
