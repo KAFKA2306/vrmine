@@ -1,0 +1,45 @@
+{
+  "id": "minimal-photo-frame-01",
+  "family": "Decorative Props",
+  "display_name": "Minimal Photo Frame",
+  "dimensions_m": [0.28, 0.09, 0.34],
+  "parts": [
+    {"component": "box", "name": "back_panel", "size": [0.24, 0.018, 0.30], "position": [0.0, 0.0, 0.17], "material": "charcoal_back"},
+    {"component": "box", "name": "photo_insert", "size": [0.19, 0.008, 0.24], "position": [0.0, -0.014, 0.175], "material": "warm_paper"},
+    {"component": "box", "name": "frame_top", "size": [0.28, 0.032, 0.032], "position": [0.0, -0.003, 0.324], "material": "warm_wood"},
+    {"component": "box", "name": "frame_bottom", "size": [0.28, 0.032, 0.032], "position": [0.0, -0.003, 0.016], "material": "warm_wood"},
+    {"component": "box", "name": "frame_left", "size": [0.032, 0.032, 0.276], "position": [-0.124, -0.003, 0.17], "material": "warm_wood"},
+    {"component": "box", "name": "frame_right", "size": [0.032, 0.032, 0.276], "position": [0.124, -0.003, 0.17], "material": "warm_wood"},
+    {"component": "box", "name": "rear_stand", "size": [0.07, 0.045, 0.20], "position": [0.0, 0.032, 0.11], "rotation_deg": [10.0, 0.0, 0.0], "material": "warm_wood"}
+  ],
+  "materials": {
+    "warm_wood": {"base_color": [0.30, 0.16, 0.075], "roughness": 0.50, "metallic": 0.0},
+    "warm_paper": {"base_color": [0.78, 0.72, 0.62], "roughness": 0.68, "metallic": 0.0},
+    "charcoal_back": {"base_color": [0.055, 0.06, 0.065], "roughness": 0.58, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "dark-frame", "planned": true},
+    {"id": "landscape", "planned": true},
+    {"id": "tabletop-small", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, photographs, artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH VRC-oriented PhotoFrame at JPY 100, crawled 2026-09-05",
+      "BOOTH VRChat-oriented wooden photo frame at JPY 298, crawled 2026-09-05",
+      "Issue #200 B-priority Decorative Props family"
+    ],
+    "expected_production_minutes": 8,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}

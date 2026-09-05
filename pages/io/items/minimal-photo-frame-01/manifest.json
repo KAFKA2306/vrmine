@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-photo-frame-01",
+  "source_spec": "config/world-items/minimal-photo-frame-01.json",
+  "spec_sha256": "cde559d12aa8dbd6d71c497972fb7e12e7404ba245dc3846fdbb14ce191fcde5",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.2800000011920929,
+    0.08982840925455093,
+    0.3400000035762787
+  ],
+  "triangles": 1316,
+  "parts_count": 7,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-photo-frame-01.blend": "31f634c81dd5be7781c52cb29a2a2d873b5bb09d56a5a759b839794bde476436",
+    "minimal-photo-frame-01.glb": "2a8134f118874561ce49ba70dcd8e4f64c721dc5f2430426fdf324f8608003b5",
+    "minimal-photo-frame-01.fbx": "8d6012ead82c73b349f7f418f0c39d2e13957a65e520033bed8a338041138b06",
+    "thumbnail.png": "816cc37603c269acae6b0cbeec02310aa9a14caf363436f6cb9b8b4faa744299",
+    "view-hero.png": "816cc37603c269acae6b0cbeec02310aa9a14caf363436f6cb9b8b4faa744299",
+    "view-front.png": "ea462df4f35135b646e726696bd929e21975fa2edfcaf6f8e0c5e9620bfde0c7",
+    "view-rear.png": "fce886e0ce683f5639478e2bff5359a29ff75b51f46498c31a25b5ad571b1731",
+    "view-left.png": "4b6c749d2562afede6464bba6e6a43abb1aa5bc67a1fa45f6e22c6bc19add0f4",
+    "view-right.png": "ab229793e7e7eb35fa00b9a0e17d998795dc69b102245b409f548e3531f1a9a0",
+    "view-top.png": "c2b1f858913c2b4b4f929e09cd6563f439e8b30906ee5bea8d0caed8b9530384"
+  }
+}
