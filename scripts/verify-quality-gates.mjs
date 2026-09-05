@@ -92,11 +92,14 @@ const generatedWorkflowPath = path.join(root, '.github', 'workflows', 'retro-caf
 if (!fs.existsSync(generatedWorkflowPath)) fail('generated-asset automatic merge workflow is missing');
 const generatedWorkflow = fs.readFileSync(generatedWorkflowPath, 'utf8');
 for (const requiredText of [
-  'gh pr merge',
-  'gh pr comment',
-  'gh issue comment',
-  'gh pr edit',
-  'gh issue edit',
+  'gh workflow run unity-vpm.yml',
+  'gh workflow run pages.yml',
+  'pulls/\\${PR_NUMBER}/merge',
+  '-f sha="$FINAL_HEAD"',
+  'render-manifest.json',
+  'deployment.json',
+  'retro-cafe-review:start',
+  'retro-cafe-review:end',
   'view-hero.png',
   'view-front.png',
   'view-rear.png',
