@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "outdoor-ac-unit-01",
+  "source_spec": "config/world-items/outdoor-ac-unit-01.json",
+  "spec_sha256": "8f951a24ffa6f4788af2a77caf780414d8acc1f24a909b04ab3dd5e7b627fa45",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.8199999928474426,
+    0.32199999690055847,
+    0.6399999856948853
+  ],
+  "triangles": 2256,
+  "parts_count": 12,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "outdoor-ac-unit-01.blend": "39dc47b00d7fd6c507510ece24dba02786429d898e9fdd75a8b303cae57d4c48",
+    "outdoor-ac-unit-01.glb": "bab505ae8406d82483baf0bbaae29591737f7f9701f8e0adf4774a1b8b77ccc4",
+    "outdoor-ac-unit-01.fbx": "28e8917319984bd0af7d5389d95819248ed209ba8fb4fc79654d4c454185b150",
+    "thumbnail.png": "dda7ef5b0ae4f864a7e5866197f356ec5d1050cd23c96ea1df709d8182a0d3ca",
+    "view-hero.png": "dda7ef5b0ae4f864a7e5866197f356ec5d1050cd23c96ea1df709d8182a0d3ca",
+    "view-front.png": "1cfe54c891c5052a1286e9ae58292a5bae71e7a647d6ef088d28e3ae6ca63933",
+    "view-rear.png": "9dddf3a3f482d6793e8995c486ea42001ec37c66962b246e0089fd44e3f8c6f4",
+    "view-left.png": "3ecbb39468250a401cc9a34c429a1f3cb04c244d4389fe69d76b4f950581a7c8",
+    "view-right.png": "ebb974bc6e03e3460dc6858d081bb2d03261e33b39000f4bd2d4772d2c7852a5",
+    "view-top.png": "df35ca32f1c27f995dcfca2cf63ef98a8ea3a66bfa296306fd37253fe4cb162c"
+  }
+}
