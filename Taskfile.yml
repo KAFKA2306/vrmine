@@ -7,6 +7,12 @@ tasks:
       - blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
       - blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py
 
+  cafe:prefabs-u2:
+    desc: Generate Retro Cafe sources, then create and verify ten Prefabs in exact Unity 2022.3.22f1
+    deps: [cafe:build]
+    cmds:
+      - node scripts/run-retro-cafe-unity.mjs
+
   setup:
     desc: Install pinned repo verification tools
     cmds:
@@ -21,6 +27,7 @@ tasks:
       - node scripts/verify-perspective-cage.mjs
       - node --check scripts/run-perspective-cage-unity.mjs
       - node --check scripts/run-glb-consumer-unity.mjs
+      - node --check scripts/run-retro-cafe-unity.mjs
       - node --check scripts/run-gaussian-unity.mjs
       - node --check scripts/open-gaussian-project.mjs
       - node scripts/verify-gaussian-fixtures.mjs
