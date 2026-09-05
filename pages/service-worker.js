@@ -1,4 +1,4 @@
-const CACHE = 'vrmine-game-hub-v3';
+const CACHE = 'vrmine-game-hub-v4';
 const scope = self.registration.scope;
 const fallback = new URL('./index.html', scope).href;
 const assets = [
@@ -40,6 +40,23 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const requestUrl = new URL(event.request.url);
   if (requestUrl.origin !== self.location.origin) return;
+
+  const isPublishedRender = requestUrl.pathname.includes('/3d/')
+    && /\.(?:png|webp)$/i.test(requestUrl.pathname);
+  if (isPublishedRender) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
 
   if (event.request.mode === 'navigate') {
     event.respondWith(
