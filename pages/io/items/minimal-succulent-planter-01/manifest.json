@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-succulent-planter-01",
+  "source_spec": "config/world-items/minimal-succulent-planter-01.json",
+  "spec_sha256": "05592c841b4a3fcca4c543db7e2eb2e3149dafed44f5ee4c8afdf1b8554629e2",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.23999999463558197,
+    0.23999999463558197,
+    0.36000001430511475
+  ],
+  "triangles": 6876,
+  "parts_count": 9,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-succulent-planter-01.blend": "23e02c8ccba1c09247ea7e0853b1a33d8c8868eef419176ec77bd9f36b53c402",
+    "minimal-succulent-planter-01.glb": "f80adfda8aa2a7599a5657a7951b211db0906eebb3ddc18a777c71b79fb3a01b",
+    "minimal-succulent-planter-01.fbx": "205fe8611856b778bfeb783d67935f3183fb67c76933ca281c7bada5318be4f3",
+    "thumbnail.png": "cb910fa0c576d538df01019d3a289d491e4bd05725b6d57cceb56317b2255ebb",
+    "view-hero.png": "cb910fa0c576d538df01019d3a289d491e4bd05725b6d57cceb56317b2255ebb",
+    "view-front.png": "5b6a2179309b3a8638fc722acbf241b4e3adaf39f0427bcb003c2d7915bcae51",
+    "view-rear.png": "9e75d30f5b86da5368a03662d72c13c0165a489dcf9595298b442208ae2cff86",
+    "view-left.png": "f121ae7ae1c1c40f9bad97bb6e46fee4364db170bfa32ab39b3971484d1d4c90",
+    "view-right.png": "7eee2ed8c3e1c246807b8554fafa81d1ce2d06d81c45a9f1da2546731d0f3bc0",
+    "view-top.png": "070030a1575eedff79aefe7ff3653b57911ff6f1e2a7f5a764e3be95db305916"
+  }
+}
