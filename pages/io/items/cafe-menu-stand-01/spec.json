@@ -1,0 +1,45 @@
+{
+  "id": "cafe-menu-stand-01",
+  "family": "Shop / Retail Props",
+  "display_name": "Café Menu Stand",
+  "dimensions_m": [0.50, 0.32, 1.15],
+  "parts": [
+    {"component": "box", "name": "panel", "size": [0.42, 0.035, 0.54], "position": [0.0, 0.0, 0.79], "material": "cream_panel"},
+    {"component": "box", "name": "frame_top", "size": [0.50, 0.055, 0.055], "position": [0.0, 0.0, 1.0875], "material": "warm_wood"},
+    {"component": "box", "name": "frame_bottom", "size": [0.50, 0.055, 0.055], "position": [0.0, 0.0, 0.4925], "material": "warm_wood"},
+    {"component": "box", "name": "frame_left", "size": [0.055, 0.055, 0.65], "position": [-0.2225, 0.0, 0.79], "material": "warm_wood"},
+    {"component": "box", "name": "frame_right", "size": [0.055, 0.055, 0.65], "position": [0.2225, 0.0, 0.79], "material": "warm_wood"},
+    {"component": "box", "name": "post", "size": [0.07, 0.07, 0.42], "position": [0.0, 0.0, 0.265], "material": "charcoal_metal"},
+    {"component": "box", "name": "base", "size": [0.42, 0.32, 0.06], "position": [0.0, 0.0, 0.03], "material": "charcoal_metal"}
+  ],
+  "materials": {
+    "warm_wood": {"base_color": [0.30, 0.16, 0.075], "roughness": 0.50, "metallic": 0.0},
+    "cream_panel": {"base_color": [0.72, 0.67, 0.56], "roughness": 0.58, "metallic": 0.0},
+    "charcoal_metal": {"base_color": [0.045, 0.05, 0.055], "roughness": 0.31, "metallic": 0.72}
+  },
+  "variants": [
+    {"id": "dark-frame", "planned": true},
+    {"id": "wide-poster", "planned": true},
+    {"id": "tabletop-size", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 250, "mini_set_target": 700},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH VRChat-oriented simple standing sign at JPY 100, crawled 2026-09-05",
+      "BOOTH exhibition booth plus sign stand bundle at JPY 900, crawled 2026-09-05",
+      "Issue #200 A-priority Shop / Retail Props family"
+    ],
+    "expected_production_minutes": 8,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}

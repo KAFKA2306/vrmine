@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "cafe-menu-stand-01",
+  "source_spec": "config/world-items/cafe-menu-stand-01.json",
+  "spec_sha256": "c21b75c33362526fb7e008ca709deafb6d0918f5630ca088a41d4a768f1cfae6",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.5,
+    0.3199999928474426,
+    1.1150000095367432
+  ],
+  "triangles": 1316,
+  "parts_count": 7,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "cafe-menu-stand-01.blend": "c18e264728ac72f98a5ba6f0b280fd9930c9d478c412fb5fc65ddd00289df360",
+    "cafe-menu-stand-01.glb": "39d8a1a3f006644b17045b8337d937633a03a3e98ef2db7073fedc55b86d3c43",
+    "cafe-menu-stand-01.fbx": "ef04dc7d64d53021eb4081585d0b1fc796d2f911b863b3783ec7b95bcee3d179",
+    "thumbnail.png": "113fddcf5f8efb0382bbc5962a1140abd5ab09418934c254eaf067904d8406d2",
+    "view-hero.png": "113fddcf5f8efb0382bbc5962a1140abd5ab09418934c254eaf067904d8406d2",
+    "view-front.png": "31467678470ee1c58f327fcdfd83e74f2993ced9a9b31d0da450099532c12dc3",
+    "view-rear.png": "bd6a8bce4d4d7e4588ef5822c9756e0c599eea776f4055d79fd5843b64c595a8",
+    "view-left.png": "4b2df3ac1c86bf49cf128046c190840c382ee490ca8e25a520ea3a2c8fd3f877",
+    "view-right.png": "d28ae3aadc20006707c6deaf959e9657111aa4424fd7299263278cad74174c24",
+    "view-top.png": "150e8f3f9466c25e375d355e38241d6927eaa0aa60a5438b2b043cb99663f84b"
+  }
+}
