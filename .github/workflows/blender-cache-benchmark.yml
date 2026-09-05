@@ -1,6 +1,9 @@
 name: Benchmark Blender archive cache
 
 on:
+  push:
+    paths:
+      - '.github/workflows/blender-cache-benchmark.yml'
   pull_request:
     paths:
       - '.github/workflows/blender-cache-benchmark.yml'
