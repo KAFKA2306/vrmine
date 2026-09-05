@@ -9,17 +9,10 @@ on:
       - 'Assets/KafkaMade/VRMine/RetroCafe/**'
       - 'Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs'
       - 'Taskfile.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/*retro-cafe.py'
-      - '.github/workflows/retro-cafe.yml'
-      - 'Assets/KafkaMade/VRMine/RetroCafe/**'
-      - 'Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs'
-      - 'Taskfile.yml'
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
   issues: write
@@ -29,7 +22,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  generate:
+  generate-and-integrate:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -51,141 +44,352 @@ jobs:
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
       - name: Generate Retro Cafe assets and six review viewpoints
+        id: generate
+        continue-on-error: true
         run: |
-          set -euo pipefail
-          blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
-          blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py
-          for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
-            test -s ".artifacts/retro-cafe/${image}.png"
-          done
+          set -uo pipefail
+          mkdir -p .artifacts/retro-cafe
+          build_status=0
+          verify_status=0
+          blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py 2>&1 | tee .artifacts/retro-cafe/build.log || build_status=${PIPESTATUS[0]}
+          if [ "$build_status" -eq 0 ]; then
+            blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py 2>&1 | tee .artifacts/retro-cafe/verify.log || verify_status=${PIPESTATUS[0]}
+          fi
+          status="$build_status"
+          if [ "$status" -eq 0 ]; then status="$verify_status"; fi
+          if [ "$status" -eq 0 ]; then
+            for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
+              test -s ".artifacts/retro-cafe/${image}.png" || status=1
+            done
+          fi
+          exit "$status"
 
-      - uses: actions/upload-artifact@v4
+      - name: Preserve generation artifact even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: retro-cafe-${{ github.event.pull_request.head.sha || github.sha }}
           path: .artifacts/retro-cafe/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 7
 
-      - name: Publish immutable review renders into the PR branch
-        if: github.event_name == 'pull_request'
+      - name: Publish rendered evidence into the PR head
+        if: always() && github.event_name == 'pull_request'
         id: publish
+        env:
+          GENERATION_OUTCOME: ${{ steps.generate.outcome }}
         run: |
           set -euo pipefail
-          mkdir -p pages/3d/retro-cafe/review
-          for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
-            cp ".artifacts/retro-cafe/${image}.png" "pages/3d/retro-cafe/review/${image}.png"
+          review_dir=pages/3d/retro-cafe/review
+          rm -rf "$review_dir"
+          mkdir -p "$review_dir"
+          shopt -s nullglob
+          for file in .artifacts/retro-cafe/*.png; do
+            cp "$file" "$review_dir/"
           done
+          python3 - "$review_dir" "$GENERATION_OUTCOME" <<'PY'
+          import hashlib, json, sys
+          from pathlib import Path
+
+          root = Path(sys.argv[1])
+          files = {}
+          for path in sorted(root.glob("*.png")):
+              files[path.name] = {
+                  "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                  "bytes": path.stat().st_size,
+              }
+          payload = {
+              "generation_status": sys.argv[2],
+              "files": files,
+          }
+          (root / "render-manifest.json").write_text(
+              json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add pages/3d/retro-cafe/review
+          git add "$review_dir"
           if ! git diff --cached --quiet; then
-            git commit -m "chore: publish Retro Cafe review renders [skip ci]"
+            git commit -m "chore: publish Retro Cafe rendered evidence"
             git push origin "HEAD:${GITHUB_HEAD_REF}"
           fi
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          final_head="$(git rev-parse HEAD)"
+          echo "final_head=$final_head" >> "$GITHUB_OUTPUT"
 
-      - name: Attach rendered viewpoints to PR and owning Issue
-        if: github.event_name == 'pull_request'
+      - name: Attach rendered evidence to PR and owning Issue
+        if: always() && github.event_name == 'pull_request'
         id: attach
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          REVIEW_SHA: ${{ steps.publish.outputs.sha }}
+          FINAL_HEAD: ${{ steps.publish.outputs.final_head }}
+          GENERATION_OUTCOME: ${{ steps.generate.outcome }}
         run: |
           set -euo pipefail
-          base="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${REVIEW_SHA}/pages/3d/retro-cafe/review"
-          cat > /tmp/gallery.md <<EOF
-          <!-- retro-cafe-review:start -->
-          ## Rendered result: Retro Café
-
-          見た目はmerge判定ではありません。生成された実画像を多面からそのまま掲載します。
-
-          | Hero | Front | Rear |
-          | --- | --- | --- |
-          | ![Hero](${base}/view-hero.png) | ![Front](${base}/view-front.png) | ![Rear](${base}/view-rear.png) |
-          | Left | Right | Top |
-          | ![Left](${base}/view-left.png) | ![Right](${base}/view-right.png) | ![Top](${base}/view-top.png) |
-
-          Direct image root: ${base}/
-          <!-- retro-cafe-review:end -->
-          EOF
-
+          test -n "$FINAL_HEAD"
           pr_body="$(gh pr view "$PR_NUMBER" --json body -q '.body // ""')"
-          issue_number="$(printf '%s\n' "$pr_body" | grep -oE '#[0-9]+' | head -n 1 | tr -d '#' || true)"
-          if [ -z "$issue_number" ]; then
-            issue_url="$(gh issue create --title "Generated review for PR #${PR_NUMBER}" --body "Automatic tracking Issue for generated-asset PR #${PR_NUMBER}.")"
-            issue_number="${issue_url##*/}"
-          fi
-          echo "issue_number=${issue_number}" >> "$GITHUB_OUTPUT"
+          issue_lines="$(printf '%s\n' "$pr_body" | sed -nE 's/^Generation-Issue:[[:space:]]*#([0-9]+)[[:space:]]*$/\1/p')"
+          test "$(printf '%s\n' "$issue_lines" | sed '/^$/d' | wc -l)" -eq 1
+          issue_number="$(printf '%s\n' "$issue_lines" | sed '/^$/d')"
+          gh issue view "$issue_number" >/dev/null
+          echo "issue_number=$issue_number" >> "$GITHUB_OUTPUT"
 
-          printf '%s\n' "$pr_body" | sed '/<!-- retro-cafe-review:start -->/,$d' > /tmp/pr-base.md
-          { cat /tmp/pr-base.md; printf '\n'; cat /tmp/gallery.md; } > /tmp/pr-body.md
-          gh pr edit "$PR_NUMBER" --body-file /tmp/pr-body.md
+          base="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${FINAL_HEAD}/pages/3d/retro-cafe/review"
+          manifest=pages/3d/retro-cafe/review/render-manifest.json
+          {
+            echo '<!-- retro-cafe-review:start -->'
+            echo '## Rendered result: Retro Café'
+            echo
+            echo "Technical generation status: **${GENERATION_OUTCOME}**"
+            echo
+            echo '見た目はmerge判定ではありません。生成された実画像を多面からそのまま掲載します。'
+            echo
+            if [ "$GENERATION_OUTCOME" = "success" ]; then
+              echo '| Hero | Front | Rear |'
+              echo '| --- | --- | --- |'
+              echo "| ![Hero](${base}/view-hero.png) | ![Front](${base}/view-front.png) | ![Rear](${base}/view-rear.png) |"
+              echo '| Left | Right | Top |'
+              echo '| --- | --- | --- |'
+              echo "| ![Left](${base}/view-left.png) | ![Right](${base}/view-right.png) | ![Top](${base}/view-top.png) |"
+            else
+              echo '生成途中で得られた画像は以下です。technical failure自体はFAILのまま保持します。'
+              for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
+                if jq -e --arg name "${image}.png" '.files[$name]' "$manifest" >/dev/null; then
+                  echo "- ![${image}](${base}/${image}.png)"
+                fi
+              done
+            fi
+            echo
+            echo "Render manifest: ${base}/render-manifest.json"
+            echo '<!-- retro-cafe-review:end -->'
+          } > /tmp/gallery.md
+
+          cat > /tmp/upsert.py <<'PY'
+          import re, sys
+          src, block, out = sys.argv[1:]
+          text = open(src, encoding="utf-8").read()
+          replacement = open(block, encoding="utf-8").read().strip()
+          pattern = re.compile(r'<!-- retro-cafe-review:start -->.*?<!-- retro-cafe-review:end -->', re.S)
+          if pattern.search(text):
+              text = pattern.sub(replacement, text, count=1)
+          else:
+              text = text.rstrip() + "\n\n" + replacement + "\n"
+          open(out, "w", encoding="utf-8").write(text)
+          PY
+
+          printf '%s' "$pr_body" > /tmp/pr-current.md
+          python3 /tmp/upsert.py /tmp/pr-current.md /tmp/gallery.md /tmp/pr-new.md
+          gh pr edit "$PR_NUMBER" --body-file /tmp/pr-new.md
 
           issue_body="$(gh issue view "$issue_number" --json body -q '.body // ""')"
-          printf '%s\n' "$issue_body" | sed '/<!-- retro-cafe-review:start -->/,$d' > /tmp/issue-base.md
-          { cat /tmp/issue-base.md; printf '\n'; cat /tmp/gallery.md; } > /tmp/issue-body.md
-          gh issue edit "$issue_number" --body-file /tmp/issue-body.md
+          printf '%s' "$issue_body" > /tmp/issue-current.md
+          python3 /tmp/upsert.py /tmp/issue-current.md /tmp/gallery.md /tmp/issue-new.md
+          gh issue edit "$issue_number" --body-file /tmp/issue-new.md
 
-          gh pr comment "$PR_NUMBER" --body-file /tmp/gallery.md
-          gh issue comment "$issue_number" --body-file /tmp/gallery.md
+          upsert_comment() {
+            local number="$1"
+            local marker='<!-- retro-cafe-review:start -->'
+            local id
+            id="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${number}/comments?per_page=100"               --jq ".[] | select(.body | contains(\"${marker}\")) | .id" | head -n 1 || true)"
+            if [ -n "$id" ]; then
+              gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${id}"                 -f body="$(cat /tmp/gallery.md)" >/dev/null
+            else
+              gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${number}/comments"                 -f body="$(cat /tmp/gallery.md)" >/dev/null
+            fi
+          }
+          upsert_comment "$PR_NUMBER"
+          upsert_comment "$issue_number"
 
-      - name: Merge generated work mechanically
-        if: github.event_name == 'pull_request'
+      - name: Fail loudly after preserving partial evidence
+        if: github.event_name == 'pull_request' && steps.generate.outcome != 'success'
+        run: |
+          echo "Retro Cafe generation or structural verification failed; evidence was preserved and published." >&2
+          exit 1
+
+      - name: Run exact-final-head technical gate explicitly
+        if: github.event_name == 'pull_request' && steps.generate.outcome == 'success'
+        id: technical
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FINAL_HEAD: ${{ steps.publish.outputs.final_head }}
+        run: |
+          set -euo pipefail
+          current_head="$(gh pr view "${{ github.event.pull_request.number }}" --json headRefOid -q .headRefOid)"
+          test "$current_head" = "$FINAL_HEAD"
+          gh workflow run unity-vpm.yml --ref "${GITHUB_HEAD_REF}"
+          run_id=''
+          for attempt in $(seq 1 90); do
+            row="$(gh run list               --workflow unity-vpm.yml               --branch "${GITHUB_HEAD_REF}"               --event workflow_dispatch               --limit 30               --json databaseId,headSha,status,conclusion               --jq ".[] | select(.headSha == \"${FINAL_HEAD}\") | [.databaseId,.status,(.conclusion // \"\")] | @tsv"               | head -n 1)"
+            if [ -n "$row" ]; then
+              IFS=$'\t' read -r run_id status conclusion <<< "$row"
+              if [ "$status" = "completed" ]; then
+                test "$conclusion" = "success"
+                echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            fi
+            sleep 2
+          done
+          echo "No successful exact-head unity-vpm workflow_dispatch run found for $FINAL_HEAD" >&2
+          exit 1
+
+      - name: Make PR ready without swallowing errors
+        if: github.event_name == 'pull_request' && steps.generate.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
-          gh pr ready "$PR_NUMBER" || true
-          gh pr merge "$PR_NUMBER" --merge
+          if [ "$(gh pr view "$PR_NUMBER" --json isDraft -q .isDraft)" = "true" ]; then
+            gh pr ready "$PR_NUMBER"
+          fi
 
-      - name: Verify public multi-angle renders after merge
-        if: github.event_name == 'pull_request'
-        id: production
+      - name: Merge exact final head mechanically
+        if: github.event_name == 'pull_request' && steps.generate.outcome == 'success'
+        id: merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          FINAL_HEAD: ${{ steps.publish.outputs.final_head }}
         run: |
           set -euo pipefail
-          base="https://kafka2306.github.io/vrmine/3d/retro-cafe"
-          tmp="$(mktemp -d)"
-          ready=false
-          for attempt in $(seq 1 60); do
-            ok=true
-            for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
-              if ! curl --fail --silent --show-error --location "${base}/${image}.png?run=${GITHUB_RUN_ID}-${attempt}" -o "${tmp}/${image}.png"; then
-                ok=false
-                break
-              fi
-              if [ "$(file --mime-type -b "${tmp}/${image}.png")" != "image/png" ]; then
-                ok=false
-                break
-              fi
-            done
-            if [ "$ok" = true ]; then
-              ready=true
-              break
-            fi
-            sleep 10
-          done
-          test "$ready" = true
-          echo "base=${base}" >> "$GITHUB_OUTPUT"
+          current_head="$(gh pr view "$PR_NUMBER" --json headRefOid -q .headRefOid)"
+          test "$current_head" = "$FINAL_HEAD"
+          merge_json="$(gh api --method PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/merge"             -f merge_method=merge             -f sha="$FINAL_HEAD")"
+          test "$(jq -r '.merged' <<< "$merge_json")" = "true"
+          merge_sha="$(jq -r '.sha' <<< "$merge_json")"
+          test -n "$merge_sha"
+          main_sha="$(gh api "repos/${GITHUB_REPOSITORY}/commits/main" --jq .sha)"
+          if [ "$main_sha" != "$merge_sha" ]; then
+            status="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${merge_sha}...${main_sha}" --jq .status)"
+            test "$status" = "ahead" -o "$status" = "identical"
+          fi
+          echo "merge_sha=$merge_sha" >> "$GITHUB_OUTPUT"
 
-      - name: Post stable production gallery
-        if: github.event_name == 'pull_request'
+      - name: Dispatch exact merged Pages deployment
+        if: github.event_name == 'pull_request' && steps.generate.outcome == 'success'
+        id: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MERGE_SHA: ${{ steps.merge.outputs.merge_sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          deploy_ref="render-deploy/pr-${PR_NUMBER}-${GITHUB_RUN_ID}"
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs"             -f ref="refs/heads/${deploy_ref}"             -f sha="$MERGE_SHA" >/dev/null
+          echo "deploy_ref=$deploy_ref" >> "$GITHUB_OUTPUT"
+          gh workflow run pages.yml --ref "$deploy_ref"
+          for attempt in $(seq 1 180); do
+            row="$(gh run list               --workflow pages.yml               --branch "$deploy_ref"               --event workflow_dispatch               --limit 20               --json databaseId,headSha,status,conclusion               --jq ".[] | select(.headSha == \"${MERGE_SHA}\") | [.databaseId,.status,(.conclusion // \"\")] | @tsv"               | head -n 1)"
+            if [ -n "$row" ]; then
+              IFS=$'\t' read -r run_id status conclusion <<< "$row"
+              if [ "$status" = "completed" ]; then
+                test "$conclusion" = "success"
+                echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            fi
+            sleep 5
+          done
+          echo "No successful Pages deployment found for merge $MERGE_SHA" >&2
+          exit 1
+
+      - name: Verify exact production render bytes
+        if: github.event_name == 'pull_request' && steps.generate.outcome == 'success'
+        id: production
+        env:
+          MERGE_SHA: ${{ steps.merge.outputs.merge_sha }}
+        run: |
+          set -euo pipefail
+          base="https://kafka2306.github.io/vrmine"
+          tmp="$(mktemp -d)"
+          matched=false
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent --show-error --location "$base/deployment.json?run=${GITHUB_RUN_ID}-${attempt}" -o "$tmp/deployment.json"; then
+              if [ "$(jq -r '.source_sha // empty' "$tmp/deployment.json")" = "$MERGE_SHA" ]; then
+                matched=true
+                break
+              fi
+            fi
+            sleep 5
+          done
+          test "$matched" = true
+          curl --fail --silent --show-error --location "$base/3d/retro-cafe/render-manifest.json?run=${GITHUB_RUN_ID}" -o "$tmp/render-manifest.json"
+          diff -u <(jq -S . pages/3d/retro-cafe/review/render-manifest.json) <(jq -S . "$tmp/render-manifest.json")
+          for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
+            curl --fail --silent --show-error --location "$base/3d/retro-cafe/${image}.png?run=${GITHUB_RUN_ID}" -o "$tmp/${image}.png"
+            expected="$(jq -r --arg name "${image}.png" '.files[$name].sha256' pages/3d/retro-cafe/review/render-manifest.json)"
+            test "$(sha256sum "$tmp/${image}.png" | awk '{print $1}')" = "$expected"
+          done
+          echo "base=$base/3d/retro-cafe" >> "$GITHUB_OUTPUT"
+
+      - name: Replace evidence links with stable production gallery
+        if: github.event_name == 'pull_request' && steps.generate.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           ISSUE_NUMBER: ${{ steps.attach.outputs.issue_number }}
           BASE: ${{ steps.production.outputs.base }}
+          MERGE_SHA: ${{ steps.merge.outputs.merge_sha }}
+          TECHNICAL_RUN: ${{ steps.technical.outputs.run_id }}
+          PAGES_RUN: ${{ steps.pages.outputs.run_id }}
         run: |
           set -euo pipefail
-          cat > /tmp/production-gallery.md <<EOF
-          ## Production rendered result
+          {
+            echo '<!-- retro-cafe-review:start -->'
+            echo '## Production rendered result: Retro Café'
+            echo
+            echo "Merged main evidence: \`$MERGE_SHA\`"
+            echo
+            echo '| Hero | Front | Rear |'
+            echo '| --- | --- | --- |'
+            echo "| ![Hero](${BASE}/view-hero.png) | ![Front](${BASE}/view-front.png) | ![Rear](${BASE}/view-rear.png) |"
+            echo '| Left | Right | Top |'
+            echo '| --- | --- | --- |'
+            echo "| ![Left](${BASE}/view-left.png) | ![Right](${BASE}/view-right.png) | ![Top](${BASE}/view-top.png) |"
+            echo
+            echo "Exact-head technical run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${TECHNICAL_RUN}"
+            echo "Exact-merge Pages run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${PAGES_RUN}"
+            echo '<!-- retro-cafe-review:end -->'
+          } > /tmp/gallery.md
 
-          | Hero | Front | Rear |
-          | --- | --- | --- |
-          | ![Hero](${BASE}/view-hero.png) | ![Front](${BASE}/view-front.png) | ![Rear](${BASE}/view-rear.png) |
-          | Left | Right | Top |
-          | ![Left](${BASE}/view-left.png) | ![Right](${BASE}/view-right.png) | ![Top](${BASE}/view-top.png) |
-          EOF
-          gh pr comment "$PR_NUMBER" --body-file /tmp/production-gallery.md
-          gh issue comment "$ISSUE_NUMBER" --body-file /tmp/production-gallery.md
+          cat > /tmp/upsert.py <<'PY'
+          import re, sys
+          src, block, out = sys.argv[1:]
+          text = open(src, encoding="utf-8").read()
+          replacement = open(block, encoding="utf-8").read().strip()
+          pattern = re.compile(r'<!-- retro-cafe-review:start -->.*?<!-- retro-cafe-review:end -->', re.S)
+          if pattern.search(text):
+              text = pattern.sub(replacement, text, count=1)
+          else:
+              text = text.rstrip() + "\n\n" + replacement + "\n"
+          open(out, "w", encoding="utf-8").write(text)
+          PY
+
+          gh pr view "$PR_NUMBER" --json body -q '.body // ""' > /tmp/pr-current.md
+          python3 /tmp/upsert.py /tmp/pr-current.md /tmp/gallery.md /tmp/pr-new.md
+          gh pr edit "$PR_NUMBER" --body-file /tmp/pr-new.md
+          gh issue view "$ISSUE_NUMBER" --json body -q '.body // ""' > /tmp/issue-current.md
+          python3 /tmp/upsert.py /tmp/issue-current.md /tmp/gallery.md /tmp/issue-new.md
+          gh issue edit "$ISSUE_NUMBER" --body-file /tmp/issue-new.md
+
+          upsert_comment() {
+            local number="$1"
+            local marker='<!-- retro-cafe-review:start -->'
+            local id
+            id="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${number}/comments?per_page=100"               --jq ".[] | select(.body | contains(\"${marker}\")) | .id" | head -n 1 || true)"
+            test -n "$id"
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${id}"               -f body="$(cat /tmp/gallery.md)" >/dev/null
+          }
+          upsert_comment "$PR_NUMBER"
+          upsert_comment "$ISSUE_NUMBER"
+
+      - name: Delete temporary deployment ref
+        if: always() && github.event_name == 'pull_request' && steps.pages.outputs.deploy_ref != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOY_REF: ${{ steps.pages.outputs.deploy_ref }}
+        run: |
+          set -euo pipefail
+          gh api --method DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${DEPLOY_REF}"
