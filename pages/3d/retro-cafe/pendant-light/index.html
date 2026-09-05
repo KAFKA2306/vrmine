@@ -18,14 +18,43 @@
   </header>
 
   <main class="shell" id="main">
-    <section class="hero">
-      <p class="eyebrow">Free 3D asset / CC0</p>
-      <h1>Retro Cafe<br>Pendant Light</h1>
-      <p class="lead">レトロ喫茶や小さな店舗シーンへ置きやすい、オリジナルのペンダントライトです。OBJとMTLを公開ファイルとしてそのまま配布します。</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="./pendant-light.obj" download>OBJをダウンロード</a>
-        <a class="btn" href="./pendant-light.mtl" download>MTLをダウンロード</a>
-        <a class="btn" href="./README.txt">導入情報を見る</a>
+    <section class="asset-product-hero">
+      <a class="asset-product-media" href="../view-hero.webp" aria-label="Retro Café の実レンダリングをWebPで原寸表示">
+        <picture>
+          <source srcset="../view-hero.webp" type="image/webp">
+          <img src="../view-hero.png" alt="Retro Café 3D assets のBlender実レンダリング" width="600" height="500">
+        </picture>
+      </a>
+      <div class="asset-product-copy">
+        <p class="eyebrow">Free 3D asset / CC0</p>
+        <h1>Retro Cafe<br>Pendant Light</h1>
+        <p class="lead">レトロ喫茶や小さな店舗シーンへ置きやすい、オリジナルのペンダントライトです。まず実レンダリングを確認し、そのままOBJとMTLを取得できます。</p>
+        <div class="product-meta">
+          <span>OBJ + MTL</span>
+          <span>0.60 × 0.60 × 0.95 m</span>
+          <span>CC0 1.0</span>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="./pendant-light.obj" download>OBJをダウンロード</a>
+          <a class="btn" href="./pendant-light.mtl" download>MTLをダウンロード</a>
+          <a class="btn" href="../view-hero.webp">WebPを原寸で見る</a>
+        </div>
+        <p class="product-proof">上の画像は同じ生成パイプラインで作ったRetro Café利用例の実レンダーです。Pages公開時に現在の生成画像との一致を検証します。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div><p class="eyebrow">Rendered views</p><h2>見た目を先に確認する</h2></div>
+        <p>hero / front / rear / left / right / top をWebPで表示します。各画像はクリックすると画像そのものを開きます。</p>
+      </div>
+      <div class="asset-view-grid">
+        <a class="asset-view" href="../view-front.webp"><picture><source srcset="../view-front.webp" type="image/webp"><img src="../view-front.png" alt="Retro Café front view" width="600" height="500" loading="lazy"></picture><span>Front</span></a>
+        <a class="asset-view" href="../view-rear.webp"><picture><source srcset="../view-rear.webp" type="image/webp"><img src="../view-rear.png" alt="Retro Café rear view" width="600" height="500" loading="lazy"></picture><span>Rear</span></a>
+        <a class="asset-view" href="../view-left.webp"><picture><source srcset="../view-left.webp" type="image/webp"><img src="../view-left.png" alt="Retro Café left view" width="600" height="500" loading="lazy"></picture><span>Left</span></a>
+        <a class="asset-view" href="../view-right.webp"><picture><source srcset="../view-right.webp" type="image/webp"><img src="../view-right.png" alt="Retro Café right view" width="600" height="500" loading="lazy"></picture><span>Right</span></a>
+        <a class="asset-view" href="../view-top.webp"><picture><source srcset="../view-top.webp" type="image/webp"><img src="../view-top.png" alt="Retro Café top view" width="600" height="500" loading="lazy"></picture><span>Top</span></a>
+        <a class="asset-view" href="../thumbnail.webp"><picture><source srcset="../thumbnail.webp" type="image/webp"><img src="../thumbnail.png" alt="Retro Café thumbnail view" width="600" height="500" loading="lazy"></picture><span>Thumbnail</span></a>
       </div>
     </section>
 

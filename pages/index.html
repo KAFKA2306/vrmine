@@ -44,17 +44,35 @@
       <div class="game-grid" data-game-grid></div>
     </section>
 
-    <section class="section" id="assets">
-      <div class="section-head">
-        <div><p class="eyebrow">3D assets</p><h2>そのまま使える3D素材</h2></div>
-        <p>実ファイル、配布条件、検証済みの範囲を同じ公開面から確認できます。Pagesで取得できることとUnity / VRChat実機対応は分けて表示します。</p>
+    <section class="section asset-market" id="assets">
+      <div class="section-head asset-market-head">
+        <div><p class="eyebrow">3D assets</p><h2>作品から選ぶ3D素材</h2></div>
+        <p>説明より先に、現在のBlender生成結果を見せます。WebPで作品を見てから、必要な素材だけ詳細・配布条件・検証範囲を確認できます。</p>
       </div>
-      <div class="feature-grid">
-        <article class="feature-card">
-          <div class="badges"><span class="badge">CC0</span><span class="badge">OBJ + MTL</span></div>
-          <h3>Retro Cafe Pendant Light</h3>
-          <p>レトロ喫茶や小さな店舗向けのオリジナル照明小物。幅0.60 mの軽量な形状で、金属・シェード・電球を別材質として編集できます。</p>
-          <p><a class="btn btn-primary" href="./3d/retro-cafe/pendant-light/">素材を取得する</a></p>
+      <div class="asset-market-grid">
+        <article class="asset-listing">
+          <a class="asset-listing-media" href="./3d/retro-cafe/pendant-light/" aria-label="Retro Cafe Pendant Light の詳細を見る">
+            <picture>
+              <source srcset="./3d/retro-cafe/view-hero.webp" type="image/webp">
+              <img src="./3d/retro-cafe/view-hero.png" alt="Retro Café 3D assets のBlender実レンダリング" width="600" height="500" loading="lazy">
+            </picture>
+            <span class="asset-listing-badge">CC0</span>
+            <span class="asset-listing-badge asset-listing-badge-right">FREE</span>
+          </a>
+          <div class="asset-listing-body">
+            <p class="asset-listing-kicker">RETRO CAFÉ · 3D MODEL</p>
+            <h3>Retro Cafe Pendant Light</h3>
+            <p class="asset-listing-copy">レトロ喫茶や小さな店舗向けのオリジナル照明小物。商品画像は同じ生成パイプラインで作ったRetro Café利用例の実レンダーです。</p>
+            <div class="asset-listing-meta">
+              <span>OBJ + MTL</span>
+              <span>0.60 × 0.60 × 0.95 m</span>
+              <span>Unity / VRChat: UNVERIFIED</span>
+            </div>
+            <div class="asset-listing-footer">
+              <span class="asset-listing-price">¥0</span>
+              <a class="asset-listing-link" href="./3d/retro-cafe/pendant-light/">詳細・取得 →</a>
+            </div>
+          </div>
         </article>
       </div>
     </section>
