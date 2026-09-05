@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-desk-lamp-01",
+  "source_spec": "config/world-items/minimal-desk-lamp-01.json",
+  "spec_sha256": "fb06c362c0005d3378fea92c2624f616f42a22c61389abbac52380df0f9aece4",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.30000001192092896,
+    0.30000001192092896,
+    0.4949999749660492
+  ],
+  "triangles": 2544,
+  "parts_count": 4,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-desk-lamp-01.blend": "ef8bbfaa0df3afae2e24303aa793d6d1e64c5d6ca6e3df473080f530b0f8df93",
+    "minimal-desk-lamp-01.glb": "9cbbe8db6341b0b3fe0c0a31031c699871fae97e90dfbe09c235ab3e83b4486f",
+    "minimal-desk-lamp-01.fbx": "f04aa3d7420d14f8d109bb7669c812564832f07a498f7f581d2844af5938ed21",
+    "thumbnail.png": "b25bdbd4fbd96838577f757191e18ae7e4427beaa46822b391cf2fe2c842acb6",
+    "view-hero.png": "b25bdbd4fbd96838577f757191e18ae7e4427beaa46822b391cf2fe2c842acb6",
+    "view-front.png": "c34c91cad57192966ad862fcb80ac26abe1ea9918b30970f208adf2ca806951b",
+    "view-rear.png": "624da50f9767bb221edb8d352aae8ad1f6d7230cae2414454fa2cf2bcd834a18",
+    "view-left.png": "6537584de1b1d9e1f84bc7b6ee3d20bae76a36731183848b8507e8776143b113",
+    "view-right.png": "f8ea9877eb720a50a95cbe98daaa7c8dc8f3d7ae65b04958b01fa548f0f02e28",
+    "view-top.png": "e487af135274d5994c3cfc35d10395a31696bc83f55c0c5e0f1a33055432dd0e"
+  }
+}
