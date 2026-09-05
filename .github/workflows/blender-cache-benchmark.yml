@@ -79,3 +79,5 @@ jobs:
           elapsed=$(( $(date +%s) - started ))
           echo "cache_hit=$CACHE_HIT" | tee -a "$GITHUB_STEP_SUMMARY"
           echo "cached_setup_seconds=$elapsed" | tee -a "$GITHUB_STEP_SUMMARY"
+
+# cache-hit proof trigger 1
