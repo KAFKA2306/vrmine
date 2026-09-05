@@ -1,0 +1,42 @@
+{
+  "id": "cafe-serving-tray-01",
+  "family": "Café / Foodware",
+  "display_name": "Cafe Serving Tray",
+  "dimensions_m": [0.38, 0.28, 0.035],
+  "parts": [
+    {"component": "box", "name": "tray_base", "size": [0.36, 0.26, 0.018], "position": [0.0, 0.0, 0.009], "material": "warm_wood"},
+    {"component": "box", "name": "front_rail", "size": [0.38, 0.018, 0.035], "position": [0.0, -0.131, 0.0175], "material": "dark_wood"},
+    {"component": "box", "name": "rear_rail", "size": [0.38, 0.018, 0.035], "position": [0.0, 0.131, 0.0175], "material": "dark_wood"},
+    {"component": "box", "name": "left_rail", "size": [0.018, 0.244, 0.035], "position": [-0.181, 0.0, 0.0175], "material": "dark_wood"},
+    {"component": "box", "name": "right_rail", "size": [0.018, 0.244, 0.035], "position": [0.181, 0.0, 0.0175], "material": "dark_wood"}
+  ],
+  "materials": {
+    "warm_wood": {"base_color": [0.48, 0.28, 0.13], "roughness": 0.54, "metallic": 0.0},
+    "dark_wood": {"base_color": [0.20, 0.10, 0.05], "roughness": 0.58, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "light-oak", "planned": true},
+    {"id": "dark-walnut", "planned": true},
+    {"id": "cafe-serving-three-piece-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH round wooden tray has a paid JPY 100 variant with FBX and VRChat-oriented usage, crawled 2026-09-06",
+      "BOOTH kitchen prop pack lists a 380 x 280 x 24 mm tray among eight VRChat world props for JPY 150, crawled 2026-09-06",
+      "Issue #200 marks Cafe / Foodware as S priority; tray-like props are highly reusable for cafe, restaurant, kitchen, bar, and shop worlds"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}

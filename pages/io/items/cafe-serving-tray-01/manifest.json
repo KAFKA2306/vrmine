@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "cafe-serving-tray-01",
+  "source_spec": "config/world-items/cafe-serving-tray-01.json",
+  "spec_sha256": "576afdfc4852e4e87fdd1e882071addc5d48da4f9ef3d9cbf957d3bf2e12b9b2",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.3799999952316284,
+    0.2800000011920929,
+    0.03500000014901161
+  ],
+  "triangles": 940,
+  "parts_count": 5,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "cafe-serving-tray-01.blend": "23594e692b0088a439d0fba632de6c5df0c128ea85deb252204bcdec1cfc5d4f",
+    "cafe-serving-tray-01.glb": "a3d03ebdb153997dd82a700223102053290a590b8bae039fd0a2a89dbc120c01",
+    "cafe-serving-tray-01.fbx": "60a99de2833b7286c883b8f5545c98f13678460e115d6d8f24b75a5580a9b81f",
+    "thumbnail.png": "a66cede9ae7bd6b241354fe0a77b351b0184ca7bd213305987fcb83e7a986582",
+    "view-hero.png": "a66cede9ae7bd6b241354fe0a77b351b0184ca7bd213305987fcb83e7a986582",
+    "view-front.png": "4841051894b281a8b7a5ea46880022f84c1996e9440a78e2eb1c08a335a2b917",
+    "view-rear.png": "ef511b437d15e01c26f16b10db0ecfd20c80c144d05273ae8ccfd6de80c62316",
+    "view-left.png": "e56e9b80520e33ca396776122755aff8879a3ccabe22ba885dd6121055196ec7",
+    "view-right.png": "7076fe6699a2e559b8f7baed17620bea859e070324b94bc0df4e3eb88b7bb498",
+    "view-top.png": "c9d1e64fc01fce204c9d591a79d5998359be41f37d37e85caf8950b48ed210d5"
+  }
+}
