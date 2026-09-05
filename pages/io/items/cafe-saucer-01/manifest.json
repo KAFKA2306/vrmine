@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "cafe-saucer-01",
+  "source_spec": "config/world-items/cafe-saucer-01.json",
+  "spec_sha256": "d216a9faaf7618bd37eaabb0a027315d14b1188aca301f56d9628ab9b233fa40",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.1599999964237213,
+    0.1599999964237213,
+    0.020999999716877937
+  ],
+  "triangles": 2548,
+  "parts_count": 3,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "cafe-saucer-01.blend": "4f234d206b3e06bb85d255c533101481334044e9a144cd3bcc93515b6fd89fba",
+    "cafe-saucer-01.glb": "07bad671c54b1b36a0ba525a2ea9ca5fe84f4f22d03d515f493f627b10031d89",
+    "cafe-saucer-01.fbx": "4debb758393f55386e1c084ee077cea34361d7318b5912451aa1579ab30ee395",
+    "thumbnail.png": "d3e9b55aa51877ca59debacf677d68de40748142c1c52dc550f230727bf9a873",
+    "view-hero.png": "d3e9b55aa51877ca59debacf677d68de40748142c1c52dc550f230727bf9a873",
+    "view-front.png": "ceffd580b3f8283915c30d2676e3d8af38459f7a6457c51329135a46bf8ce9f3",
+    "view-rear.png": "55ddd48508d82d37a3812085650ccf63be3510917317e9499a3223245c143452",
+    "view-left.png": "b5ea843931d802009850e93fa56161085b9a962e71532f90f901c5feaa3a2483",
+    "view-right.png": "1bb0e39ff03232d7c1c1539d2f3b738b6eddb06023cec1e5f687e7e5d604e221",
+    "view-top.png": "9c9544bf96adcc2af8640c7427eef7621b45b5872c19db9a509ae538bc34523e"
+  }
+}
