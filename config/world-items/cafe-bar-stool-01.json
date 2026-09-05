@@ -1,0 +1,47 @@
+{
+  "id": "cafe-bar-stool-01",
+  "family": "Tables / Stools / Shelves",
+  "display_name": "Café Bar Stool",
+  "dimensions_m": [0.42, 0.42, 0.74],
+  "parts": [
+    {"component": "cylinder", "name": "round_seat", "radius": 0.19, "height": 0.045, "position": [0.0, 0.0, 0.7175], "vertices": 64, "material": "warm_wood"},
+    {"component": "box", "name": "leg_front_left", "size": [0.035, 0.035, 0.68], "position": [-0.145, -0.145, 0.34], "material": "charcoal_metal"},
+    {"component": "box", "name": "leg_front_right", "size": [0.035, 0.035, 0.68], "position": [0.145, -0.145, 0.34], "material": "charcoal_metal"},
+    {"component": "box", "name": "leg_rear_left", "size": [0.035, 0.035, 0.68], "position": [-0.145, 0.145, 0.34], "material": "charcoal_metal"},
+    {"component": "box", "name": "leg_rear_right", "size": [0.035, 0.035, 0.68], "position": [0.145, 0.145, 0.34], "material": "charcoal_metal"},
+    {"component": "box", "name": "footrest_front", "size": [0.325, 0.025, 0.025], "position": [0.0, -0.145, 0.255], "material": "charcoal_metal"},
+    {"component": "box", "name": "footrest_rear", "size": [0.325, 0.025, 0.025], "position": [0.0, 0.145, 0.255], "material": "charcoal_metal"},
+    {"component": "box", "name": "footrest_left", "size": [0.025, 0.325, 0.025], "position": [-0.145, 0.0, 0.255], "material": "charcoal_metal"},
+    {"component": "box", "name": "footrest_right", "size": [0.025, 0.325, 0.025], "position": [0.145, 0.0, 0.255], "material": "charcoal_metal"},
+    {"component": "cylinder", "name": "seat_support", "radius": 0.115, "height": 0.028, "position": [0.0, 0.0, 0.681], "vertices": 48, "material": "charcoal_metal"}
+  ],
+  "materials": {
+    "warm_wood": {"base_color": [0.34, 0.16, 0.065], "roughness": 0.5, "metallic": 0.0},
+    "charcoal_metal": {"base_color": [0.04, 0.05, 0.055], "roughness": 0.34, "metallic": 0.74}
+  },
+  "variants": [
+    {"id": "counter-height", "planned": true},
+    {"id": "light-oak", "planned": true},
+    {"id": "backrest", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH generic wooden-seat bar stool listing at JPY 300, crawled 2026-09-04",
+      "BOOTH VRChat furniture set with table, shelf, and four stools at JPY 300, crawled 2026-08-31",
+      "Issue #200 S-priority Tables / Stools / Shelves family"
+    ],
+    "expected_production_minutes": 10,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
