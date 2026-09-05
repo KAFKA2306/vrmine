@@ -157,6 +157,21 @@ N PLY
 
 ## Unity / VRChat の検証
 
+### Retro Café Mini Set の生成
+
+Blender 4.2をPATHへ配置し、`task cafe:build` を実行します。ペンダントライト、
+卓上ライト、壁付ライト、丸テーブル、スツール、サイドテーブル、カップ、
+ソーサー、トレー、一輪挿しの10点を、メートル単位・共通5マテリアルで生成します。
+寸法・形状・配置の正本は `scripts/build-retro-cafe.py` です。
+
+出力先 `.artifacts/retro-cafe/` には各モデルのGLB/FBX、配置例の
+`retro-cafe.blend`、`thumbnail.png`、寸法・三角形数・SHA-256の `manifest.json` を保存します。
+同じコマンドで実ファイルを再読込し、寸法・原点・UV・マテリアル・形状を検証します。
+GitHub Actionsの **Retro Cafe generation** でも生成と検証を行い、成果物を7日間保存します。
+既存PagesのペンダントライトOBJは先行試作で、このセットの生成入力ではありません。
+Unity Prefab化、Unity/VRChat実機動作、販売用ライセンス確定、BOOTH公開は
+Issue #191の未完了工程です。FBX出力のみで「VRChat対応済み」とは扱いません。
+
 現在のtargetはUnity `2022.3.22f1` / VRChat SDK `3.9.0`です。versionは `ProjectSettings/ProjectVersion.txt` と `config/vrchat-toolchain.json` で管理します。
 
 GitHub Actionsの `unity-vpm.yml` はUnity Editorを起動せず、次を検証します。

@@ -1,0 +1,36 @@
+name: Retro Cafe generation
+
+on:
+  pull_request:
+    paths: ['scripts/*retro-cafe.py', '.github/workflows/retro-cafe.yml', 'Taskfile.yml']
+  push:
+    branches: [main]
+    paths: ['scripts/*retro-cafe.py', '.github/workflows/retro-cafe.yml', 'Taskfile.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Install official Blender 4.2.0
+        run: |
+          curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
+          curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0.sha256
+          grep ' blender-4.2.0-linux-x64.tar.xz$' blender-4.2.0.sha256 | sha256sum --check --strict
+          tar -xf blender-4.2.0-linux-x64.tar.xz
+          echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
+      - run: blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
+      - run: blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: retro-cafe-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .artifacts/retro-cafe/
+          if-no-files-found: error
+          retention-days: 7
