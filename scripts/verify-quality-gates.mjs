@@ -94,7 +94,7 @@ const generatedWorkflow = fs.readFileSync(generatedWorkflowPath, 'utf8');
 for (const requiredText of [
   'gh workflow run unity-vpm.yml',
   'gh workflow run pages.yml',
-  'pulls/\\${PR_NUMBER}/merge',
+  'pulls/${PR_NUMBER}/merge',
   '-f sha="$FINAL_HEAD"',
   'render-manifest.json',
   'deployment.json',
