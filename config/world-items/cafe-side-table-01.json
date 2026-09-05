@@ -1,0 +1,47 @@
+{
+  "id": "cafe-side-table-01",
+  "family": "Tables / Stools / Shelves",
+  "display_name": "Café Side Table",
+  "dimensions_m": [0.62, 0.62, 0.72],
+  "parts": [
+    {"component": "box", "name": "top", "size": [0.62, 0.62, 0.045], "position": [0.0, 0.0, 0.6975], "material": "warm_wood"},
+    {"component": "box", "name": "apron_front", "size": [0.54, 0.045, 0.07], "position": [0.0, -0.265, 0.64], "material": "charcoal_metal"},
+    {"component": "box", "name": "apron_rear", "size": [0.54, 0.045, 0.07], "position": [0.0, 0.265, 0.64], "material": "charcoal_metal"},
+    {"component": "box", "name": "apron_left", "size": [0.045, 0.54, 0.07], "position": [-0.265, 0.0, 0.64], "material": "charcoal_metal"},
+    {"component": "box", "name": "apron_right", "size": [0.045, 0.54, 0.07], "position": [0.265, 0.0, 0.64], "material": "charcoal_metal"},
+    {"component": "box", "name": "leg_front_left", "size": [0.055, 0.055, 0.62], "position": [-0.245, -0.245, 0.31], "material": "charcoal_metal"},
+    {"component": "box", "name": "leg_front_right", "size": [0.055, 0.055, 0.62], "position": [0.245, -0.245, 0.31], "material": "charcoal_metal"},
+    {"component": "box", "name": "leg_rear_left", "size": [0.055, 0.055, 0.62], "position": [-0.245, 0.245, 0.31], "material": "charcoal_metal"},
+    {"component": "box", "name": "leg_rear_right", "size": [0.055, 0.055, 0.62], "position": [0.245, 0.245, 0.31], "material": "charcoal_metal"}
+  ],
+  "materials": {
+    "warm_wood": {"base_color": [0.29, 0.15, 0.07], "roughness": 0.48, "metallic": 0.0},
+    "charcoal_metal": {"base_color": [0.045, 0.05, 0.055], "roughness": 0.31, "metallic": 0.72}
+  },
+  "variants": [
+    {"id": "light-oak", "planned": true},
+    {"id": "round-corner-top", "planned": true},
+    {"id": "low-coffee-height", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 250, "mini_set_target": 700},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH VRChat-compatible lightweight wooden side table/shelf at JPY 200, crawled 2026-09-05",
+      "BOOTH VRChat-oriented concrete side table at JPY 300, crawled 2026-09-05",
+      "BOOTH VRChat-oriented C-shaped modern side table 3-color set at JPY 100, crawled 2026-09-05",
+      "Issue #200 S-priority Tables / Stools / Shelves family"
+    ],
+    "expected_production_minutes": 8,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
