@@ -47,9 +47,13 @@ jobs:
     outputs:
       pages_enabled: ${{ steps.pages.outputs.enabled }}
       gaussian_count: ${{ steps.gaussian-registry.outputs.count }}
+      source_sha: ${{ steps.source.outputs.sha }}
       retro_cafe_review_sha256: ${{ steps.retro-cafe-review.outputs.sha256 }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Record exact source SHA
+        id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
@@ -129,39 +133,25 @@ jobs:
           grep -F 'new WebSocket(server)' pages/games/abyss-invasion/tracker.js
           grep -F 'vrmine-game-hub-v3' pages/service-worker.js
 
-      - name: Install official Blender 4.2.0 for Retro Cafe preview
-        run: |
-          set -euo pipefail
-          curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
-          curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0.sha256
-          grep ' blender-4.2.0-linux-x64.tar.xz$' blender-4.2.0.sha256 | sha256sum --check --strict
-          tar -xf blender-4.2.0-linux-x64.tar.xz
-          sudo apt-get update
-          sudo apt-get install -y libegl1 libgl1-mesa-dri
-          echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
-
-      - name: Generate verified Retro Cafe public renders
-        run: |
-          set -euo pipefail
-          blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
-          blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py
-          for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
-            test -s ".artifacts/retro-cafe/${image}.png"
-          done
-
-      - name: Record Retro Cafe public render hash
+      - name: Verify committed Retro Cafe review renders
         id: retro-cafe-review
         run: |
           set -euo pipefail
-          files=(
-            .artifacts/retro-cafe/thumbnail.png
-            .artifacts/retro-cafe/view-hero.png
-            .artifacts/retro-cafe/view-front.png
-            .artifacts/retro-cafe/view-rear.png
-            .artifacts/retro-cafe/view-left.png
-            .artifacts/retro-cafe/view-right.png
-            .artifacts/retro-cafe/view-top.png
-          )
+          review_dir=pages/3d/retro-cafe/review
+          if [ ! -f "$review_dir/render-manifest.json" ]; then
+            echo "sha256=UNAVAILABLE" >> "$GITHUB_OUTPUT"
+            echo "No committed Retro Cafe review manifest on this pre-render head." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          files=()
+          for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
+            file="$review_dir/${image}.png"
+            test -s "$file"
+            expected="$(jq -r --arg name "${image}.png" '.files[$name].sha256 // empty' "$review_dir/render-manifest.json")"
+            test -n "$expected"
+            test "$(sha256sum "$file" | awk '{print $1}')" = "$expected"
+            files+=("$file")
+          done
           echo "sha256=$(sha256sum "${files[@]}" | sha256sum | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - name: Assemble Pages artifact
@@ -171,7 +161,11 @@ jobs:
           cp -R pages _site
           cp config/gaussian-splats.json _site/3dgs/gaussian-splats.json
           mkdir -p _site/3d/retro-cafe
-          cp .artifacts/retro-cafe/*.png _site/3d/retro-cafe/
+          if [ -f pages/3d/retro-cafe/review/render-manifest.json ]; then
+            cp pages/3d/retro-cafe/review/*.png _site/3d/retro-cafe/
+            cp pages/3d/retro-cafe/review/render-manifest.json _site/3d/retro-cafe/render-manifest.json
+          fi
+          jq -n             --arg source_sha "${{ steps.source.outputs.sha }}"             --arg retro_cafe_review_sha256 "${{ steps.retro-cafe-review.outputs.sha256 }}"             '{source_sha:$source_sha,retro_cafe_review_sha256:$retro_cafe_review_sha256}'             > _site/deployment.json
           test ! -e _site/404.html
           touch _site/.nojekyll
 
@@ -335,13 +329,14 @@ jobs:
       - name: Verify public game hub
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
-          EXPECTED_SHA: ${{ github.sha }}
+          EXPECTED_SHA: ${{ needs.build.outputs.source_sha }}
           EXPECTED_GAUSSIAN_COUNT: ${{ needs.build.outputs.gaussian_count }}
           EXPECTED_RETRO_CAFE_REVIEW_SHA256: ${{ needs.build.outputs.retro_cafe_review_sha256 }}
         run: |
           set -euo pipefail
           base="${PAGE_URL%/}"
           tmp="$(mktemp -d)"
+          test "$EXPECTED_RETRO_CAFE_REVIEW_SHA256" != "UNAVAILABLE"
           matched=false
           for attempt in $(seq 1 36); do
             curl --fail --silent --show-error --location "$base/?smoke=${EXPECTED_SHA}-${attempt}" -o "$tmp/index.html"
@@ -357,8 +352,15 @@ jobs:
           curl --fail --silent --show-error --location "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
           curl --fail --silent --show-error --location "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
           curl --fail --silent --show-error --location "$base/3dgs/?smoke=${EXPECTED_SHA}" -o "$tmp/3dgs.html"
+          curl --fail --silent --show-error --location "$base/deployment.json?smoke=${EXPECTED_SHA}" -o "$tmp/deployment.json"
+          curl --fail --silent --show-error --location "$base/3d/retro-cafe/render-manifest.json?smoke=${EXPECTED_SHA}" -o "$tmp/render-manifest.json"
+          test "$(jq -r '.source_sha' "$tmp/deployment.json")" = "$EXPECTED_SHA"
+          test "$(jq -r '.retro_cafe_review_sha256' "$tmp/deployment.json")" = "$EXPECTED_RETRO_CAFE_REVIEW_SHA256"
           for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
             curl --fail --silent --show-error --location "$base/3d/retro-cafe/${image}.png?smoke=${EXPECTED_SHA}" -o "$tmp/${image}.png"
+            expected="$(jq -r --arg name "${image}.png" '.files[$name].sha256 // empty' "$tmp/render-manifest.json")"
+            test -n "$expected"
+            test "$(sha256sum "$tmp/${image}.png" | awk '{print $1}')" = "$expected"
           done
           curl --fail --silent --show-error --location "$base/3d/retro-cafe/pendant-light/?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-pendant.html"
           curl --fail --silent --show-error --location "$base/3dgs/gallery.js?smoke=${EXPECTED_SHA}" -o "$tmp/gallery.js"
