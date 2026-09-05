@@ -1,0 +1,44 @@
+{
+  "id": "street-safety-bollard-01",
+  "family": "Japanese Street Props",
+  "display_name": "Street Safety Bollard",
+  "dimensions_m": [0.18, 0.18, 0.90],
+  "parts": [
+    {"component": "cylinder", "name": "base", "radius": 0.09, "height": 0.06, "position": [0.0, 0.0, 0.03], "material": "charcoal_rubber", "vertices": 48},
+    {"component": "cylinder", "name": "post", "radius": 0.045, "height": 0.72, "position": [0.0, 0.0, 0.42], "material": "safety_orange", "vertices": 48},
+    {"component": "cylinder", "name": "reflective_band_low", "radius": 0.048, "height": 0.055, "position": [0.0, 0.0, 0.57], "material": "reflective_white", "vertices": 48},
+    {"component": "cylinder", "name": "reflective_band_high", "radius": 0.048, "height": 0.055, "position": [0.0, 0.0, 0.70], "material": "reflective_white", "vertices": 48},
+    {"component": "cylinder", "name": "cap", "radius": 0.052, "height": 0.05, "position": [0.0, 0.0, 0.805], "material": "safety_orange", "vertices": 48},
+    {"component": "cylinder", "name": "top_button", "radius": 0.022, "height": 0.03, "position": [0.0, 0.0, 0.845], "material": "charcoal_rubber", "vertices": 32}
+  ],
+  "materials": {
+    "safety_orange": {"base_color": [0.95, 0.24, 0.04], "roughness": 0.58, "metallic": 0.0},
+    "reflective_white": {"base_color": [0.92, 0.94, 0.90], "roughness": 0.30, "metallic": 0.05},
+    "charcoal_rubber": {"base_color": [0.045, 0.05, 0.055], "roughness": 0.88, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "orange-white", "planned": true},
+    {"id": "yellow-black", "planned": true},
+    {"id": "street-safety-three-piece-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded street-furniture geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH currently lists a VRChat-oriented traffic cone prop at JPY 200, crawled 2026-09-06",
+      "Issue #200 ranks Japanese Street Props as A priority and explicitly includes bollards as a target",
+      "The product reuses only the existing cylinder component, supports color variants, and can bundle with parking blocks and future street-safety props"
+    ],
+    "expected_production_minutes": 6,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}

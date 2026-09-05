@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "street-safety-bollard-01",
+  "source_spec": "config/world-items/street-safety-bollard-01.json",
+  "spec_sha256": "24390501dd5dffe2021c452dd1e9ecf496e1b2fb884a8dbbb3ae6aa4f449b35c",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.18000000715255737,
+    0.18000000715255737,
+    0.8600000143051147
+  ],
+  "triangles": 4328,
+  "parts_count": 6,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "street-safety-bollard-01.blend": "0225ee48347b407e05caa7f8899da5d54960be979dff7c79fbdf060cf56a3314",
+    "street-safety-bollard-01.glb": "a91cd3d469d0dd1462103b6cc78217ea4767d42d5266aa6897891ad792fe2fa2",
+    "street-safety-bollard-01.fbx": "854df4b550847806e2b6f9377fae4ead6775bd9f6cdd60f64557593c806cfa35",
+    "thumbnail.png": "94746d29c93b7b3d19a30b8c97da9f3db40ffa279761a31f58536de0c55eb95b",
+    "view-hero.png": "94746d29c93b7b3d19a30b8c97da9f3db40ffa279761a31f58536de0c55eb95b",
+    "view-front.png": "ef7394e9bd7deb9d85d54a1ad279c7746e8197126c5662022acdfa527ca7172a",
+    "view-rear.png": "9fb54e505810baead2b7d97d30fd6418a52698a181a4d2c9570769f176ca6d2c",
+    "view-left.png": "12b928f5612a4248c5de5d0cac399c675d0f8216d1b0abfc7f05c34dec404911",
+    "view-right.png": "024690ecb7cc616b4e74bc0538eb4cfbc6a1fe61305b5a2b2cd59327580a50dc",
+    "view-top.png": "67d9478134508537b0108b249923862ceccbc5e0f21849141f0eeb6bbe767718"
+  }
+}
