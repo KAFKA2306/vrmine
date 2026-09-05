@@ -2,12 +2,119 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="VRMine 3Dワールドアイテムの商品View。実レンダリング、寸法、形式、利用状態を確認できます。">
 <title>3D Product View — VRMine</title>
 <style>
-:root{color-scheme:dark;background:#0d1117;color:#e6edf3;font-family:system-ui,sans-serif}*{box-sizing:border-box}body{margin:0}a{color:inherit}.wrap{max-width:1180px;margin:auto;padding:28px 24px 64px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:28px}.back{color:#8b949e}.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:28px;align-items:center}.hero img{width:100%;aspect-ratio:1/1;object-fit:contain;background:#161b22;border:1px solid #30363d;border-radius:18px}.eyebrow{color:#8b949e;text-transform:uppercase;letter-spacing:.12em;font-size:12px}h1{font-size:clamp(34px,5vw,64px);line-height:1;margin:.15em 0}.meta{color:#8b949e;line-height:1.7}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.btn{border:1px solid #30363d;border-radius:10px;padding:10px 14px;text-decoration:none;background:#161b22}.views{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:36px}.view{display:block;text-decoration:none;border:1px solid #30363d;border-radius:14px;overflow:hidden;background:#161b22}.view img{width:100%;aspect-ratio:1/1;object-fit:contain;display:block}.view span{display:block;padding:10px 12px;color:#8b949e}.error{padding:28px;border:1px solid #f85149;border-radius:14px}@media(max-width:760px){.hero{grid-template-columns:1fr}.top{align-items:flex-start}}
+:root{color-scheme:dark;background:#0b0f14;color:#f0f4f8;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:#0b0f14}a{color:inherit}.wrap{max-width:1320px;margin:auto;padding:24px 22px 72px}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:22px}.back{color:#9aa5b1;text-decoration:none}
+.hero{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.65fr);gap:30px;align-items:center}
+.hero-media{display:block}.hero img{width:100%;aspect-ratio:1/1;object-fit:contain;background:#121821;border:1px solid #252d38;border-radius:20px;display:block}
+.eyebrow{color:#8b949e;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700}
+h1{font-size:clamp(38px,6vw,72px);line-height:.95;letter-spacing:-.045em;margin:.13em 0 .2em}
+.description{color:#c5ced8;font-size:17px;line-height:1.7;margin:0 0 18px}.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:18px 0}
+.fact{background:#121821;border:1px solid #252d38;border-radius:12px;padding:11px 12px}.fact small{display:block;color:#798694;font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}.fact strong{font-size:14px;font-weight:650}
+.statuses{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.status{font-size:12px;padding:6px 8px;border-radius:999px;border:1px solid #303946;color:#aeb8c4}.status.pass{border-color:#2f7d51;color:#8fe0ac}.status.warn{border-color:#82662a;color:#e7c66e}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}.btn{border:1px solid #303946;border-radius:11px;padding:11px 14px;text-decoration:none;background:#121821;font-weight:650;font-size:14px}.btn.primary{background:#e7edf4;color:#0b0f14;border-color:#e7edf4}.btn.secondary{color:#c6d0da}
+.section-title{font-size:24px;letter-spacing:-.03em;margin:48px 0 14px}.views{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.view{display:block;text-decoration:none;border:1px solid #252d38;border-radius:14px;overflow:hidden;background:#121821}.view img{width:100%;aspect-ratio:1/1;object-fit:contain;display:block;background:#171e28}.view span{display:block;padding:10px 12px;color:#8f9aa7;font-size:13px}
+.tech{margin-top:38px;border-top:1px solid #252d38;padding-top:18px;color:#8f9aa7;font-size:13px;line-height:1.7}.tech summary{cursor:pointer;color:#c5ced8}.tech a{color:#a8bdd4}.error{padding:28px;border:1px solid #f85149;border-radius:14px}
+@media(max-width:780px){.hero{grid-template-columns:1fr}.top{align-items:flex-start}.facts{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.wrap{padding:18px 14px 56px}.facts{grid-template-columns:1fr}.views{grid-template-columns:1fr 1fr;gap:9px}}
 </style>
 </head>
-<body><main class="wrap" id="app"><div class="top"><a class="back" href="./">← World Item Gallery</a><a href="https://github.com/KAFKA2306/vrmine">GitHub</a></div><p>読み込み中…</p></main>
+<body>
+<main class="wrap" id="app"><div class="top"><a class="back" href="./">← World Item Gallery</a></div><p>読み込み中…</p></main>
 <script>
-(async()=>{const p=new URLSearchParams(location.search);const id=p.get('item');const app=document.getElementById('app');const safe=/^[a-z0-9-]+$/.test(id||'');if(!safe){app.insertAdjacentHTML('beforeend','<div class="error">商品IDが不正です。</div>');return}const base=`items/${id}/`;let spec={};try{const r=await fetch(base+'spec.json',{cache:'no-store'});if(!r.ok)throw new Error(`HTTP ${r.status}`);spec=await r.json()}catch(e){app.insertAdjacentHTML('beforeend',`<div class="error">spec.json を取得できません: ${e.message}</div>`);return}const title=spec.name||spec.title||id.split('-').map(x=>x[0].toUpperCase()+x.slice(1)).join(' ');document.title=`${title} — VRMine`;const dims=spec.dimensions||spec.size||spec.bounds||null;const dimText=dims?`<p class="meta">寸法: ${typeof dims==='string'?dims:JSON.stringify(dims)}</p>`:'';const views=[['front','Front'],['rear','Rear'],['left','Left'],['right','Right'],['top','Top'],['hero','Hero']];app.innerHTML=`<div class="top"><a class="back" href="./">← World Item Gallery</a><a href="https://github.com/KAFKA2306/vrmine">GitHub</a></div><section class="hero"><a href="${base}view-hero.png"><img src="${base}view-hero.png" alt="${title} hero render"></a><div><p class="eyebrow">VRMine / Rendered 3D Product</p><h1>${title}</h1><p class="meta">SKU: ${id}</p>${dimText}<div class="actions"><a class="btn" href="${base}${id}.glb">GLB</a><a class="btn" href="${base}${id}.fbx">FBX</a><a class="btn" href="${base}${id}.blend">Blend</a><a class="btn" href="${base}spec.json">Spec</a></div></div></section><section class="views">${views.map(([f,l])=>`<a class="view" href="${base}view-${f}.png"><img src="${base}view-${f}.png" alt="${title} ${l} view" loading="lazy"><span>${l}</span></a>`).join('')}</section>`})()
-</script></body></html>
+(async()=>{
+  const p=new URLSearchParams(location.search);
+  const id=p.get('item');
+  const app=document.getElementById('app');
+  const safe=/^[a-z0-9-]+$/.test(id||'');
+  const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  if(!safe){app.innerHTML='<div class="error">商品IDが不正です。</div>';return}
+  const base=`items/${id}/`;
+  let spec={};
+  try{
+    const r=await fetch(base+'spec.json',{cache:'no-store'});
+    if(!r.ok)throw new Error(`HTTP ${r.status}`);
+    spec=await r.json();
+  }catch(e){
+    app.innerHTML=`<div class="top"><a class="back" href="./">← World Item Gallery</a></div><div class="error">spec.json を取得できません: ${esc(e.message)}</div>`;
+    return;
+  }
+
+  const humanTitle=id=>id.replace(/-01$/,'').split('-').map(x=>x[0].toUpperCase()+x.slice(1)).join(' ');
+  const title=spec.display_name||spec.name||spec.title||humanTitle(id);
+  const family=spec.family||'3D World Item';
+  const description=spec.description||`${family}向けの3Dワールドアイテム。実レンダリングと配布ファイルを同じページで確認できます。`;
+  document.title=`${title} — VRMine`;
+  document.querySelector('meta[name="description"]').setAttribute('content',description);
+
+  const dims=spec.dimensions_m||spec.dimensions||spec.size||spec.bounds||null;
+  const formatDims=value=>{
+    if(Array.isArray(value)&&value.length>=3&&value.every(x=>Number.isFinite(Number(x)))){
+      const cm=value.slice(0,3).map(x=>Math.round(Number(x)*1000)/10);
+      return `${cm[0]} × ${cm[1]} × ${cm[2]} cm`;
+    }
+    if(typeof value==='string')return value;
+    return value?JSON.stringify(value):'';
+  };
+  const dimText=formatDims(dims);
+
+  const formats=Array.isArray(spec.formats)?spec.formats.map(x=>String(x).toLowerCase()):[];
+  const formatLabel={glb:'GLB',fbx:'FBX',blend:'Blend'};
+  const formatButtons=formats.filter(f=>formatLabel[f]).map((f,i)=>`<a class="btn ${i===0?'primary':'secondary'}" href="${base}${id}.${f}" download>${i===0?'3Dモデルを取得（':''}${formatLabel[f]}${i===0?'）':''}</a>`).join('');
+  const price=spec.price_hypothesis&&Number.isFinite(Number(spec.price_hypothesis.single))?Number(spec.price_hypothesis.single):null;
+  const currency=spec.price_hypothesis?.currency||'JPY';
+  let priceText='';
+  if(price!==null){
+    try{priceText=new Intl.NumberFormat('ja-JP',{style:'currency',currency,maximumFractionDigits:0}).format(price)+'（価格仮説）';}
+    catch{priceText=`${currency} ${price}（価格仮説）`;}
+  }
+
+  const licenseName=spec.license?.name||'未記載';
+  const licenseStatus=spec.license?.status||'UNVERIFIED';
+  const statuses=[
+    ['Unity',spec.unity_status],
+    ['VRChat',spec.vrchat_status],
+    ['BOOTH',spec.booth_status]
+  ].filter(([,value])=>value).map(([label,value])=>{
+    const v=String(value);
+    const cls=/^(PASS|VERIFIED|READY|PUBLISHED)$/i.test(v)?'pass':/^(DRAFT|UNVERIFIED|PENDING)$/i.test(v)?'warn':'';
+    return `<span class="status ${cls}">${esc(label)}: ${esc(v)}</span>`;
+  }).join('');
+
+  const facts=[
+    ['カテゴリ',family],
+    ['寸法',dimText],
+    ['形式',formats.map(f=>formatLabel[f]||f.toUpperCase()).join(' / ')],
+    ['価格',priceText]
+  ].filter(([,value])=>value).map(([label,value])=>`<div class="fact"><small>${esc(label)}</small><strong>${esc(value)}</strong></div>`).join('');
+
+  const views=[['front','Front'],['rear','Rear'],['left','Left'],['right','Right'],['top','Top']];
+  app.innerHTML=`
+    <div class="top"><a class="back" href="./">← World Item Gallery</a></div>
+    <section class="hero">
+      <a class="hero-media" href="${base}view-hero.png"><img src="${base}view-hero.png" alt="${esc(title)} hero render"></a>
+      <div>
+        <p class="eyebrow">VRMine / Rendered 3D Product</p>
+        <h1>${esc(title)}</h1>
+        <p class="description">${esc(description)}</p>
+        <div class="facts">${facts}</div>
+        <div class="statuses">${statuses}</div>
+        <div class="actions">${formatButtons}</div>
+      </div>
+    </section>
+    <h2 class="section-title">Multi-angle renders</h2>
+    <section class="views">${views.map(([f,l])=>`<a class="view" href="${base}view-${f}.png"><img src="${base}view-${f}.png" alt="${esc(title)} ${l} view" loading="lazy"><span>${l}</span></a>`).join('')}</section>
+    <details class="tech">
+      <summary>技術情報・正本データ</summary>
+      <p>SKU: ${esc(id)}<br>License: ${esc(licenseName)} / ${esc(licenseStatus)}</p>
+      <p><a href="${base}spec.json">spec.json</a> · <a href="https://github.com/KAFKA2306/vrmine">GitHub source</a></p>
+    </details>
+  `;
+})()
+</script>
+</body>
+</html>
