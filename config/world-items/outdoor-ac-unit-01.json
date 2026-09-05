@@ -1,0 +1,51 @@
+{
+  "id": "outdoor-ac-unit-01",
+  "family": "Japanese Street",
+  "display_name": "Generic Outdoor AC Unit",
+  "dimensions_m": [0.82, 0.316, 0.64],
+  "parts": [
+    {"component": "box", "name": "main_body", "size": [0.82, 0.30, 0.56], "position": [0.0, 0.0, 0.36], "rotation_deg": [0, 0, 0], "material": "painted_metal"},
+    {"component": "box", "name": "left_foot", "size": [0.16, 0.22, 0.06], "position": [-0.26, 0.0, 0.03], "rotation_deg": [0, 0, 0], "material": "dark_rubber"},
+    {"component": "box", "name": "right_foot", "size": [0.16, 0.22, 0.06], "position": [0.26, 0.0, 0.03], "rotation_deg": [0, 0, 0], "material": "dark_rubber"},
+    {"component": "box", "name": "front_panel", "size": [0.56, 0.016, 0.42], "position": [-0.08, -0.158, 0.37], "rotation_deg": [0, 0, 0], "material": "grille_dark"},
+    {"component": "box", "name": "grille_slats_1", "size": [0.48, 0.012, 0.018], "position": [-0.08, -0.166, 0.22], "rotation_deg": [0, 0, 0], "material": "painted_metal"},
+    {"component": "box", "name": "grille_slats_2", "size": [0.48, 0.012, 0.018], "position": [-0.08, -0.166, 0.28], "rotation_deg": [0, 0, 0], "material": "painted_metal"},
+    {"component": "box", "name": "grille_slats_3", "size": [0.48, 0.012, 0.018], "position": [-0.08, -0.166, 0.34], "rotation_deg": [0, 0, 0], "material": "painted_metal"},
+    {"component": "box", "name": "grille_slats_4", "size": [0.48, 0.012, 0.018], "position": [-0.08, -0.166, 0.40], "rotation_deg": [0, 0, 0], "material": "painted_metal"},
+    {"component": "box", "name": "grille_slats_5", "size": [0.48, 0.012, 0.018], "position": [-0.08, -0.166, 0.46], "rotation_deg": [0, 0, 0], "material": "painted_metal"},
+    {"component": "box", "name": "grille_slats_6", "size": [0.48, 0.012, 0.018], "position": [-0.08, -0.166, 0.52], "rotation_deg": [0, 0, 0], "material": "painted_metal"},
+    {"component": "box", "name": "service_panel", "size": [0.16, 0.018, 0.34], "position": [0.29, -0.159, 0.38], "rotation_deg": [0, 0, 0], "material": "service_panel"},
+    {"component": "box", "name": "top_lip", "size": [0.78, 0.028, 0.035], "position": [0.0, -0.151, 0.615], "rotation_deg": [0, 0, 0], "material": "painted_metal"}
+  ],
+  "materials": {
+    "painted_metal": {"base_color": [0.72, 0.73, 0.70], "roughness": 0.58, "metallic": 0.18},
+    "grille_dark": {"base_color": [0.08, 0.09, 0.09], "roughness": 0.44, "metallic": 0.22},
+    "service_panel": {"base_color": [0.58, 0.60, 0.57], "roughness": 0.54, "metallic": 0.22},
+    "dark_rubber": {"base_color": [0.035, 0.04, 0.04], "roughness": 0.86, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "warm-gray", "planned": true},
+    {"id": "weathered-light-gray", "planned": true},
+    {"id": "compact-twin-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, artwork, or branded appliance geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH generic Outdoor Unit 3D model for VRChat/world use is listed at JPY 500, crawled 2026-09-05",
+      "BOOTH VRChat alley prop set with outdoor AC units is listed at JPY 1000, crawled 2026-09-05",
+      "Issue #200 A-priority Japanese Street family"
+    ],
+    "expected_production_minutes": 6,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
