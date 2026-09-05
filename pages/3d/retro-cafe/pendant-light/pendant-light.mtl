@@ -1,0 +1,29 @@
+# Retro Cafe Pendant Light materials
+newmtl MetalDark
+Ka 0.020 0.020 0.020
+Kd 0.070 0.065 0.060
+Ks 0.350 0.350 0.350
+Ns 120.000
+illum 2
+
+newmtl ShadeWarm
+Ka 0.080 0.050 0.025
+Kd 0.780 0.470 0.190
+Ks 0.120 0.100 0.080
+Ns 28.000
+illum 2
+
+newmtl ShadeInner
+Ka 0.090 0.080 0.060
+Kd 0.880 0.790 0.640
+Ks 0.080 0.080 0.080
+Ns 18.000
+illum 2
+
+newmtl BulbGlow
+Ka 0.150 0.090 0.030
+Kd 1.000 0.680 0.300
+Ks 0.200 0.160 0.100
+Ke 1.000 0.520 0.160
+Ns 40.000
+illum 2
