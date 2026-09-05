@@ -13,7 +13,7 @@ fetch(catalogUrl,{headers:{Accept:'application/vnd.github+json'}})
     if(!Array.isArray(entries))throw new Error('GitHub catalog response is not a directory listing');
     const items=entries.filter(entry=>entry.type==='dir').map(entry=>entry.name).sort();
     if(!items.length)throw new Error('No published world-item directories found');
-    grid.innerHTML=items.map(id=>`<a class="card" href="items/${id}/"><img src="items/${id}/view-hero.png" alt="${title(id)} hero render" loading="lazy"><div class="meta"><h2>${title(id)}</h2><p>${id} · Multi-angle view</p></div></a>`).join('');
+    grid.innerHTML=items.map(id=>`<a class="card" href="view.html?item=${encodeURIComponent(id)}"><img src="items/${id}/view-hero.png" alt="${title(id)} hero render" loading="lazy"><div class="meta"><h2>${title(id)}</h2><p>${id} · Multi-angle view</p></div></a>`).join('');
   })
   .catch(error=>{grid.innerHTML=`<p class="error">商品一覧を取得できません: ${error.message}</p>`;console.error(error);});
 </script></body></html>
