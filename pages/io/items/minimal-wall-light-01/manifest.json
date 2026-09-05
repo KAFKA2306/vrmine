@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-wall-light-01",
+  "source_spec": "config/world-items/minimal-wall-light-01.json",
+  "spec_sha256": "6ade5cede2527530ca5fdc5151ecf9cdcfa63b7a88609a5bd1175f25aa3c6a1d",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.2800000011920929,
+    0.31150001287460327,
+    0.3450000286102295
+  ],
+  "triangles": 1316,
+  "parts_count": 7,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-wall-light-01.blend": "f71b7314ec63d32a1fff7fc7072aa4a8a61190c1484af25c407208f0847d6dee",
+    "minimal-wall-light-01.glb": "a1f833d6a6571b81b0ad30efe33e45dc3e27264cfa27f1511588456ce0f193c5",
+    "minimal-wall-light-01.fbx": "70a41560428874d5af1f1a08f88ff6a9cf478fd2271812ec3c090b476f225a64",
+    "thumbnail.png": "5c30d2167bb8e8f9e1321a2dc8139c32304b4ea49ae5d0c313508238015015e9",
+    "view-hero.png": "5c30d2167bb8e8f9e1321a2dc8139c32304b4ea49ae5d0c313508238015015e9",
+    "view-front.png": "fedc244f429df3294b7cd8b7b7b9da7844e98da6665e193d13821999a582b133",
+    "view-rear.png": "9d9811926f74adbc3495e252c2dc5acddbb197923ba0a7e7b774d7495b19614f",
+    "view-left.png": "2691de8264edb9e1b79e2a0f82057564eb89a66889e52a61abdd81cd6d302891",
+    "view-right.png": "93a0c3f2396dcde2cf90fafdf4eb0bd743c99c13bb6cd8f7cd3993b26fa91435",
+    "view-top.png": "76e8a08cd2b819509385de1389a1900a132e4ff75127c1f70f2711d0d48bcc2f"
+  }
+}
