@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-wall-sconce-01",
+  "source_spec": "config/world-items/minimal-wall-sconce-01.json",
+  "spec_sha256": "82a78f6507745af2881eae14c15bdda32c203bd20dbe04a626721cb70fd1aea2",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.20999999344348907,
+    0.35350003838539124,
+    0.23999997973442078
+  ],
+  "triangles": 3244,
+  "parts_count": 5,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-wall-sconce-01.blend": "6353aeb250754b227094a7d2842905876c6e6af0580eab68d57df51fd2455d4e",
+    "minimal-wall-sconce-01.glb": "5125d9f55e16d36111a3f646ba62125d7e85b793eaac077e82d58e310dc509ee",
+    "minimal-wall-sconce-01.fbx": "2c3ab82d544d29b9d3de52ae1219717b7fba29c68d5a2dce65e7acfdebe7c209",
+    "thumbnail.png": "c49f97d594e6b66d0bfac03b2bcdad30277c703f70b7b7eea93f3c49b8fa23a2",
+    "view-hero.png": "c49f97d594e6b66d0bfac03b2bcdad30277c703f70b7b7eea93f3c49b8fa23a2",
+    "view-front.png": "53144ce825fe662e87ec4043b375159997c0b67c364b2e647285aee5d656182d",
+    "view-rear.png": "74bdea775cce1d583f933d9163bf31900b9666ee6b5ebcfb25e998e1347e5571",
+    "view-left.png": "1e810800b27247b7dba89661939b7c19b2489e647e336d47b72da46db63e4585",
+    "view-right.png": "75c9f16b575cd78e19e9bb254538df9e5bf2964f4cd0dc5047c8db62dbb90b0f",
+    "view-top.png": "0dfe310a73459f8b57a2e74aa51157a766a204530c4e3b89edae59756a4cfda2"
+  }
+}
