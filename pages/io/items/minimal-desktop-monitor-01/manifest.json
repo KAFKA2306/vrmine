@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-desktop-monitor-01",
+  "source_spec": "config/world-items/minimal-desktop-monitor-01.json",
+  "spec_sha256": "d1c9f656d6979309d71b543dcd901bc629f0bdfb7c23ac25526759021d4c3cc0",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.5600000023841858,
+    0.20000000298023224,
+    0.46000000834465027
+  ],
+  "triangles": 940,
+  "parts_count": 5,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-desktop-monitor-01.blend": "b6c9e737d192680d557feac688bd320e78d026add72a434ecaf790f0189a6f31",
+    "minimal-desktop-monitor-01.glb": "d6992b460c2f685e0fc2e197728f0e62443cfa02db9c9fa2618ac46c6e8572a7",
+    "minimal-desktop-monitor-01.fbx": "c75e8cca1bffeac82b773342af635865e016fe6acb6be131e5cdd6b3bc634911",
+    "thumbnail.png": "136ade192c4eee0700b3817d5b4af6abf15b48df95641ad6c5cbeeee4b096d8d",
+    "view-hero.png": "136ade192c4eee0700b3817d5b4af6abf15b48df95641ad6c5cbeeee4b096d8d",
+    "view-front.png": "03497831c6b40ad082a6cf9562bb18f7186f417832bf03347b94299e34e8ca5f",
+    "view-rear.png": "bdc26d275a5c2817d473abccb68b8df951a7452ae78e3e3708968731d0fd8f79",
+    "view-left.png": "0827d28755d9550801d667c2eaf9d97efb826f6fcd814e7069d3e219a77467e6",
+    "view-right.png": "05eb9d012168b20eaca57f2fc77fb1f3b9eb9f28eade5eca4b8b3aa8fa2b11b6",
+    "view-top.png": "62943e4c61dd828f0f5a99b8b1aadff9b370e28ceaeb7d1cfe8bf189d3adc9f5"
+  }
+}
