@@ -1,0 +1,42 @@
+{
+  "id": "minimal-floor-lamp-01",
+  "family": "Lighting",
+  "display_name": "Minimal Floor Lamp",
+  "dimensions_m": [0.42, 0.42, 1.58],
+  "parts": [
+    {"component": "cylinder", "name": "base", "radius": 0.21, "height": 0.045, "position": [0.0, 0.0, 0.0225], "material": "charcoal_metal", "vertices": 48},
+    {"component": "cylinder", "name": "stem", "radius": 0.018, "height": 1.25, "position": [0.0, 0.0, 0.67], "material": "charcoal_metal", "vertices": 32},
+    {"component": "cylinder", "name": "shade_lower", "radius": 0.19, "height": 0.18, "position": [0.0, 0.0, 1.39], "material": "warm_shade", "vertices": 48},
+    {"component": "cylinder", "name": "shade_upper", "radius": 0.13, "height": 0.12, "position": [0.0, 0.0, 1.54], "material": "warm_shade", "vertices": 48},
+    {"component": "cylinder", "name": "cap", "radius": 0.035, "height": 0.025, "position": [0.0, 0.0, 1.5775], "material": "charcoal_metal", "vertices": 32}
+  ],
+  "materials": {
+    "charcoal_metal": {"base_color": [0.12, 0.13, 0.14], "roughness": 0.38, "metallic": 0.55},
+    "warm_shade": {"base_color": [0.82, 0.73, 0.58], "roughness": 0.64, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "ivory-brass", "planned": true},
+    {"id": "black-white", "planned": true},
+    {"id": "lighting-three-piece-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 ranks Lighting as S priority and explicitly includes floor lamps",
+      "This SKU uses only the existing cylinder component and can share materials and bundle positioning with existing lighting products",
+      "The tall silhouette is thumbnail-readable and suitable for home, cafe, hotel, office, and lounge worlds"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
