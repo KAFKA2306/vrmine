@@ -88,6 +88,25 @@ for (const retiredCommand of ['skills:init:', 'skills:add:', 'skills:sync:', 'uv
   if (taskfile.includes(retiredCommand)) fail(`retired skill command returned to Taskfile.yml: ${retiredCommand}`);
 }
 
+const generatedWorkflowPath = path.join(root, '.github', 'workflows', 'retro-cafe.yml');
+if (!fs.existsSync(generatedWorkflowPath)) fail('generated-asset automatic merge workflow is missing');
+const generatedWorkflow = fs.readFileSync(generatedWorkflowPath, 'utf8');
+for (const requiredText of [
+  'gh pr merge',
+  'gh pr comment',
+  'gh issue comment',
+  'gh pr edit',
+  'gh issue edit',
+  'view-hero.png',
+  'view-front.png',
+  'view-rear.png',
+  'view-left.png',
+  'view-right.png',
+  'view-top.png',
+]) {
+  if (!generatedWorkflow.includes(requiredText)) fail(`generated-asset workflow is missing required automatic integration behavior: ${requiredText}`);
+}
+
 const publicPages = [
   'https://kafka2306.github.io/vrmine/',
   'https://kafka2306.github.io/vrmine/games/perspective-cage/',
