@@ -43,7 +43,7 @@
       "https://booth.pm/en/items/4257379",
       "https://booth.pm/en/items/2442378"
     ],
-    "expected_production_minutes": 5,
+    "expected_production_minutes": 4,
     "manual_touch_target": 0,
     "reusable_component_ratio_target": 1.0
   }
