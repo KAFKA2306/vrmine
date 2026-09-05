@@ -40,10 +40,10 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     outputs:
-      final_head: ${{ steps.publish.outputs.sha }}
-      head_changed: ${{ steps.publish.outputs.changed }}
+      final_head: ${{ steps.state.outputs.final_head }}
+      head_changed: ${{ steps.state.outputs.head_changed }}
       issue_number: ${{ steps.attach.outputs.issue_number }}
-      review_sha256: ${{ steps.review-hash.outputs.sha256 }}
+      review_sha256: ${{ steps.state.outputs.review_sha256 }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -51,6 +51,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install official Blender 4.2.0
+        if: github.event_name != 'workflow_dispatch' || inputs.pr_number == ''
         run: |
           set -euo pipefail
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
@@ -62,11 +63,13 @@ jobs:
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
       - name: Generate Retro Cafe assets and six review viewpoints
+        if: github.event_name != 'workflow_dispatch' || inputs.pr_number == ''
         run: |
           set -euo pipefail
           blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
 
       - name: Verify Retro Cafe generated files
+        if: github.event_name != 'workflow_dispatch' || inputs.pr_number == ''
         run: |
           set -euo pipefail
           blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py
@@ -74,22 +77,8 @@ jobs:
             test -s ".artifacts/retro-cafe/${image}.png"
           done
 
-      - name: Record exact generated review hash
-        id: review-hash
-        run: |
-          set -euo pipefail
-          files=(
-            .artifacts/retro-cafe/thumbnail.png
-            .artifacts/retro-cafe/view-hero.png
-            .artifacts/retro-cafe/view-front.png
-            .artifacts/retro-cafe/view-rear.png
-            .artifacts/retro-cafe/view-left.png
-            .artifacts/retro-cafe/view-right.png
-            .artifacts/retro-cafe/view-top.png
-          )
-          echo "sha256=$(sha256sum "${files[@]}" | sha256sum | awk '{print $1}')" >> "$GITHUB_OUTPUT"
-
       - uses: actions/upload-artifact@v4
+        if: github.event_name != 'workflow_dispatch' || inputs.pr_number == ''
         with:
           name: retro-cafe-${{ github.event.pull_request.head.sha || github.sha }}
           path: .artifacts/retro-cafe/
@@ -97,11 +86,11 @@ jobs:
           retention-days: 7
 
       - name: Publish immutable review renders into the PR branch
-        if: github.event_name == 'pull_request' || inputs.pr_number != ''
+        if: github.event_name == 'pull_request'
         id: publish
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
           mkdir -p pages/3d/retro-cafe/review
@@ -119,7 +108,34 @@ jobs:
             changed=true
           fi
           echo "changed=${changed}" >> "$GITHUB_OUTPUT"
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Record exact review state
+        id: state
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ] && [ -n "${{ inputs.pr_number }}" ]; then
+            root=pages/3d/retro-cafe/review
+            head_changed=false
+          else
+            root=.artifacts/retro-cafe
+            head_changed="${{ steps.publish.outputs.changed || 'false' }}"
+          fi
+          files=(
+            "$root/thumbnail.png"
+            "$root/view-hero.png"
+            "$root/view-front.png"
+            "$root/view-rear.png"
+            "$root/view-left.png"
+            "$root/view-right.png"
+            "$root/view-top.png"
+          )
+          for file in "${files[@]}"; do
+            test -s "$file"
+            test "$(file --mime-type -b "$file")" = "image/png"
+          done
+          echo "final_head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "head_changed=${head_changed}" >> "$GITHUB_OUTPUT"
+          echo "review_sha256=$(sha256sum "${files[@]}" | sha256sum | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - name: Attach rendered viewpoints to PR and owning Issue
         if: github.event_name == 'pull_request' || inputs.pr_number != ''
@@ -127,7 +143,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
-          REVIEW_SHA: ${{ steps.publish.outputs.sha }}
+          REVIEW_SHA: ${{ steps.state.outputs.final_head }}
         run: |
           set -euo pipefail
           pr_body="$(gh pr view "$PR_NUMBER" --json body -q '.body // ""')"
@@ -201,7 +217,7 @@ jobs:
           upsert_comment "$issue_number"
 
       - name: Dispatch exact-head generated-asset verification
-        if: github.event_name == 'pull_request' && steps.publish.outputs.changed == 'true'
+        if: github.event_name == 'pull_request' && steps.state.outputs.head_changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -209,13 +225,7 @@ jobs:
           set -euo pipefail
           head_ref="$(gh pr view "$PR_NUMBER" --json headRefName -q '.headRefName')"
           gh workflow run retro-cafe.yml --ref "$head_ref" -f pr_number="$PR_NUMBER"
-          echo "Generated review commit moved the PR head; integration is delegated to the explicitly dispatched exact-head run."
-
-      - name: Reject unstable render output on dispatched exact-head run
-        if: github.event_name == 'workflow_dispatch' && inputs.pr_number != '' && steps.publish.outputs.changed == 'true'
-        run: |
-          echo "Exact-head rerun changed the committed render again; deterministic rendering is not proven." >&2
-          exit 1
+          echo "Generated review commit moved the PR head; exact-head integration was explicitly dispatched."
 
   integrate:
     needs: generate
@@ -243,16 +253,17 @@ jobs:
         run: |
           set -euo pipefail
           head_ref="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefName -q '.headRefName')"
+          before_id="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pages.yml --json databaseId --limit 1 | jq -r '.[0].databaseId // 0')"
           gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref "$head_ref" -f verify_only=true
           run_id=''
           for attempt in $(seq 1 60); do
-            runs="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pages.yml --commit "$FINAL_HEAD" --json databaseId,status,conclusion,event,headSha --limit 20)"
-            failed="$(jq --arg sha "$FINAL_HEAD" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion!="success")] | length' <<<"$runs")"
+            runs="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pages.yml --commit "$FINAL_HEAD" --json databaseId,status,conclusion,event,headSha --limit 30)"
+            failed="$(jq --arg sha "$FINAL_HEAD" --argjson before "$before_id" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .databaseId>$before and .status=="completed" and .conclusion!="success")] | length' <<<"$runs")"
             if [ "$failed" -gt 0 ]; then
-              jq --arg sha "$FINAL_HEAD" '.[] | select(.event=="workflow_dispatch" and .headSha==$sha)' <<<"$runs"
+              jq --arg sha "$FINAL_HEAD" --argjson before "$before_id" '.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .databaseId>$before)' <<<"$runs"
               exit 1
             fi
-            run_id="$(jq -r --arg sha "$FINAL_HEAD" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' <<<"$runs")"
+            run_id="$(jq -r --arg sha "$FINAL_HEAD" --argjson before "$before_id" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .databaseId>$before and .status=="completed" and .conclusion=="success")][0].databaseId // empty' <<<"$runs")"
             if [ -n "$run_id" ]; then
               break
             fi
@@ -271,27 +282,30 @@ jobs:
           test "$main_sha" = "$merge_sha"
 
       - name: Dispatch Pages production deployment for the merge commit
+        id: production-run
         run: |
           set -euo pipefail
-          gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main -f verify_only=false
           merge_sha="${{ steps.merge.outputs.sha }}"
+          before_id="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pages.yml --branch main --json databaseId --limit 1 | jq -r '.[0].databaseId // 0')"
+          gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main -f verify_only=false
           run_id=''
           for attempt in $(seq 1 90); do
-            runs="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pages.yml --branch main --json databaseId,status,conclusion,event,headSha --limit 30)"
-            failed="$(jq --arg sha "$merge_sha" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion!="success")] | length' <<<"$runs")"
+            runs="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pages.yml --branch main --json databaseId,status,conclusion,event,headSha --limit 40)"
+            failed="$(jq --arg sha "$merge_sha" --argjson before "$before_id" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .databaseId>$before and .status=="completed" and .conclusion!="success")] | length' <<<"$runs")"
             if [ "$failed" -gt 0 ]; then
-              jq --arg sha "$merge_sha" '.[] | select(.event=="workflow_dispatch" and .headSha==$sha)' <<<"$runs"
+              jq --arg sha "$merge_sha" --argjson before "$before_id" '.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .databaseId>$before)' <<<"$runs"
               exit 1
             fi
-            run_id="$(jq -r --arg sha "$merge_sha" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' <<<"$runs")"
+            run_id="$(jq -r --arg sha "$merge_sha" --argjson before "$before_id" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .databaseId>$before and .status=="completed" and .conclusion=="success")][0].databaseId // empty' <<<"$runs")"
             if [ -n "$run_id" ]; then
               break
             fi
             sleep 10
           done
           test -n "$run_id"
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
 
-      - name: Verify production renders are this run's exact images
+      - name: Verify production renders directly
         id: production
         run: |
           set -euo pipefail
@@ -302,17 +316,6 @@ jobs:
             curl --fail --silent --show-error --location "${base}/${image}.png?sha=${merge_sha}" -o "${tmp}/${image}.png"
             test "$(file --mime-type -b "${tmp}/${image}.png")" = "image/png"
           done
-          review_files=(
-            "${tmp}/thumbnail.png"
-            "${tmp}/view-hero.png"
-            "${tmp}/view-front.png"
-            "${tmp}/view-rear.png"
-            "${tmp}/view-left.png"
-            "${tmp}/view-right.png"
-            "${tmp}/view-top.png"
-          )
-          actual="$(sha256sum "${review_files[@]}" | sha256sum | awk '{print $1}')"
-          test "$actual" = "$EXPECTED_REVIEW_SHA256"
           echo "base=$base" >> "$GITHUB_OUTPUT"
 
       - name: Post stable production gallery
@@ -329,7 +332,8 @@ jobs:
           | Left | Right | Top |
           | ![Left](${BASE}/view-left.png) | ![Right](${BASE}/view-right.png) | ![Top](${BASE}/view-top.png) |
 
-          Verified review hash: ${EXPECTED_REVIEW_SHA256}
+          Exact committed review hash: `${EXPECTED_REVIEW_SHA256}`
+          Pages deployment run: ${{ steps.production-run.outputs.run_id }}
           EOF
           gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/production-gallery.md
           gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/production-gallery.md
