@@ -92,11 +92,16 @@ const generatedWorkflowPath = path.join(root, '.github', 'workflows', 'retro-caf
 if (!fs.existsSync(generatedWorkflowPath)) fail('generated-asset automatic merge workflow is missing');
 const generatedWorkflow = fs.readFileSync(generatedWorkflowPath, 'utf8');
 for (const requiredText of [
-  'gh pr merge',
-  'gh pr comment',
-  'gh issue comment',
-  'gh pr edit',
-  'gh issue edit',
+  'actions: write',
+  'Generation-Issue:',
+  'gh workflow run retro-cafe.yml',
+  'gh workflow run pages.yml',
+  'verify_only=true',
+  'verify_only=false',
+  'pulls/${PR_NUMBER}/merge',
+  '-f sha="$FINAL_HEAD"',
+  'EXPECTED_REVIEW_SHA256',
+  'retro-cafe-review-comment',
   'view-hero.png',
   'view-front.png',
   'view-rear.png',
@@ -105,6 +110,20 @@ for (const requiredText of [
   'view-top.png',
 ]) {
   if (!generatedWorkflow.includes(requiredText)) fail(`generated-asset workflow is missing required automatic integration behavior: ${requiredText}`);
+}
+for (const forbiddenText of [
+  '[skip ci]',
+  "grep -oE '#[0-9]+'",
+  "sed '/<!-- retro-cafe-review:start -->/,$d'",
+  'gh pr ready "$PR_NUMBER" || true',
+]) {
+  if (generatedWorkflow.includes(forbiddenText)) fail(`generated-asset workflow contains retired unsafe behavior: ${forbiddenText}`);
+}
+
+const pagesWorkflowPath = path.join(root, '.github', 'workflows', 'pages.yml');
+const pagesWorkflow = fs.readFileSync(pagesWorkflowPath, 'utf8');
+for (const requiredText of ['verify_only:', 'inputs.verify_only']) {
+  if (!pagesWorkflow.includes(requiredText)) fail(`Pages workflow is missing exact-head verification-only support: ${requiredText}`);
 }
 
 const publicPages = [
