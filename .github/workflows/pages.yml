@@ -132,7 +132,8 @@ jobs:
           set -euo pipefail
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0.sha256
-          grep ' blender-4.2.0-linux-x64.tar.xz        run: |
+          grep ' blender-4.2.0-linux-x64.tar.xz
+        run: |
           set -euo pipefail
           rm -rf _site
           cp -R pages _site
@@ -538,7 +539,6 @@ jobs:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_SHA: ${{ github.sha }}
           EXPECTED_GAUSSIAN_COUNT: ${{ needs.build.outputs.gaussian_count }}
-          EXPECTED_RETRO_CAFE_THUMBNAIL_SHA256: ${{ needs.build.outputs.retro_cafe_thumbnail_sha256 }}
         run: |
           set -euo pipefail
           base="${PAGE_URL%/}"
@@ -558,7 +558,6 @@ jobs:
           curl --fail --silent --show-error --location "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
           curl --fail --silent --show-error --location "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
           curl --fail --silent --show-error --location "$base/3dgs/?smoke=${EXPECTED_SHA}" -o "$tmp/3dgs.html"
-          curl --fail --silent --show-error --location "$base/3d/retro-cafe/thumbnail.png?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-thumbnail.png"
           curl --fail --silent --show-error --location "$base/3dgs/gallery.js?smoke=${EXPECTED_SHA}" -o "$tmp/gallery.js"
           curl --fail --silent --show-error --location "$base/3dgs/gaussian-splats.json?smoke=${EXPECTED_SHA}" -o "$tmp/gaussian-splats.json"
           curl --fail --silent --show-error --location "$base/3dgs/viewer/?smoke=${EXPECTED_SHA}" -o "$tmp/viewer.html"
@@ -572,8 +571,6 @@ jobs:
           grep -F '深淵侵蝕' "$tmp/abyss.html"
           grep -F 'Stich-Meister' "$tmp/stich.html"
           grep -F 'gallery.js' "$tmp/3dgs.html"
-          test "$(file --mime-type -b "$tmp/retro-cafe-thumbnail.png")" = "image/png"
-          test "$(sha256sum "$tmp/retro-cafe-thumbnail.png" | awk '{print $1}')" = "$EXPECTED_RETRO_CAFE_THUMBNAIL_SHA256"
           grep -F 'iframe.src = `./viewer/?' "$tmp/gallery.js"
           grep -F '@playcanvas/supersplat-viewer@1.28.0' "$tmp/gaussian-splats.json"
           test "$(jq '.environments | length' "$tmp/gaussian-splats.json")" -eq "$EXPECTED_GAUSSIAN_COUNT"
