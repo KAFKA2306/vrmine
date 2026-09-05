@@ -223,8 +223,7 @@ def main():
     scene.world = bpy.data.worlds.new('Cafe world')
     scene.world.use_nodes = True
     scene.world.node_tree.nodes['Background'].inputs[0].default_value = (.12, .12, .12, 1)
-    scene.render.engine = 'CYCLES'
-    scene.cycles.samples = 16
+    scene.render.engine = 'BLENDER_EEVEE_NEXT'
     scene.cycles.seed = 191
     scene.render.resolution_x, scene.render.resolution_y = 1200, 1000
     scene.render.resolution_percentage = 100
