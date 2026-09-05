@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "table-lamp-01",
+  "source_spec": "config/world-items/table-lamp-01.json",
+  "spec_sha256": "c31869a636ebd75beeea0daf3030ed6fc468ef2a7855b4e2ad2cd5540057ebe8",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.25999999046325684,
+    0.2199999988079071,
+    0.4099999964237213
+  ],
+  "triangles": 2976,
+  "parts_count": 8,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "table-lamp-01.blend": "70240cc44ad0d0cda2d4e9bf520ead687ab7a78f50c41cb1eefb4f20ac96f1b1",
+    "table-lamp-01.glb": "3ded9cf0925352a51fe605a1ff6236b55b69d877e4a67e5b550a0b464e28fbe7",
+    "table-lamp-01.fbx": "ec099e9d010b1424b18a6a89b75efa486af3517c129c1cf2fc40977f99437533",
+    "thumbnail.png": "8c7ef6b8bc85972653e5205687b71ce3beb8a79d54dc718339408d1ec5a7b229",
+    "view-hero.png": "8c7ef6b8bc85972653e5205687b71ce3beb8a79d54dc718339408d1ec5a7b229",
+    "view-front.png": "c9eb3e99590f1ce1df31def972005deca382175246bf8f371d201a90a47b893b",
+    "view-rear.png": "7848c4c9b225d570f2a4f311f1d44cf5425fc02aa2c5b79997585f7be08f67fc",
+    "view-left.png": "49f41b92033abd413307c3a0d4232aadf1d0dd91e2cee30fd194fd68e1006ef1",
+    "view-right.png": "7ac022d16214ac1ec86320442cf3082684e78c91d405f74a3d1a2295b2fb86b7",
+    "view-top.png": "5c12f38a76f1970e6f67b8f824d901ef17918f1c9a36d062a18e16a57306c82c"
+  }
+}
