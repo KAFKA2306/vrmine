@@ -1,6 +1,12 @@
 version: '3'
 
 tasks:
+  cafe:build:
+    desc: Generate ten Retro Cafe props, GLB/FBX, Blender scene and thumbnail with Blender 4.2
+    cmds:
+      - blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
+      - blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py
+
   setup:
     desc: Install pinned repo verification tools
     cmds:
