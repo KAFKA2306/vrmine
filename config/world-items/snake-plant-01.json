@@ -1,0 +1,52 @@
+{
+  "id": "snake-plant-01",
+  "family": "Plants / Planters",
+  "display_name": "Compact Snake Plant",
+  "dimensions_m": [0.34, 0.34, 0.46],
+  "parts": [
+    {"component": "cylinder", "name": "planter", "radius": 0.13, "height": 0.16, "position": [0.0, 0.0, 0.08], "material": "warm_ceramic", "vertices": 48},
+    {"component": "cylinder", "name": "soil", "radius": 0.115, "height": 0.018, "position": [0.0, 0.0, 0.167], "material": "dark_soil", "vertices": 48},
+    {"component": "box", "name": "leaf_center", "size": [0.055, 0.022, 0.28], "position": [0.0, 0.0, 0.31], "rotation_deg": [0, 0, 0], "material": "deep_leaf"},
+    {"component": "box", "name": "leaf_front", "size": [0.052, 0.020, 0.24], "position": [0.0, -0.045, 0.285], "rotation_deg": [7, 0, 0], "material": "mid_leaf"},
+    {"component": "box", "name": "leaf_rear", "size": [0.048, 0.020, 0.22], "position": [0.0, 0.05, 0.275], "rotation_deg": [-8, 0, 0], "material": "deep_leaf"},
+    {"component": "box", "name": "leaf_left", "size": [0.020, 0.050, 0.25], "position": [-0.05, 0.0, 0.29], "rotation_deg": [0, -9, 0], "material": "mid_leaf"},
+    {"component": "box", "name": "leaf_right", "size": [0.020, 0.052, 0.23], "position": [0.05, 0.0, 0.28], "rotation_deg": [0, 10, 0], "material": "deep_leaf"},
+    {"component": "box", "name": "leaf_front_left", "size": [0.044, 0.018, 0.19], "position": [-0.04, -0.035, 0.255], "rotation_deg": [10, -6, -18], "material": "light_leaf"},
+    {"component": "box", "name": "leaf_front_right", "size": [0.044, 0.018, 0.20], "position": [0.04, -0.035, 0.26], "rotation_deg": [9, 7, 18], "material": "light_leaf"},
+    {"component": "box", "name": "leaf_rear_left", "size": [0.042, 0.018, 0.18], "position": [-0.04, 0.038, 0.25], "rotation_deg": [-9, -6, 20], "material": "mid_leaf"},
+    {"component": "box", "name": "leaf_rear_right", "size": [0.042, 0.018, 0.17], "position": [0.04, 0.04, 0.245], "rotation_deg": [-8, 7, -20], "material": "mid_leaf"}
+  ],
+  "materials": {
+    "warm_ceramic": {"base_color": [0.58, 0.35, 0.20], "roughness": 0.64, "metallic": 0.0},
+    "dark_soil": {"base_color": [0.055, 0.035, 0.020], "roughness": 0.92, "metallic": 0.0},
+    "deep_leaf": {"base_color": [0.055, 0.24, 0.10], "roughness": 0.72, "metallic": 0.0},
+    "mid_leaf": {"base_color": [0.095, 0.36, 0.14], "roughness": 0.70, "metallic": 0.0},
+    "light_leaf": {"base_color": [0.18, 0.46, 0.18], "roughness": 0.68, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "terracotta-green", "planned": true},
+    {"id": "white-ceramic", "planned": true},
+    {"id": "tall-planter", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH VRChat-oriented five-plant set at JPY 200, crawled 2026-09-05",
+      "BOOTH VRChat-compatible single indoor plant at JPY 500, crawled 2026-09-05",
+      "BOOTH VRChat-oriented twelve-plant pack at JPY 1,800, crawled 2026-09-05",
+      "Issue #200 A-priority Plants / Planters family"
+    ],
+    "expected_production_minutes": 8,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
