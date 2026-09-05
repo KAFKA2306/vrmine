@@ -1,7 +1,6 @@
 """Generate ten metre-scale café props, GLB/FBX, a staged .blend and thumbnail.
 
 Run with Blender 4.2: blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
-or Python 3.11 with bpy==4.2.0: python scripts/build-retro-cafe.py
 """
 import hashlib
 import json
@@ -126,6 +125,7 @@ def build(name, mats):
             cylinder(.03, height - .035, (height - .035) / 2, metal)
             cylinder(radius * .65, .025, .0125, metal)
     elif name == 'cup':
+        cylinder(.033, .006, .003, cream)
         lathe([(.004, 0), (.035, 0), (.043, .085), (.038, .085),
                (.030, .006), (.004, .006)], cream)
         # A half torus attaches at the two ends, with no handle crossing the cavity.
@@ -176,6 +176,7 @@ def main():
         raise RuntimeError('Use Blender / bpy 4.2 for reproducible exports')
     OUT.mkdir(parents=True, exist_ok=True)
     bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.context.preferences.filepaths.save_version = 0
     scene = bpy.context.scene
     scene.unit_settings.system = 'METRIC'
     scene.unit_settings.scale_length = 1
