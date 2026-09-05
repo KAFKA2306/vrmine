@@ -18,14 +18,20 @@ on:
       - 'Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs'
       - 'Taskfile.yml'
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Existing generated-asset PR to verify and integrate
+        required: false
+        type: string
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
   issues: write
 
 concurrency:
-  group: retro-cafe-${{ github.event.pull_request.number || github.ref }}
+  group: retro-cafe-${{ inputs.pr_number || github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -33,6 +39,11 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    outputs:
+      final_head: ${{ steps.publish.outputs.sha }}
+      head_changed: ${{ steps.publish.outputs.changed }}
+      issue_number: ${{ steps.attach.outputs.issue_number }}
+      review_sha256: ${{ steps.review-hash.outputs.sha256 }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -54,10 +65,29 @@ jobs:
         run: |
           set -euo pipefail
           blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
+
+      - name: Verify Retro Cafe generated files
+        run: |
+          set -euo pipefail
           blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py
           for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
             test -s ".artifacts/retro-cafe/${image}.png"
           done
+
+      - name: Record exact generated review hash
+        id: review-hash
+        run: |
+          set -euo pipefail
+          files=(
+            .artifacts/retro-cafe/thumbnail.png
+            .artifacts/retro-cafe/view-hero.png
+            .artifacts/retro-cafe/view-front.png
+            .artifacts/retro-cafe/view-rear.png
+            .artifacts/retro-cafe/view-left.png
+            .artifacts/retro-cafe/view-right.png
+            .artifacts/retro-cafe/view-top.png
+          )
+          echo "sha256=$(sha256sum "${files[@]}" | sha256sum | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -67,8 +97,11 @@ jobs:
           retention-days: 7
 
       - name: Publish immutable review renders into the PR branch
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || inputs.pr_number != ''
         id: publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
         run: |
           set -euo pipefail
           mkdir -p pages/3d/retro-cafe/review
@@ -78,21 +111,35 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add pages/3d/retro-cafe/review
+          changed=false
           if ! git diff --cached --quiet; then
-            git commit -m "chore: publish Retro Cafe review renders [skip ci]"
-            git push origin "HEAD:${GITHUB_HEAD_REF}"
+            git commit -m "chore: publish Retro Cafe review renders"
+            head_ref="$(gh pr view "$PR_NUMBER" --json headRefName -q '.headRefName')"
+            git push origin "HEAD:${head_ref}"
+            changed=true
           fi
+          echo "changed=${changed}" >> "$GITHUB_OUTPUT"
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Attach rendered viewpoints to PR and owning Issue
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || inputs.pr_number != ''
         id: attach
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
           REVIEW_SHA: ${{ steps.publish.outputs.sha }}
         run: |
           set -euo pipefail
+          pr_body="$(gh pr view "$PR_NUMBER" --json body -q '.body // ""')"
+          mapfile -t issue_matches < <(printf '%s\n' "$pr_body" | grep -oE 'Generation-Issue:[[:space:]]*#[0-9]+' | sed -E 's/.*#//' || true)
+          if [ "${#issue_matches[@]}" -ne 1 ]; then
+            echo "Expected exactly one Generation-Issue: #<number> marker in PR body" >&2
+            exit 1
+          fi
+          issue_number="${issue_matches[0]}"
+          gh issue view "$issue_number" >/dev/null
+          echo "issue_number=${issue_number}" >> "$GITHUB_OUTPUT"
+
           base="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${REVIEW_SHA}/pages/3d/retro-cafe/review"
           cat > /tmp/gallery.md <<EOF
           <!-- retro-cafe-review:start -->
@@ -110,71 +157,166 @@ jobs:
           <!-- retro-cafe-review:end -->
           EOF
 
-          pr_body="$(gh pr view "$PR_NUMBER" --json body -q '.body // ""')"
-          issue_number="$(printf '%s\n' "$pr_body" | grep -oE '#[0-9]+' | head -n 1 | tr -d '#' || true)"
-          if [ -z "$issue_number" ]; then
-            issue_url="$(gh issue create --title "Generated review for PR #${PR_NUMBER}" --body "Automatic tracking Issue for generated-asset PR #${PR_NUMBER}.")"
-            issue_number="${issue_url##*/}"
-          fi
-          echo "issue_number=${issue_number}" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$pr_body" > /tmp/current-pr.md
+          gh issue view "$issue_number" --json body -q '.body // ""' > /tmp/current-issue.md
+          python3 - <<'PY'
+          from pathlib import Path
 
-          printf '%s\n' "$pr_body" | sed '/<!-- retro-cafe-review:start -->/,$d' > /tmp/pr-base.md
-          { cat /tmp/pr-base.md; printf '\n'; cat /tmp/gallery.md; } > /tmp/pr-body.md
+          start = '<!-- retro-cafe-review:start -->'
+          end = '<!-- retro-cafe-review:end -->'
+          block = Path('/tmp/gallery.md').read_text().strip()
+
+          def replace_block(source, target):
+              body = Path(source).read_text()
+              starts = body.count(start)
+              ends = body.count(end)
+              if starts != ends or starts > 1:
+                  raise SystemExit(f'invalid review marker count in {source}: start={starts}, end={ends}')
+              if starts == 1:
+                  left, rest = body.split(start, 1)
+                  _, right = rest.split(end, 1)
+                  result = left.rstrip() + '\n\n' + block + right
+              else:
+                  result = body.rstrip() + '\n\n' + block + '\n'
+              Path(target).write_text(result)
+
+          replace_block('/tmp/current-pr.md', '/tmp/pr-body.md')
+          replace_block('/tmp/current-issue.md', '/tmp/issue-body.md')
+          PY
           gh pr edit "$PR_NUMBER" --body-file /tmp/pr-body.md
-
-          issue_body="$(gh issue view "$issue_number" --json body -q '.body // ""')"
-          printf '%s\n' "$issue_body" | sed '/<!-- retro-cafe-review:start -->/,$d' > /tmp/issue-base.md
-          { cat /tmp/issue-base.md; printf '\n'; cat /tmp/gallery.md; } > /tmp/issue-body.md
           gh issue edit "$issue_number" --body-file /tmp/issue-body.md
 
-          gh pr comment "$PR_NUMBER" --body-file /tmp/gallery.md
-          gh issue comment "$issue_number" --body-file /tmp/gallery.md
+          { echo '<!-- retro-cafe-review-comment -->'; cat /tmp/gallery.md; } > /tmp/gallery-comment.md
+          upsert_comment() {
+            target="$1"
+            marker='<!-- retro-cafe-review-comment -->'
+            comment_id="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${target}/comments" --paginate --jq ".[] | select(.body | contains(\"${marker}\")) | .id" | head -n 1)"
+            if [ -n "$comment_id" ]; then
+              gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" -F body=@/tmp/gallery-comment.md >/dev/null
+            else
+              gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${target}/comments" -F body=@/tmp/gallery-comment.md >/dev/null
+            fi
+          }
+          upsert_comment "$PR_NUMBER"
+          upsert_comment "$issue_number"
 
-      - name: Merge generated work mechanically
-        if: github.event_name == 'pull_request'
+      - name: Dispatch exact-head generated-asset verification
+        if: github.event_name == 'pull_request' && steps.publish.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
-          gh pr ready "$PR_NUMBER" || true
-          gh pr merge "$PR_NUMBER" --merge
+          head_ref="$(gh pr view "$PR_NUMBER" --json headRefName -q '.headRefName')"
+          gh workflow run retro-cafe.yml --ref "$head_ref" -f pr_number="$PR_NUMBER"
+          echo "Generated review commit moved the PR head; integration is delegated to the explicitly dispatched exact-head run."
 
-      - name: Verify public multi-angle renders after merge
-        if: github.event_name == 'pull_request'
+      - name: Reject unstable render output on dispatched exact-head run
+        if: github.event_name == 'workflow_dispatch' && inputs.pr_number != '' && steps.publish.outputs.changed == 'true'
+        run: |
+          echo "Exact-head rerun changed the committed render again; deterministic rendering is not proven." >&2
+          exit 1
+
+  integrate:
+    needs: generate
+    if: needs.generate.result == 'success' && (github.event_name == 'pull_request' || inputs.pr_number != '') && needs.generate.outputs.head_changed == 'false'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+      FINAL_HEAD: ${{ needs.generate.outputs.final_head }}
+      ISSUE_NUMBER: ${{ needs.generate.outputs.issue_number }}
+      EXPECTED_REVIEW_SHA256: ${{ needs.generate.outputs.review_sha256 }}
+    steps:
+      - name: Confirm exact PR head and ready state
+        run: |
+          set -euo pipefail
+          current_head="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid -q '.headRefOid')"
+          test "$current_head" = "$FINAL_HEAD"
+          is_draft="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json isDraft -q '.isDraft')"
+          if [ "$is_draft" = "true" ]; then
+            gh pr ready "$PR_NUMBER" --repo "$GITHUB_REPOSITORY"
+          fi
+
+      - name: Run Pages build against the exact PR head
+        run: |
+          set -euo pipefail
+          head_ref="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefName -q '.headRefName')"
+          gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref "$head_ref" -f verify_only=true
+          run_id=''
+          for attempt in $(seq 1 60); do
+            runs="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pages.yml --commit "$FINAL_HEAD" --json databaseId,status,conclusion,event,headSha --limit 20)"
+            failed="$(jq --arg sha "$FINAL_HEAD" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion!="success")] | length' <<<"$runs")"
+            if [ "$failed" -gt 0 ]; then
+              jq --arg sha "$FINAL_HEAD" '.[] | select(.event=="workflow_dispatch" and .headSha==$sha)' <<<"$runs"
+              exit 1
+            fi
+            run_id="$(jq -r --arg sha "$FINAL_HEAD" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' <<<"$runs")"
+            if [ -n "$run_id" ]; then
+              break
+            fi
+            sleep 10
+          done
+          test -n "$run_id"
+
+      - name: Merge only the verified final head
+        id: merge
+        run: |
+          set -euo pipefail
+          merge_sha="$(gh api --method PUT "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/merge" -f merge_method=merge -f sha="$FINAL_HEAD" --jq '.sha')"
+          test -n "$merge_sha"
+          echo "sha=$merge_sha" >> "$GITHUB_OUTPUT"
+          main_sha="$(gh api "repos/${GITHUB_REPOSITORY}/commits/main" --jq '.sha')"
+          test "$main_sha" = "$merge_sha"
+
+      - name: Dispatch Pages production deployment for the merge commit
+        run: |
+          set -euo pipefail
+          gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main -f verify_only=false
+          merge_sha="${{ steps.merge.outputs.sha }}"
+          run_id=''
+          for attempt in $(seq 1 90); do
+            runs="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pages.yml --branch main --json databaseId,status,conclusion,event,headSha --limit 30)"
+            failed="$(jq --arg sha "$merge_sha" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion!="success")] | length' <<<"$runs")"
+            if [ "$failed" -gt 0 ]; then
+              jq --arg sha "$merge_sha" '.[] | select(.event=="workflow_dispatch" and .headSha==$sha)' <<<"$runs"
+              exit 1
+            fi
+            run_id="$(jq -r --arg sha "$merge_sha" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' <<<"$runs")"
+            if [ -n "$run_id" ]; then
+              break
+            fi
+            sleep 10
+          done
+          test -n "$run_id"
+
+      - name: Verify production renders are this run's exact images
         id: production
         run: |
           set -euo pipefail
           base="https://kafka2306.github.io/vrmine/3d/retro-cafe"
           tmp="$(mktemp -d)"
-          ready=false
-          for attempt in $(seq 1 60); do
-            ok=true
-            for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
-              if ! curl --fail --silent --show-error --location "${base}/${image}.png?run=${GITHUB_RUN_ID}-${attempt}" -o "${tmp}/${image}.png"; then
-                ok=false
-                break
-              fi
-              if [ "$(file --mime-type -b "${tmp}/${image}.png")" != "image/png" ]; then
-                ok=false
-                break
-              fi
-            done
-            if [ "$ok" = true ]; then
-              ready=true
-              break
-            fi
-            sleep 10
+          merge_sha="${{ steps.merge.outputs.sha }}"
+          for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
+            curl --fail --silent --show-error --location "${base}/${image}.png?sha=${merge_sha}" -o "${tmp}/${image}.png"
+            test "$(file --mime-type -b "${tmp}/${image}.png")" = "image/png"
           done
-          test "$ready" = true
-          echo "base=${base}" >> "$GITHUB_OUTPUT"
+          review_files=(
+            "${tmp}/thumbnail.png"
+            "${tmp}/view-hero.png"
+            "${tmp}/view-front.png"
+            "${tmp}/view-rear.png"
+            "${tmp}/view-left.png"
+            "${tmp}/view-right.png"
+            "${tmp}/view-top.png"
+          )
+          actual="$(sha256sum "${review_files[@]}" | sha256sum | awk '{print $1}')"
+          test "$actual" = "$EXPECTED_REVIEW_SHA256"
+          echo "base=$base" >> "$GITHUB_OUTPUT"
 
       - name: Post stable production gallery
-        if: github.event_name == 'pull_request'
         env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          ISSUE_NUMBER: ${{ steps.attach.outputs.issue_number }}
           BASE: ${{ steps.production.outputs.base }}
         run: |
           set -euo pipefail
@@ -186,6 +328,8 @@ jobs:
           | ![Hero](${BASE}/view-hero.png) | ![Front](${BASE}/view-front.png) | ![Rear](${BASE}/view-rear.png) |
           | Left | Right | Top |
           | ![Left](${BASE}/view-left.png) | ![Right](${BASE}/view-right.png) | ![Top](${BASE}/view-top.png) |
+
+          Verified review hash: ${EXPECTED_REVIEW_SHA256}
           EOF
-          gh pr comment "$PR_NUMBER" --body-file /tmp/production-gallery.md
-          gh issue comment "$ISSUE_NUMBER" --body-file /tmp/production-gallery.md
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/production-gallery.md
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/production-gallery.md
