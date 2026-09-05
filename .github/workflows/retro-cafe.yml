@@ -64,14 +64,14 @@ jobs:
         run: |
           set -euo pipefail
           git fetch origin "$BASE_REF"
-          mapfile -t specs < <(git diff --name-only "origin/${BASE_REF}...HEAD" | grep -E '^config/world-items/[^/]+\.json$' || true)
+          mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/${BASE_REF}...HEAD" | grep -E '^config/world-items/[^/]+\.json$' || true)
           if [ "${#specs[@]}" -eq 0 ]; then
             echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "No canonical world-item spec changed; generation is not applicable to this PR."
+            echo "No added or modified canonical world-item spec; generation is not applicable to this PR."
             exit 0
           fi
           if [ "${#specs[@]}" -ne 1 ]; then
-            printf 'Expected exactly one changed canonical world-item spec, got %s\n' "${#specs[@]}" >&2
+            printf 'Expected exactly one added or modified canonical world-item spec, got %s\n' "${#specs[@]}" >&2
             printf '%s\n' "${specs[@]:-}" >&2
             exit 1
           fi
@@ -365,9 +365,13 @@ jobs:
           spec="config/world-items/${SKU}.json"
           display_name="$(jq -r '.display_name' "$spec")"
           curl --fail --silent --show-error --location "${root}/?sha=${merge_sha}" -o "$tmp/gallery.html"
-          grep -F "$SKU" "$tmp/gallery.html"
-          curl --fail --silent --show-error --location "${item}/?sha=${merge_sha}" -o "$tmp/item.html"
-          grep -F "$display_name" "$tmp/item.html"
+          grep -F "fetch('catalog.json'" "$tmp/gallery.html"
+          curl --fail --silent --show-error --location "${root}/catalog.json?sha=${merge_sha}" -o "$tmp/catalog.json"
+          jq -e --arg sku "$SKU" --arg name "$display_name" 'any(.[]; .id == $sku and .display_name == $name)' "$tmp/catalog.json" >/dev/null
+          curl --fail --silent --show-error --location "${root}/view.html?item=${SKU}&sha=${merge_sha}" -o "$tmp/item.html"
+          grep -F 'spec.display_name' "$tmp/item.html"
+          curl --fail --silent --show-error --location "${item}/spec.json?sha=${merge_sha}" -o "$tmp/spec.json"
+          jq -e --arg sku "$SKU" --arg name "$display_name" '.id == $sku and .display_name == $name' "$tmp/spec.json" >/dev/null
           for name in view-hero view-front view-rear view-left view-right view-top; do
             curl --fail --silent --show-error --location "${item}/${name}.png?sha=${merge_sha}" -o "$tmp/${name}.png"
             test "$(file --mime-type -b "$tmp/${name}.png")" = image/png
@@ -375,17 +379,19 @@ jobs:
           for ext in blend glb fbx; do curl --fail --silent --show-error --location "${item}/${SKU}.${ext}?sha=${merge_sha}" -o "$tmp/${SKU}.${ext}"; test -s "$tmp/${SKU}.${ext}"; done
           curl --fail --silent --show-error --location "${item}/manifest.json?sha=${merge_sha}" -o "$tmp/manifest.json"
           test "$(jq -r .id "$tmp/manifest.json")" = "$SKU"
-          echo "item_url=${item}/" >> "$GITHUB_OUTPUT"
+          echo "item_url=${root}/view.html?item=${SKU}" >> "$GITHUB_OUTPUT"
+          echo "asset_url=${item}/" >> "$GITHUB_OUTPUT"
 
       - name: Record SKU completion on Issue #200 and PR
         env:
           MERGE_SHA: ${{ steps.merge.outputs.sha }}
           ITEM_URL: ${{ steps.production.outputs.item_url }}
+          ASSET_URL: ${{ steps.production.outputs.asset_url }}
         run: |
           set -euo pipefail
           spec="config/world-items/${SKU}.json"
           price="$(jq -r '.price_hypothesis.single' "$spec")"
-          metrics_url="${ITEM_URL}factory-metrics.json"
+          metrics_url="${ASSET_URL}factory-metrics.json"
           cat > /tmp/completion.md <<EOF
           <!-- world-item-${SKU}:completion -->
           ### SKU complete: $(jq -r '.display_name' "$spec")
@@ -395,12 +401,12 @@ jobs:
           - PR: https://github.com/${GITHUB_REPOSITORY}/pull/${PR_NUMBER}
           - gallery: https://kafka2306.github.io/vrmine/io/
           - product: ${ITEM_URL}
-          - hero: ${ITEM_URL}view-hero.png
-          - front: ${ITEM_URL}view-front.png
-          - rear: ${ITEM_URL}view-rear.png
-          - left: ${ITEM_URL}view-left.png
-          - right: ${ITEM_URL}view-right.png
-          - top: ${ITEM_URL}view-top.png
+          - hero: ${ASSET_URL}view-hero.png
+          - front: ${ASSET_URL}view-front.png
+          - rear: ${ASSET_URL}view-rear.png
+          - left: ${ASSET_URL}view-left.png
+          - right: ${ASSET_URL}view-right.png
+          - top: ${ASSET_URL}view-top.png
           - formats: BLEND / GLB / FBX verified structurally; direct production downloads read back
           - geometry: PASS; render PNG: PASS; exact-head Pages build: PASS; exact main read-back: PASS; production Pages: PASS
           - price hypothesis: ¥${price}
