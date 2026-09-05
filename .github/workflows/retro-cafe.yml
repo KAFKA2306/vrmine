@@ -136,13 +136,23 @@ jobs:
           src=".artifacts/world-items/${SKU}"
           dest="pages/io/items/${SKU}"
           mkdir -p "$dest"
-          for name in thumbnail view-hero view-front view-rear view-left view-right view-top; do cp "$src/${name}.png" "$dest/${name}.png"; done
-          cp "$src/${SKU}.blend" "$dest/${SKU}.blend"
-          cp "$src/${SKU}.glb" "$dest/${SKU}.glb"
-          cp "$src/${SKU}.fbx" "$dest/${SKU}.fbx"
-          cp "$src/manifest.json" "$dest/manifest.json"
-          cp "$src/factory-metrics.json" "$dest/factory-metrics.json"
-          cp "$SPEC_PATH" "$dest/spec.json"
+
+          input_digest="$(cat "$SPEC_PATH" scripts/world_item_factory.py scripts/verify_world_item.py | sha256sum | awk '{print $1}')"
+          published_digest="$(cat "$dest/build-input.sha256" 2>/dev/null || true)"
+          if [ "$published_digest" != "$input_digest" ]; then
+            for name in thumbnail view-hero view-front view-rear view-left view-right view-top; do cp "$src/${name}.png" "$dest/${name}.png"; done
+            cp "$src/${SKU}.blend" "$dest/${SKU}.blend"
+            cp "$src/${SKU}.glb" "$dest/${SKU}.glb"
+            cp "$src/${SKU}.fbx" "$dest/${SKU}.fbx"
+            cp "$src/manifest.json" "$dest/manifest.json"
+            cp "$src/factory-metrics.json" "$dest/factory-metrics.json"
+            cp "$SPEC_PATH" "$dest/spec.json"
+            printf '%s\n' "$input_digest" > "$dest/build-input.sha256"
+          fi
+
+          for file in thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png "$SKU.blend" "$SKU.glb" "$SKU.fbx" manifest.json factory-metrics.json spec.json build-input.sha256; do
+            test -s "$dest/$file"
+          done
           (
             cd "$dest"
             sha256sum thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png > render.sha256
@@ -211,6 +221,19 @@ jobs:
             if [ -n "$comment_id" ]; then gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" -F body=@/tmp/comment.md >/dev/null; else gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${target}/comments" -F body=@/tmp/comment.md >/dev/null; fi
           done
 
+      - name: Dispatch exact-head rerun after publishing generated evidence
+        if: steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+        run: |
+          set -euo pipefail
+          current_head="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid -q '.headRefOid')"
+          test "$current_head" = "${{ steps.publish.outputs.final_head }}"
+          gh workflow run retro-cafe.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_REF" -f pr_number="$PR_NUMBER"
+          echo "Explicit exact-head verification dispatched for $current_head"
+
   integrate:
     needs: generate
     if: needs.generate.result == 'success' && needs.generate.outputs.changed == 'false'
@@ -239,6 +262,7 @@ jobs:
           (cd "$dest" && sha256sum --check render.sha256)
           current_render="$(cd "$dest" && sha256sum thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png | sha256sum | awk '{print $1}')"
           test "$current_render" = "$RENDER_SHA256"
+          test -s "$dest/build-input.sha256"
 
       - name: Run Pages build against exact PR head
         run: |
@@ -290,10 +314,12 @@ jobs:
           root="https://kafka2306.github.io/vrmine/io"
           item="${root}/items/${SKU}"
           tmp="$(mktemp -d)"
+          spec="config/world-items/${SKU}.json"
+          display_name="$(jq -r '.display_name' "$spec")"
           curl --fail --silent --show-error --location "${root}/?sha=${merge_sha}" -o "$tmp/gallery.html"
           grep -F "$SKU" "$tmp/gallery.html"
           curl --fail --silent --show-error --location "${item}/?sha=${merge_sha}" -o "$tmp/item.html"
-          grep -F 'Open Frame Shelf' "$tmp/item.html"
+          grep -F "$display_name" "$tmp/item.html"
           for name in view-hero view-front view-rear view-left view-right view-top; do
             curl --fail --silent --show-error --location "${item}/${name}.png?sha=${merge_sha}" -o "$tmp/${name}.png"
             test "$(file --mime-type -b "$tmp/${name}.png")" = image/png
