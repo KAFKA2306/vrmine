@@ -1,0 +1,50 @@
+{
+  "id": "minimal-waste-bin-01",
+  "family": "Home / Office Basics",
+  "display_name": "Minimal Waste Bin",
+  "dimensions_m": [0.30, 0.26, 0.35],
+  "parts": [
+    {"component": "box", "name": "base", "size": [0.28, 0.24, 0.025], "position": [0.0, 0.0, 0.0125], "material": "bin_body"},
+    {"component": "box", "name": "wall_left", "size": [0.018, 0.24, 0.34], "position": [-0.131, 0.0, 0.17], "material": "bin_body"},
+    {"component": "box", "name": "wall_right", "size": [0.018, 0.24, 0.34], "position": [0.131, 0.0, 0.17], "material": "bin_body"},
+    {"component": "box", "name": "wall_front", "size": [0.244, 0.018, 0.34], "position": [0.0, -0.111, 0.17], "material": "bin_body"},
+    {"component": "box", "name": "wall_rear", "size": [0.244, 0.018, 0.34], "position": [0.0, 0.111, 0.17], "material": "bin_body"},
+    {"component": "box", "name": "rim_left", "size": [0.026, 0.26, 0.026], "position": [-0.137, 0.0, 0.337], "material": "rim_dark"},
+    {"component": "box", "name": "rim_right", "size": [0.026, 0.26, 0.026], "position": [0.137, 0.0, 0.337], "material": "rim_dark"},
+    {"component": "box", "name": "rim_front", "size": [0.248, 0.026, 0.026], "position": [0.0, -0.117, 0.337], "material": "rim_dark"},
+    {"component": "box", "name": "rim_rear", "size": [0.248, 0.026, 0.026], "position": [0.0, 0.117, 0.337], "material": "rim_dark"}
+  ],
+  "materials": {
+    "bin_body": {"base_color": [0.31, 0.33, 0.34], "roughness": 0.56, "metallic": 0.08},
+    "rim_dark": {"base_color": [0.10, 0.11, 0.12], "roughness": 0.44, "metallic": 0.18}
+  },
+  "variants": [
+    {"id": "warm-white", "planned": true},
+    {"id": "office-blue", "planned": true},
+    {"id": "office-basics-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH currently lists a world-use vending-machine set that includes a trash bin at JPY 200 and supplies UnityPackage/FBX assets",
+      "BOOTH currently lists a VRChat/game Trash Enclosure at JPY 300",
+      "Issue #200 ranks Home / Office Basics as a target family; this design uses only the existing box component and can bundle with tissue box, clock, frame, monitor, and other office basics"
+    ],
+    "source_urls": [
+      "https://booth.pm/en/items/4257379",
+      "https://booth.pm/en/items/2442378"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
