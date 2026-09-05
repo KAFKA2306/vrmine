@@ -136,6 +136,8 @@ jobs:
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0.sha256
           grep ' blender-4.2.0-linux-x64.tar.xz$' blender-4.2.0.sha256 | sha256sum --check --strict
           tar -xf blender-4.2.0-linux-x64.tar.xz
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1-mesa-dri
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
       - name: Generate verified Retro Cafe public renders
