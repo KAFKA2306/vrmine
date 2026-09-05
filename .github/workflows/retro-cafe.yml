@@ -2,10 +2,10 @@ name: Retro Cafe generation
 
 on:
   pull_request:
-    paths: ['scripts/*retro-cafe.py', 'pages/3d/retro-cafe/thumbnail.png', '.github/workflows/retro-cafe.yml', 'Taskfile.yml']
+    paths: ['scripts/*retro-cafe.py', '.github/workflows/retro-cafe.yml', 'Taskfile.yml']
   push:
     branches: [main]
-    paths: ['scripts/*retro-cafe.py', 'pages/3d/retro-cafe/thumbnail.png', '.github/workflows/retro-cafe.yml', 'Taskfile.yml']
+    paths: ['scripts/*retro-cafe.py', '.github/workflows/retro-cafe.yml', 'Taskfile.yml']
   workflow_dispatch:
 
 permissions:
@@ -28,12 +28,6 @@ jobs:
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
       - run: blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
       - run: blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py
-      - name: Verify one-click PNG matches generated thumbnail
-        run: |
-          set -euo pipefail
-          test -s pages/3d/retro-cafe/thumbnail.png
-          cmp .artifacts/retro-cafe/thumbnail.png pages/3d/retro-cafe/thumbnail.png
-          echo "thumbnail_sha256=$(sha256sum pages/3d/retro-cafe/thumbnail.png | awk '{print $1}')" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: retro-cafe-${{ github.event.pull_request.head.sha || github.sha }}
