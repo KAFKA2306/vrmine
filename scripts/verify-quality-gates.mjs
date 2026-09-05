@@ -26,7 +26,6 @@ const expectedMerge = [
   'repository_u1_pass',
   'changed_surface_tests_pass',
   'pr_mergeable',
-  'no_unresolved_blocking_review',
 ];
 for (const item of expectedMerge) if (!mergeRequired.has(item)) fail(`PR merge gate missing ${item}`);
 
@@ -36,6 +35,10 @@ const releaseOnly = [
   'actual_vrchat_client',
   'multiplayer_runtime_evidence',
   'release_performance_measurement',
+  'visual_review',
+  'manual_approval',
+  'draft_state',
+  'unresolved_review',
 ];
 for (const item of releaseOnly) {
   if (!mergeNotRequired.has(item)) fail(`PR merge gate must explicitly exclude release-only evidence ${item}`);
@@ -55,6 +58,9 @@ if (rules.implementation_issue_may_close_after_merge_gate !== true) fail('implem
 if (rules.release_issue_may_close_without_product_release_gate !== false) fail('release issue must stay open until product release gate passes');
 if (rules.epic_may_claim_product_complete_without_product_release_gate !== false) fail('epic must not claim product completion before release gate');
 if (rules.lower_evidence_may_be_promoted_to_actual_client_pass !== false) fail('lower evidence must never be promoted to actual-client PASS');
+if (rules.generated_asset_visual_review_may_block_merge !== false) fail('generated asset visual review must never block merge');
+if (rules.generated_asset_manual_approval_may_block_merge !== false) fail('generated asset manual approval must never block merge');
+if (rules.generated_asset_flow_continues_to_merge_after_generation !== true) fail('generated asset flow must continue to merge after generation');
 
 const agentsPath = path.join(root, 'AGENTS.md');
 const readmePath = path.join(root, 'README.md');
@@ -64,7 +70,7 @@ for (const requiredPath of [agentsPath, readmePath, taskfilePath]) {
 }
 
 const agents = fs.readFileSync(agentsPath, 'utf8');
-for (const requiredText of ['このファイルを、VRMineで作業するエージェント向けルールの正準とする。', 'CI/CDは必須', 'task check', 'U1', 'U5']) {
+for (const requiredText of ['このファイルを、VRMineで作業するエージェント向けルールの正準とする。', 'CI/CDは必須', 'task check', 'U1', 'U5', 'appearance is evidence for the user, not a merge gate', 'hero, front, rear, left, right, and top']) {
   if (!agents.includes(requiredText)) fail(`AGENTS.md is missing required rule: ${requiredText}`);
 }
 
