@@ -1,0 +1,41 @@
+{
+  "id": "minimal-desk-lamp-01",
+  "family": "Lighting",
+  "display_name": "Minimal Desk Lamp",
+  "dimensions_m": [0.30, 0.30, 0.48],
+  "parts": [
+    {"component": "cylinder", "name": "base", "radius": 0.15, "height": 0.035, "position": [0.0, 0.0, 0.0175], "material": "charcoal_metal", "vertices": 48},
+    {"component": "cylinder", "name": "stem", "radius": 0.018, "height": 0.31, "position": [0.0, 0.0, 0.19], "material": "charcoal_metal", "vertices": 32},
+    {"component": "cylinder", "name": "shade", "radius": 0.11, "height": 0.13, "position": [0.0, 0.0, 0.405], "material": "warm_cream", "vertices": 48},
+    {"component": "cylinder", "name": "cap", "radius": 0.045, "height": 0.025, "position": [0.0, 0.0, 0.4825], "material": "charcoal_metal", "vertices": 32}
+  ],
+  "materials": {
+    "charcoal_metal": {"base_color": [0.10, 0.11, 0.12], "roughness": 0.34, "metallic": 0.62},
+    "warm_cream": {"base_color": [0.86, 0.76, 0.58], "roughness": 0.48, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "ivory-brass", "planned": true},
+    {"id": "black-copper", "planned": true},
+    {"id": "lighting-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 ranks Lighting as S priority with very high reuse and a JPY 200-500 simple-single hypothesis",
+      "Current factory already has a pendant-light SKU, so a desk/table form expands the same Lighting family without duplicating that SKU",
+      "The design reuses only the existing cylinder component and can share stem, shade, base and material patterns with future floor and wall lighting variants"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
