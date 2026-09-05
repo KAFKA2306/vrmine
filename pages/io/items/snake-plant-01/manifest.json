@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "snake-plant-01",
+  "source_spec": "config/world-items/snake-plant-01.json",
+  "spec_sha256": "2d369717bea812f4d2d884872c0e09546f4b6313afeb178b563956f6dd4d5c27",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.25999999046325684,
+    0.25999999046325684,
+    0.44999998807907104
+  ],
+  "triangles": 3220,
+  "parts_count": 11,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "snake-plant-01.blend": "2e0a75700f27c8ab2e40e447b924983a965db184248a545fa444337a4491177c",
+    "snake-plant-01.glb": "3989f93379310ab153ea0d3f038ec959d5a43b42a19a09117281d3127452cfcf",
+    "snake-plant-01.fbx": "220a08126b3b0a98afa0e93347147e833c4340ac3fca933fd98eacee1bfd7a5b",
+    "thumbnail.png": "30d10745205ca0ad16e3bca600bcc958a6b0adb75317d30f295198997bafd8b0",
+    "view-hero.png": "30d10745205ca0ad16e3bca600bcc958a6b0adb75317d30f295198997bafd8b0",
+    "view-front.png": "e29c0b6351ca4a0f22ddcc52bf42ab5b3a2596017848613d005f7e38b80494b5",
+    "view-rear.png": "aff0941100a7e80f1cc79167b2b432277b21b338643e1b5a2a495e065b76cec1",
+    "view-left.png": "462b11f487765548f4d9040bb12b6d83dff363bfb77d60cb13226ac53e230f9c",
+    "view-right.png": "ab3b2b3a43c16e1427b8a3b6eff5efd8dc104fa2df8704e1795cf19a279c1ec5",
+    "view-top.png": "537e36e5a9a63766f79e1ca04d84ece0768a23678362c99d883895803e1cc730"
+  }
+}
