@@ -1,0 +1,47 @@
+{
+  "id": "open-frame-shelf-01",
+  "family": "Tables / Stools / Shelves",
+  "display_name": "Open Frame Shelf",
+  "dimensions_m": [0.75, 0.32, 1.2],
+  "parts": [
+    {"component": "box", "name": "shelf_bottom", "size": [0.75, 0.32, 0.035], "position": [0.0, 0.0, 0.12], "material": "warm_wood"},
+    {"component": "box", "name": "shelf_lower", "size": [0.75, 0.32, 0.035], "position": [0.0, 0.0, 0.43], "material": "warm_wood"},
+    {"component": "box", "name": "shelf_middle", "size": [0.75, 0.32, 0.035], "position": [0.0, 0.0, 0.74], "material": "warm_wood"},
+    {"component": "box", "name": "shelf_top", "size": [0.75, 0.32, 0.035], "position": [0.0, 0.0, 1.05], "material": "warm_wood"},
+    {"component": "box", "name": "post_front_left", "size": [0.035, 0.035, 1.14], "position": [-0.34, -0.135, 0.60], "material": "charcoal_metal"},
+    {"component": "box", "name": "post_front_right", "size": [0.035, 0.035, 1.14], "position": [0.34, -0.135, 0.60], "material": "charcoal_metal"},
+    {"component": "box", "name": "post_rear_left", "size": [0.035, 0.035, 1.14], "position": [-0.34, 0.135, 0.60], "material": "charcoal_metal"},
+    {"component": "box", "name": "post_rear_right", "size": [0.035, 0.035, 1.14], "position": [0.34, 0.135, 0.60], "material": "charcoal_metal"},
+    {"component": "box", "name": "rear_brace_left", "size": [0.025, 0.025, 1.00], "position": [-0.17, 0.148, 0.59], "rotation_deg": [0.0, 17.0, 0.0], "material": "charcoal_metal"},
+    {"component": "box", "name": "rear_brace_right", "size": [0.025, 0.025, 1.00], "position": [0.17, 0.148, 0.59], "rotation_deg": [0.0, -17.0, 0.0], "material": "charcoal_metal"}
+  ],
+  "materials": {
+    "warm_wood": {"base_color": [0.31, 0.14, 0.055], "roughness": 0.52, "metallic": 0.0},
+    "charcoal_metal": {"base_color": [0.035, 0.045, 0.05], "roughness": 0.36, "metallic": 0.72}
+  },
+  "variants": [
+    {"id": "three-tier", "planned": true},
+    {"id": "wide-four-tier", "planned": true},
+    {"id": "light-oak", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH lightweight wooden side table/shelf listing at JPY 200",
+      "BOOTH original furniture set including shelf/table/stools at JPY 300",
+      "Issue #200 furniture market snapshot and S-priority family"
+    ],
+    "expected_production_minutes": 12,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
