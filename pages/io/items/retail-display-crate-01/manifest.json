@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "retail-display-crate-01",
+  "source_spec": "config/world-items/retail-display-crate-01.json",
+  "spec_sha256": "e1189d9c7215097662c7a41057992650b7802dab0d31d44b1ecff43ab6a2b163",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.47999998927116394,
+    0.3400000035762787,
+    0.2800000011920929
+  ],
+  "triangles": 2068,
+  "parts_count": 11,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "retail-display-crate-01.blend": "67bb2650cb96a2d1d61c22d7f858d0f596f6e8e9af1abcaa5cf4a6617b481ae3",
+    "retail-display-crate-01.glb": "bc60113c9908a5631b97217393a53e0132706431772448dd658e921884045d15",
+    "retail-display-crate-01.fbx": "59488191d4a70b3376ea2ad230ddb9bb9cd46a4d43ad0937ed721f00f9344f10",
+    "thumbnail.png": "67a5661865ced15d7e4b06aba7a4f0df9250cb057b65a3203767b6bf8d36b084",
+    "view-hero.png": "67a5661865ced15d7e4b06aba7a4f0df9250cb057b65a3203767b6bf8d36b084",
+    "view-front.png": "37943a794a43a86cbedcfc936d5674504d3cf9ab3347c2bd8c8578d49d0a23c7",
+    "view-rear.png": "25c212c3f7402b424cc8dc01b461b695a03fdb7aff62bf0b4651bf12dba681fc",
+    "view-left.png": "ba42edb5bade02207eea15cb97b8d0927f75046084219060d9cf06eed990cb54",
+    "view-right.png": "4c74d9b5b0d8862b90485332784edbe6d9f42503d67e0636dd55876039d254aa",
+    "view-top.png": "03171d64e3a9d0d75b46d4a762a6c8b6742dfbf2db7a929b3ccf4ebeb4d13f15"
+  }
+}
