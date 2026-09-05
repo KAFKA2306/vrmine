@@ -1,0 +1,52 @@
+{
+  "id": "minimal-book-stack-01",
+  "family": "Decorative Props",
+  "display_name": "Minimal Book Stack",
+  "dimensions_m": [0.30, 0.22, 0.18],
+  "parts": [
+    {"component": "box", "name": "book_bottom_cover_lower", "size": [0.30, 0.20, 0.012], "position": [0.0, 0.0, 0.006], "material": "muted_red"},
+    {"component": "box", "name": "book_bottom_pages", "size": [0.28, 0.18, 0.038], "position": [0.0, 0.0, 0.031], "material": "warm_page"},
+    {"component": "box", "name": "book_bottom_cover_upper", "size": [0.30, 0.20, 0.012], "position": [0.0, 0.0, 0.056], "material": "muted_red"},
+    {"component": "box", "name": "book_middle_cover_lower", "size": [0.27, 0.21, 0.012], "position": [0.012, -0.004, 0.068], "material": "forest_green"},
+    {"component": "box", "name": "book_middle_pages", "size": [0.25, 0.19, 0.038], "position": [0.012, -0.004, 0.093], "material": "warm_page"},
+    {"component": "box", "name": "book_middle_cover_upper", "size": [0.27, 0.21, 0.012], "position": [0.012, -0.004, 0.118], "material": "forest_green"},
+    {"component": "box", "name": "book_top_cover_lower", "size": [0.24, 0.18, 0.012], "position": [-0.018, 0.010, 0.130], "material": "navy_blue"},
+    {"component": "box", "name": "book_top_pages", "size": [0.22, 0.16, 0.032], "position": [-0.018, 0.010, 0.152], "material": "warm_page"},
+    {"component": "box", "name": "book_top_cover_upper", "size": [0.24, 0.18, 0.012], "position": [-0.018, 0.010, 0.174], "material": "navy_blue"}
+  ],
+  "materials": {
+    "warm_page": {"base_color": [0.77, 0.70, 0.58], "roughness": 0.72, "metallic": 0.0},
+    "muted_red": {"base_color": [0.36, 0.09, 0.08], "roughness": 0.58, "metallic": 0.0},
+    "forest_green": {"base_color": [0.08, 0.24, 0.15], "roughness": 0.60, "metallic": 0.0},
+    "navy_blue": {"base_color": [0.07, 0.12, 0.24], "roughness": 0.57, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "warm-neutral", "planned": true},
+    {"id": "office-muted", "planned": true},
+    {"id": "shelf-filler-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, book titles, cover art, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH currently lists a 15-book VRChat interior prop set at JPY 200",
+      "BOOTH also lists free decorative book props with UnityPackage and FBX for VRChat worlds",
+      "Issue #200 includes book stack in Decorative Props; this SKU uses only the existing box component and can bundle with shelves, photo frames, clocks, and Home / Office Basics"
+    ],
+    "source_urls": [
+      "https://toraba.booth.pm/items/8021163",
+      "https://booth.pm/ja/items/4028872"
+    ],
+    "expected_production_minutes": 4,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
