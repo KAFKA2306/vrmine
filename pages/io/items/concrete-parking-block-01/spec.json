@@ -1,0 +1,42 @@
+{
+  "id": "concrete-parking-block-01",
+  "family": "Japanese Street Props",
+  "display_name": "Generic Concrete Parking Block",
+  "dimensions_m": [0.68, 0.16, 0.12],
+  "parts": [
+    {"component": "box", "name": "body", "size": [0.50, 0.16, 0.10], "position": [0.0, 0.0, 0.05], "rotation_deg": [0, 0, 0], "material": "concrete"},
+    {"component": "box", "name": "left_slope", "size": [0.16, 0.16, 0.085], "position": [-0.29, 0.0, 0.047], "rotation_deg": [0, 14, 0], "material": "concrete"},
+    {"component": "box", "name": "right_slope", "size": [0.16, 0.16, 0.085], "position": [0.29, 0.0, 0.047], "rotation_deg": [0, -14, 0], "material": "concrete"},
+    {"component": "box", "name": "reflector_left", "size": [0.07, 0.164, 0.012], "position": [-0.17, 0.0, 0.106], "rotation_deg": [0, 0, 0], "material": "reflector_yellow"},
+    {"component": "box", "name": "reflector_right", "size": [0.07, 0.164, 0.012], "position": [0.17, 0.0, 0.106], "rotation_deg": [0, 0, 0], "material": "reflector_yellow"}
+  ],
+  "materials": {
+    "concrete": {"base_color": [0.43, 0.44, 0.42], "roughness": 0.92, "metallic": 0.0},
+    "reflector_yellow": {"base_color": [0.78, 0.58, 0.05], "roughness": 0.48, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "yellow-reflector", "planned": true},
+    {"id": "white-reflector", "planned": true},
+    {"id": "weathered-dark", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, road-sign graphics, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH VRChat alley prop set with 33 street items at JPY 1000",
+      "BOOTH VRChat-oriented concrete block prop offered at JPY 0 with JPY 100 support tier",
+      "Issue #200 A-priority Japanese Street Props family"
+    ],
+    "expected_production_minutes": 8,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}

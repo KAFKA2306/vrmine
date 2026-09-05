@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "concrete-parking-block-01",
+  "source_spec": "config/world-items/concrete-parking-block-01.json",
+  "spec_sha256": "d471c9188505094cc99c044326fb054e6706eda7697418d9c44b47c4c31c25eb",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.7538752555847168,
+    0.164000004529953,
+    0.12462364137172699
+  ],
+  "triangles": 940,
+  "parts_count": 5,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "concrete-parking-block-01.blend": "0723354b4401183878c4bb5eaa6556be038134b7953eb9c036b7f9b8805bebb8",
+    "concrete-parking-block-01.glb": "f9bfb667c81bceada7248ec67ac063f8262e8de2b85e867c3f3ba7b6b409e95d",
+    "concrete-parking-block-01.fbx": "550d8b954b30c4a16c5fdff0e1eca31ab7529afdb8d3cf3d8c5d5c746857c7ff",
+    "thumbnail.png": "7f960029aa7c04777ea9c035eaf8f1f4d0cd10af35e8aec28e77d76d4b063c7c",
+    "view-hero.png": "7f960029aa7c04777ea9c035eaf8f1f4d0cd10af35e8aec28e77d76d4b063c7c",
+    "view-front.png": "7f21840d67fbb3716d77d7ca05b89e1bb37f99c51d7b81d095b4081549fe648d",
+    "view-rear.png": "3813379e03f52d97d1ea9888007f1cc8c61d9d4b88204d271ba03a94b1314ef1",
+    "view-left.png": "33be1b931a6c91edef7dbbfa42bfeebda612854e388586cf30dfe1e90f5f3565",
+    "view-right.png": "268bc31d7279f7d34b9b05dc0c0fe6600dfc84433a6bb3a81281fcca251ac5fd",
+    "view-top.png": "1c92bf47d25a039f3337b942b4dcf7950c4657d8b2788991309cc5dc6aa71b93"
+  }
+}
