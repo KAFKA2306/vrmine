@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "cafe-pendant-lamp-01",
+  "source_spec": "config/world-items/cafe-pendant-lamp-01.json",
+  "spec_sha256": "a8c19610dafafd85bbd6fe528f9d245101366065b9e8e5b1ccb35c33f9886695",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.4399999976158142,
+    0.4399999976158142,
+    1.0149998664855957
+  ],
+  "triangles": 7008,
+  "parts_count": 8,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "cafe-pendant-lamp-01.blend": "38c28ca24653ebbf42eb712d36cdf16100d7df41c37a4e264aea9013cda88ca7",
+    "cafe-pendant-lamp-01.glb": "f8925bf84368340257251544daaa907cad0249a4b3584e55753d0c2d2bdb18f8",
+    "cafe-pendant-lamp-01.fbx": "1d41e2cf367042890fe5331f55f037006c65d598e91ab6dd4bb60b07c3a332b3",
+    "thumbnail.png": "6b65b969398cda95ed1809e9dfeaa1e630eeff7cb1667ebcb80f3a98db21ba92",
+    "view-hero.png": "6b65b969398cda95ed1809e9dfeaa1e630eeff7cb1667ebcb80f3a98db21ba92",
+    "view-front.png": "6c2753d64ab7f31d31a3b40fd14d40222396962f81dea384f8a319b4688eb101",
+    "view-rear.png": "05ad381d930bc373f5a2a103da3baed287cf6d39ebe0b07096f9c7183796406f",
+    "view-left.png": "7e9e7607c9237683c5875a2211701b15ac90de45ef57e61d671e8f21a4a72b5b",
+    "view-right.png": "962afced889684e0e6ec43c227e1f56f3a4d207a2f78f4a77708b33ed6cdb582",
+    "view-top.png": "aa7fe88f3f8f786dfb12b22b69c0309bfce1947c2f69866214ba2c8c75bf27fc"
+  }
+}

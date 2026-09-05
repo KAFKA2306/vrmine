@@ -1,0 +1,47 @@
+{
+  "id": "cafe-pendant-lamp-01",
+  "family": "Lighting",
+  "display_name": "Café Pendant Lamp",
+  "dimensions_m": [0.44, 0.44, 1.20],
+  "parts": [
+    {"component": "cylinder", "name": "ceiling_canopy", "radius": 0.12, "height": 0.05, "position": [0.0, 0.0, 1.175], "vertices": 64, "material": "charcoal_metal"},
+    {"component": "cylinder", "name": "suspension_cable", "radius": 0.009, "height": 0.52, "position": [0.0, 0.0, 0.89], "vertices": 24, "material": "charcoal_metal"},
+    {"component": "cylinder", "name": "shade_neck", "radius": 0.055, "height": 0.10, "position": [0.0, 0.0, 0.605], "vertices": 48, "material": "charcoal_metal"},
+    {"component": "cylinder", "name": "shade_upper", "radius": 0.135, "height": 0.11, "position": [0.0, 0.0, 0.50], "vertices": 64, "material": "charcoal_metal"},
+    {"component": "cylinder", "name": "shade_lower", "radius": 0.205, "height": 0.09, "position": [0.0, 0.0, 0.405], "vertices": 64, "material": "charcoal_metal"},
+    {"component": "cylinder", "name": "shade_rim", "radius": 0.22, "height": 0.025, "position": [0.0, 0.0, 0.3475], "vertices": 64, "material": "warm_brass"},
+    {"component": "cylinder", "name": "diffuser", "radius": 0.115, "height": 0.12, "position": [0.0, 0.0, 0.275], "vertices": 64, "material": "warm_diffuser"},
+    {"component": "cylinder", "name": "diffuser_cap", "radius": 0.085, "height": 0.03, "position": [0.0, 0.0, 0.20], "vertices": 48, "material": "warm_brass"}
+  ],
+  "materials": {
+    "charcoal_metal": {"base_color": [0.045, 0.05, 0.055], "roughness": 0.32, "metallic": 0.78},
+    "warm_brass": {"base_color": [0.42, 0.24, 0.075], "roughness": 0.30, "metallic": 0.72},
+    "warm_diffuser": {"base_color": [0.86, 0.72, 0.46], "roughness": 0.48, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "matte-white", "planned": true},
+    {"id": "short-cable", "planned": true},
+    {"id": "wide-shade", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH VRChat-oriented antique bar lighting set with table, wall, pendant, and shelf lights at JPY 300, crawled 2026-09-05",
+      "BOOTH VRChat-oriented wall lamp at JPY 200, crawled 2026-09-05",
+      "BOOTH VRChat-oriented lamp with configured light at JPY 300, crawled 2026-09-05",
+      "Issue #200 S-priority Lighting family"
+    ],
+    "expected_production_minutes": 10,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
