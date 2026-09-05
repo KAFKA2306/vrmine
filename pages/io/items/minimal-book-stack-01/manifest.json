@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "minimal-book-stack-01",
   "source_spec": "config/world-items/minimal-book-stack-01.json",
-  "spec_sha256": "23dba0b994c60aa372d9ebaf07ef60121a3aaecd9e69e9a7d4b1f1e42c525f2a",
+  "spec_sha256": "be16e33668261be1dd614f87b325b3250714511788060ecdb054004c35c9cae7",
   "blender": "4.2.0",
   "units": "metres",
   "dimensions_m_actual": [
@@ -21,15 +21,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-book-stack-01.blend": "0792082d0991e94fe6fe19b9b48a998548a4523bc0c80d2afce8c117d2677942",
+    "minimal-book-stack-01.blend": "9d2da126de0ae53d8218d7417ebff60af17b4014dde44f6212ec8e13caca199c",
     "minimal-book-stack-01.glb": "6ed66109e1d39eed68855057355a4a6828b8f0339d2888da0e6d3f5517f33e3b",
-    "minimal-book-stack-01.fbx": "b6292477e752e7af2e1616ef57a4f6beda843f2153fd8f8f4b2a0741610219ae",
-    "thumbnail.png": "00196472d9684b409a8861084b147c02384cc8a682ae09feb67e5b40f4b92d15",
-    "view-hero.png": "00196472d9684b409a8861084b147c02384cc8a682ae09feb67e5b40f4b92d15",
-    "view-front.png": "2a9fb0b1187744969a944079a2ebcbf58798d4164123181f35a3a5d99336ab4d",
-    "view-rear.png": "3afb4c72002537db96a28354e0b0dddc8df7ef068d2529c7c9412e9dcd63fbac",
-    "view-left.png": "1c51c6d5ce43870fb57ae980675c08baf0f8da048815dfec25d90c3257c3ef83",
-    "view-right.png": "54cbdcb96a9f01f0c18654da97f81c547ec95988aeac5e3e240809c0be0f510a",
-    "view-top.png": "ffa96f38cad013128df442a27a9b685a99cd727cb8db690bad790ac851a3e203"
+    "minimal-book-stack-01.fbx": "2cdd277c0ff34db2a71792cf0508fdd54b17dedfd81cb0f0715cb61033b0152f",
+    "thumbnail.png": "07b71b20b410ea39b6c47d149a04dc91a9a6adbefa84e51d4ba1b8eb3bf35e54",
+    "view-hero.png": "07b71b20b410ea39b6c47d149a04dc91a9a6adbefa84e51d4ba1b8eb3bf35e54",
+    "view-front.png": "32ce95e77600de4759ef1a0b354fe5b6a2ff0a33b167accb9a553636956b91f1",
+    "view-rear.png": "3e5830026b444cc852bdf2bfc85c689314bd7a5ce514550283f24ca0abe0b1f8",
+    "view-left.png": "c8738c217b84bc04b4a0d4a45b609c7cd7aa6a46360f324f2e36250a45d54822",
+    "view-right.png": "d33aa9a358326aae4543bc9c1f0a8a4fdb630c3cb25f2d082aab65c178205b7f",
+    "view-top.png": "22fe0365b6d38dd6e49dfe47b748dc1cbdaa57dada0ae3835f761474d9abedab"
   }
 }
