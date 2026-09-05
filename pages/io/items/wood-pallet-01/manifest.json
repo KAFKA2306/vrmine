@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "wood-pallet-01",
+  "source_spec": "config/world-items/wood-pallet-01.json",
+  "spec_sha256": "53e49cbce0f1702dbdf0fe76688c4ea1baa6f8d17d41622876f07d49312776f9",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    1.2000000476837158,
+    0.800000011920929,
+    0.14399999380111694
+  ],
+  "triangles": 3196,
+  "parts_count": 17,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "wood-pallet-01.blend": "5a1aee7924e7b2ed5820e613e26634e79bb1edb0c81455f9d8f50668e33a9270",
+    "wood-pallet-01.glb": "bf16a1bf470ac83d8731ad1508ad36c64cabcfb35d44eb8b3b8a15174e16363b",
+    "wood-pallet-01.fbx": "3296f3d977d5a793bc994b1c413d00ff3e31845787a2431e02cfd38b920094e6",
+    "thumbnail.png": "534f3628822bcaf4513cd0fe7a1cf22639a5de4d58b80e932cdd787356d92914",
+    "view-hero.png": "534f3628822bcaf4513cd0fe7a1cf22639a5de4d58b80e932cdd787356d92914",
+    "view-front.png": "5fe1ec1061c332475846a05c8c64e9ea67ac058fb8d8d62c17868786d5eaa22a",
+    "view-rear.png": "7d882c46ba12f7833283bd6c907a77e4bbe7f6d243794756a927040fe478c4d2",
+    "view-left.png": "6d5429f09d162d9fc10d0eb2f0a9c13fe3130bd4928d0a79d67986c361a04865",
+    "view-right.png": "9cb8145c5baa1a77df17fa9eb4cd03a7c1b6a8225472731091945c049fbe4c54",
+    "view-top.png": "05b4807bd2bc7a8095952b12992c8e9b5cfd65f6ed3d79bdc907d2f386b9fd41"
+  }
+}
