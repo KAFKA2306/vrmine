@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "cafe-takeaway-cup-01",
+  "source_spec": "config/world-items/cafe-takeaway-cup-01.json",
+  "spec_sha256": "42489d649adb9b944381557c471d391a306a8f077b4c558ce713afc856d70279",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.09000000357627869,
+    0.09000000357627869,
+    0.13499999046325684
+  ],
+  "triangles": 3044,
+  "parts_count": 7,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "cafe-takeaway-cup-01.blend": "1bd873dba3c11e40abdeed799ff34a8c6e768c1a4d9b183feef40fedac75fff4",
+    "cafe-takeaway-cup-01.glb": "25aa19c58e1eceb0648a3c8fb3ebbeb61b526b4db7e0bb03452f4e77fb044f13",
+    "cafe-takeaway-cup-01.fbx": "fb053cdf4b72e9cb8da58694573658864efa982d5d53f5cd7cc7f0f3e8f7def2",
+    "thumbnail.png": "9735edc683bfaaf3b89ede6e24c17036df46f54034bfabac69bdaa11f7b695c0",
+    "view-hero.png": "9735edc683bfaaf3b89ede6e24c17036df46f54034bfabac69bdaa11f7b695c0",
+    "view-front.png": "dd7c75029e8a53143e6eb1e028b64b25b9de62d635620bee97aa4714fe7bd914",
+    "view-rear.png": "de220aa8f41737ea0637f93148a42a343cb0d752598b2e1a93f0af1139a5c853",
+    "view-left.png": "a6e817981931816c08af77a06d990b2ab39aeaa1fbb2e9abcb95811992d45ebf",
+    "view-right.png": "f8e1854d6bd65f793a2ba32498a5bb73caf4a9bbcd9da73f20bbf3d3cc49a118",
+    "view-top.png": "885ecd7c3d24a5001c3663c76225b5de8b350e9ed6aa5ad818cb88b7cc499959"
+  }
+}

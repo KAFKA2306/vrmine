@@ -1,0 +1,46 @@
+{
+  "id": "cafe-takeaway-cup-01",
+  "family": "Café / Foodware",
+  "display_name": "Cafe Takeaway Cup",
+  "dimensions_m": [0.09, 0.09, 0.14],
+  "parts": [
+    {"component": "cylinder", "name": "cup_body", "radius": 0.041, "height": 0.115, "position": [0.0, 0.0, 0.0575], "material": "warm_paper", "vertices": 48},
+    {"component": "cylinder", "name": "lid_rim", "radius": 0.045, "height": 0.012, "position": [0.0, 0.0, 0.121], "material": "charcoal_lid", "vertices": 48},
+    {"component": "cylinder", "name": "lid_top", "radius": 0.040, "height": 0.008, "position": [0.0, 0.0, 0.131], "material": "charcoal_lid", "vertices": 48},
+    {"component": "box", "name": "sleeve_front", "size": [0.084, 0.004, 0.046], "position": [0.0, -0.041, 0.067], "rotation_deg": [0, 0, 0], "material": "kraft_sleeve"},
+    {"component": "box", "name": "sleeve_rear", "size": [0.084, 0.004, 0.046], "position": [0.0, 0.041, 0.067], "rotation_deg": [0, 0, 0], "material": "kraft_sleeve"},
+    {"component": "box", "name": "sleeve_left", "size": [0.004, 0.078, 0.046], "position": [-0.041, 0.0, 0.067], "rotation_deg": [0, 0, 0], "material": "kraft_sleeve"},
+    {"component": "box", "name": "sleeve_right", "size": [0.004, 0.078, 0.046], "position": [0.041, 0.0, 0.067], "rotation_deg": [0, 0, 0], "material": "kraft_sleeve"}
+  ],
+  "materials": {
+    "warm_paper": {"base_color": [0.82, 0.76, 0.64], "roughness": 0.82, "metallic": 0.0},
+    "kraft_sleeve": {"base_color": [0.38, 0.22, 0.10], "roughness": 0.88, "metallic": 0.0},
+    "charcoal_lid": {"base_color": [0.035, 0.04, 0.045], "roughness": 0.42, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "cream-kraft", "planned": true},
+    {"id": "white-black", "planned": true},
+    {"id": "short-cup", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 150, "mini_set_target": 500},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH VRChat-oriented paper cup product at JPY 150, crawled 2026-09-05",
+      "BOOTH VRChat-oriented cafe/kitchen 28-asset set at JPY 900 includes coffee cups, crawled 2026-09-05",
+      "BOOTH VRChat-oriented cafe 25-asset set at JPY 500 includes coffee cup, crawled 2026-09-05",
+      "Issue #200 S-priority Café / Foodware family"
+    ],
+    "expected_production_minutes": 8,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
