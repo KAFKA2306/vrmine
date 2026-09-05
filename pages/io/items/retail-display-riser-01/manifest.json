@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "retail-display-riser-01",
+  "source_spec": "config/world-items/retail-display-riser-01.json",
+  "spec_sha256": "bcbad10ac9393d955a00f3b1356c7eea9802c5f30cbc619ec317ecf325083d8e",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.7400000095367432,
+    0.36000001430511475,
+    0.3400000035762787
+  ],
+  "triangles": 752,
+  "parts_count": 4,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "retail-display-riser-01.blend": "d77d1b3f88695cde30699841c504d6d7fc99476e2e1b2b668b6a6a5fb03054f7",
+    "retail-display-riser-01.glb": "9a9561feffd9048a88bf4f73ea789b564051632256c7f4e21873fdb319a2bfb0",
+    "retail-display-riser-01.fbx": "5e7a70668d772042eb2af9ba2fda2c54b25c1178ae7472b6869a5a77cd80a74a",
+    "thumbnail.png": "b0eb3d608ae09bd4242ba934167947964939a62517028ea8b28d73183fd6f982",
+    "view-hero.png": "b0eb3d608ae09bd4242ba934167947964939a62517028ea8b28d73183fd6f982",
+    "view-front.png": "05f808c6b398150fb7858f1749c8f221ee86b7b1c8687d1640f41d492a21c70a",
+    "view-rear.png": "b011c1db17d40a128596898e2d10729519bccb9f5a7b23c69f66a6c0320cdc40",
+    "view-left.png": "baf3434b88cf7b31fe97dad58b2f2c722e095ca1ad854bbd800987c3bc301db8",
+    "view-right.png": "03ccff86ae7f0d0033ffba8a50d84b99b94fb1ff4b25cb7596aa85d3f645136f",
+    "view-top.png": "26a07a8d23bc60e714398673908e052a2bc4631661541cfd0e16439ffa0af0ee"
+  }
+}

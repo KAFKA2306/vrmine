@@ -1,0 +1,41 @@
+{
+  "id": "retail-display-riser-01",
+  "family": "Shop / Retail",
+  "display_name": "Retail Display Riser",
+  "dimensions_m": [0.74, 0.36, 0.34],
+  "parts": [
+    {"component": "box", "name": "base_plinth", "size": [0.74, 0.36, 0.04], "position": [0.0, 0.0, 0.02], "material": "charcoal_base"},
+    {"component": "box", "name": "low_riser", "size": [0.20, 0.30, 0.10], "position": [-0.24, 0.0, 0.09], "material": "warm_white"},
+    {"component": "box", "name": "mid_riser", "size": [0.20, 0.30, 0.20], "position": [0.0, 0.0, 0.14], "material": "warm_white"},
+    {"component": "box", "name": "high_riser", "size": [0.20, 0.30, 0.30], "position": [0.24, 0.0, 0.19], "material": "warm_white"}
+  ],
+  "materials": {
+    "warm_white": {"base_color": [0.76, 0.73, 0.67], "roughness": 0.48, "metallic": 0.0},
+    "charcoal_base": {"base_color": [0.055, 0.06, 0.065], "roughness": 0.55, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "dark-set", "planned": true},
+    {"id": "two-tier", "planned": true},
+    {"id": "wide-five-tier", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH VRChat Exhibition Hall includes display shelves and showcases at JPY 0, crawled 2026-09-05",
+      "BOOTH 3D exhibition booth plus sign stand is listed at JPY 900, crawled 2026-09-05",
+      "Issue #200 priority Shop / Retail family"
+    ],
+    "expected_production_minutes": 6,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
