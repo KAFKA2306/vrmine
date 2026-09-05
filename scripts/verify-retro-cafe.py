@@ -61,7 +61,7 @@ def main():
     ]
     for filename in review_images:
         image = bpy.data.images.load(str(OUT / filename), check_existing=False)
-        require(tuple(image.size) == (1200, 1000), f'Render dimensions: {filename}')
+        require(tuple(image.size) == (600, 500), f'Render dimensions: {filename}')
         pixels = list(image.pixels)[::4]
         require(max(pixels) - min(pixels) > .1, f'Render is blank: {filename}')
         bpy.data.images.remove(image)
