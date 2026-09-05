@@ -7,7 +7,7 @@ on:
       - 'config/world-items/**'
       - 'scripts/world_item_factory.py'
       - 'scripts/verify_world_item.py'
-      - 'pages/io/**'
+      - 'pages/io/items/**'
       - '.github/workflows/retro-cafe.yml'
   workflow_dispatch:
     inputs:
@@ -65,11 +65,17 @@ jobs:
           set -euo pipefail
           git fetch origin "$BASE_REF"
           mapfile -t specs < <(git diff --name-only "origin/${BASE_REF}...HEAD" | grep -E '^config/world-items/[^/]+\.json$' || true)
+          if [ "${#specs[@]}" -eq 0 ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "No canonical world-item spec changed; generation is not applicable to this PR."
+            exit 0
+          fi
           if [ "${#specs[@]}" -ne 1 ]; then
             printf 'Expected exactly one changed canonical world-item spec, got %s\n' "${#specs[@]}" >&2
             printf '%s\n' "${specs[@]:-}" >&2
             exit 1
           fi
+          echo "run=true" >> "$GITHUB_OUTPUT"
           spec_path="${specs[0]}"
           sku="$(jq -r '.id' "$spec_path")"
           test -n "$sku" && test "$sku" != null
@@ -86,6 +92,7 @@ jobs:
           echo "issue_number=${issues[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Install official Blender 4.2.0
+        if: steps.select.outputs.run == 'true'
         run: |
           set -euo pipefail
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
@@ -97,6 +104,7 @@ jobs:
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
       - name: Generate and verify canonical SKU
+        if: steps.select.outputs.run == 'true'
         env:
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
           SKU: ${{ steps.select.outputs.sku }}
@@ -117,6 +125,7 @@ jobs:
             > "$out/factory-metrics.json"
 
       - uses: actions/upload-artifact@v4
+        if: steps.select.outputs.run == 'true'
         with:
           name: world-item-${{ steps.select.outputs.sku }}-${{ steps.pr.outputs.head_sha }}
           path: .artifacts/world-items/${{ steps.select.outputs.sku }}/
@@ -124,6 +133,7 @@ jobs:
           retention-days: 7
 
       - name: Publish product files and multi-angle renders into PR branch
+        if: steps.select.outputs.run == 'true'
         id: publish
         env:
           GH_TOKEN: ${{ github.token }}
@@ -173,6 +183,7 @@ jobs:
           echo "render_sha256=$render_sha" >> "$GITHUB_OUTPUT"
 
       - name: Attach current rendered viewpoints to PR and Issue
+        if: steps.select.outputs.run == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
@@ -222,7 +233,7 @@ jobs:
           done
 
       - name: Dispatch exact-head rerun after publishing generated evidence
-        if: steps.publish.outputs.changed == 'true'
+        if: steps.select.outputs.run == 'true' && steps.publish.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
