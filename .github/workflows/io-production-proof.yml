@@ -1,0 +1,37 @@
+name: Temporary IO production proof
+
+on:
+  push:
+    paths:
+      - '.github/workflows/io-production-proof.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify Retail Display Crate on production Pages
+        run: |
+          set -euo pipefail
+          root='https://kafka2306.github.io/vrmine/io'
+          sku='retail-display-crate-01'
+          tmp="$(mktemp -d)"
+          curl --fail --silent --show-error --location "$root/catalog.json?proof=${GITHUB_SHA}" -o "$tmp/catalog.json"
+          jq -e --arg sku "$sku" 'any(.[]; .id == $sku and .display_name == "Retail Display Crate")' "$tmp/catalog.json" >/dev/null
+          curl --fail --silent --show-error --location "$root/view.html?item=${sku}&proof=${GITHUB_SHA}" -o "$tmp/view.html"
+          grep -F 'spec.display_name' "$tmp/view.html" >/dev/null
+          curl --fail --silent --show-error --location "$root/items/${sku}/spec.json?proof=${GITHUB_SHA}" -o "$tmp/spec.json"
+          test "$(jq -r .id "$tmp/spec.json")" = "$sku"
+          for name in view-hero view-front view-rear view-left view-right view-top; do
+            curl --fail --silent --show-error --location "$root/items/${sku}/${name}.png?proof=${GITHUB_SHA}" -o "$tmp/${name}.png"
+            test "$(file --mime-type -b "$tmp/${name}.png")" = image/png
+          done
+          for ext in blend glb fbx; do
+            curl --fail --silent --show-error --location "$root/items/${sku}/${sku}.${ext}?proof=${GITHUB_SHA}" -o "$tmp/${sku}.${ext}"
+            test -s "$tmp/${sku}.${ext}"
+          done
+          curl --fail --silent --show-error --location "$root/items/${sku}/manifest.json?proof=${GITHUB_SHA}" -o "$tmp/manifest.json"
+          test "$(jq -r .id "$tmp/manifest.json")" = "$sku"
+          echo 'PRODUCTION_IO_PASS'
