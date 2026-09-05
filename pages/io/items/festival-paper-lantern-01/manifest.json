@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "festival-paper-lantern-01",
   "source_spec": "config/world-items/festival-paper-lantern-01.json",
-  "spec_sha256": "e5d7c1547a2747c59badb891869b8be498d32323fbb8cf5f64df9fc78656f0c6",
+  "spec_sha256": "47d93f9cc57df07b50738c02167518d9b75fef6b7bd9e2801a7cc67a62bc9cf4",
   "blender": "4.2.0",
   "units": "metres",
   "dimensions_m_actual": [
@@ -21,15 +21,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "festival-paper-lantern-01.blend": "df40a9f90309f1ff4ad9b9a5782a91fc9150cf74b1c28072ab51d99c659eb904",
+    "festival-paper-lantern-01.blend": "1f92b27c9b2ac063105fd9a6f137a1532cd3bd65eba0c006814d1d830551996c",
     "festival-paper-lantern-01.glb": "5f6332653b9e167f1f38f3b8eef3720257c5a91160eabdc15d4cf398577c4903",
-    "festival-paper-lantern-01.fbx": "6a7ab3e26cd7bdff380dd65ffce6ea782379aa93666165690ea0e080ea7b348b",
-    "thumbnail.png": "c5280d8a6dbf5d12e41c83557e571bdb9e11326e8ff220cb51b764bdce16a040",
-    "view-hero.png": "c5280d8a6dbf5d12e41c83557e571bdb9e11326e8ff220cb51b764bdce16a040",
-    "view-front.png": "0a95aea6dbc4c88b81a03b85154ea370529458ae346882a358618199113036b5",
-    "view-rear.png": "7b33fd3ac05a7f55e4444be8e2b984a54d4c444517e8ffcb7587d7d390148d29",
-    "view-left.png": "c6d29b6533881483cdfe638450c77cd8e19074e79012d125b4344750a1a25491",
-    "view-right.png": "bf2d050fc87c1d6ff25918256b062d06100ff819e3fdddafd8984eb59172d205",
-    "view-top.png": "23c61fb63d3452b194d74c94a0e3cc185933a4785ea164296db9e909872416ed"
+    "festival-paper-lantern-01.fbx": "73a109f965a3658504bf259c0e9b5fe9c6b5a1044d89b604008ca8663183ea7b",
+    "thumbnail.png": "bd4fed84ef7ca08bcc66c0cffa0459bca71cec68ebca77a7e603dd56c663e508",
+    "view-hero.png": "bd4fed84ef7ca08bcc66c0cffa0459bca71cec68ebca77a7e603dd56c663e508",
+    "view-front.png": "77aae33328757a06a1d8cf1d2cda20fa3d3b90aa00a60076cbaecb593dd5d007",
+    "view-rear.png": "06710f4a273c0724d7882fde7ca77ade896db91bcb20b0f67c2a4c927b2241f0",
+    "view-left.png": "92adc260cfd6a64df7b3e99709a0aa5fa8d787d4292108d05d2c451f912f84be",
+    "view-right.png": "f58f448745c9a4b0301d5169f99ef0d1818410098162e26ba12821be40a96f9a",
+    "view-top.png": "69738fa1026a0fff8c7b25902a5b3bff86db044a86e86729e4f5bdde36d23b21"
   }
 }
