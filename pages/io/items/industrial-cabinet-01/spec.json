@@ -1,0 +1,49 @@
+{
+  "id": "industrial-cabinet-01",
+  "family": "Storage / Industrial",
+  "display_name": "Generic Industrial Cabinet",
+  "dimensions_m": [0.64, 0.34, 1.10],
+  "parts": [
+    {"component": "box", "name": "body", "size": [0.60, 0.30, 1.00], "position": [0.0, 0.0, 0.58], "rotation_deg": [0, 0, 0], "material": "painted_steel"},
+    {"component": "box", "name": "left_foot", "size": [0.12, 0.22, 0.08], "position": [-0.20, 0.0, 0.04], "rotation_deg": [0, 0, 0], "material": "dark_steel"},
+    {"component": "box", "name": "right_foot", "size": [0.12, 0.22, 0.08], "position": [0.20, 0.0, 0.04], "rotation_deg": [0, 0, 0], "material": "dark_steel"},
+    {"component": "box", "name": "top_cap", "size": [0.64, 0.32, 0.04], "position": [0.0, 0.0, 1.08], "rotation_deg": [0, 0, 0], "material": "painted_steel"},
+    {"component": "box", "name": "left_door", "size": [0.278, 0.012, 0.86], "position": [-0.145, -0.156, 0.60], "rotation_deg": [0, 0, 0], "material": "door_steel"},
+    {"component": "box", "name": "right_door", "size": [0.278, 0.012, 0.86], "position": [0.145, -0.156, 0.60], "rotation_deg": [0, 0, 0], "material": "door_steel"},
+    {"component": "box", "name": "center_seam", "size": [0.012, 0.016, 0.88], "position": [0.0, -0.164, 0.60], "rotation_deg": [0, 0, 0], "material": "dark_steel"},
+    {"component": "box", "name": "handle", "size": [0.04, 0.04, 0.12], "position": [0.20, -0.17, 0.62], "rotation_deg": [0, 0, 0], "material": "dark_steel"},
+    {"component": "box", "name": "upper_vent_1", "size": [0.34, 0.014, 0.018], "position": [0.0, -0.164, 0.91], "rotation_deg": [0, 0, 0], "material": "dark_steel"},
+    {"component": "box", "name": "upper_vent_2", "size": [0.34, 0.014, 0.018], "position": [0.0, -0.164, 0.95], "rotation_deg": [0, 0, 0], "material": "dark_steel"},
+    {"component": "box", "name": "upper_vent_3", "size": [0.34, 0.014, 0.018], "position": [0.0, -0.164, 0.99], "rotation_deg": [0, 0, 0], "material": "dark_steel"}
+  ],
+  "materials": {
+    "painted_steel": {"base_color": [0.42, 0.46, 0.47], "roughness": 0.50, "metallic": 0.48},
+    "door_steel": {"base_color": [0.50, 0.54, 0.55], "roughness": 0.46, "metallic": 0.52},
+    "dark_steel": {"base_color": [0.07, 0.08, 0.085], "roughness": 0.40, "metallic": 0.66}
+  },
+  "variants": [
+    {"id": "light-gray", "planned": true},
+    {"id": "olive-industrial", "planned": true},
+    {"id": "twin-cabinet-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, artwork, or branded cabinet geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH VRChat-oriented cabinet single is listed at JPY 200, crawled 2026-09-06",
+      "BOOTH VRChat-oriented 33-item alley prop set is listed at JPY 1000, crawled 2026-09-06",
+      "Issue #200 Storage / Industrial family; simple cabinet geometry supports Single to Mini Set reuse"
+    ],
+    "expected_production_minutes": 6,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}

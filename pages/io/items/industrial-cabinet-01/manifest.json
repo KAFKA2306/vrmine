@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "industrial-cabinet-01",
+  "source_spec": "config/world-items/industrial-cabinet-01.json",
+  "spec_sha256": "9b58f1836cd22cd03b0703b1515cd2fcdbaff669f4c7f5b03aff330c1e15fc8e",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.6399999856948853,
+    0.3499999940395355,
+    1.100000023841858
+  ],
+  "triangles": 2068,
+  "parts_count": 11,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "industrial-cabinet-01.blend": "639e77436097a558d0fb4fd08d374299bfb2079e818067f51cce2bfa66bc4b84",
+    "industrial-cabinet-01.glb": "d2511cac9b739ba99f066dc9b697c494433e3e0fec0ac1516d6bba30d19c6596",
+    "industrial-cabinet-01.fbx": "1b76fdf9be34ed0390a10578090c03440a58e806fdcf3c951d736f1669ad918d",
+    "thumbnail.png": "8a89a668db1f9061da4fbfe92dbafbe6c233676136f4571c33d998b9b2530544",
+    "view-hero.png": "8a89a668db1f9061da4fbfe92dbafbe6c233676136f4571c33d998b9b2530544",
+    "view-front.png": "7788d658603bb3f11c78dca1675b739578c5f880d0781bbb53e7c47560ec5cba",
+    "view-rear.png": "ac5ec17f8793d9d4ada5946464ecb8214eec1594d9e9d0bec4d786b6f1c72e75",
+    "view-left.png": "7893f5a4b54d1d1566f6e455fe1c771a9870f5fbafe299af4e586f24d3fa1dad",
+    "view-right.png": "0d71a5e9c36884761a5727b812d555d7429b88a7c8516615c34d813d58830762",
+    "view-top.png": "e34cba37a31ec51e17bc1e8bbb845dd21f048539b866c33f37baf11c7aa811c4"
+  }
+}
