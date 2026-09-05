@@ -1,0 +1,40 @@
+{
+  "id": "cafe-saucer-01",
+  "family": "Café / Foodware",
+  "display_name": "Cafe Saucer",
+  "dimensions_m": [0.16, 0.16, 0.022],
+  "parts": [
+    {"component": "cylinder", "name": "lower_foot", "radius": 0.058, "height": 0.006, "position": [0.0, 0.0, 0.003], "material": "warm_ceramic", "vertices": 48},
+    {"component": "cylinder", "name": "saucer_body", "radius": 0.08, "height": 0.010, "position": [0.0, 0.0, 0.010], "material": "warm_ceramic", "vertices": 64},
+    {"component": "cylinder", "name": "cup_seat", "radius": 0.047, "height": 0.006, "position": [0.0, 0.0, 0.018], "material": "accent_ceramic", "vertices": 48}
+  ],
+  "materials": {
+    "warm_ceramic": {"base_color": [0.86, 0.81, 0.72], "roughness": 0.42, "metallic": 0.0},
+    "accent_ceramic": {"base_color": [0.30, 0.18, 0.11], "roughness": 0.46, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "ivory-brown", "planned": true},
+    {"id": "white-charcoal", "planned": true},
+    {"id": "cafe-cup-and-saucer-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 marks Cafe / Foodware as S priority and explicitly lists saucer as a reusable rotational prop suitable for set sales",
+      "A current BOOTH 3D prop listing exposes a buffet set containing dish, bowl, plate, cup, coffee, tea and saucer assets for JPY 500, confirming saucer is part of a paid VRChat-oriented foodware bundle",
+      "This SKU reuses only the existing cylinder component and naturally bundles with cafe-takeaway-cup-01 and cafe-serving-tray-01"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
