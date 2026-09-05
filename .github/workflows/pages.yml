@@ -194,7 +194,7 @@ jobs:
             .artifacts/retro-cafe/view-right.png
             .artifacts/retro-cafe/view-top.png
           )
-          echo "sha256=$(sha256sum "${files[@]}" | sha256sum | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum "${files[@]}" | awk '{print $1}' | sha256sum | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - name: Record Retro Cafe public WebP hash
         id: retro-cafe-webp
@@ -209,7 +209,7 @@ jobs:
             .artifacts/retro-cafe/view-right.webp
             .artifacts/retro-cafe/view-top.webp
           )
-          echo "sha256=$(sha256sum "${files[@]}" | sha256sum | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum "${files[@]}" | awk '{print $1}' | sha256sum | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - name: Assemble Pages artifact
         env:
@@ -454,7 +454,7 @@ jobs:
             "$tmp/view-right.png"
             "$tmp/view-top.png"
           )
-          test "$(sha256sum "${review_files[@]}" | sha256sum | awk '{print $1}')" = "$EXPECTED_RETRO_CAFE_REVIEW_SHA256"
+          test "$(sha256sum "${review_files[@]}" | awk '{print $1}' | sha256sum | awk '{print $1}')" = "$EXPECTED_RETRO_CAFE_REVIEW_SHA256"
           webp_files=(
             "$tmp/thumbnail.webp"
             "$tmp/view-hero.webp"
@@ -464,7 +464,7 @@ jobs:
             "$tmp/view-right.webp"
             "$tmp/view-top.webp"
           )
-          test "$(sha256sum "${webp_files[@]}" | sha256sum | awk '{print $1}')" = "$EXPECTED_RETRO_CAFE_WEBP_SHA256"
+          test "$(sha256sum "${webp_files[@]}" | awk '{print $1}' | sha256sum | awk '{print $1}')" = "$EXPECTED_RETRO_CAFE_WEBP_SHA256"
           grep -F 'iframe.src = `./viewer/?' "$tmp/gallery.js"
           grep -F '@playcanvas/supersplat-viewer@1.28.0' "$tmp/gaussian-splats.json"
           test "$(jq '.environments | length' "$tmp/gaussian-splats.json")" -eq "$EXPECTED_GAUSSIAN_COUNT"
