@@ -78,8 +78,13 @@ For generated 3D/image assets, appearance is evidence for the user, not a merge 
 - Visual PASS/FAIL, taste, polish, product-readiness, or reviewer preference must never cause Draft conversion, REQUEST_CHANGES, manual-approval waiting, or a merge hold.
 - A generated-asset PR must not require an unresolved-review-free state. Technical generation failure may fail loudly only when the requested result was not produced or the produced files are structurally invalid.
 - Every generated-asset workline must publish rendered images in the PR body, the owning Issue body, and comments on both. Use direct-render URLs, not artifact ZIP/workflow/repository-file pages.
+- The owning Issue must be explicit and unambiguous (for generated PRs use one `Generation-Issue: #N` line). Never guess from the first issue-looking number and never multiply tracking Issues to hide ambiguity.
 - For a 3D scene or asset set, publish multiple viewpoints. Retro Café requires at least hero, front, rear, left, right, and top.
-- If no owning Issue is linked, automation creates one rather than stopping the merge.
+- If automation writes rendered evidence into the PR head, re-run the technical merge gate explicitly against that final head before merge. Merge must name the exact expected head SHA; a moved head must not be merged implicitly.
+- A bot-driven merge must explicitly dispatch the production Pages workflow instead of assuming a `GITHUB_TOKEN` push will trigger downstream workflows.
+- Production evidence must prove the deployed source SHA and the published render bytes. Compare the public render manifest and every PNG SHA-256 with the generated evidence; stale images are not success.
+- Update only the marked render-evidence block in PR/Issue bodies and update the existing render-evidence comments rather than appending duplicates.
+- Preserve generated artifacts and any available renders when technical generation fails. Keep the technical result as FAIL and do not hide it behind fallback or approval state.
 - Missing U2-U5 runtime evidence remains `UNVERIFIED`; it is recorded, not used to hold generated work outside `main`.
 
 ## CI, Pages, and release
