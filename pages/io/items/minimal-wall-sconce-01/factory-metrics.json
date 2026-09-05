@@ -1,0 +1,10 @@
+{
+  "production_seconds": 192,
+  "manual_blender_touch_count": 0,
+  "reusable_component_ratio": 1.0,
+  "parts_count": 5,
+  "common_components": [
+    "box",
+    "cylinder"
+  ]
+}

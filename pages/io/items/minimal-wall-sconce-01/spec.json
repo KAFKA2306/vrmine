@@ -1,0 +1,44 @@
+{
+  "id": "minimal-wall-sconce-01",
+  "family": "Lighting",
+  "display_name": "Minimal Wall Sconce",
+  "dimensions_m": [0.21, 0.3535, 0.24],
+  "parts": [
+    {"component": "box", "name": "wall_plate", "size": [0.16, 0.035, 0.24], "position": [0.0, 0.0, 0.17], "material": "charcoal_metal"},
+    {"component": "cylinder", "name": "arm", "radius": 0.018, "height": 0.14, "position": [0.0, -0.0875, 0.20], "rotation_deg": [90, 0, 0], "vertices": 32, "material": "charcoal_metal"},
+    {"component": "cylinder", "name": "socket", "radius": 0.045, "height": 0.075, "position": [0.0, -0.1575, 0.20], "rotation_deg": [90, 0, 0], "vertices": 48, "material": "warm_brass"},
+    {"component": "cylinder", "name": "shade", "radius": 0.105, "height": 0.13, "position": [0.0, -0.19, 0.20], "rotation_deg": [90, 0, 0], "vertices": 64, "material": "soft_ivory"},
+    {"component": "cylinder", "name": "light_disc", "radius": 0.075, "height": 0.012, "position": [0.0, -0.261, 0.20], "rotation_deg": [90, 0, 0], "vertices": 48, "material": "warm_light"}
+  ],
+  "materials": {
+    "charcoal_metal": {"base_color": [0.055, 0.06, 0.065], "roughness": 0.38, "metallic": 0.72},
+    "warm_brass": {"base_color": [0.52, 0.31, 0.11], "roughness": 0.32, "metallic": 0.82},
+    "soft_ivory": {"base_color": [0.84, 0.80, 0.68], "roughness": 0.55, "metallic": 0.0},
+    "warm_light": {"base_color": [1.0, 0.70, 0.32], "roughness": 0.28, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "black-shade", "planned": true},
+    {"id": "brass-shade", "planned": true},
+    {"id": "lighting-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded luminaire geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 gives Lighting S priority and identifies wall lights as an initial product family.",
+      "Current canonical catalog already has pendant and desk/table lighting but no wall-sconce SKU, so this expands the family without duplicating shape.",
+      "The design reuses only existing box/cylinder primitives, has a strong thumbnail silhouette, and can bundle with existing Lighting SKUs."
+    ],
+    "expected_production_minutes": 6,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
