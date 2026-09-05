@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-tissue-box-01",
+  "source_spec": "config/world-items/minimal-tissue-box-01.json",
+  "spec_sha256": "b5ae7f3b2bc21447eef9d6ef8f5a9d2c42eeae721dc2584f608a6aca85d5d72e",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.23999999463558197,
+    0.12999999523162842,
+    0.16864559054374695
+  ],
+  "triangles": 752,
+  "parts_count": 4,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-tissue-box-01.blend": "51851a62409a72a386a32894b44e821a34470f4844b0ace14b207c5804da70ef",
+    "minimal-tissue-box-01.glb": "f282a5a020298a6371ea014cfb3d4a2643ee1e72944c787cb0116217ddb122d6",
+    "minimal-tissue-box-01.fbx": "cd0936a5664e6e262d00d45c3638d62dcc5693d70ae5fbe894b25e4169b06057",
+    "thumbnail.png": "5f14d221c50d78dadf1b44e758a002dfbd4994b7c0a2c71d4bc1da0ccc34d260",
+    "view-hero.png": "5f14d221c50d78dadf1b44e758a002dfbd4994b7c0a2c71d4bc1da0ccc34d260",
+    "view-front.png": "2c1b5451f6465afc56788b865e564b15cb0755b6b1f8c1458267a2a3df9c792e",
+    "view-rear.png": "969fba317cea9cf94a4f0056a52e554c7125013d716ee2796928c947123ff0c8",
+    "view-left.png": "55d521305df0444c7e64aecbb4363d09da6575b9c09675b6696687df200ba174",
+    "view-right.png": "081ae3508259cb1ae13b33deda275bf66908ead573b11b99a215e2282ea0e2d9",
+    "view-top.png": "d1b8629f7b2697eaa3186989c3af667ffb50a8f0b19702fc0f9290053e784ac1"
+  }
+}
