@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "cafe-bar-stool-01",
+  "source_spec": "config/world-items/cafe-bar-stool-01.json",
+  "spec_sha256": "a12985ac1418007eb9abcb612453b82319602317dde035c7699478545e780e77",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.3799999952316284,
+    0.3799999952316284,
+    0.7399999499320984
+  ],
+  "triangles": 3288,
+  "parts_count": 10,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "cafe-bar-stool-01.blend": "5dc4c312c2358b032b7352795dc3f8bbcf20439bd4011fc0fb58f3f620f26e53",
+    "cafe-bar-stool-01.glb": "0d170be873122c4240aa8069ba0299ae08be57abbc9c5b1de96596a3744c3f75",
+    "cafe-bar-stool-01.fbx": "fb268e91e28f183c64794eebbfe0908872a095b8273a37ff66a4bf8605c6300e",
+    "thumbnail.png": "82d328ddbe92d08a050907c4b67ae2a9670accd13c6f879780adfcbb4e99b347",
+    "view-hero.png": "82d328ddbe92d08a050907c4b67ae2a9670accd13c6f879780adfcbb4e99b347",
+    "view-front.png": "33b3ff8979800222898d194fbcad9a07bb9dc7a0962ba51df37ccff0998db59c",
+    "view-rear.png": "e1a5c74f7e90dcd0f65ee68d6b7eb776e1340837bc3bca199bc18bf6a818a3d9",
+    "view-left.png": "d94f8a0492bda5a92576241228bfd20ae6d313dec97529db5d09ec30f903051c",
+    "view-right.png": "fe14642523b25245b2324ad9a2a31047e964d3fcaa9ffbd5bc7e6ff34944eacc",
+    "view-top.png": "fb40acf40064537cd6cefb799f566acdf16062a413f8a7d11dde4555b51908ad"
+  }
+}
