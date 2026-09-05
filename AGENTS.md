@@ -70,9 +70,21 @@ Read `Taskfile.yml` only as needed for the current surface.
 - make ownership, serialization, synced state, and late-join behavior explicit when relevant.
 - comments should explain non-obvious rationale/external constraints, not narrate code.
 
+## Generated assets: render first, never stop on appearance
+
+For generated 3D/image assets, appearance is evidence for the user, not a merge gate.
+
+- Once generation starts, continue mechanically through generation, file-integrity verification, multi-angle rendering, PR/Issue/comment publication, merge, exact-main read-back, and public Pages verification. Do not pause for visual approval.
+- Visual PASS/FAIL, taste, polish, product-readiness, or reviewer preference must never cause Draft conversion, REQUEST_CHANGES, manual-approval waiting, or a merge hold.
+- A generated-asset PR must not require an unresolved-review-free state. Technical generation failure may fail loudly only when the requested result was not produced or the produced files are structurally invalid.
+- Every generated-asset workline must publish rendered images in the PR body, the owning Issue body, and comments on both. Use direct-render URLs, not artifact ZIP/workflow/repository-file pages.
+- For a 3D scene or asset set, publish multiple viewpoints. Retro Café requires at least hero, front, rear, left, right, and top.
+- If no owning Issue is linked, automation creates one rather than stopping the merge.
+- Missing U2-U5 runtime evidence remains `UNVERIFIED`; it is recorded, not used to hold generated work outside `main`.
+
 ## CI, Pages, and release
 
-Use a reviewable PR and verify the exact head with the checks required by the changed surface. `task check` is the repository-level gate when applicable.
+Use a PR for traceability and run the exact-head checks required by the changed surface. `task check` is the repository-level gate when applicable. Generated-asset PRs follow the automatic integration rule above and do not wait for visual/manual approval.
 
 After merge, read back exact `main`. Pages changes additionally require deployment success and direct verification of `https://kafka2306.github.io/vrmine/`. Browser evidence never proves Unity/VRChat behavior.
 

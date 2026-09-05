@@ -47,7 +47,7 @@ jobs:
     outputs:
       pages_enabled: ${{ steps.pages.outputs.enabled }}
       gaussian_count: ${{ steps.gaussian-registry.outputs.count }}
-      retro_cafe_thumbnail_sha256: ${{ steps.retro-cafe-thumbnail.outputs.sha256 }}
+      retro_cafe_review_sha256: ${{ steps.retro-cafe-review.outputs.sha256 }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -136,20 +136,33 @@ jobs:
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0.sha256
           grep ' blender-4.2.0-linux-x64.tar.xz$' blender-4.2.0.sha256 | sha256sum --check --strict
           tar -xf blender-4.2.0-linux-x64.tar.xz
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1-mesa-dri
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
-      - name: Generate verified Retro Cafe public PNG
+      - name: Generate verified Retro Cafe public renders
         run: |
           set -euo pipefail
           blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
           blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py
-          test -s .artifacts/retro-cafe/thumbnail.png
+          for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
+            test -s ".artifacts/retro-cafe/${image}.png"
+          done
 
-      - name: Record Retro Cafe public PNG hash
-        id: retro-cafe-thumbnail
+      - name: Record Retro Cafe public render hash
+        id: retro-cafe-review
         run: |
           set -euo pipefail
-          echo "sha256=$(sha256sum .artifacts/retro-cafe/thumbnail.png | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          files=(
+            .artifacts/retro-cafe/thumbnail.png
+            .artifacts/retro-cafe/view-hero.png
+            .artifacts/retro-cafe/view-front.png
+            .artifacts/retro-cafe/view-rear.png
+            .artifacts/retro-cafe/view-left.png
+            .artifacts/retro-cafe/view-right.png
+            .artifacts/retro-cafe/view-top.png
+          )
+          echo "sha256=$(sha256sum "${files[@]}" | sha256sum | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - name: Assemble Pages artifact
         run: |
@@ -158,7 +171,7 @@ jobs:
           cp -R pages _site
           cp config/gaussian-splats.json _site/3dgs/gaussian-splats.json
           mkdir -p _site/3d/retro-cafe
-          cp .artifacts/retro-cafe/thumbnail.png _site/3d/retro-cafe/thumbnail.png
+          cp .artifacts/retro-cafe/*.png _site/3d/retro-cafe/
           test ! -e _site/404.html
           touch _site/.nojekyll
 
@@ -324,7 +337,7 @@ jobs:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_SHA: ${{ github.sha }}
           EXPECTED_GAUSSIAN_COUNT: ${{ needs.build.outputs.gaussian_count }}
-          EXPECTED_RETRO_CAFE_THUMBNAIL_SHA256: ${{ needs.build.outputs.retro_cafe_thumbnail_sha256 }}
+          EXPECTED_RETRO_CAFE_REVIEW_SHA256: ${{ needs.build.outputs.retro_cafe_review_sha256 }}
         run: |
           set -euo pipefail
           base="${PAGE_URL%/}"
@@ -344,7 +357,9 @@ jobs:
           curl --fail --silent --show-error --location "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
           curl --fail --silent --show-error --location "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
           curl --fail --silent --show-error --location "$base/3dgs/?smoke=${EXPECTED_SHA}" -o "$tmp/3dgs.html"
-          curl --fail --silent --show-error --location "$base/3d/retro-cafe/thumbnail.png?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-thumbnail.png"
+          for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
+            curl --fail --silent --show-error --location "$base/3d/retro-cafe/${image}.png?smoke=${EXPECTED_SHA}" -o "$tmp/${image}.png"
+          done
           curl --fail --silent --show-error --location "$base/3d/retro-cafe/pendant-light/?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-pendant.html"
           curl --fail --silent --show-error --location "$base/3dgs/gallery.js?smoke=${EXPECTED_SHA}" -o "$tmp/gallery.js"
           curl --fail --silent --show-error --location "$base/3dgs/gaussian-splats.json?smoke=${EXPECTED_SHA}" -o "$tmp/gaussian-splats.json"
@@ -360,8 +375,19 @@ jobs:
           grep -F 'Stich-Meister' "$tmp/stich.html"
           grep -F 'gallery.js' "$tmp/3dgs.html"
           grep -F 'Retro Cafe Pendant Light' "$tmp/retro-cafe-pendant.html"
-          test "$(file --mime-type -b "$tmp/retro-cafe-thumbnail.png")" = "image/png"
-          test "$(sha256sum "$tmp/retro-cafe-thumbnail.png" | awk '{print $1}')" = "$EXPECTED_RETRO_CAFE_THUMBNAIL_SHA256"
+          for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
+            test "$(file --mime-type -b "$tmp/${image}.png")" = "image/png"
+          done
+          review_files=(
+            "$tmp/thumbnail.png"
+            "$tmp/view-hero.png"
+            "$tmp/view-front.png"
+            "$tmp/view-rear.png"
+            "$tmp/view-left.png"
+            "$tmp/view-right.png"
+            "$tmp/view-top.png"
+          )
+          test "$(sha256sum "${review_files[@]}" | sha256sum | awk '{print $1}')" = "$EXPECTED_RETRO_CAFE_REVIEW_SHA256"
           grep -F 'iframe.src = `./viewer/?' "$tmp/gallery.js"
           grep -F '@playcanvas/supersplat-viewer@1.28.0' "$tmp/gaussian-splats.json"
           test "$(jq '.environments | length' "$tmp/gaussian-splats.json")" -eq "$EXPECTED_GAUSSIAN_COUNT"

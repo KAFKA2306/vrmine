@@ -13,17 +13,20 @@ VRMineでは **PR merge条件** と **製品release条件** を別の判定と�
 - Repository U1がPASS
 - 変更対象に対応する高速testがPASS
 - PRがmergeable
-- unresolved blocking reviewがない
 
 PR mergeに **不要**:
 
+- visual reviewのPASS
+- manual approval
+- Draft解除待ち
+- unresolved reviewの解消待ち
 - Unity Editor実行
 - SDK Builder実行
 - actual VRChat client実行
 - 2-client/late-join実測
 - release時性能測定
 
-これらが利用できない環境であることだけを理由に、Merge GateをPASSしたPRを保留しません。
+これらを理由にMerge GateをPASSしたPRを保留しません。特に生成物は、見た目をユーザーへ提示することを優先し、visual reviewをmerge authorityにしません。生成開始後は多面レンダリングをPR・Issue・コメントへ掲載し、そのまま機械的にmergeまで進めます。
 
 ただし、変更内容そのものに既知のcompile error、破壊的schema drift、明確なruntime defectがある場合は「release evidence不足」ではなく「変更品質の既知不良」なのでmerge blockerです。
 

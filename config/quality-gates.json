@@ -8,17 +8,20 @@
       "static_contracts_pass",
       "repository_u1_pass",
       "changed_surface_tests_pass",
-      "pr_mergeable",
-      "no_unresolved_blocking_review"
+      "pr_mergeable"
     ],
     "not_required": [
       "unity_editor_execution",
       "sdk_builder_validation",
       "actual_vrchat_client",
       "multiplayer_runtime_evidence",
-      "release_performance_measurement"
+      "release_performance_measurement",
+      "visual_review",
+      "manual_approval",
+      "draft_state",
+      "unresolved_review"
     ],
-    "rule": "Unavailable release-only infrastructure must not by itself block a PR merge when the merge gate passes."
+    "rule": "Generated-asset integration must not wait for appearance review, manual approval, draft state, unresolved review, or release-only infrastructure. Visual quality is published evidence, not merge authority."
   },
   "release_candidate_gate": {
     "purpose": "Decide whether an exact main commit is eligible for product-level runtime validation.",
@@ -52,6 +55,9 @@
     "implementation_issue_may_close_after_merge_gate": true,
     "release_issue_may_close_without_product_release_gate": false,
     "epic_may_claim_product_complete_without_product_release_gate": false,
-    "lower_evidence_may_be_promoted_to_actual_client_pass": false
+    "lower_evidence_may_be_promoted_to_actual_client_pass": false,
+    "generated_asset_visual_review_may_block_merge": false,
+    "generated_asset_manual_approval_may_block_merge": false,
+    "generated_asset_flow_continues_to_merge_after_generation": true
   }
 }

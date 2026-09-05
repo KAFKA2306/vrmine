@@ -1,4 +1,4 @@
-"""Generate ten metre-scale café props, GLB/FBX, a staged .blend and thumbnail.
+"""Generate ten metre-scale café props, GLB/FBX, a staged .blend and multi-angle renders.
 
 Run with Blender 4.2: blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
 """
@@ -213,8 +213,7 @@ def main():
     box((2.8, .06, 2.6), (0, .78, 1.27), floor)
     bpy.ops.object.camera_add(location=(3.2, -4.8, 3.1))
     camera = bpy.context.object
-    camera.rotation_euler = (Vector((0, 0, 1)) - camera.location).to_track_quat('-Z', 'Y').to_euler()
-    camera.data.type, camera.data.ortho_scale = 'ORTHO', 3.3
+    camera.data.type = 'ORTHO'
     scene.camera = camera
     for location, energy, size in [((1, -3, 4), 450, 4), ((-2, -1, 2), 180, 3)]:
         bpy.ops.object.light_add(type='AREA', location=location)
@@ -224,17 +223,36 @@ def main():
     scene.world = bpy.data.worlds.new('Cafe world')
     scene.world.use_nodes = True
     scene.world.node_tree.nodes['Background'].inputs[0].default_value = (.12, .12, .12, 1)
-    scene.render.engine = 'CYCLES'
-    scene.cycles.samples = 24
+    scene.render.engine = 'BLENDER_EEVEE_NEXT'
     scene.cycles.seed = 191
-    scene.render.resolution_x, scene.render.resolution_y = 1200, 1000
+    scene.render.resolution_x, scene.render.resolution_y = 600, 500
     scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = 'PNG'
-    scene.render.filepath = str(OUT / 'thumbnail.png')
+
+    views = {
+        'thumbnail.png': ((3.2, -4.8, 3.1), (0, 0, 1.0), 3.3),
+        'view-hero.png': ((3.2, -4.8, 3.1), (0, 0, 1.0), 3.3),
+        'view-front.png': ((0, -5.2, 1.7), (0, 0, 1.0), 3.0),
+        'view-rear.png': ((0, 5.2, 1.7), (0, 0, 1.0), 3.0),
+        'view-left.png': ((-5.2, 0, 1.7), (0, 0, 1.0), 3.0),
+        'view-right.png': ((5.2, 0, 1.7), (0, 0, 1.0), 3.0),
+        'view-top.png': ((0, -0.05, 6.5), (0, 0, .72), 3.1),
+    }
+    hero_location, hero_target, hero_scale = views['view-hero.png']
+    camera.location = hero_location
+    camera.rotation_euler = (Vector(hero_target) - camera.location).to_track_quat('-Z', 'Y').to_euler()
+    camera.data.ortho_scale = hero_scale
     bpy.ops.wm.save_as_mainfile(filepath=str(OUT / 'retro-cafe.blend'))
-    bpy.ops.render.render(write_still=True)
+
+    for filename, (location, target, ortho_scale) in views.items():
+        camera.location = location
+        camera.rotation_euler = (Vector(target) - camera.location).to_track_quat('-Z', 'Y').to_euler()
+        camera.data.ortho_scale = ortho_scale
+        scene.render.filepath = str(OUT / filename)
+        bpy.ops.render.render(write_still=True)
+
     files = [f'{name}.{ext}' for name in NAMES for ext in ('glb', 'fbx')]
-    files += ['retro-cafe.blend', 'thumbnail.png']
+    files += ['retro-cafe.blend', *views.keys()]
     manifest = {'blender': bpy.app.version_string, 'units': 'metres', 'models': records,
                 'unity_import': 'UNVERIFIED', 'vrchat_runtime': 'UNVERIFIED',
                 'sha256': {name: hashlib.sha256((OUT / name).read_bytes()).hexdigest() for name in files}}

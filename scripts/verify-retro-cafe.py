@@ -1,4 +1,4 @@
-"""Verify actual exports by reimporting GLB and FBX into Blender, not source matching."""
+"""Verify exported files and that all review viewpoints are real nonblank renders."""
 import hashlib
 import json
 import math
@@ -50,11 +50,22 @@ def main():
     require(bpy.context.scene.camera is not None, 'Example scene missing camera')
     require(all(record['name'] in bpy.context.scene.objects for record in manifest['models']),
             'Example scene missing models')
-    image = bpy.data.images.load(str(OUT / 'thumbnail.png'))
-    require(tuple(image.size) == (1200, 1000), 'Thumbnail dimensions')
-    pixels = list(image.pixels)[::4]
-    require(max(pixels) - min(pixels) > .1, 'Thumbnail is blank')
-    print('PASS: 10 GLB + 10 FBX reimports, metre bounds, origin, materials, UV, geometry, scene, thumbnail')
+    review_images = [
+        'thumbnail.png',
+        'view-hero.png',
+        'view-front.png',
+        'view-rear.png',
+        'view-left.png',
+        'view-right.png',
+        'view-top.png',
+    ]
+    for filename in review_images:
+        image = bpy.data.images.load(str(OUT / filename), check_existing=False)
+        require(tuple(image.size) == (600, 500), f'Render dimensions: {filename}')
+        pixels = list(image.pixels)[::4]
+        require(max(pixels) - min(pixels) > .1, f'Render is blank: {filename}')
+        bpy.data.images.remove(image)
+    print('PASS: 10 GLB + 10 FBX reimports, metre bounds, origin, materials, UV, geometry, scene, 6 review viewpoints')
 
 
 if __name__ == '__main__':
