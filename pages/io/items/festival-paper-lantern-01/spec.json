@@ -1,0 +1,48 @@
+{
+  "id": "festival-paper-lantern-01",
+  "family": "Seasonal",
+  "display_name": "Simple Festival Paper Lantern",
+  "dimensions_m": [0.32, 0.32, 0.40],
+  "parts": [
+    {"component": "cylinder", "name": "paper_body", "radius": 0.14, "height": 0.26, "position": [0.0, 0.0, 0.20], "material": "warm_paper", "vertices": 48},
+    {"component": "cylinder", "name": "top_ring", "radius": 0.155, "height": 0.025, "position": [0.0, 0.0, 0.3425], "material": "dark_frame", "vertices": 48},
+    {"component": "cylinder", "name": "bottom_ring", "radius": 0.155, "height": 0.025, "position": [0.0, 0.0, 0.0575], "material": "dark_frame", "vertices": 48},
+    {"component": "box", "name": "front_rib", "size": [0.018, 0.018, 0.26], "position": [0.0, -0.142, 0.20], "rotation_deg": [0, 0, 0], "material": "dark_frame"},
+    {"component": "box", "name": "rear_rib", "size": [0.018, 0.018, 0.26], "position": [0.0, 0.142, 0.20], "rotation_deg": [0, 0, 0], "material": "dark_frame"},
+    {"component": "box", "name": "left_rib", "size": [0.018, 0.018, 0.26], "position": [-0.142, 0.0, 0.20], "rotation_deg": [0, 0, 0], "material": "dark_frame"},
+    {"component": "box", "name": "right_rib", "size": [0.018, 0.018, 0.26], "position": [0.142, 0.0, 0.20], "rotation_deg": [0, 0, 0], "material": "dark_frame"},
+    {"component": "box", "name": "hanger_left", "size": [0.018, 0.018, 0.10], "position": [-0.09, 0.0, 0.39], "rotation_deg": [0, 0, 0], "material": "dark_frame"},
+    {"component": "box", "name": "hanger_right", "size": [0.018, 0.018, 0.10], "position": [0.09, 0.0, 0.39], "rotation_deg": [0, 0, 0], "material": "dark_frame"},
+    {"component": "box", "name": "hanger_top", "size": [0.198, 0.018, 0.018], "position": [0.0, 0.0, 0.44], "rotation_deg": [0, 0, 0], "material": "dark_frame"}
+  ],
+  "materials": {
+    "warm_paper": {"base_color": [0.82, 0.24, 0.12], "roughness": 0.82, "metallic": 0.0},
+    "dark_frame": {"base_color": [0.055, 0.045, 0.035], "roughness": 0.56, "metallic": 0.28}
+  },
+  "variants": [
+    {"id": "ivory-black", "planned": true},
+    {"id": "indigo-black", "planned": true},
+    {"id": "festival-three-color-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 700},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded lantern geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH Lantern [VRChat] is listed at JPY 400 and includes a world-oriented FBX/prefab package, crawled 2026-09-05",
+      "BOOTH Full Moon Lantern [VRChat] is listed at JPY 400 with three color variants, crawled 2026-09-05",
+      "BOOTH fantasy lantern eight-model pack is distributed free for VRChat/Unity, showing active lantern category supply, crawled 2026-09-05",
+      "Issue #200 Seasonal mini packs family; color variants can reuse one generator and bundle cleanly"
+    ],
+    "expected_production_minutes": 6,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
