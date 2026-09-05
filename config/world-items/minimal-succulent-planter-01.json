@@ -1,0 +1,54 @@
+{
+  "id": "minimal-succulent-planter-01",
+  "family": "Plants / Planters",
+  "display_name": "Minimal Succulent Planter",
+  "dimensions_m": [0.32, 0.32, 0.38],
+  "parts": [
+    {"component": "cylinder", "name": "planter_body", "radius": 0.12, "height": 0.16, "position": [0.0, 0.0, 0.08], "material": "warm_ceramic"},
+    {"component": "cylinder", "name": "soil_disc", "radius": 0.105, "height": 0.025, "position": [0.0, 0.0, 0.1675], "material": "dark_soil"},
+    {"component": "cylinder", "name": "leaf_center", "radius": 0.034, "height": 0.18, "position": [0.0, 0.0, 0.27], "material": "succulent_green"},
+    {"component": "cylinder", "name": "leaf_front", "radius": 0.026, "height": 0.13, "position": [0.0, -0.055, 0.235], "material": "succulent_green_light"},
+    {"component": "cylinder", "name": "leaf_back", "radius": 0.026, "height": 0.14, "position": [0.0, 0.055, 0.24], "material": "succulent_green"},
+    {"component": "cylinder", "name": "leaf_left", "radius": 0.025, "height": 0.12, "position": [-0.055, 0.0, 0.23], "material": "succulent_green_light"},
+    {"component": "cylinder", "name": "leaf_right", "radius": 0.025, "height": 0.115, "position": [0.055, 0.0, 0.2275], "material": "succulent_green"},
+    {"component": "cylinder", "name": "leaf_front_left", "radius": 0.021, "height": 0.095, "position": [-0.042, -0.042, 0.215], "material": "succulent_green_light"},
+    {"component": "cylinder", "name": "leaf_back_right", "radius": 0.021, "height": 0.10, "position": [0.042, 0.042, 0.2175], "material": "succulent_green"}
+  ],
+  "materials": {
+    "warm_ceramic": {"base_color": [0.58, 0.39, 0.27], "roughness": 0.68, "metallic": 0.0},
+    "dark_soil": {"base_color": [0.08, 0.055, 0.035], "roughness": 0.95, "metallic": 0.0},
+    "succulent_green": {"base_color": [0.18, 0.42, 0.25], "roughness": 0.72, "metallic": 0.0},
+    "succulent_green_light": {"base_color": [0.28, 0.53, 0.32], "roughness": 0.72, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "white-pot", "planned": true},
+    {"id": "dark-pot", "planned": true},
+    {"id": "three-planter-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted plant assets, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH currently lists a three-piece VRChat houseplant set at JPY 200, showing low-price demand for indoor plant props",
+      "BOOTH currently lists a lightweight flower planter at JPY 100, showing small planter props as a viable low-price category",
+      "BOOTH currently lists a VRChat bonsai at JPY 300, supporting a broader decorative plant price range",
+      "Issue #200 prioritizes Plants / Planters and recommends reusing the pot while varying the plant; this SKU uses only the existing cylinder component"
+    ],
+    "source_urls": [
+      "https://booth.pm/ja/items/6440841",
+      "https://booth.pm/en/items/8436775",
+      "https://booth.pm/ko/items/8638321"
+    ],
+    "expected_production_minutes": 4,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
