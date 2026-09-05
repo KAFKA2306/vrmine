@@ -1,0 +1,45 @@
+{
+  "id": "minimal-wall-light-01",
+  "family": "Lighting",
+  "display_name": "Minimal Wall Light",
+  "dimensions_m": [0.28, 0.30, 0.42],
+  "parts": [
+    {"component": "box", "name": "wall_plate", "size": [0.18, 0.035, 0.30], "position": [0.0, 0.0, 0.21], "rotation_deg": [0, 0, 0], "material": "charcoal_metal"},
+    {"component": "box", "name": "arm", "size": [0.045, 0.18, 0.045], "position": [0.0, -0.105, 0.26], "rotation_deg": [0, 0, 0], "material": "warm_brass"},
+    {"component": "box", "name": "shade_front", "size": [0.28, 0.018, 0.18], "position": [0.0, -0.285, 0.315], "rotation_deg": [0, 0, 0], "material": "linen_shade"},
+    {"component": "box", "name": "shade_rear", "size": [0.28, 0.018, 0.18], "position": [0.0, -0.155, 0.315], "rotation_deg": [0, 0, 0], "material": "linen_shade"},
+    {"component": "box", "name": "shade_left", "size": [0.018, 0.13, 0.18], "position": [-0.131, -0.22, 0.315], "rotation_deg": [0, 0, 0], "material": "linen_shade"},
+    {"component": "box", "name": "shade_right", "size": [0.018, 0.13, 0.18], "position": [0.131, -0.22, 0.315], "rotation_deg": [0, 0, 0], "material": "linen_shade"},
+    {"component": "box", "name": "shade_top", "size": [0.28, 0.13, 0.018], "position": [0.0, -0.22, 0.396], "rotation_deg": [0, 0, 0], "material": "linen_shade"}
+  ],
+  "materials": {
+    "charcoal_metal": {"base_color": [0.055, 0.06, 0.065], "roughness": 0.30, "metallic": 0.78},
+    "warm_brass": {"base_color": [0.42, 0.24, 0.075], "roughness": 0.34, "metallic": 0.66},
+    "linen_shade": {"base_color": [0.78, 0.70, 0.54], "roughness": 0.76, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "cream-brass", "planned": true},
+    {"id": "black-white", "planned": true},
+    {"id": "narrow-hallway", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH Wall Light 2 - VRChat compatible is listed at JPY 500, crawled 2026-09-05",
+      "BOOTH VRChat-oriented four-model antique lighting set including wall-mounted lighting is listed at JPY 300, crawled 2026-09-05",
+      "Issue #200 S-priority Lighting family"
+    ],
+    "expected_production_minutes": 6,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
