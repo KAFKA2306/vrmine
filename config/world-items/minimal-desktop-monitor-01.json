@@ -1,0 +1,49 @@
+{
+  "id": "minimal-desktop-monitor-01",
+  "family": "Home / Office Basics",
+  "display_name": "Minimal Desktop Monitor",
+  "dimensions_m": [0.56, 0.20, 0.46],
+  "parts": [
+    {"component": "box", "name": "monitor_body", "size": [0.56, 0.045, 0.32], "position": [0.0, 0.0, 0.30], "material": "charcoal_shell"},
+    {"component": "box", "name": "screen_panel", "size": [0.515, 0.010, 0.278], "position": [0.0, -0.028, 0.305], "material": "screen_black"},
+    {"component": "box", "name": "lower_chin", "size": [0.20, 0.052, 0.028], "position": [0.0, 0.002, 0.151], "material": "charcoal_shell"},
+    {"component": "box", "name": "stand_neck", "size": [0.075, 0.055, 0.13], "position": [0.0, 0.02, 0.085], "material": "graphite_stand"},
+    {"component": "box", "name": "stand_base", "size": [0.30, 0.20, 0.025], "position": [0.0, 0.035, 0.0125], "material": "graphite_stand"}
+  ],
+  "materials": {
+    "charcoal_shell": {"base_color": [0.045, 0.05, 0.06], "roughness": 0.48, "metallic": 0.0},
+    "screen_black": {"base_color": [0.012, 0.020, 0.028], "roughness": 0.22, "metallic": 0.0},
+    "graphite_stand": {"base_color": [0.12, 0.13, 0.15], "roughness": 0.38, "metallic": 0.32}
+  },
+  "variants": [
+    {"id": "silver-stand", "planned": true},
+    {"id": "compact-24inch", "planned": true},
+    {"id": "dual-monitor-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, UI imagery, copyrighted screen content, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH currently lists Simple Monitor / モニター at JPY 100 with FBX, Blender and UnityPackage for VRChat use",
+      "BOOTH currently lists a movable frameless monitor for VRC at JPY 300 regular / JPY 500 boost",
+      "BOOTH currently lists a monitor + PC desk set at JPY 100, confirming monitor props as a reusable Home / Office world category",
+      "Issue #200 lists monitor under Home / Office Basics; this SKU uses only existing box components and can bundle with desk, clock, book stack, waste bin and future office props"
+    ],
+    "source_urls": [
+      "https://booth.pm/ko/items/6250223",
+      "https://booth.pm/zh-tw/items/3190701",
+      "https://booth.pm/en/items/7960122"
+    ],
+    "expected_production_minutes": 4,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
