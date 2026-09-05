@@ -1,0 +1,44 @@
+{
+  "id": "minimal-drum-floor-lamp-01",
+  "family": "Lighting",
+  "display_name": "Minimal Drum Floor Lamp",
+  "dimensions_m": [0.44, 0.44, 1.59],
+  "parts": [
+    {"component": "cylinder", "name": "base", "radius": 0.22, "height": 0.04, "position": [0.0, 0.0, 0.02], "material": "dark_metal", "vertices": 48},
+    {"component": "cylinder", "name": "stem", "radius": 0.025, "height": 1.30, "position": [0.0, 0.0, 0.69], "material": "dark_metal", "vertices": 32},
+    {"component": "cylinder", "name": "shade", "radius": 0.20, "height": 0.28, "position": [0.0, 0.0, 1.42], "material": "warm_fabric", "vertices": 48},
+    {"component": "cylinder", "name": "inner_light", "radius": 0.07, "height": 0.16, "position": [0.0, 0.0, 1.42], "material": "warm_light", "vertices": 32},
+    {"component": "cylinder", "name": "top_cap", "radius": 0.08, "height": 0.03, "position": [0.0, 0.0, 1.575], "material": "dark_metal", "vertices": 32}
+  ],
+  "materials": {
+    "dark_metal": {"base_color": [0.055, 0.06, 0.065], "roughness": 0.42, "metallic": 0.72},
+    "warm_fabric": {"base_color": [0.80, 0.72, 0.58], "roughness": 0.88, "metallic": 0.0},
+    "warm_light": {"base_color": [1.0, 0.72, 0.34], "roughness": 0.28, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "ivory-black", "planned": true},
+    {"id": "charcoal-brass", "planned": true},
+    {"id": "lighting-three-piece-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded lamp geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH VRChat floor lamp is distributed free with JPY 100 and JPY 500 support tiers, crawled 2026-09-06",
+      "BOOTH VRChat lamp with configured light is listed at JPY 300, crawled 2026-09-06",
+      "BOOTH VRChat lighting furniture PalmLight is listed at JPY 500, crawled 2026-09-06",
+      "Issue #200 Lighting is S priority; base, stem, shade and cap can reuse cylinder components and bundle with existing wall and pendant lights"
+    ],
+    "expected_production_minutes": 6,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
