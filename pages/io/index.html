@@ -1,19 +1,52 @@
 <!doctype html>
 <html lang="ja">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VRMine World Item Gallery</title>
-<style>:root{color-scheme:dark;background:#0d1117;color:#e6edf3;font-family:system-ui,sans-serif}body{margin:0}.wrap{max-width:1180px;margin:auto;padding:48px 24px}a{color:inherit}.eyebrow{color:#8b949e;text-transform:uppercase;letter-spacing:.12em;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:28px}.card{border:1px solid #30363d;border-radius:16px;overflow:hidden;background:#161b22;text-decoration:none}.card img{width:100%;aspect-ratio:1/1;object-fit:contain;display:block;background:#20262e}.meta{padding:16px}.meta h2{margin:0 0 7px;font-size:18px}.meta p{margin:0;color:#8b949e;font-size:13px}.error{padding:16px;border:1px solid #f85149;border-radius:12px;color:#ffb3ad}</style></head>
-<body><main class="wrap"><div class="eyebrow">VRMine / 3D World Item Factory</div><h1>World Item Gallery</h1><p>公開済みの3D製品を、実レンダリングから選んで多面Viewで確認できます。</p><section class="grid" id="grid"></section></main>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="VRMineの3Dワールドアイテムを実レンダリングから選べる公開ギャラリー。">
+<title>VRMine 3D World Items</title>
+<style>
+:root{color-scheme:dark;background:#0b0f14;color:#f0f4f8;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:#0b0f14}a{color:inherit}.wrap{max-width:1320px;margin:auto;padding:42px 22px 72px}
+.eyebrow{color:#8b949e;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700}
+h1{font-size:clamp(36px,7vw,76px);line-height:.95;letter-spacing:-.045em;margin:10px 0 14px;max-width:900px}
+.lead{margin:0;max-width:700px;color:#aeb8c4;font-size:16px;line-height:1.7}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:34px}
+.card{border:1px solid #252d38;border-radius:18px;overflow:hidden;background:#121821;text-decoration:none;transition:transform .16s ease,border-color .16s ease}
+.card:hover{transform:translateY(-2px);border-color:#4d6076}
+.card img{width:100%;aspect-ratio:1/1;object-fit:contain;display:block;background:#171e28}
+.meta{padding:15px 16px 17px}.meta h2{margin:0 0 7px;font-size:18px;letter-spacing:-.02em}
+.meta p{margin:0;color:#8994a1;font-size:13px;line-height:1.5}.error{padding:18px;border:1px solid #f85149;border-radius:12px;color:#ffb3ad}
+@media(max-width:600px){.wrap{padding:30px 14px 56px}.grid{grid-template-columns:1fr 1fr;gap:10px}.meta{padding:12px}.meta h2{font-size:15px}.meta p{font-size:12px}}
+@media(max-width:420px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="eyebrow">VRMine / 3D World Items</div>
+  <h1>World Item Gallery</h1>
+  <p class="lead">実際に生成・公開された3Dアイテムを、まず見た目から選べます。商品ページでは多面レンダリング、寸法、配布形式、検証状態を確認できます。</p>
+  <section class="grid" id="grid" aria-live="polite"></section>
+</main>
 <script>
 const grid=document.getElementById('grid');
-const title=id=>id.replace(/-01$/,'').split('-').map(x=>x[0].toUpperCase()+x.slice(1)).join(' ');
-const catalogUrl='https://api.github.com/repos/KAFKA2306/vrmine/contents/pages/io/items?ref=main';
-fetch(catalogUrl,{headers:{Accept:'application/vnd.github+json'}})
-  .then(response=>{if(!response.ok)throw new Error(`GitHub catalog request failed: HTTP ${response.status}`);return response.json();})
+const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const humanTitle=id=>id.replace(/-01$/,'').split('-').map(x=>x[0].toUpperCase()+x.slice(1)).join(' ');
+fetch('catalog.json',{cache:'no-store'})
+  .then(response=>{if(!response.ok)throw new Error(`catalog.json: HTTP ${response.status}`);return response.json();})
   .then(entries=>{
-    if(!Array.isArray(entries))throw new Error('GitHub catalog response is not a directory listing');
-    const items=entries.filter(entry=>entry.type==='dir').map(entry=>entry.name).sort();
-    if(!items.length)throw new Error('No published world-item directories found');
-    grid.innerHTML=items.map(id=>`<a class="card" href="view.html?item=${encodeURIComponent(id)}"><img src="items/${id}/view-hero.png" alt="${title(id)} hero render" loading="lazy"><div class="meta"><h2>${title(id)}</h2><p>${id} · Multi-angle view</p></div></a>`).join('');
+    if(!Array.isArray(entries)||!entries.length)throw new Error('公開商品がありません');
+    grid.innerHTML=entries.map(spec=>{
+      const id=String(spec.id||'');
+      if(!/^[a-z0-9-]+$/.test(id))return '';
+      const name=spec.display_name||spec.name||spec.title||humanTitle(id);
+      const family=spec.family||'3D World Item';
+      const formats=Array.isArray(spec.formats)?spec.formats.map(x=>String(x).toUpperCase()).join(' / '):'';
+      const detail=[family,formats].filter(Boolean).join(' · ');
+      return `<a class="card" href="view.html?item=${encodeURIComponent(id)}"><img src="items/${encodeURIComponent(id)}/view-hero.png" alt="${esc(name)} hero render" loading="lazy"><div class="meta"><h2>${esc(name)}</h2><p>${esc(detail)}</p></div></a>`;
+    }).join('');
+    if(!grid.children.length)throw new Error('有効な公開商品がありません');
   })
-  .catch(error=>{grid.innerHTML=`<p class="error">商品一覧を取得できません: ${error.message}</p>`;console.error(error);});
-</script></body></html>
+  .catch(error=>{grid.innerHTML=`<p class="error">商品一覧を取得できません: ${esc(error.message)}</p>`;console.error(error);});
+</script>
+</body>
+</html>
