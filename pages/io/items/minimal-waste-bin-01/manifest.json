@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "minimal-waste-bin-01",
   "source_spec": "config/world-items/minimal-waste-bin-01.json",
-  "spec_sha256": "ba2edddd40a484701cc25b02a217acc247eadf48c6dbed9821e63402efd91c9e",
+  "spec_sha256": "e7f6eaf0b235d36430c2c1e5a8db4d91325edd5c3b0295f179dd156dc72ec3a7",
   "blender": "4.2.0",
   "units": "metres",
   "dimensions_m_actual": [
@@ -21,15 +21,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-waste-bin-01.blend": "0abad8bb9cc64bdf485584334348312c05ebee0d7e4bc9a54a9fbdb8c31c58b0",
+    "minimal-waste-bin-01.blend": "4321e75b3067825600b9b52176f6cc4608ad8fe70f6425ca9e4b773401a6f746",
     "minimal-waste-bin-01.glb": "aef66989bf77fd0fae322a5fdcb64ac6791446aee9af096992144502d6d3ad10",
-    "minimal-waste-bin-01.fbx": "4c6361eb9b2372d9cdeb8a3d641270212e6cbd2664579f30012b2c7841e82a22",
-    "thumbnail.png": "418ba25363cde72b1841f5586ef012029761405b95237f4ff6c7f5d10d386b67",
-    "view-hero.png": "418ba25363cde72b1841f5586ef012029761405b95237f4ff6c7f5d10d386b67",
-    "view-front.png": "a06f54afb6feb6d07c3bb73d90d8232a739751bea457fcc4113996c4355539bc",
-    "view-rear.png": "d9b224e8207cb9a54d2f5be8c96a280f05d7f22571a88eda1e4594707e97d1b5",
-    "view-left.png": "3ae7a81f2d1cbbe033a1c3753ab2b234d69d05c0bbb942f2ed630a3fcfebb725",
-    "view-right.png": "0e45e790b94db47d8407480aa41c840faa51426f20f2b006dd737aa4160110c2",
-    "view-top.png": "478079effd1b2344cdb9ba630d80855859098b437c154387745c989da51f75dc"
+    "minimal-waste-bin-01.fbx": "0e6e5bb873c6fdcb5d7e4393ba08ff098fe8044d3077996f4f2cab412d7930f4",
+    "thumbnail.png": "3d4b157bf9291613309d60a293e5d95d370dedb29dfefc49ab0f58e8dcb55e1b",
+    "view-hero.png": "3d4b157bf9291613309d60a293e5d95d370dedb29dfefc49ab0f58e8dcb55e1b",
+    "view-front.png": "8e54daa115e4cb23a367da2f4f4030714332af7e32f68c0b03a6c48d02b13655",
+    "view-rear.png": "48d6c27d04bea46e09d3afc658209c92d5ba90888cdfb0e757e71bc665c474e2",
+    "view-left.png": "a3b3e89ebe49bd6e4cc18f3a44c1f4a633722b76b43677e8427cf2f7400240f0",
+    "view-right.png": "0f555fd64d94ca89238ec18b35e59bbfe12ab98df80dc178337dd3b5286f9cae",
+    "view-top.png": "8c642f8235df2cabcbbeee4927b3ecdde62c2321a98867614ef31f4c52350ec4"
   }
 }
