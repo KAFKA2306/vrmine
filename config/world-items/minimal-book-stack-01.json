@@ -2,7 +2,11 @@
   "id": "minimal-book-stack-01",
   "family": "Decorative Props",
   "display_name": "Minimal Book Stack",
-  "dimensions_m": [0.30, 0.22, 0.18],
+  "dimensions_m": [
+    0.30,
+    0.22,
+    0.18
+  ],
   "parts": [
     {"component": "box", "name": "book_bottom_cover_lower", "size": [0.30, 0.20, 0.012], "position": [0.0, 0.0, 0.006], "material": "muted_red"},
     {"component": "box", "name": "book_bottom_pages", "size": [0.28, 0.18, 0.038], "position": [0.0, 0.0, 0.031], "material": "warm_page"},
