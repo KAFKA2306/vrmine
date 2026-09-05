@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-drum-floor-lamp-01",
+  "source_spec": "config/world-items/minimal-drum-floor-lamp-01.json",
+  "spec_sha256": "390195ae26ee5688554ae7a2e3bccc4e090959d3417d322b8b4a3ee4a77e9f1b",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.4399999976158142,
+    0.4399999976158142,
+    1.590000033378601
+  ],
+  "triangles": 3052,
+  "parts_count": 5,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-drum-floor-lamp-01.blend": "f1948f58d2b7dcdb4c968878c75c570cb47254b5a32ac4dafeaddadcd931c99a",
+    "minimal-drum-floor-lamp-01.glb": "80c88b2ff84d64dcf4d3a057ed2785fe24bef95a2a1bc425eea20a052ca6858f",
+    "minimal-drum-floor-lamp-01.fbx": "54a19beb4b84804bad88c464eb6e4aa33bd403dff7a91c2b2e78e63b34cd44f4",
+    "thumbnail.png": "8f9a412129e5db4eb3d579ec2a87ece786ce80066bc0f10767f9ce89ea672212",
+    "view-hero.png": "8f9a412129e5db4eb3d579ec2a87ece786ce80066bc0f10767f9ce89ea672212",
+    "view-front.png": "58b1fdb5ab825ef478bb21e65d6761579a3f0ee10295000d61d26eebac538625",
+    "view-rear.png": "dd0b75036985e99d26c41eb81ed1ebed4c8a04b2e3ccda92e52eb598446ee1c8",
+    "view-left.png": "d052844c68890f0a1a6903d25dd09876635e32546fca14a41efec7b356d1999c",
+    "view-right.png": "5ff0f921533fc22b9bd0502850ae15039b71a4638bbe4cdf89ca0fd6bfbf47f3",
+    "view-top.png": "0c4214bd7d13e630466d4101b7c6930dd98be8826330ad9fa037b96b2698d4ad"
+  }
+}
