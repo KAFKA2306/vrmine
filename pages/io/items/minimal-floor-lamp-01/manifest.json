@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-floor-lamp-01",
+  "source_spec": "config/world-items/minimal-floor-lamp-01.json",
+  "spec_sha256": "23be994aecf9c3e00812bd9a932f16c344e7e3cb115a3414f2983b1f7117adc0",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.41999998688697815,
+    0.41999998688697815,
+    1.5999999046325684
+  ],
+  "triangles": 3308,
+  "parts_count": 5,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-floor-lamp-01.blend": "72589f6ac25eca18492835f7f29022e25166e1d9f08d588b20c0f8456cc2f8b6",
+    "minimal-floor-lamp-01.glb": "eeb5bcdda46b1fa36d1aa22c8bb6cd702f836c63a3072ab087762a3979a4e539",
+    "minimal-floor-lamp-01.fbx": "a465c7d10a71be09da94f600b2137dfa200a59e96dcb156e79a2e1ba1b70685d",
+    "thumbnail.png": "b82fd2fffa6d3e3f33264d5d3c5d9f3a1d42927f75213748d63cf7f7e3d18c66",
+    "view-hero.png": "b82fd2fffa6d3e3f33264d5d3c5d9f3a1d42927f75213748d63cf7f7e3d18c66",
+    "view-front.png": "6097588729712ea8202dc18f0ebefe2f4665e52fe76023acd9a067c3c7e2b82d",
+    "view-rear.png": "e464fc0a502bb5c5649fdd71554e9e943242f91ecd185e144b8ba5e99fe4b862",
+    "view-left.png": "6731b336a59e7ad1d0577ac6c37c39e400580bdcf8d0c7ab379e710bc6799d2c",
+    "view-right.png": "27b1f30e3e8050ffa9273c05e0daaef87038e93e00891222c7f793511b1075a9",
+    "view-top.png": "e5ac2c015fdcd98d90d2161537e441038c538a18658f495ede14c20a842d0226"
+  }
+}
