@@ -91,8 +91,37 @@ jobs:
           echo "sku=$sku" >> "$GITHUB_OUTPUT"
           echo "issue_number=${issues[0]}" >> "$GITHUB_OUTPUT"
 
-      - name: Install official Blender 4.2.0
+      - name: Detect current exact-head product evidence
+        id: evidence
         if: steps.select.outputs.run == 'true'
+        env:
+          SPEC_PATH: ${{ steps.select.outputs.spec_path }}
+          SKU: ${{ steps.select.outputs.sku }}
+        run: |
+          set -euo pipefail
+          dest="pages/io/items/${SKU}"
+          input_digest="$(cat "$SPEC_PATH" scripts/world_item_factory.py scripts/verify_world_item.py | sha256sum | awk '{print $1}')"
+          echo "input_digest=$input_digest" >> "$GITHUB_OUTPUT"
+          echo "current=false" >> "$GITHUB_OUTPUT"
+
+          if [ -s "$dest/build-input.sha256" ] && [ "$(cat "$dest/build-input.sha256")" = "$input_digest" ]; then
+            for file in thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png "$SKU.blend" "$SKU.glb" "$SKU.fbx" manifest.json factory-metrics.json spec.json render.sha256; do
+              test -s "$dest/$file"
+            done
+            cmp -s "$SPEC_PATH" "$dest/spec.json"
+            test "$(jq -r .id "$dest/manifest.json")" = "$SKU"
+            test "$(jq -r .id "$dest/spec.json")" = "$SKU"
+            (cd "$dest" && sha256sum --check render.sha256)
+            test "$(head -c 7 "$dest/$SKU.blend")" = "BLENDER"
+            test "$(head -c 4 "$dest/$SKU.glb")" = "glTF"
+            render_sha="$(cd "$dest" && sha256sum thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png | sha256sum | awk '{print $1}')"
+            echo "render_sha256=$render_sha" >> "$GITHUB_OUTPUT"
+            echo "current=true" >> "$GITHUB_OUTPUT"
+            echo "Exact-head evidence is current; Blender regeneration is not required."
+          fi
+
+      - name: Install official Blender 4.2.0
+        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
         run: |
           set -euo pipefail
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
@@ -104,7 +133,7 @@ jobs:
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
       - name: Generate and verify canonical SKU
-        if: steps.select.outputs.run == 'true'
+        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
         env:
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
           SKU: ${{ steps.select.outputs.sku }}
@@ -125,7 +154,7 @@ jobs:
             > "$out/factory-metrics.json"
 
       - uses: actions/upload-artifact@v4
-        if: steps.select.outputs.run == 'true'
+        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
         with:
           name: world-item-${{ steps.select.outputs.sku }}-${{ steps.pr.outputs.head_sha }}
           path: .artifacts/world-items/${{ steps.select.outputs.sku }}/
@@ -141,8 +170,16 @@ jobs:
           HEAD_REF: ${{ steps.pr.outputs.head_ref }}
           SKU: ${{ steps.select.outputs.sku }}
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
+          CURRENT_EVIDENCE: ${{ steps.evidence.outputs.current }}
+          CURRENT_RENDER_SHA256: ${{ steps.evidence.outputs.render_sha256 }}
         run: |
           set -euo pipefail
+          if [ "$CURRENT_EVIDENCE" = "true" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "final_head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+            echo "render_sha256=$CURRENT_RENDER_SHA256" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           src=".artifacts/world-items/${SKU}"
           dest="pages/io/items/${SKU}"
           mkdir -p "$dest"
