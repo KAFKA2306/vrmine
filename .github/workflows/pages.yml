@@ -212,6 +212,10 @@ jobs:
           echo "sha256=$(sha256sum "${files[@]}" | sha256sum | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - name: Assemble Pages artifact
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          PNG_SHA256: ${{ steps.retro-cafe-review.outputs.sha256 }}
+          WEBP_SHA256: ${{ steps.retro-cafe-webp.outputs.sha256 }}
         run: |
           set -euo pipefail
           rm -rf _site
@@ -220,6 +224,13 @@ jobs:
           mkdir -p _site/3d/retro-cafe
           cp .artifacts/retro-cafe/*.png _site/3d/retro-cafe/
           cp .artifacts/retro-cafe/*.webp _site/3d/retro-cafe/
+          jq -n \
+            --arg source_sha "$SOURCE_SHA" \
+            --arg png_combined_sha256 "$PNG_SHA256" \
+            --arg webp_combined_sha256 "$WEBP_SHA256" \
+            '{source_sha: $source_sha, png_combined_sha256: $png_combined_sha256, webp_combined_sha256: $webp_combined_sha256}' \
+            > _site/3d/retro-cafe/render-manifest.json
+          test -s _site/3d/retro-cafe/render-manifest.json
           test ! -e _site/404.html
           touch _site/.nojekyll
 
@@ -406,6 +417,10 @@ jobs:
           curl --fail --silent --show-error --location "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
           curl --fail --silent --show-error --location "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
           curl --fail --silent --show-error --location "$base/3dgs/?smoke=${EXPECTED_SHA}" -o "$tmp/3dgs.html"
+          curl --fail --silent --show-error --location "$base/3d/retro-cafe/render-manifest.json?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-render-manifest.json"
+          test "$(jq -r '.source_sha' "$tmp/retro-cafe-render-manifest.json")" = "$EXPECTED_SHA"
+          test "$(jq -r '.png_combined_sha256' "$tmp/retro-cafe-render-manifest.json")" = "$EXPECTED_RETRO_CAFE_REVIEW_SHA256"
+          test "$(jq -r '.webp_combined_sha256' "$tmp/retro-cafe-render-manifest.json")" = "$EXPECTED_RETRO_CAFE_WEBP_SHA256"
           for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
             curl --fail --silent --show-error --location "$base/3d/retro-cafe/${image}.png?smoke=${EXPECTED_SHA}" -o "$tmp/${image}.png"
             curl --fail --silent --show-error --location "$base/3d/retro-cafe/${image}.webp?smoke=${EXPECTED_SHA}" -o "$tmp/${image}.webp"
