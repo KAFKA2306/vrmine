@@ -13,6 +13,8 @@ on:
       - "config/perspective-cage.json"
       - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
       - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
+      - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs"
+      - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs.meta"
       - "docs/QUALITY_GATES.md"
       - ".github/PULL_REQUEST_TEMPLATE.md"
       - "scripts/install-vrc-get.mjs"
@@ -21,6 +23,7 @@ on:
       - "scripts/verify-perspective-cage.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
+      - "scripts/run-retro-cafe-unity.mjs"
       - "Taskfile.yml"
       - "skills/**"
       - "agr.toml"
@@ -81,6 +84,7 @@ jobs:
         run: |
           node --check scripts/run-perspective-cage-unity.mjs
           node --check scripts/run-glb-consumer-unity.mjs
+          node --check scripts/run-retro-cafe-unity.mjs
 
       - name: Install pinned vrc-get
         run: node scripts/install-vrc-get.mjs
