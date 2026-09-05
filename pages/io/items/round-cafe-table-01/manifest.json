@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "round-cafe-table-01",
+  "source_spec": "config/world-items/round-cafe-table-01.json",
+  "spec_sha256": "76213a2ba08cf439f300f489c9bd6922cfc956ec2aea09509d0aa3a1a29b1e02",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.699999988079071,
+    0.699999988079071,
+    0.7400000095367432
+  ],
+  "triangles": 2292,
+  "parts_count": 3,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "round-cafe-table-01.blend": "d83d0ab8ab3476fae10ba21373f4c92209478d077a20fd70032599d39989ba1e",
+    "round-cafe-table-01.glb": "c380a362ec647b0d8bd29cdf9d127a717001438326235852fa8e58c057a21f2a",
+    "round-cafe-table-01.fbx": "4d8f2e51d06a515c239e28da305ef9d7ec73592814739a935255a78a5eb7728d",
+    "thumbnail.png": "bd73981856794afa9fffddaaf4335a4f697038975143c761e936e797a129afc9",
+    "view-hero.png": "bd73981856794afa9fffddaaf4335a4f697038975143c761e936e797a129afc9",
+    "view-front.png": "13881f05a7e23328f2748b944a82037286fdd311dc3673b77730af9a38bac1a0",
+    "view-rear.png": "333a80ed8527b10ff79620327040a0da2e825cb31a303e0785b524a94308a87e",
+    "view-left.png": "2b2c9662d70fd93e05c99a07fe8953d32e4d4b1333c046f926e5c21799b13259",
+    "view-right.png": "71179fe0701a64286bb823a2cc7647dd9ac9e55942343aebfa21b2c501fbb4d8",
+    "view-top.png": "0ee06f612701751b6375e07dfbf18164083fbe6f168ad66def6ad04b6f26f0cd"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "round-cafe-table-01",
+  "family": "Tables / Stools / Shelves",
+  "display_name": "Round Cafe Table",
+  "dimensions_m": [0.70, 0.70, 0.74],
+  "parts": [
+    {"component": "cylinder", "name": "tabletop", "radius": 0.35, "height": 0.04, "position": [0.0, 0.0, 0.72], "vertices": 64, "material": "warm_oak"},
+    {"component": "cylinder", "name": "pedestal", "radius": 0.04, "height": 0.66, "position": [0.0, 0.0, 0.37], "vertices": 32, "material": "charcoal_metal"},
+    {"component": "cylinder", "name": "base", "radius": 0.22, "height": 0.04, "position": [0.0, 0.0, 0.02], "vertices": 48, "material": "charcoal_metal"}
+  ],
+  "materials": {
+    "warm_oak": {"base_color": [0.50, 0.28, 0.12], "roughness": 0.48, "metallic": 0.0},
+    "charcoal_metal": {"base_color": [0.055, 0.06, 0.065], "roughness": 0.38, "metallic": 0.72}
+  },
+  "variants": [
+    {"id": "light-oak", "planned": true},
+    {"id": "black-top", "planned": true},
+    {"id": "table-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded furniture geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 gives Tables / Stools / Shelves S priority and identifies round table as an initial product example.",
+      "Current canonical catalog has side-table products but no round-cafe-table SKU, so this adds a distinct pedestal-table silhouette.",
+      "The product uses only the existing cylinder primitive and is directly bundleable with current cafe stools and lighting products."
+    ],
+    "expected_production_minutes": 6,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
