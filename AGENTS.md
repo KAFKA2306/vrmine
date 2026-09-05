@@ -82,7 +82,7 @@ For generated 3D/image assets, appearance is evidence for the user, not a merge 
 - If no owning Issue is linked, automation creates one rather than stopping the merge.
 - Missing U2-U5 runtime evidence remains `UNVERIFIED`; it is recorded, not used to hold generated work outside `main`.
 - If automation commits generated review files back to the PR branch, that commit is a new head: do not use `[skip ci]`, rerun technical checks on that exact head, and merge only when the expected head SHA still matches.
-- A merge performed with `GITHUB_TOKEN` must not assume a downstream push workflow will start. Explicitly dispatch the existing Pages workflow, bind the run to the merge SHA, and compare published render hashes with the generated evidence before claiming production PASS.
+- A merge performed with `GITHUB_TOKEN` must not assume a downstream push workflow will start. Explicitly dispatch the existing Pages workflow, bind the run and public render manifest to the merge SHA, and verify the published image hashes from that manifest before claiming production PASS.
 
 ## CI, Pages, and release
 
