@@ -162,11 +162,11 @@ jobs:
 
           root = Path(".artifacts/retro-cafe")
           stems = ("thumbnail", "view-hero", "view-front", "view-rear", "view-left", "view-right", "view-top")
+          scene = bpy.context.scene
+          scene.render.image_settings.file_format = "WEBP"
           for stem in stems:
               image = bpy.data.images.load(str(root / f"{stem}.png"), check_existing=False)
-              image.file_format = "WEBP"
-              image.filepath_raw = str(root / f"{stem}.webp")
-              image.save(quality=88)
+              image.save_render(filepath=str(root / f"{stem}.webp"), scene=scene, quality=88)
               bpy.data.images.remove(image)
           PY
           blender -b --python-exit-code 1 --python /tmp/retro-cafe-webp.py
