@@ -2,7 +2,7 @@
   "id": "minimal-tissue-box-01",
   "family": "Home / Office Basics",
   "display_name": "Minimal Tissue Box",
-  "dimensions_m": [0.24, 0.13, 0.09],
+  "dimensions_m": [0.24, 0.13, 0.17],
   "parts": [
     {"component": "box", "name": "body", "size": [0.24, 0.13, 0.075], "position": [0.0, 0.0, 0.0375], "material": "warm_wood"},
     {"component": "box", "name": "top_left", "size": [0.095, 0.13, 0.015], "position": [-0.0725, 0.0, 0.0825], "material": "warm_wood"},
