@@ -1,0 +1,55 @@
+{
+  "id": "wood-pallet-01",
+  "family": "Storage / Industrial",
+  "display_name": "Generic Wooden Pallet",
+  "dimensions_m": [1.2, 0.8, 0.144],
+  "parts": [
+    {"component": "box", "name": "deck_01", "size": [1.2, 0.13, 0.022], "position": [0.0, -0.33, 0.133], "rotation_deg": [0, 0, 0], "material": "wood_tan"},
+    {"component": "box", "name": "deck_02", "size": [1.2, 0.13, 0.022], "position": [0.0, -0.165, 0.133], "rotation_deg": [0, 0, 0], "material": "wood_tan"},
+    {"component": "box", "name": "deck_03", "size": [1.2, 0.13, 0.022], "position": [0.0, 0.0, 0.133], "rotation_deg": [0, 0, 0], "material": "wood_tan"},
+    {"component": "box", "name": "deck_04", "size": [1.2, 0.13, 0.022], "position": [0.0, 0.165, 0.133], "rotation_deg": [0, 0, 0], "material": "wood_tan"},
+    {"component": "box", "name": "deck_05", "size": [1.2, 0.13, 0.022], "position": [0.0, 0.33, 0.133], "rotation_deg": [0, 0, 0], "material": "wood_tan"},
+    {"component": "box", "name": "block_lf", "size": [0.10, 0.10, 0.09], "position": [-0.50, -0.32, 0.067], "rotation_deg": [0, 0, 0], "material": "wood_dark"},
+    {"component": "box", "name": "block_lc", "size": [0.10, 0.10, 0.09], "position": [-0.50, 0.0, 0.067], "rotation_deg": [0, 0, 0], "material": "wood_dark"},
+    {"component": "box", "name": "block_lr", "size": [0.10, 0.10, 0.09], "position": [-0.50, 0.32, 0.067], "rotation_deg": [0, 0, 0], "material": "wood_dark"},
+    {"component": "box", "name": "block_cf", "size": [0.10, 0.10, 0.09], "position": [0.0, -0.32, 0.067], "rotation_deg": [0, 0, 0], "material": "wood_dark"},
+    {"component": "box", "name": "block_cc", "size": [0.10, 0.10, 0.09], "position": [0.0, 0.0, 0.067], "rotation_deg": [0, 0, 0], "material": "wood_dark"},
+    {"component": "box", "name": "block_cr", "size": [0.10, 0.10, 0.09], "position": [0.0, 0.32, 0.067], "rotation_deg": [0, 0, 0], "material": "wood_dark"},
+    {"component": "box", "name": "block_rf", "size": [0.10, 0.10, 0.09], "position": [0.50, -0.32, 0.067], "rotation_deg": [0, 0, 0], "material": "wood_dark"},
+    {"component": "box", "name": "block_rc", "size": [0.10, 0.10, 0.09], "position": [0.50, 0.0, 0.067], "rotation_deg": [0, 0, 0], "material": "wood_dark"},
+    {"component": "box", "name": "block_rr", "size": [0.10, 0.10, 0.09], "position": [0.50, 0.32, 0.067], "rotation_deg": [0, 0, 0], "material": "wood_dark"},
+    {"component": "box", "name": "runner_left", "size": [0.10, 0.80, 0.022], "position": [-0.50, 0.0, 0.011], "rotation_deg": [0, 0, 0], "material": "wood_tan"},
+    {"component": "box", "name": "runner_center", "size": [0.10, 0.80, 0.022], "position": [0.0, 0.0, 0.011], "rotation_deg": [0, 0, 0], "material": "wood_tan"},
+    {"component": "box", "name": "runner_right", "size": [0.10, 0.80, 0.022], "position": [0.50, 0.0, 0.011], "rotation_deg": [0, 0, 0], "material": "wood_tan"}
+  ],
+  "materials": {
+    "wood_tan": {"base_color": [0.55, 0.32, 0.14], "roughness": 0.78, "metallic": 0.0},
+    "wood_dark": {"base_color": [0.32, 0.17, 0.07], "roughness": 0.84, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "natural", "planned": true},
+    {"id": "weathered", "planned": true},
+    {"id": "dark-stain", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded pallet geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH VRChat pallet-bed product at JPY 300 demonstrates pallet-form world usage",
+      "BOOTH backyard/warehouse prop set includes a wooden pallet among reusable VRChat world props",
+      "Issue #200 B-priority Storage / Industrial family",
+      "Existing factory box component can generate every part without a product-specific script"
+    ],
+    "expected_production_minutes": 8,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
