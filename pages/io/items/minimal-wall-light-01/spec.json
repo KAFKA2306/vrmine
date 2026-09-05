@@ -2,7 +2,7 @@
   "id": "minimal-wall-light-01",
   "family": "Lighting",
   "display_name": "Minimal Wall Light",
-  "dimensions_m": [0.28, 0.30, 0.42],
+  "dimensions_m": [0.28, 0.3115, 0.345],
   "parts": [
     {"component": "box", "name": "wall_plate", "size": [0.18, 0.035, 0.30], "position": [0.0, 0.0, 0.21], "rotation_deg": [0, 0, 0], "material": "charcoal_metal"},
     {"component": "box", "name": "arm", "size": [0.045, 0.18, 0.045], "position": [0.0, -0.105, 0.26], "rotation_deg": [0, 0, 0], "material": "warm_brass"},
