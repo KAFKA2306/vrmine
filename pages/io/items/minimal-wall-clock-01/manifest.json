@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-wall-clock-01",
+  "source_spec": "config/world-items/minimal-wall-clock-01.json",
+  "spec_sha256": "d958195fc6bb50ee4cbfcc1b1cdb1de729989590c639e3c22d515bd622c03322",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.3400000035762787,
+    0.04650000110268593,
+    0.3400000035762787
+  ],
+  "triangles": 2080,
+  "parts_count": 8,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-wall-clock-01.blend": "41c1d019ada5cbaf99ded58c6941272ff4e474d7c1c3d0a857acd2f98daacf36",
+    "minimal-wall-clock-01.glb": "ae322e3065b8b3443c9b7613c8f2a58b582991b8c5690849cd10a23365175d26",
+    "minimal-wall-clock-01.fbx": "abed3c5b66e755c71ca5684f9d6252cd66ef02e350951a3357e2d1ef30e8a15d",
+    "thumbnail.png": "d51caec098f5b50c8b7863a9bbf3c3e713e940e0e70f4cd05505b8a2883fd540",
+    "view-hero.png": "d51caec098f5b50c8b7863a9bbf3c3e713e940e0e70f4cd05505b8a2883fd540",
+    "view-front.png": "a55f52980552bf0ab3d7835c684841fc1d890b3497c075b3a37dc6b60e74305e",
+    "view-rear.png": "70859cf2b4202802881e29e80efa87f6a442be1dad4803efdde007bf3bf48b78",
+    "view-left.png": "bb415e729465f60d6ae93fb05764b399d6f9f66e34bddb81e869ed132ddffca2",
+    "view-right.png": "6bfe20ee6fface1e869d5e31edb2ef4567d25a55ac2847dbbfcc07be4d334ee4",
+    "view-top.png": "6f809578500645e08d40c320babc302e871a3338bcd6df2c4531bde38ba782b8"
+  }
+}
