@@ -1,36 +1,185 @@
-name: Retro Cafe generation
+name: Retro Cafe generation and automatic merge
 
 on:
   pull_request:
-    paths: ['scripts/*retro-cafe.py', '.github/workflows/retro-cafe.yml', 'Taskfile.yml']
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'scripts/*retro-cafe.py'
+      - '.github/workflows/retro-cafe.yml'
+      - 'Assets/KafkaMade/VRMine/RetroCafe/**'
+      - 'Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs'
+      - 'Taskfile.yml'
   push:
     branches: [main]
-    paths: ['scripts/*retro-cafe.py', '.github/workflows/retro-cafe.yml', 'Taskfile.yml']
+    paths:
+      - 'scripts/*retro-cafe.py'
+      - '.github/workflows/retro-cafe.yml'
+      - 'Assets/KafkaMade/VRMine/RetroCafe/**'
+      - 'Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs'
+      - 'Taskfile.yml'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
   generate:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
       - name: Install official Blender 4.2.0
         run: |
+          set -euo pipefail
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0.sha256
           grep ' blender-4.2.0-linux-x64.tar.xz$' blender-4.2.0.sha256 | sha256sum --check --strict
           tar -xf blender-4.2.0-linux-x64.tar.xz
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
-      - run: blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
-      - run: blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py
+
+      - name: Generate Retro Cafe assets and six review viewpoints
+        run: |
+          set -euo pipefail
+          blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
+          blender -b --python-exit-code 1 --python scripts/verify-retro-cafe.py
+          for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
+            test -s ".artifacts/retro-cafe/${image}.png"
+          done
+
       - uses: actions/upload-artifact@v4
         with:
           name: retro-cafe-${{ github.event.pull_request.head.sha || github.sha }}
           path: .artifacts/retro-cafe/
           if-no-files-found: error
           retention-days: 7
+
+      - name: Publish immutable review renders into the PR branch
+        if: github.event_name == 'pull_request'
+        id: publish
+        run: |
+          set -euo pipefail
+          mkdir -p pages/3d/retro-cafe/review
+          for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
+            cp ".artifacts/retro-cafe/${image}.png" "pages/3d/retro-cafe/review/${image}.png"
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pages/3d/retro-cafe/review
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: publish Retro Cafe review renders [skip ci]"
+            git push origin "HEAD:${GITHUB_HEAD_REF}"
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Attach rendered viewpoints to PR and owning Issue
+        if: github.event_name == 'pull_request'
+        id: attach
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REVIEW_SHA: ${{ steps.publish.outputs.sha }}
+        run: |
+          set -euo pipefail
+          base="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${REVIEW_SHA}/pages/3d/retro-cafe/review"
+          cat > /tmp/gallery.md <<EOF
+          <!-- retro-cafe-review:start -->
+          ## Rendered result: Retro Café
+
+          見た目はmerge判定ではありません。生成された実画像を多面からそのまま掲載します。
+
+          | Hero | Front | Rear |
+          | --- | --- | --- |
+          | ![Hero](${base}/view-hero.png) | ![Front](${base}/view-front.png) | ![Rear](${base}/view-rear.png) |
+          | Left | Right | Top |
+          | ![Left](${base}/view-left.png) | ![Right](${base}/view-right.png) | ![Top](${base}/view-top.png) |
+
+          Direct image root: ${base}/
+          <!-- retro-cafe-review:end -->
+          EOF
+
+          pr_body="$(gh pr view "$PR_NUMBER" --json body -q '.body // ""')"
+          issue_number="$(printf '%s\n' "$pr_body" | grep -oE '#[0-9]+' | head -n 1 | tr -d '#' || true)"
+          if [ -z "$issue_number" ]; then
+            issue_url="$(gh issue create --title "Generated review for PR #${PR_NUMBER}" --body "Automatic tracking Issue for generated-asset PR #${PR_NUMBER}.")"
+            issue_number="${issue_url##*/}"
+          fi
+          echo "issue_number=${issue_number}" >> "$GITHUB_OUTPUT"
+
+          printf '%s\n' "$pr_body" | sed '/<!-- retro-cafe-review:start -->/,$d' > /tmp/pr-base.md
+          { cat /tmp/pr-base.md; printf '\n'; cat /tmp/gallery.md; } > /tmp/pr-body.md
+          gh pr edit "$PR_NUMBER" --body-file /tmp/pr-body.md
+
+          issue_body="$(gh issue view "$issue_number" --json body -q '.body // ""')"
+          printf '%s\n' "$issue_body" | sed '/<!-- retro-cafe-review:start -->/,$d' > /tmp/issue-base.md
+          { cat /tmp/issue-base.md; printf '\n'; cat /tmp/gallery.md; } > /tmp/issue-body.md
+          gh issue edit "$issue_number" --body-file /tmp/issue-body.md
+
+          gh pr comment "$PR_NUMBER" --body-file /tmp/gallery.md
+          gh issue comment "$issue_number" --body-file /tmp/gallery.md
+
+      - name: Merge generated work mechanically
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          gh pr ready "$PR_NUMBER" || true
+          gh pr merge "$PR_NUMBER" --merge
+
+      - name: Verify public multi-angle renders after merge
+        if: github.event_name == 'pull_request'
+        id: production
+        run: |
+          set -euo pipefail
+          base="https://kafka2306.github.io/vrmine/3d/retro-cafe"
+          tmp="$(mktemp -d)"
+          ready=false
+          for attempt in $(seq 1 60); do
+            ok=true
+            for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
+              if ! curl --fail --silent --show-error --location "${base}/${image}.png?run=${GITHUB_RUN_ID}-${attempt}" -o "${tmp}/${image}.png"; then
+                ok=false
+                break
+              fi
+              if [ "$(file --mime-type -b "${tmp}/${image}.png")" != "image/png" ]; then
+                ok=false
+                break
+              fi
+            done
+            if [ "$ok" = true ]; then
+              ready=true
+              break
+            fi
+            sleep 10
+          done
+          test "$ready" = true
+          echo "base=${base}" >> "$GITHUB_OUTPUT"
+
+      - name: Post stable production gallery
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          ISSUE_NUMBER: ${{ steps.attach.outputs.issue_number }}
+          BASE: ${{ steps.production.outputs.base }}
+        run: |
+          set -euo pipefail
+          cat > /tmp/production-gallery.md <<EOF
+          ## Production rendered result
+
+          | Hero | Front | Rear |
+          | --- | --- | --- |
+          | ![Hero](${BASE}/view-hero.png) | ![Front](${BASE}/view-front.png) | ![Rear](${BASE}/view-rear.png) |
+          | Left | Right | Top |
+          | ![Left](${BASE}/view-left.png) | ![Right](${BASE}/view-right.png) | ![Top](${BASE}/view-top.png) |
+          EOF
+          gh pr comment "$PR_NUMBER" --body-file /tmp/production-gallery.md
+          gh issue comment "$ISSUE_NUMBER" --body-file /tmp/production-gallery.md
