@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Open Frame Shelf · VRMine</title>
-  <style>:root{color-scheme:dark;background:#0d1117;color:#e6edf3;font-family:system-ui,sans-serif}body{margin:0}.wrap{max-width:1120px;margin:auto;padding:32px 24px 64px}a{color:#79c0ff}.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(260px,.7fr);gap:28px;align-items:start}.hero img,.gallery img{width:100%;display:block;border-radius:14px;background:#20262e}.panel{border:1px solid #30363d;border-radius:14px;padding:22px;background:#161b22}.muted{color:#8b949e}.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}.downloads{display:flex;gap:10px;flex-wrap:wrap}.downloads a{border:1px solid #30363d;border-radius:9px;padding:9px 12px;text-decoration:none}@media(max-width:760px){.hero{grid-template-columns:1fr}.gallery{grid-template-columns:1fr 1fr}}</style>
+  <style>:root{color-scheme:dark;background:#0d1117;color:#e6edf3;font-family:system-ui,sans-serif}body{margin:0}.wrap{max-width:1120px;margin:auto;padding:32px 24px 64px}a{color:#79c0ff}.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(260px,.7fr);gap:28px;align-items:start}.hero img,.gallery img{width:100%;display:block;border-radius:14px;background:#20262e}.panel{border:1px solid #30363d;border-radius:14px;padding:22px;background:#161b22}.muted{color:#8b949e}.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}.downloads{display:flex;gap:10px;flex-wrap:wrap}.downloads a,.downloads button{border:1px solid #30363d;border-radius:9px;padding:9px 12px;text-decoration:none;background:#21262d;color:#e6edf3;font:inherit;cursor:pointer}.downloads button:disabled{opacity:.55;cursor:wait}.package-status{min-height:1.4em;margin-top:10px;font-size:.9rem}.notice{margin-top:14px;padding:12px;border-radius:9px;background:#21262d}@media(max-width:760px){.hero{grid-template-columns:1fr}.gallery{grid-template-columns:1fr 1fr}}</style>
+  <script defer src="../../package.js"></script>
 </head>
 <body><main class="wrap">
   <p><a href="../../">← World Item Gallery</a></p>
@@ -14,7 +15,12 @@
       <p>Generic original design. 4段の木製棚板と細い金属フレームを共通primitiveから決定論的に生成します。</p>
       <p><strong>0.75 × 0.32 × 1.20 m</strong><br>Price hypothesis: <strong>¥300</strong></p>
       <p>Unity: UNVERIFIED<br>VRChat: UNVERIFIED<br>BOOTH: UNVERIFIED</p>
-      <div class="downloads"><a href="open-frame-shelf-01.glb">GLB</a><a href="open-frame-shelf-01.fbx">FBX</a><a href="open-frame-shelf-01.blend">BLEND</a><a href="manifest.json">Manifest</a><a href="spec.json">Spec</a></div>
+      <div class="notice"><strong>利用条件: DRAFT</strong><br>形状・素材値はKAFKA2306/vrmineのオリジナルですが、BOOTH向け利用条件は未確定です。商用利用可能とはまだ確認していません。</div>
+      <h2>取得</h2>
+      <div class="downloads"><button type="button" data-package-download>3Dデータ一括取得（TAR）</button><a href="open-frame-shelf-01.glb">GLB</a><a href="open-frame-shelf-01.fbx">FBX</a><a href="open-frame-shelf-01.blend">BLEND</a><a href="manifest.json">Manifest</a><a href="spec.json">Spec</a></div>
+      <p class="package-status muted" data-package-status>一括取得はBLEND / GLB / FBXの公開bytesをmanifestのSHA-256と照合してから、manifest・specと同じTARにまとめます。</p>
+      <h2>導入</h2>
+      <p>BlenderはBLEND、UnityはFBX、その他の3DツールはGLBを入口にします。Unity Editor / VRChat runtimeでの動作はまだ未確認です。</p>
     </div>
   </section>
   <section class="gallery">
