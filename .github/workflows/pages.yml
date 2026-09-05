@@ -102,6 +102,8 @@ jobs:
             pages/events/demo/config.json
             pages/events/question-packs/demo.json
             pages/organizers/index.html
+            pages/io/index.html
+            pages/io/view.html
             pages/3d/retro-cafe/pendant-light/index.html
             pages/service-worker.js
           )
@@ -130,6 +132,10 @@ jobs:
           grep -F 'VRMine Event Demo' pages/events/demo/config.json
           grep -F 'analytics_endpoint' pages/events/demo/config.json
           grep -F '5,000〜15,000円 / event' pages/organizers/index.html
+          grep -F "fetch('catalog.json'" pages/io/index.html
+          grep -F 'spec.display_name' pages/io/view.html
+          grep -F 'spec.dimensions_m' pages/io/view.html
+          grep -F 'price_hypothesis' pages/io/view.html
           grep -F 'Retro Cafe Pendant Light' pages/3d/retro-cafe/pendant-light/index.html
           grep -F './3d/retro-cafe/view-hero.webp' pages/index.html
           grep -F '../view-hero.webp' pages/3d/retro-cafe/pendant-light/index.html
@@ -220,6 +226,24 @@ jobs:
           set -euo pipefail
           rm -rf _site
           cp -R pages _site
+          jq -s '
+            [.[]
+              | {
+                  id,
+                  display_name,
+                  family,
+                  dimensions_m,
+                  formats,
+                  license,
+                  unity_status,
+                  vrchat_status,
+                  booth_status,
+                  price_hypothesis
+                }]
+            | sort_by(.display_name // .id)
+          ' pages/io/items/*/spec.json > _site/io/catalog.json
+          test -s _site/io/catalog.json
+          jq -e 'length > 0 and all(.[]; (.id | type == "string") and (.id | length > 0))' _site/io/catalog.json >/dev/null
           cp config/gaussian-splats.json _site/3dgs/gaussian-splats.json
           mkdir -p _site/3d/retro-cafe
           cp .artifacts/retro-cafe/*.png _site/3d/retro-cafe/
@@ -432,6 +456,10 @@ jobs:
           curl --fail --silent --show-error --location "$base/3dgs/viewer/index.js?smoke=${EXPECTED_SHA}" -o "$tmp/viewer.js"
           curl --fail --silent --show-error --location "$base/events/demo/?smoke=${EXPECTED_SHA}" -o "$tmp/event.html"
           curl --fail --silent --show-error --location "$base/organizers/?smoke=${EXPECTED_SHA}" -o "$tmp/organizers.html"
+          curl --fail --silent --show-error --location "$base/io/?smoke=${EXPECTED_SHA}" -o "$tmp/io.html"
+          curl --fail --silent --show-error --location "$base/io/catalog.json?smoke=${EXPECTED_SHA}" -o "$tmp/io-catalog.json"
+          curl --fail --silent --show-error --location "$base/io/view.html?item=minimal-book-stack-01&smoke=${EXPECTED_SHA}" -o "$tmp/io-view.html"
+          curl --fail --silent --show-error --location "$base/io/items/minimal-book-stack-01/spec.json?smoke=${EXPECTED_SHA}" -o "$tmp/io-book-spec.json"
           curl --fail --silent --show-error --location "$base/games/answer-impostor/engine.mjs?smoke=${EXPECTED_SHA}" -o "$tmp/engine.mjs"
           curl --fail --silent --show-error --location "$base/games/abyss-invasion/tracker.js?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.js"
           grep -F 'vrmine-game-hub-v4' "$tmp/service-worker.js"
@@ -441,6 +469,10 @@ jobs:
           grep -F 'gallery.js' "$tmp/3dgs.html"
           grep -F 'Retro Cafe Pendant Light' "$tmp/retro-cafe-pendant.html"
           grep -F '../view-hero.webp' "$tmp/retro-cafe-pendant.html"
+          grep -F "fetch('catalog.json'" "$tmp/io.html"
+          grep -F 'spec.display_name' "$tmp/io-view.html"
+          jq -e 'any(.[]; .id == "minimal-book-stack-01" and .display_name == "Minimal Book Stack")' "$tmp/io-catalog.json" >/dev/null
+          jq -e '.display_name == "Minimal Book Stack" and .dimensions_m == [0.30,0.22,0.18]' "$tmp/io-book-spec.json" >/dev/null
           for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
             test "$(file --mime-type -b "$tmp/${image}.png")" = "image/png"
             test "$(file --mime-type -b "$tmp/${image}.webp")" = "image/webp"
