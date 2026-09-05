@@ -2,7 +2,7 @@
   "id": "outdoor-ac-unit-01",
   "family": "Japanese Street",
   "display_name": "Generic Outdoor AC Unit",
-  "dimensions_m": [0.82, 0.316, 0.64],
+  "dimensions_m": [0.82, 0.322, 0.64],
   "parts": [
     {"component": "box", "name": "main_body", "size": [0.82, 0.30, 0.56], "position": [0.0, 0.0, 0.36], "rotation_deg": [0, 0, 0], "material": "painted_metal"},
     {"component": "box", "name": "left_foot", "size": [0.16, 0.22, 0.06], "position": [-0.26, 0.0, 0.03], "rotation_deg": [0, 0, 0], "material": "dark_rubber"},

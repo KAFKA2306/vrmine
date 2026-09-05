@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "outdoor-ac-unit-01",
   "source_spec": "config/world-items/outdoor-ac-unit-01.json",
-  "spec_sha256": "03c99d72d1732be63e7c4f0e4f3ae644c78804b4e167c8d16450658bc158b4e1",
+  "spec_sha256": "8f951a24ffa6f4788af2a77caf780414d8acc1f24a909b04ab3dd5e7b627fa45",
   "blender": "4.2.0",
   "units": "metres",
   "dimensions_m_actual": [
@@ -21,15 +21,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "outdoor-ac-unit-01.blend": "9aba7937f471c8802545e3f7231fdb2f6c817f3094cd1f963bb4bea27d3d776d",
+    "outdoor-ac-unit-01.blend": "39dc47b00d7fd6c507510ece24dba02786429d898e9fdd75a8b303cae57d4c48",
     "outdoor-ac-unit-01.glb": "bab505ae8406d82483baf0bbaae29591737f7f9701f8e0adf4774a1b8b77ccc4",
-    "outdoor-ac-unit-01.fbx": "ad9f611a9acbdf26127d46529980a430e12dcfbc63210ddc8e61711a4b9d1b34",
-    "thumbnail.png": "1671771a5e67b4c24fb3839512ee7f43a6e957913610d55d6a706faeb5570f1c",
-    "view-hero.png": "1671771a5e67b4c24fb3839512ee7f43a6e957913610d55d6a706faeb5570f1c",
-    "view-front.png": "eba55b4b70a1c1f7b82de86a9b56b1cdd4c02a3aac739b483bdfecda9ff2d8d9",
-    "view-rear.png": "827ca0a546034d80e3b0e1edefc2adab6f0521c11a23aecc8d5517846d986299",
-    "view-left.png": "cb7b116498e0309d251da2045396d6340713fb338b20e6a360e602dbc19ce3e0",
-    "view-right.png": "1c7c36fcda41c9d46a8478d323a97ee44bba2ba5e4cadd8c52e0aacae096c316",
-    "view-top.png": "7bf2d0bfc3e92def5b6cfa3a5b6edba8a3e64dd4ed9d6a8d67f6802f48898775"
+    "outdoor-ac-unit-01.fbx": "28e8917319984bd0af7d5389d95819248ed209ba8fb4fc79654d4c454185b150",
+    "thumbnail.png": "dda7ef5b0ae4f864a7e5866197f356ec5d1050cd23c96ea1df709d8182a0d3ca",
+    "view-hero.png": "dda7ef5b0ae4f864a7e5866197f356ec5d1050cd23c96ea1df709d8182a0d3ca",
+    "view-front.png": "1cfe54c891c5052a1286e9ae58292a5bae71e7a647d6ef088d28e3ae6ca63933",
+    "view-rear.png": "9dddf3a3f482d6793e8995c486ea42001ec37c66962b246e0089fd44e3f8c6f4",
+    "view-left.png": "3ecbb39468250a401cc9a34c429a1f3cb04c244d4389fe69d76b4f950581a7c8",
+    "view-right.png": "ebb974bc6e03e3460dc6858d081bb2d03261e33b39000f4bd2d4772d2c7852a5",
+    "view-top.png": "df35ca32f1c27f995dcfca2cf63ef98a8ea3a66bfa296306fd37253fe4cb162c"
   }
 }
