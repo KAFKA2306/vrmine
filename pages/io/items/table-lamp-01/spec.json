@@ -1,0 +1,46 @@
+{
+  "id": "table-lamp-01",
+  "family": "Lighting",
+  "display_name": "Compact Table Lamp",
+  "dimensions_m": [0.26, 0.26, 0.42],
+  "parts": [
+    {"component": "cylinder", "name": "base", "radius": 0.11, "height": 0.035, "position": [0.0, 0.0, 0.0175], "material": "charcoal_metal", "vertices": 48},
+    {"component": "cylinder", "name": "stem", "radius": 0.018, "height": 0.20, "position": [0.0, 0.0, 0.135], "material": "charcoal_metal", "vertices": 32},
+    {"component": "cylinder", "name": "lower_ring", "radius": 0.085, "height": 0.018, "position": [0.0, 0.0, 0.245], "material": "warm_brass", "vertices": 48},
+    {"component": "box", "name": "shade_front", "size": [0.26, 0.018, 0.17], "position": [0.0, -0.09, 0.325], "rotation_deg": [0, 0, 0], "material": "linen_shade"},
+    {"component": "box", "name": "shade_rear", "size": [0.26, 0.018, 0.17], "position": [0.0, 0.09, 0.325], "rotation_deg": [0, 0, 0], "material": "linen_shade"},
+    {"component": "box", "name": "shade_left", "size": [0.018, 0.18, 0.17], "position": [-0.121, 0.0, 0.325], "rotation_deg": [0, 0, 0], "material": "linen_shade"},
+    {"component": "box", "name": "shade_right", "size": [0.018, 0.18, 0.17], "position": [0.121, 0.0, 0.325], "rotation_deg": [0, 0, 0], "material": "linen_shade"},
+    {"component": "box", "name": "shade_top", "size": [0.26, 0.18, 0.018], "position": [0.0, 0.0, 0.401], "rotation_deg": [0, 0, 0], "material": "linen_shade"}
+  ],
+  "materials": {
+    "charcoal_metal": {"base_color": [0.055, 0.06, 0.065], "roughness": 0.30, "metallic": 0.78},
+    "warm_brass": {"base_color": [0.42, 0.24, 0.075], "roughness": 0.34, "metallic": 0.66},
+    "linen_shade": {"base_color": [0.77, 0.68, 0.50], "roughness": 0.76, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "cream-brass", "planned": true},
+    {"id": "black-white", "planned": true},
+    {"id": "tall-bedside", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_05": [
+      "BOOTH VRChat-oriented table lamp support edition at JPY 300, crawled 2026-09-05",
+      "BOOTH VRChat-oriented four-model antique lighting set at JPY 300, crawled 2026-09-05",
+      "Issue #200 S-priority Lighting family"
+    ],
+    "expected_production_minutes": 8,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
