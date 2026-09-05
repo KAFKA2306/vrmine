@@ -100,7 +100,8 @@ for (const requiredText of [
   'verify_only=false',
   'pulls/${PR_NUMBER}/merge',
   '-f sha="$FINAL_HEAD"',
-  'EXPECTED_REVIEW_SHA256',
+  'review.sha256',
+  'render-manifest.json',
   'retro-cafe-review-comment',
   'view-hero.png',
   'view-front.png',
@@ -122,7 +123,7 @@ for (const forbiddenText of [
 
 const pagesWorkflowPath = path.join(root, '.github', 'workflows', 'pages.yml');
 const pagesWorkflow = fs.readFileSync(pagesWorkflowPath, 'utf8');
-for (const requiredText of ['verify_only:', 'inputs.verify_only']) {
+for (const requiredText of ['verify_only:', 'inputs.verify_only', 'render-manifest.json', 'source_sha', 'png_combined_sha256']) {
   if (!pagesWorkflow.includes(requiredText)) fail(`Pages workflow is missing exact-head verification-only support: ${requiredText}`);
 }
 
