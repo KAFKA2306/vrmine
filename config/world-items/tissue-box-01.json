@@ -2,7 +2,7 @@
   "id": "tissue-box-01",
   "family": "Home / Office Basics",
   "display_name": "Compact Tissue Box",
-  "dimensions_m": [0.24, 0.13, 0.13],
+  "dimensions_m": [0.24, 0.13, 0.1855],
   "parts": [
     {"component": "box", "name": "body", "size": [0.24, 0.13, 0.085], "position": [0.0, 0.0, 0.0425], "rotation_deg": [0, 0, 0], "material": "warm_white"},
     {"component": "box", "name": "top", "size": [0.235, 0.125, 0.018], "position": [0.0, 0.0, 0.094], "rotation_deg": [0, 0, 0], "material": "warm_white"},
