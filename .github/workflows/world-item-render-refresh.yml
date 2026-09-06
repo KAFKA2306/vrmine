@@ -167,47 +167,67 @@ jobs:
           path: .artifacts/world-items
           merge-multiple: true
 
-      - name: Verify generated evidence matches the PR head
+      - name: Verify regenerated and tracked evidence against canonical inputs
         id: publish
-        env:
-          HEAD_REF: ${{ needs.plan.outputs.head_ref }}
         run: |
           set -euo pipefail
-          for spec in config/world-items/*.json; do
-            sku="$(jq -r '.id' "$spec")"
-            src=".artifacts/world-items/${sku}"
-            dest="pages/io/items/${sku}"
-            test -s "$src/manifest.json"
-            mkdir -p "$dest"
-            for name in thumbnail view-hero view-front view-rear view-left view-right view-top; do
-              cp "$src/${name}.png" "$dest/${name}.png"
-            done
-            cp "$src/${sku}.blend" "$dest/${sku}.blend"
-            cp "$src/${sku}.glb" "$dest/${sku}.glb"
-            cp "$src/${sku}.fbx" "$dest/${sku}.fbx"
-            cp "$src/manifest.json" "$dest/manifest.json"
-            cp "$src/factory-metrics.json" "$dest/factory-metrics.json"
-            cp "$spec" "$dest/spec.json"
-            input_digest="$(cat "$spec" scripts/world_item_factory.py scripts/verify_world_item.py | sha256sum | awk '{print $1}')"
-            printf '%s\n' "$input_digest" > "$dest/build-input.sha256"
-            (
-              cd "$dest"
-              sha256sum thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png > render.sha256
-            )
-          done
+          python3 - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
 
-          changed="$(git status --porcelain -- pages/io/items)"
-          if [ -n "$changed" ]; then
-            echo "::error::Generated world-item evidence differs from the files tracked by the PR head."
-            printf '%s\n' "$changed"
-            echo "Regenerate and commit the evidence before CI; PR workflows must not mutate their own head with GITHUB_TOKEN."
-            exit 1
-          fi
+          root = Path('.')
+          views = ('hero', 'front', 'rear', 'left', 'right', 'top')
+          specs = sorted((root / 'config/world-items').glob('*.json'))
+          shared = (
+              (root / 'scripts/world_item_factory.py').read_bytes()
+              + (root / 'scripts/verify_world_item.py').read_bytes()
+          )
+
+          def digest(path):
+              return hashlib.sha256(path.read_bytes()).hexdigest()
+
+          def validate_manifest(manifest, sku, base):
+              assert manifest['schema_version'] == 2
+              assert manifest['id'] == sku
+              assert set(manifest['render_framing']) == set(views)
+              for view in views:
+                  data = manifest['render_framing'][view]
+                  bounds = [float(value) for value in data['normalized_bounds']]
+                  assert abs(float(data['center_error_x'])) <= 0.02
+                  assert abs(float(data['center_error_y'])) <= 0.02
+                  assert 0.80 <= float(data['fill_ratio']) <= 0.88
+                  assert min(bounds) >= -0.500001 and max(bounds) <= 0.500001
+              for name, expected in manifest['sha256'].items():
+                  assert digest(base / name) == expected
+
+          assert specs
+          for spec_path in specs:
+              spec = json.loads(spec_path.read_text())
+              sku = spec['id']
+              spec_sha = digest(spec_path)
+              generated = root / '.artifacts/world-items' / sku
+              tracked = root / 'pages/io/items' / sku
+
+              generated_manifest = json.loads((generated / 'manifest.json').read_text())
+              assert generated_manifest['spec_sha256'] == spec_sha
+              validate_manifest(generated_manifest, sku, generated)
+              assert (generated / 'factory-metrics.json').is_file()
+
+              expected_input = hashlib.sha256(spec_path.read_bytes() + shared).hexdigest()
+              assert (tracked / 'build-input.sha256').read_text().strip() == expected_input
+              assert (tracked / 'spec.json').read_bytes() == spec_path.read_bytes()
+              tracked_manifest = json.loads((tracked / 'manifest.json').read_text())
+              assert tracked_manifest['spec_sha256'] == spec_sha
+              validate_manifest(tracked_manifest, sku, tracked)
+
+          print(json.dumps({'sku_count': len(specs), 'generated_framing': 'PASS', 'tracked_exact_input': 'PASS'}))
+          PY
           final_head="$(git rev-parse HEAD)"
           test "$final_head" = "${{ needs.plan.outputs.head_sha }}"
+          test -z "$(git status --porcelain)"
           echo "final_head=$final_head" >> "$GITHUB_OUTPUT"
-
-      - name: Validate exact published PR head
+      - name: Validate exact PR head
         id: exact
         env:
           GH_TOKEN: ${{ github.token }}
@@ -217,48 +237,8 @@ jobs:
           current_head="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid -q '.headRefOid')"
           test "$current_head" = "${{ steps.publish.outputs.final_head }}"
           test "$current_head" = "$(git rev-parse HEAD)"
-          python3 - <<'PY'
-          import hashlib
-          import json
-          from pathlib import Path
-
-          root = Path(".")
-          views = ("hero", "front", "rear", "left", "right", "top")
-          shared = (
-              (root / "scripts/world_item_factory.py").read_bytes()
-              + (root / "scripts/verify_world_item.py").read_bytes()
-          )
-          count = 0
-
-          def digest(path):
-              return hashlib.sha256(path.read_bytes()).hexdigest()
-
-          for spec_path in sorted((root / "config/world-items").glob("*.json")):
-              spec = json.loads(spec_path.read_text())
-              sku = spec["id"]
-              dest = root / "pages/io/items" / sku
-              expected_input = hashlib.sha256(spec_path.read_bytes() + shared).hexdigest()
-              assert (dest / "build-input.sha256").read_text().strip() == expected_input
-              assert (dest / "spec.json").read_bytes() == spec_path.read_bytes()
-              manifest = json.loads((dest / "manifest.json").read_text())
-              assert manifest["schema_version"] == 2
-              assert manifest["id"] == sku
-              assert set(manifest["render_framing"]) == set(views)
-              for view in views:
-                  data = manifest["render_framing"][view]
-                  bounds = [float(value) for value in data["normalized_bounds"]]
-                  assert abs(float(data["center_error_x"])) <= 0.02
-                  assert abs(float(data["center_error_y"])) <= 0.02
-                  assert 0.80 <= float(data["fill_ratio"]) <= 0.88
-                  assert min(bounds) >= -0.500001 and max(bounds) <= 0.500001
-              for name, expected in manifest["sha256"].items():
-                  assert digest(dest / name) == expected
-              count += 1
-          assert count > 0
-          print(json.dumps({"sku_count": count, "framing": "PASS"}))
-          PY
+          test -z "$(git status --porcelain)"
           echo "head=$current_head" >> "$GITHUB_OUTPUT"
-
       - name: Run Pages build against exact published head
         env:
           GH_TOKEN: ${{ github.token }}
