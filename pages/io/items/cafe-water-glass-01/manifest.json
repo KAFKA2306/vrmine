@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "cafe-water-glass-01",
+  "source_spec": "config/world-items/cafe-water-glass-01.json",
+  "spec_sha256": "0c7c28b68cd41f055d0401a1f8c55afe12ceddb12385147b12b498bb16530936",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.0820000022649765,
+    0.0820000022649765,
+    0.11800000071525574
+  ],
+  "triangles": 3060,
+  "parts_count": 3,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "cafe-water-glass-01.blend": "74993e28cd760b2684772399f84eb5049c5e263b0ff97d018a49b680a4213dc9",
+    "cafe-water-glass-01.glb": "f1cd3973077da892a68e418a15c4741612704577b3b706659b621a765128d3a4",
+    "cafe-water-glass-01.fbx": "9aeb291525b7e5bac1cf42e4f588f50db3738f0ad093432d33a061d59c255d90",
+    "thumbnail.png": "f211948a169199a6b5e4413a3334e55dcc2c1749892e555aa527c28a836decb2",
+    "view-hero.png": "f211948a169199a6b5e4413a3334e55dcc2c1749892e555aa527c28a836decb2",
+    "view-front.png": "5cbc4d2964c208a6291eb8ff5a2fb4152d83e9353de4b73ef94b629ed70466e4",
+    "view-rear.png": "a70475c9bbde88bc5b1fc6534d78c4e5cf1e5a4866e11478a571514bc803451a",
+    "view-left.png": "0c7aee1aefbd834bb1fbfc9a4d1e97021e545dddc8c56f7d3fa494abd895a10d",
+    "view-right.png": "34aad82005fdbc8828631cda57d5e878451ad5873803ed4a1739d8a3be1b1764",
+    "view-top.png": "d888e709c02bdab2209bd9ef9f1302f289099563e1e3e66949ae183cf9ba1bda"
+  }
+}
