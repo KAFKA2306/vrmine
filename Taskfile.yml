@@ -24,6 +24,7 @@ tasks:
     cmds:
       - node --test pages/games/answer-impostor/engine.test.mjs
       - node scripts/verify-quality-gates.mjs
+      - node scripts/verify-factory-timing.mjs
       - node scripts/verify-perspective-cage.mjs
       - node --check scripts/run-perspective-cage-unity.mjs
       - node --check scripts/run-glb-consumer-unity.mjs
