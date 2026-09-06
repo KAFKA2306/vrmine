@@ -27,76 +27,76 @@
   ],
   "render_framing": {
     "hero": {
-      "center_error_x": 7.199e-07,
-      "center_error_y": -7.944e-07,
-      "fill_ratio": 0.8399999603,
+      "center_error_x": -2.726e-07,
+      "center_error_y": 5.74e-08,
+      "fill_ratio": 0.8400000344,
       "normalized_bounds": [
-        -0.255534683,
-        0.2555361228,
-        -0.4200007746,
-        0.4199991857
+        -0.2116682333,
+        0.2116676881,
+        -0.4199999598,
+        0.4200000746
       ],
-      "ortho_scale": 0.6002402306
+      "ortho_scale": 0.5193310976
     },
     "front": {
       "center_error_x": 0.0,
-      "center_error_y": -1.149e-07,
-      "fill_ratio": 0.8399999931,
+      "center_error_y": 2.93e-08,
+      "fill_ratio": 0.8399999977,
       "normalized_bounds": [
-        -0.2119939167,
-        0.2119939167,
-        -0.4200001114,
-        0.4199998817
+        -0.2164020721,
+        0.2164020721,
+        -0.4199999695,
+        0.4200000281
       ],
-      "ortho_scale": 0.5188828111
+      "ortho_scale": 0.5083130598
     },
     "rear": {
-      "center_error_x": 8.041e-07,
-      "center_error_y": -1.149e-07,
-      "fill_ratio": 0.8399999931,
+      "center_error_x": 0.0,
+      "center_error_y": 2.93e-08,
+      "fill_ratio": 0.8399999977,
       "normalized_bounds": [
-        -0.21199317,
-        0.2119947782,
-        -0.4200001114,
-        0.4199998817
+        -0.2164020867,
+        0.2164020867,
+        -0.4199999695,
+        0.4200000281
       ],
-      "ortho_scale": 0.5188828111
+      "ortho_scale": 0.5083130598
     },
     "left": {
-      "center_error_x": -2.226e-07,
-      "center_error_y": -1.0338e-06,
-      "fill_ratio": 0.8399999931,
+      "center_error_x": 0.0,
+      "center_error_y": -8.79e-08,
+      "fill_ratio": 0.8400000375,
       "normalized_bounds": [
-        -0.2119941895,
-        0.2119937443,
-        -0.4200010304,
-        0.4199989627
+        -0.2164021268,
+        0.2164021268,
+        -0.4200001067,
+        0.4199999308
       ],
-      "ortho_scale": 0.5188828111
+      "ortho_scale": 0.5083130002
     },
     "right": {
-      "center_error_x": 2.226e-07,
-      "center_error_y": -1.0338e-06,
-      "fill_ratio": 0.8399999931,
+      "center_error_x": 0.0,
+      "center_error_y": -8.79e-08,
+      "fill_ratio": 0.8400000375,
       "normalized_bounds": [
-        -0.2119937443,
-        0.2119941895,
-        -0.4200010304,
-        0.4199989627
+        -0.2164021268,
+        0.2164021268,
+        -0.4200001067,
+        0.4199999308
       ],
-      "ortho_scale": 0.5188828111
+      "ortho_scale": 0.5083130002
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -0.0002517991,
-      "fill_ratio": 0.8399999943,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8400000409,
       "normalized_bounds": [
-        -0.4184309184,
-        0.4184309184,
-        -0.4202517963,
-        0.4197481981
+        -0.41918765,
+        0.41918765,
+        -0.4200000204,
+        0.4200000204
       ],
-      "ortho_scale": 0.2628868818
+      "ortho_scale": 0.2624123096
     }
   },
   "triangles": 2800,
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-ceramic-vase-01.blend": "5356a3139f60bce75f9e807e8540efa9398494d6b04a52e1830216d986f7403b",
+    "minimal-ceramic-vase-01.blend": "61cab8456456f79720f40a2b1adccb29e05c034ce5e8736ec483e31f5bcf1340",
     "minimal-ceramic-vase-01.glb": "30959c7e79b081022b5ee0040d1138038028ce9c877f571a0944bea05ff83375",
-    "minimal-ceramic-vase-01.fbx": "50fb32702d7e10f1b0f74e651700fb724457ac24abd16becc2bf728ba702b119",
-    "thumbnail.png": "c2ea6372fb54a116cfe4f820f779ce03d96b0392047fa109c1c663152e6e7fcd",
-    "view-hero.png": "c2ea6372fb54a116cfe4f820f779ce03d96b0392047fa109c1c663152e6e7fcd",
-    "view-front.png": "b6cebfe88ba603511970cd190a8f1255965a3c76dc9813fb36957388dc701bc8",
-    "view-rear.png": "6e6407eaa1edb43e5625220198397d9d1cefa36c1c9c204481ebd7fc81272d26",
-    "view-left.png": "3a8edc6b6b06f922a1b8e2d749ef1cca14713c6ddf4ef6b6ca46242709f415d3",
-    "view-right.png": "31ebaa779e1406678e5f8c6534401a2b0b89077e871d4e6bc027f554d8fe4bd7",
-    "view-top.png": "7e9231f8ddff75161158da46ebed7178ab880fbe62ef4a39c4d136cf089172aa"
+    "minimal-ceramic-vase-01.fbx": "4800c6b862827dbfb7be83b2dc9a643b0f9f6cbc25190a85417d1e47485c8d1e",
+    "thumbnail.png": "bbc2861c45dae94692a6589ef787f613175396c0b5e1c72d6ceac919741e00ab",
+    "view-hero.png": "bbc2861c45dae94692a6589ef787f613175396c0b5e1c72d6ceac919741e00ab",
+    "view-front.png": "709c5c847d4906bfd22d1919ff9503e381ccc3283b0cb8ba1ba466f344045a8c",
+    "view-rear.png": "1b19867a2c4fd10d790747c4e108b2d08117c281594f6b8c5b1fd37768016225",
+    "view-left.png": "a6d2e7a6f3737f0ab01149271ffeb57bc320f2a3777837ddc28cbc0bde0ea66e",
+    "view-right.png": "41f17d74dc88eeda7541bbbd1290c71db0ce4ea9544dd52954f2d9f29ca0db8c",
+    "view-top.png": "43b247814f298d045bef1fdcd21d3235cb2e6c272d66f4a3b6c6291ba185073f"
   }
 }

@@ -27,76 +27,76 @@
   ],
   "render_framing": {
     "hero": {
-      "center_error_x": 3.619e-07,
-      "center_error_y": -5.011e-07,
-      "fill_ratio": 0.839999971,
+      "center_error_x": -1.48e-08,
+      "center_error_y": 8.89e-08,
+      "fill_ratio": 0.8400000095,
       "normalized_bounds": [
-        -0.2474618255,
-        0.2474625493,
-        -0.4200004866,
-        0.4199994845
+        -0.2237546344,
+        0.2237546048,
+        -0.4199999158,
+        0.4200000937
       ],
-      "ortho_scale": 1.070602417
+      "ortho_scale": 1.0055319071
     },
     "front": {
       "center_error_x": 0.0,
-      "center_error_y": -6.38e-08,
-      "fill_ratio": 0.8399999821,
+      "center_error_y": 4.82e-08,
+      "fill_ratio": 0.8399999884,
       "normalized_bounds": [
-        -0.2034725783,
-        0.2034725783,
-        -0.4200000549,
-        0.4199999272
+        -0.2047187534,
+        0.2047187534,
+        -0.4199999461,
+        0.4200000424
       ],
-      "ortho_scale": 0.9337867498
+      "ortho_scale": 0.9281025529
     },
     "rear": {
-      "center_error_x": 4.468e-07,
-      "center_error_y": -6.38e-08,
-      "fill_ratio": 0.8399999923,
+      "center_error_x": 0.0,
+      "center_error_y": 3.21e-08,
+      "fill_ratio": 0.8400000206,
       "normalized_bounds": [
-        -0.2034721664,
-        0.20347306,
-        -0.42000006,
-        0.4199999323
+        -0.2047187534,
+        0.2047187534,
+        -0.4199999782,
+        0.4200000424
       ],
-      "ortho_scale": 0.9337868094
+      "ortho_scale": 0.9281025529
     },
     "left": {
-      "center_error_x": -1.197e-07,
-      "center_error_y": -5.745e-07,
-      "fill_ratio": 0.8399999821,
+      "center_error_x": 0.0,
+      "center_error_y": 3.21e-08,
+      "fill_ratio": 0.8400000103,
       "normalized_bounds": [
-        -0.2034727539,
-        0.2034725145,
-        -0.4200005655,
-        0.4199994166
+        -0.2047187665,
+        0.2047187665,
+        -0.419999973,
+        0.4200000372
       ],
-      "ortho_scale": 0.9337867498
+      "ortho_scale": 0.9281024933
     },
     "right": {
-      "center_error_x": 1.197e-07,
-      "center_error_y": -5.745e-07,
-      "fill_ratio": 0.8399999821,
+      "center_error_x": 0.0,
+      "center_error_y": 3.21e-08,
+      "fill_ratio": 0.8400000103,
       "normalized_bounds": [
-        -0.2034725145,
-        0.2034727539,
-        -0.4200005655,
-        0.4199994166
+        -0.2047187665,
+        0.2047187665,
+        -0.419999973,
+        0.4200000372
       ],
-      "ortho_scale": 0.9337867498
+      "ortho_scale": 0.9281024933
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -0.0001457458,
-      "fill_ratio": 0.8400000262,
+      "center_error_y": -1.65e-08,
+      "fill_ratio": 0.8400000198,
       "normalized_bounds": [
-        -0.418360685,
-        0.418360685,
-        -0.4201457589,
-        0.4198542674
+        -0.4199185501,
+        0.4199185501,
+        -0.4200000263,
+        0.4199999934
       ],
-      "ortho_scale": 0.4541535676
+      "ortho_scale": 0.4524686933
     }
   },
   "triangles": 3288,
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-bar-stool-01.blend": "8aca5bf4f29ad527d2471a145a8178cc89ceb800353fe189b5ddba353e4811ee",
+    "cafe-bar-stool-01.blend": "577860c22e49de91b9b8124427894de9dd656ab5e65fb5dc7af6923cb1877283",
     "cafe-bar-stool-01.glb": "0d170be873122c4240aa8069ba0299ae08be57abbc9c5b1de96596a3744c3f75",
-    "cafe-bar-stool-01.fbx": "0394b7ff1a8cec5f01119bf863ae02c12ff8f17ec22f87cd6ace8b76f3ed9589",
-    "thumbnail.png": "c7aeb8914d3460d5c965ac5e2a434cb016b562f06b286b4e1b128aa47fe2dc12",
-    "view-hero.png": "c7aeb8914d3460d5c965ac5e2a434cb016b562f06b286b4e1b128aa47fe2dc12",
-    "view-front.png": "9f1fad2fb68894a1411726304b759481e75052d8b1a35602537b092b7f3e54d2",
-    "view-rear.png": "497b51854f05c6df48db65a7a9e42700d90143d80361a8e34478f447712a4854",
-    "view-left.png": "8381913cd6b7f201021b34b6102322159da1a7b80928a46e1f4da0146463ce37",
-    "view-right.png": "10c4d03adf6c232b62216e9cca1c49ebee8f464595db95fabd4ead892779098d",
-    "view-top.png": "bf3bc8d06056c4f046ece90c7621e0df78123b0bb2458fa952585606039c5aee"
+    "cafe-bar-stool-01.fbx": "c1f3de926fea044049e014691fe415463fd3c6d4563bf6347de7b9866f10c8db",
+    "thumbnail.png": "5abdd5350353672be7b27041413a8254d239edba0751c8879d0b289547ad06b2",
+    "view-hero.png": "5abdd5350353672be7b27041413a8254d239edba0751c8879d0b289547ad06b2",
+    "view-front.png": "99d5f54f6f5adcab21808763a435bd958904453cdd14b670f82f53b33107b5df",
+    "view-rear.png": "b06d20d7ce5284822c09d2bfbd249a6dfd72fc656ad7692b27e8266de7fec12a",
+    "view-left.png": "a211176ac527a9bfe208da5a6788ffe34d23d187170be55655152ce4ed5557ab",
+    "view-right.png": "dbb117608e9b708bd8fc0a7cf00ac3d525e83e093f5c55e18d9f1fe5e9e90e66",
+    "view-top.png": "d7c2c472b894f2c3c6ced4ad30a852f54e8abfc7fa3e65c55ba97530de31e6e5"
   }
 }

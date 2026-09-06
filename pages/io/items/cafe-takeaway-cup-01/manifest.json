@@ -27,76 +27,76 @@
   ],
   "render_framing": {
     "hero": {
-      "center_error_x": 2.068e-06,
-      "center_error_y": -3.1109e-06,
-      "fill_ratio": 0.8400000057,
+      "center_error_x": -1.116e-07,
+      "center_error_y": -6.09e-08,
+      "fill_ratio": 0.8400000049,
       "normalized_bounds": [
-        -0.2977141676,
-        0.2977183036,
-        -0.4200031137,
-        0.419996892
+        -0.3177832064,
+        0.3177829832,
+        -0.4200000633,
+        0.4199999416
       ],
-      "ortho_scale": 0.2107625902
+      "ortho_scale": 0.1836022884
     },
     "front": {
       "center_error_x": 0.0,
-      "center_error_y": -7.293e-07,
-      "fill_ratio": 0.840000024,
+      "center_error_y": 2.615e-07,
+      "fill_ratio": 0.8400000279,
       "normalized_bounds": [
-        -0.2591224225,
-        0.2591224225,
-        -0.4200007414,
-        0.4199992827
+        -0.2632522751,
+        0.2632522751,
+        -0.4199997524,
+        0.4200002755
       ],
-      "ortho_scale": 0.1736630946
+      "ortho_scale": 0.1709387004
     },
     "rear": {
-      "center_error_x": 2.3918e-06,
-      "center_error_y": -7.293e-07,
-      "fill_ratio": 0.840000024,
+      "center_error_x": 0.0,
+      "center_error_y": 2.615e-07,
+      "fill_ratio": 0.8400000279,
       "normalized_bounds": [
-        -0.2591200843,
-        0.259124868,
-        -0.4200007414,
-        0.4199992827
+        -0.2632522751,
+        0.2632522751,
+        -0.4199997524,
+        0.4200002755
       ],
-      "ortho_scale": 0.1736630946
+      "ortho_scale": 0.1709387004
     },
     "left": {
-      "center_error_x": -6.65e-07,
-      "center_error_y": -3.4751e-06,
-      "fill_ratio": 0.840000024,
+      "center_error_x": 0.0,
+      "center_error_y": 2.615e-07,
+      "fill_ratio": 0.8400000139,
       "normalized_bounds": [
-        -0.2591231519,
-        0.2591218219,
-        -0.4200034871,
-        0.4199965369
+        -0.263252298,
+        0.263252298,
+        -0.4199997455,
+        0.4200002685
       ],
-      "ortho_scale": 0.1736630946
+      "ortho_scale": 0.1709386855
     },
     "right": {
-      "center_error_x": 6.65e-07,
-      "center_error_y": -3.4751e-06,
-      "fill_ratio": 0.840000024,
+      "center_error_x": 0.0,
+      "center_error_y": 2.615e-07,
+      "fill_ratio": 0.8400000139,
       "normalized_bounds": [
-        -0.2591218219,
-        0.2591231519,
-        -0.4200034871,
-        0.4199965369
+        -0.263252298,
+        0.263252298,
+        -0.4199997455,
+        0.4200002685
       ],
-      "ortho_scale": 0.1736630946
+      "ortho_scale": 0.1709386855
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -0.0006159581,
-      "fill_ratio": 0.8400000139,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999861,
       "normalized_bounds": [
-        -0.4187363031,
-        0.4187363031,
-        -0.4206159651,
-        0.4193840488
+        -0.419963245,
+        0.419963245,
+        -0.419999993,
+        0.419999993
       ],
-      "ortho_scale": 0.107466206
+      "ortho_scale": 0.1071522385
     }
   },
   "triangles": 3044,
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-takeaway-cup-01.blend": "98d8b22d989f9fe046837ce454a795ca569487fb2e4806416d526fecfc00c217",
+    "cafe-takeaway-cup-01.blend": "8e466a14b25946f2e51554c78bde34c716a1e5946f19003bbedf5671669fb1a8",
     "cafe-takeaway-cup-01.glb": "25aa19c58e1eceb0648a3c8fb3ebbeb61b526b4db7e0bb03452f4e77fb044f13",
-    "cafe-takeaway-cup-01.fbx": "e7973d922379b88c52ef4e9e79c7dc7b1692b3fca530bac96d17ab1964f2f840",
-    "thumbnail.png": "c0f3d83dff45fdb8b939f3fb6055631df84fa7dc03853de39cd81c597a2bbc67",
-    "view-hero.png": "c0f3d83dff45fdb8b939f3fb6055631df84fa7dc03853de39cd81c597a2bbc67",
-    "view-front.png": "661a301611b0640515082451c1b931f3946e6e58df087a2c91921047a5d6256d",
-    "view-rear.png": "3db5f59ba3385ec19f919405b1e884711062c82ad991b4e4d4351ea0008bcd2e",
-    "view-left.png": "7aa56bb03b6c9c867875f3da263cb755907e696dfe981a2efaceb3e87bc8136d",
-    "view-right.png": "de5222a4a66d81854f7f67f9e67863986f474503f58c7ad395b080ba6e541e2f",
-    "view-top.png": "2950b9cf921e085976d38a2255f3b1955124c2c1701e0552c3a2e18f15f95ddb"
+    "cafe-takeaway-cup-01.fbx": "f37488b7a04a55bb83a215043605e4fe2bdff4470384b58ef910b536292b661d",
+    "thumbnail.png": "ef7b2e5ca488b83dd70bce487af06ab2e0467c849f4921145557b369494df07e",
+    "view-hero.png": "ef7b2e5ca488b83dd70bce487af06ab2e0467c849f4921145557b369494df07e",
+    "view-front.png": "d41595e19cdb34e763d89a405180fcffaafabd10dc268668338a2f59302045fd",
+    "view-rear.png": "dbe76dbd1549280c0f024a8c64fbc54cc11488e11b42fb2dbe625f620d31ca41",
+    "view-left.png": "51f49de91f32c2384a3570c0e796471fe5c5555981ee45a7f3b37d5744bd75db",
+    "view-right.png": "bc6c7501aee8fe26dde05b9c29616afc439b69b50760998e2e1233419efe787f",
+    "view-top.png": "5a29a066beec2d4e5dee9419e6e86061f38009880b53edb963a75b5c2294b86d"
   }
 }

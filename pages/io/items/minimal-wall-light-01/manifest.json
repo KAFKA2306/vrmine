@@ -27,76 +27,76 @@
   ],
   "render_framing": {
     "hero": {
-      "center_error_x": 9.096e-07,
-      "center_error_y": -2.3499e-06,
-      "fill_ratio": 0.8399999596,
+      "center_error_x": -1.716e-07,
+      "center_error_y": 8.58e-08,
+      "fill_ratio": 0.840000011,
       "normalized_bounds": [
-        -0.346485663,
-        0.3464874823,
-        -0.4200023297,
-        0.4199976299
+        -0.4200001771,
+        0.4199998339,
+        -0.3721360977,
+        0.3721362693
       ],
-      "ortho_scale": 0.5897393823
+      "ortho_scale": 0.434194535
     },
     "front": {
       "center_error_x": 0.0,
-      "center_error_y": -2.609e-07,
-      "fill_ratio": 0.8400000157,
+      "center_error_y": -5.8e-08,
+      "fill_ratio": 0.8400000263,
       "normalized_bounds": [
-        -0.3064438848,
-        0.3064438848,
-        -0.4200002688,
-        0.4199997469
+        -0.3635134627,
+        0.3635134627,
+        -0.4200000712,
+        0.4199999551
       ],
-      "ortho_scale": 0.4568536282
+      "ortho_scale": 0.385130167
     },
     "rear": {
-      "center_error_x": 9.133e-07,
-      "center_error_y": -1.142e-07,
-      "fill_ratio": 0.8399999935,
+      "center_error_x": 0.0,
+      "center_error_y": 1.64e-08,
+      "fill_ratio": 0.839999983,
       "normalized_bounds": [
-        -0.3064430168,
-        0.3064448433,
-        -0.4200001109,
-        0.4199998826
+        -0.3073054251,
+        0.3073054251,
+        -0.4199999751,
+        0.4200000079
       ],
-      "ortho_scale": 0.456853658
+      "ortho_scale": 0.4555728734
     },
     "left": {
-      "center_error_x": -2.968e-07,
-      "center_error_y": -2.474e-07,
-      "fill_ratio": 0.8400000119,
+      "center_error_x": 0.0,
+      "center_error_y": 8.42e-08,
+      "fill_ratio": 0.8400000229,
       "normalized_bounds": [
-        -0.3447244399,
-        0.3447238462,
-        -0.4200002533,
-        0.4199997586
+        -0.3519575553,
+        0.3519575553,
+        -0.4199999273,
+        0.4200000956
       ],
-      "ortho_scale": 0.4518105984
+      "ortho_scale": 0.4425249696
     },
     "right": {
-      "center_error_x": 2.968e-07,
-      "center_error_y": -2.474e-07,
-      "fill_ratio": 0.8400000119,
+      "center_error_x": 0.0,
+      "center_error_y": 8.42e-08,
+      "fill_ratio": 0.8400000229,
       "normalized_bounds": [
-        -0.3447238462,
-        0.3447244399,
-        -0.4200002533,
-        0.4199997586
+        -0.3519575553,
+        0.3519575553,
+        -0.4199999273,
+        0.4200000956
       ],
-      "ortho_scale": 0.4518105984
+      "ortho_scale": 0.4425249696
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -0.0001781158,
-      "fill_ratio": 0.8400000016,
+      "center_error_y": 2.01e-08,
+      "fill_ratio": 0.839999992,
       "normalized_bounds": [
-        -0.3766889224,
-        0.3766889224,
-        -0.4201781166,
-        0.419821885
+        -0.3772192328,
+        0.3772192328,
+        -0.4199999759,
+        0.4200000161
       ],
-      "ortho_scale": 0.3716594577
+      "ortho_scale": 0.3711369634
     }
   },
   "triangles": 1316,
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-wall-light-01.blend": "f5723a4203d7b80588bdfa6b28073a8395dc15ab6588dd3a7afe0722f6178633",
+    "minimal-wall-light-01.blend": "554695db56c8b72b34fa0a3d4f377571a4b7c2ef20bf13f9d26bb4000f2bee3b",
     "minimal-wall-light-01.glb": "a1f833d6a6571b81b0ad30efe33e45dc3e27264cfa27f1511588456ce0f193c5",
-    "minimal-wall-light-01.fbx": "b0d8e95b67927646c7179b2c6e5d8e82b4a6759b09d3f3304d45096ec94840f2",
-    "thumbnail.png": "6b60ce5fe8c7a88c3c423bd386997d6b19b2708fc14341f44f76803a726d76f3",
-    "view-hero.png": "6b60ce5fe8c7a88c3c423bd386997d6b19b2708fc14341f44f76803a726d76f3",
-    "view-front.png": "13e309a04e0e69aa45214e9790c4a70524da5d8e60613aba992208d3df3c2cd1",
-    "view-rear.png": "c03dfb44845007aeff970597c288f14ab3d3353fecf80c80162e48e027f082b8",
-    "view-left.png": "474de0f3bb4ffea6430adf93bde9f75faffd81a05b6724c281452d8ff22ebbdf",
-    "view-right.png": "482025be7aee940511e7e3b19fbb878b10174200fe94d19617cbfd91a3cd3d4d",
-    "view-top.png": "f231dae08a9576b9c82fc6c6197c170a3fe146be96da21855e6dcf5eb6b5a012"
+    "minimal-wall-light-01.fbx": "683e0d65b43adc4a253e3041416ed35ba8bf03fe6df20d58df275fa00fe34e2c",
+    "thumbnail.png": "6a2009dccbdae8100e508df3c3f51c4892b6fc77c3cc26cb8bf65a3520c794c0",
+    "view-hero.png": "6a2009dccbdae8100e508df3c3f51c4892b6fc77c3cc26cb8bf65a3520c794c0",
+    "view-front.png": "a9408d69489117bad2c3aa32ad854d084971244957f79f941fdd63a66d005d69",
+    "view-rear.png": "dba7be38b747c2815573a84b73e296201ade4780116cd7268e3458c4180ba1cc",
+    "view-left.png": "78c95865f87b966a5abbf8961530a2dc3530a863c02b940233e0154ed0fc0d46",
+    "view-right.png": "283cc004b0a77d7e50451305337ace5c6a97119a6e2e20d2c10bdb716999d8e1",
+    "view-top.png": "f655c8c604f5d3d1e4c9fdd4bd88bbfa6fb214dbef07da47a93ccd60fec9fdef"
   }
 }

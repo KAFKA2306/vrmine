@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "cafe-sugar-jar-01",
   "source_spec": "config/world-items/cafe-sugar-jar-01.json",
   "spec_sha256": "c2af33b9c57d3f571d9c318c2cb2be1b63a879121c286d49113b54b90e0d3e51",
@@ -10,6 +10,95 @@
     0.14000000059604645,
     0.16500000655651093
   ],
+  "bounds_min_m": [
+    -0.07000000029802322,
+    -0.07000000029802322,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.07000000029802322,
+    0.07000000029802322,
+    0.16500000655651093
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.08250000327825546
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": -8.89e-08,
+      "center_error_y": 1.955e-07,
+      "fill_ratio": 0.840000027,
+      "normalized_bounds": [
+        -0.3338153221,
+        0.3338151444,
+        -0.419999818,
+        0.420000209
+      ],
+      "ortho_scale": 0.2096104324
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": 5.46e-08,
+      "fill_ratio": 0.8399999956,
+      "normalized_bounds": [
+        -0.3421843102,
+        0.3421843102,
+        -0.4199999432,
+        0.4200000524
+      ],
+      "ortho_scale": 0.2045681179
+    },
+    "rear": {
+      "center_error_x": -1.82e-08,
+      "center_error_y": 5.46e-08,
+      "fill_ratio": 0.8399999956,
+      "normalized_bounds": [
+        -0.3421843466,
+        0.3421843102,
+        -0.4199999432,
+        0.4200000524
+      ],
+      "ortho_scale": 0.2045681179
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": 7.28e-08,
+      "fill_ratio": 0.8400000204,
+      "normalized_bounds": [
+        -0.3421843715,
+        0.3421843715,
+        -0.4199999374,
+        0.420000083
+      ],
+      "ortho_scale": 0.204568103
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 7.28e-08,
+      "fill_ratio": 0.8400000204,
+      "normalized_bounds": [
+        -0.3421843715,
+        0.3421843715,
+        -0.4199999374,
+        0.420000083
+      ],
+      "ortho_scale": 0.204568103
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8400000214,
+      "normalized_bounds": [
+        -0.4194158346,
+        0.4194158346,
+        -0.4200000107,
+        0.4200000107
+      ],
+      "ortho_scale": 0.1668988019
+    }
+  },
   "triangles": 4588,
   "parts_count": 5,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-sugar-jar-01.blend": "3595d39ce300ca0d9e2e02b73f8f801529287be65069098e6b9f839560cc2fcc",
+    "cafe-sugar-jar-01.blend": "270f5238514d1b59edc91e39822b12fae54973889b06dc157fce41deabc235e0",
     "cafe-sugar-jar-01.glb": "c848ed93dfbcf92e952b53c6f2fc855b9fc660da62839e0fe1f27da8fa06b552",
-    "cafe-sugar-jar-01.fbx": "8d126d51b6121f97fe4dfaa68c6face6766051bc334002881c9a68df76c1f4ec",
-    "thumbnail.png": "035aaac5330d7d502721b139df169ccef5b81f0a85fae9f5c5aec06b90b6e301",
-    "view-hero.png": "035aaac5330d7d502721b139df169ccef5b81f0a85fae9f5c5aec06b90b6e301",
-    "view-front.png": "f5b707dcfd0a723872c487dd63269ce84feb79128a35b07fe27ce9115c6b534e",
-    "view-rear.png": "6e04eab144672ffd6b2f95e77ccb9fe36fd8468095bd91c6ae767eb4a000f4d7",
-    "view-left.png": "4cd99cce65b38c8c8c345b92e784445893cb030ac0fb6b2efc214f76a28b04eb",
-    "view-right.png": "209c9f6ababbb4a9755ba09b070e083d5e6e31aa2d2f05683c8b243e7c8d3dfd",
-    "view-top.png": "6536242ff05ba0afc85ee7fc982dc0b918ad2fdc92cd3b254289aa803135d737"
+    "cafe-sugar-jar-01.fbx": "fdd659c52e97be964633546bae975ced938ec65d311159b7eac5c8b9f6447b02",
+    "thumbnail.png": "8874e9d3d587e51113d22bcd101c254b04bf3b56ff7c36490d7b362ace7923e3",
+    "view-hero.png": "8874e9d3d587e51113d22bcd101c254b04bf3b56ff7c36490d7b362ace7923e3",
+    "view-front.png": "c417e7c83552d4bcc8b6374d2eae81f685ade20a6e7459a03cb0b82c40e0526c",
+    "view-rear.png": "6d82c100cbb9c361fae0cc106d3da03b8055cb748fe1b3ff46c0bde60c998181",
+    "view-left.png": "74e0620bd638bb01e84ef0ac959d037c3798a4d4caa2eb4c72b3b57c7f666fa5",
+    "view-right.png": "1490542ffc0c9a6ebf5418c68ec7dad8c2924acd49409d7444ef6cfaf8f01dfb",
+    "view-top.png": "e9cb3c97d483b59520f9cf0410368edd04ce2884ef2723c58d78d36ec3b0e31e"
   }
 }

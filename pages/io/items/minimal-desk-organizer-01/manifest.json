@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "minimal-desk-organizer-01",
   "source_spec": "config/world-items/minimal-desk-organizer-01.json",
   "spec_sha256": "1ac47a31f92a509cd6b21790176317294348bee6f25871280fb0bca848136e24",
@@ -10,6 +10,95 @@
     0.14000000059604645,
     0.12000000476837158
   ],
+  "bounds_min_m": [
+    -0.14000000059604645,
+    -0.07000000029802322,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.14000000059604645,
+    0.07000000029802322,
+    0.12000000476837158
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.06000000238418579
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": -4.09e-08,
+      "center_error_y": 2.044e-07,
+      "fill_ratio": 0.8400000262,
+      "normalized_bounds": [
+        -0.420000054,
+        0.4199999722,
+        -0.3114617427,
+        0.3114621516
+      ],
+      "ortho_scale": 0.3644623458
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -2.24e-08,
+      "fill_ratio": 0.8399999785,
+      "normalized_bounds": [
+        -0.4199999893,
+        0.4199999893,
+        -0.2049922435,
+        0.2049921988
+      ],
+      "ortho_scale": 0.3333333433
+    },
+    "rear": {
+      "center_error_x": 0.0,
+      "center_error_y": 2.068e-07,
+      "fill_ratio": 0.8399999928,
+      "normalized_bounds": [
+        -0.4199999964,
+        0.4199999964,
+        -0.1803819322,
+        0.1803823457
+      ],
+      "ortho_scale": 0.3333333731
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": -8.05e-08,
+      "fill_ratio": 0.8400000193,
+      "normalized_bounds": [
+        -0.3781622218,
+        0.3781622218,
+        -0.4200000902,
+        0.4199999292
+      ],
+      "ortho_scale": 0.1851057857
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": -8.05e-08,
+      "fill_ratio": 0.8400000193,
+      "normalized_bounds": [
+        -0.3781622218,
+        0.3781622218,
+        -0.4200000902,
+        0.4199999292
+      ],
+      "ortho_scale": 0.1851057857
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999785,
+      "normalized_bounds": [
+        -0.4199999893,
+        0.4199999893,
+        -0.2103377965,
+        0.2103377965
+      ],
+      "ortho_scale": 0.3333333433
+    }
+  },
   "triangles": 1316,
   "parts_count": 7,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-desk-organizer-01.blend": "a3af372733cf19603e8da7be51405ef981c94ec9c3465e3dc89258bcfde7684a",
+    "minimal-desk-organizer-01.blend": "03053ea35fd2bb8db98ea244825dea38184ff1597a7264fa79507075fd92b630",
     "minimal-desk-organizer-01.glb": "bf952157e28407da4f75b6cead56fd929201531d673c0bc50e4303f335b4794f",
-    "minimal-desk-organizer-01.fbx": "a0cc3c525ae75e1d8cf5d322712797674229c38cf6d7ec3d42c1fb8becb0f4fc",
-    "thumbnail.png": "505baad02709f6146ee47afe559d27d8d1e0566f71d3f7b8ca05396cd19eb685",
-    "view-hero.png": "505baad02709f6146ee47afe559d27d8d1e0566f71d3f7b8ca05396cd19eb685",
-    "view-front.png": "5757262be20cb4c09d83dc6ed05250bde8c77d6f22ee99ff6f7a3a58849e6af4",
-    "view-rear.png": "70f3176faec5f6cfbc35fe590d1a15fdfc780ebed78b82bce04edd54cbc44344",
-    "view-left.png": "64dbea077fb38c4794d65f5641a6da2ab78d916e3cc057e8e51b3f88f4d69d7f",
-    "view-right.png": "a79b53bb1f074a93c18dad8cc74e43a39dabaf886982988d618fb91b037b61ec",
-    "view-top.png": "d5ecdcb0f1f8c009c0c13f28a2667487f5bea43055dea08f046d8c49b549290f"
+    "minimal-desk-organizer-01.fbx": "89e0f3ba258f07cf69884b161ab4d9b764a6fe79f6a84aaf040c59382798bc13",
+    "thumbnail.png": "c9d59c850eb9b8a4a6391ce74711abafd0b4c766f78c4eae5f48620559144536",
+    "view-hero.png": "c9d59c850eb9b8a4a6391ce74711abafd0b4c766f78c4eae5f48620559144536",
+    "view-front.png": "63c3b9c78d4255f41945c27004b729db28874c8519e9f9d6104d1ae655cf74e6",
+    "view-rear.png": "8a8cbc8384014edba37bd69d53b928b3fabcc3f5a975b1a7b1243e6280bc640b",
+    "view-left.png": "b806abb04b5881d09681d31ca2c7618b686a6ff6031f7e4cf938a6835d3beb9a",
+    "view-right.png": "de99f261aa6e8f171595ea06fd30236858952b4b7465de35029cf16d35dd36c1",
+    "view-top.png": "87916d9a526ab3db57ea74e6460711ce1102e8237b5f7191f7ce4582ae9ef6a9"
   }
 }

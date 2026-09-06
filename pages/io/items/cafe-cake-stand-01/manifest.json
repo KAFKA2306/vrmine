@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "cafe-cake-stand-01",
   "source_spec": "config/world-items/cafe-cake-stand-01.json",
   "spec_sha256": "451b5adabbced62cd1874a6f7c1dd29d0735769d413750203c3babbc6fc9e86b",
@@ -10,6 +10,95 @@
     0.2800000011920929,
     0.16200000047683716
   ],
+  "bounds_min_m": [
+    -0.14000000059604645,
+    -0.14000000059604645,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.14000000059604645,
+    0.14000000059604645,
+    0.16200000047683716
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.08100000023841858
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": -3.801e-07,
+      "center_error_y": 1.453e-07,
+      "fill_ratio": 0.8399999839,
+      "normalized_bounds": [
+        -0.4200003721,
+        0.4199996118,
+        -0.3581113517,
+        0.3581116423
+      ],
+      "ortho_scale": 0.3331959844
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -2.24e-08,
+      "fill_ratio": 0.8399999785,
+      "normalized_bounds": [
+        -0.4199999893,
+        0.4199999893,
+        -0.2825471973,
+        0.2825471526
+      ],
+      "ortho_scale": 0.3333333433
+    },
+    "rear": {
+      "center_error_x": 0.0,
+      "center_error_y": -2.24e-08,
+      "fill_ratio": 0.8399999785,
+      "normalized_bounds": [
+        -0.4199999893,
+        0.4199999893,
+        -0.2825471973,
+        0.2825471526
+      ],
+      "ortho_scale": 0.3333333433
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": -2.24e-08,
+      "fill_ratio": 0.8399999785,
+      "normalized_bounds": [
+        -0.4199999893,
+        0.4199999893,
+        -0.2825471973,
+        0.2825471526
+      ],
+      "ortho_scale": 0.3333333433
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": -2.24e-08,
+      "fill_ratio": 0.8399999785,
+      "normalized_bounds": [
+        -0.4199999893,
+        0.4199999893,
+        -0.2825471973,
+        0.2825471526
+      ],
+      "ortho_scale": 0.3333333433
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 2.24e-08,
+      "fill_ratio": 0.839999966,
+      "normalized_bounds": [
+        -0.4199766714,
+        0.4199766714,
+        -0.4199999607,
+        0.4200000054
+      ],
+      "ortho_scale": 0.3333518505
+    }
+  },
   "triangles": 3824,
   "parts_count": 4,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-cake-stand-01.blend": "80766e3b6d44fc1f1fe4af68d8cf12b5df05194ef19b17d1629997ca0360dc7a",
+    "cafe-cake-stand-01.blend": "89ef514229af9ad337d527d814d09fb9cefa478d3fb99e66bf19588b326f650f",
     "cafe-cake-stand-01.glb": "e54ff9e5bb2093e6f5cc62b7168d952632b6820e0f029f3bc5cde41e237fc636",
-    "cafe-cake-stand-01.fbx": "1e2c3fe9089071fba4a6990d4f6c5559e8c770385f30dcc5b98d906b3682fceb",
-    "thumbnail.png": "26680081aa62eab9eb9998024fa7b4bca2efdb4883552e2f65255efb89db1b14",
-    "view-hero.png": "26680081aa62eab9eb9998024fa7b4bca2efdb4883552e2f65255efb89db1b14",
-    "view-front.png": "db011240fb357986c435048d09e0283c1119204df4137f64cf4f88bf684ecf66",
-    "view-rear.png": "ba5b4999f6a76efcbb7aa2b8bd9f6b698055553e2046d4da248383502f80dcbf",
-    "view-left.png": "58063fc5cdcb4a3595ad07ea9836f63ba608dfa7566c457b6e86041a86ebbff5",
-    "view-right.png": "64f55a6149482f2993241fcb87c56979beeca8e83dd0a049039c153b43a1520d",
-    "view-top.png": "039ff76c36d1d2f29e3180442a31e948f898f081eaa69f817def30581ab33c3d"
+    "cafe-cake-stand-01.fbx": "d7b9d4f0cfb17fdb56493a88ef2ae2ee65627f9a4f517a1bd03f073fe92527b1",
+    "thumbnail.png": "47b39a93de2d4c85a0a3386394b9aea1fe0fafa4e091f75d5d26d4477f29918a",
+    "view-hero.png": "47b39a93de2d4c85a0a3386394b9aea1fe0fafa4e091f75d5d26d4477f29918a",
+    "view-front.png": "08e18c318427cf1b961614b61c7648bb02dcacc80a92102a747cbd8335f4530a",
+    "view-rear.png": "d447f92a3ef585bfa47c848cc48412eb9414ad34ede0935ef008a373902a8f83",
+    "view-left.png": "a876ba42be159b6a78e9ddd239987dcce6fb2fc505a2ab9bf6f5cef33b807e26",
+    "view-right.png": "f1024a299e70aab1575b9481e7ec2167fad46b6cf327e9852d4f1ad1550adb1b",
+    "view-top.png": "99ee7e8e227d652066d80e281f3230bab21b9900db441b1eadf319308605a996"
   }
 }
