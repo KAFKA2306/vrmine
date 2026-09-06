@@ -44,7 +44,7 @@ class WorldItemVisualLoopTests(unittest.TestCase):
     def test_identity_patch_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             spec_path, out = self.fixture(Path(tmp)); bundle = M.build_review_bundle(spec_path, out); review = self.review(bundle)
-            review["patches"] = [{"path":"/id/value","value":1}]
+            review["patches"] = [{"path":"/id/value/field","value":1}]
             with self.assertRaisesRegex(ValueError, "not allowed"):
                 M.validate_review(review, bundle, M.read_object(spec_path))
 
