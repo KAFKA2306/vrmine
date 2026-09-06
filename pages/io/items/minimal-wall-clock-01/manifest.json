@@ -27,74 +27,74 @@
   ],
   "render_framing": {
     "hero": {
-      "center_error_x": 6.881e-07,
-      "center_error_y": -1.2232e-06,
-      "fill_ratio": 0.8399999853,
+      "center_error_x": 1.562e-07,
+      "center_error_y": 1.25e-07,
+      "fill_ratio": 0.8400000025,
       "normalized_bounds": [
-        -0.312031251,
-        0.3120326271,
-        -0.4200012159,
-        0.4199987695
+        -0.3084959959,
+        0.3084963083,
+        -0.4199998763,
+        0.4200001262
       ],
-      "ortho_scale": 0.4872809649
+      "ortho_scale": 0.4768980742
     },
     "front": {
       "center_error_x": 0.0,
-      "center_error_y": 3.65e-08,
-      "fill_ratio": 0.8399999854,
+      "center_error_y": -2.022e-07,
+      "fill_ratio": 0.8399999868,
       "normalized_bounds": [
-        -0.4161264825,
-        0.4161264825,
-        -0.4199999562,
-        0.4200000292
+        -0.4193309058,
+        0.4193309058,
+        -0.4200001955,
+        0.4199997912
       ],
-      "ortho_scale": 0.4085296392
+      "ortho_scale": 0.4054077566
     },
     "rear": {
-      "center_error_x": 1.0213e-06,
-      "center_error_y": -2.006e-07,
-      "fill_ratio": 0.8400000219,
+      "center_error_x": 0.0,
+      "center_error_y": 3.68e-08,
+      "fill_ratio": 0.8400000235,
       "normalized_bounds": [
-        -0.4161254977,
-        0.4161275403,
-        -0.4200002116,
-        0.4199998103
+        -0.4193309426,
+        0.4193309426,
+        -0.419999975,
+        0.4200000485
       ],
-      "ortho_scale": 0.4085296392
+      "ortho_scale": 0.4054077566
     },
     "left": {
-      "center_error_x": -2.556e-07,
-      "center_error_y": -1.1777e-06,
-      "fill_ratio": 0.84,
+      "center_error_x": 4.1e-09,
+      "center_error_y": -1.312e-07,
+      "fill_ratio": 0.8399999895,
       "normalized_bounds": [
-        -0.0510411017,
-        0.0510405906,
-        -0.4200011777,
-        0.4199988223
+        -0.051184728,
+        0.0511847362,
+        -0.420000126,
+        0.4199998635
       ],
-      "ortho_scale": 0.4555180669
+      "ortho_scale": 0.4542372823
     },
     "right": {
-      "center_error_x": 2.556e-07,
-      "center_error_y": -1.1777e-06,
-      "fill_ratio": 0.84,
+      "center_error_x": -4.1e-09,
+      "center_error_y": -1.312e-07,
+      "fill_ratio": 0.8399999895,
       "normalized_bounds": [
-        -0.0510405906,
-        0.0510411017,
-        -0.4200011777,
-        0.4199988223
+        -0.0511847362,
+        0.051184728,
+        -0.420000126,
+        0.4199998635
       ],
-      "ortho_scale": 0.4555180669
+      "ortho_scale": 0.4542372823
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -0.0001635421,
+      "center_error_y": 2.3e-09,
       "fill_ratio": 0.8399999971,
       "normalized_bounds": [
         -0.4199999985,
         0.4199999985,
-        -0.0584501603,
-        0.0581230761
+        -0.057858862,
+        0.0578588666
       ],
       "ortho_scale": 0.4047619104
     }
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-wall-clock-01.blend": "2a6a5936f560a11498ad5b6f2cadf8061131e22b9b5d2e96dc226d0c1b114f9c",
+    "minimal-wall-clock-01.blend": "b6f031552d21835d65358fd2d285541bdf5da208f8fa360c9c8a069252e5e22f",
     "minimal-wall-clock-01.glb": "ae322e3065b8b3443c9b7613c8f2a58b582991b8c5690849cd10a23365175d26",
-    "minimal-wall-clock-01.fbx": "4191c8ccfcf064be1a2258945adf0eecc786b16b64703a154d8db462f70dcf1e",
-    "thumbnail.png": "62b4cd6bb31d5f381f68759a7cf1c4e2f735326a4f3907d016ea5a4677623635",
-    "view-hero.png": "62b4cd6bb31d5f381f68759a7cf1c4e2f735326a4f3907d016ea5a4677623635",
-    "view-front.png": "ff247482f3df47d3980ecac617ac02067972457a5a95505226f7eca22043d9fc",
-    "view-rear.png": "aec767e2f9182dc0216df37b2f92c61e43a0f266465124f72160fcbbb2f3cb2a",
-    "view-left.png": "97947467425f19b39cca3b2320228a80b36294b553a5cfb4a6a3097885174d88",
-    "view-right.png": "e50af2a6626caa75f59e31f7a4de05f1bb5ac0cbd48a6bf4e9150c2296dfeef7",
-    "view-top.png": "d7e04b24cfc3975da00dcee8fa42f85f4c535953be1e7b4ec4ade2495deec339"
+    "minimal-wall-clock-01.fbx": "487acd5a611e799a40c9cc09874e889fd54eaebefdacd76941bb6d4166ab9f88",
+    "thumbnail.png": "69047c04583b4c3000d30dc0074d3881bd8ad8435dfcddba21356c27a6597fbe",
+    "view-hero.png": "69047c04583b4c3000d30dc0074d3881bd8ad8435dfcddba21356c27a6597fbe",
+    "view-front.png": "70baf3ff8803f3628270b1845e30a9b19572fe4b8ac30a4294080677ae5285e0",
+    "view-rear.png": "0f5b6ad5539028b407d9af3f95ac9460e3222b292c55420e296186ac1c42321d",
+    "view-left.png": "f5140941abf7523bed024f09b5382b5f62265009a2780acb3326548fa168dff0",
+    "view-right.png": "bc8afb000beb886fd04359c9e13d309baedd2315386d9330345f93e19ef3511f",
+    "view-top.png": "89fdfd77078aa3c216894feeefb5cf11e4b13eb1893070e9242769b95fa33ef6"
   }
 }

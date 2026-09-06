@@ -27,76 +27,76 @@
   ],
   "render_framing": {
     "hero": {
-      "center_error_x": 1.4447e-06,
-      "center_error_y": -2.0338e-06,
-      "fill_ratio": 0.8400000079,
+      "center_error_x": 1.96e-08,
+      "center_error_y": -8.902e-07,
+      "fill_ratio": 0.8400000141,
       "normalized_bounds": [
-        -0.4199985592,
-        0.4200014486,
-        -0.224369604,
-        0.2243655364
+        -0.4199999875,
+        0.4200000266,
+        -0.2052709896,
+        0.2052692091
       ],
-      "ortho_scale": 0.2655976117
+      "ortho_scale": 0.1903976947
     },
     "front": {
       "center_error_x": 0.0,
-      "center_error_y": -7.628e-07,
+      "center_error_y": 4.107e-07,
       "fill_ratio": 0.8400000313,
       "normalized_bounds": [
         -0.4200000156,
         0.4200000156,
-        -0.1111072322,
-        0.1111057066
+        -0.0895676676,
+        0.089568489
       ],
       "ortho_scale": 0.1904761791
     },
     "rear": {
-      "center_error_x": 2.1905e-06,
-      "center_error_y": -7.676e-07,
-      "fill_ratio": 0.8399999781,
+      "center_error_x": 0.0,
+      "center_error_y": 4.107e-07,
+      "fill_ratio": 0.8400000313,
       "normalized_bounds": [
-        -0.4199977986,
-        0.4200021795,
-        -0.1111072539,
-        0.1111057186
+        -0.4200000156,
+        0.4200000156,
+        -0.0895676676,
+        0.089568489
       ],
-      "ortho_scale": 0.1904762089
+      "ortho_scale": 0.1904761791
     },
     "left": {
-      "center_error_x": -6.063e-07,
-      "center_error_y": -3.271e-06,
-      "fill_ratio": 0.8400000047,
+      "center_error_x": 0.0,
+      "center_error_y": 4.156e-07,
+      "fill_ratio": 0.8400000313,
       "normalized_bounds": [
-        -0.4200006086,
-        0.4199993961,
-        -0.1111097366,
-        0.1111031946
+        -0.4200000156,
+        0.4200000156,
+        -0.0895676382,
+        0.0895684694
       ],
-      "ortho_scale": 0.190476194
+      "ortho_scale": 0.1904761791
     },
     "right": {
-      "center_error_x": 6.063e-07,
-      "center_error_y": -3.271e-06,
-      "fill_ratio": 0.8400000047,
+      "center_error_x": 0.0,
+      "center_error_y": 4.156e-07,
+      "fill_ratio": 0.8400000313,
       "normalized_bounds": [
-        -0.4199993961,
-        0.4200006086,
-        -0.1111097366,
-        0.1111031946
+        -0.4200000156,
+        0.4200000156,
+        -0.0895676382,
+        0.0895684694
       ],
-      "ortho_scale": 0.190476194
+      "ortho_scale": 0.1904761791
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -0.000347431,
-      "fill_ratio": 0.8400000172,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999812,
       "normalized_bounds": [
-        -0.4198899076,
-        0.4198899076,
-        -0.4203474396,
-        0.4196525776
+        -0.4199902902,
+        0.4199902902,
+        -0.4199999906,
+        0.4199999906
       ],
-      "ortho_scale": 0.1905261278
+      "ortho_scale": 0.1904805899
     }
   },
   "triangles": 2548,
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-saucer-01.blend": "25b9616e1a0aaf3997e4ad7b95757560958065786a87a57a086f5203139764b9",
+    "cafe-saucer-01.blend": "78bcf895f2e7c675ff86961aad2d812d93efa353200b47b0de3524fb7e07d2dc",
     "cafe-saucer-01.glb": "07bad671c54b1b36a0ba525a2ea9ca5fe84f4f22d03d515f493f627b10031d89",
-    "cafe-saucer-01.fbx": "a0bf7b795875b6db4c348de9ec3441bc6c904eb9ca555973e84cb580b2ea49d4",
-    "thumbnail.png": "76b43c2f2e25127d5f74b5c5890739ab0bdcbc4b46b5d005aa4c966a1a0b8681",
-    "view-hero.png": "76b43c2f2e25127d5f74b5c5890739ab0bdcbc4b46b5d005aa4c966a1a0b8681",
-    "view-front.png": "b76821a8883569a53f579771512ccd624f720d9351d7b22fe4eda0a89fb627f8",
-    "view-rear.png": "b471ce2fdce02e32f19f19dd9184eb2d173cf1f54d97caf1eb25a49b436af538",
-    "view-left.png": "566fc75f44299e6d2e130d849b20c52aac5e72df53675bc25b0eb70af2c9b131",
-    "view-right.png": "772e51ade7140183368de94f6a02104a01205f89391fd2c705b4b360b1e900e4",
-    "view-top.png": "bb4642d066100b8b3f5bbe6b879d0f0c7a29436f2f926b072c4358cd13eacedf"
+    "cafe-saucer-01.fbx": "56c36086176bb76f058b154eaabcb855fac27266205fe86c584b4891ea1c15e6",
+    "thumbnail.png": "808fba7eab9f0d61aeebf8ad88d8f90177c3b10e621a659d77a2d3c79ed5adad",
+    "view-hero.png": "808fba7eab9f0d61aeebf8ad88d8f90177c3b10e621a659d77a2d3c79ed5adad",
+    "view-front.png": "8077a916a0c0fc369d3e1b5b71155af08566c4b38f4d8b8e2af10f9ab61c21dd",
+    "view-rear.png": "2fb540d215061bfd1f81c8cd7676a5eeeb5b8843fccaa74da939e02e0bb929bc",
+    "view-left.png": "086a828b0a496325f2ebc62cb5e8cd54b07996595e1aca89350e3065c73e5f17",
+    "view-right.png": "30b89087a5eff54509d6d5308edfbfeaa3f9d2cac65bbed1a05fa14e19b24975",
+    "view-top.png": "408f74ee515e765f548d8c9bfbe197a68d5377b65442e4cefa73efd3ac77a7a9"
   }
 }

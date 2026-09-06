@@ -27,74 +27,74 @@
   ],
   "render_framing": {
     "hero": {
-      "center_error_x": 1.051e-07,
-      "center_error_y": -1.991e-07,
-      "fill_ratio": 0.8399999911,
+      "center_error_x": 1.84e-08,
+      "center_error_y": 2.45e-08,
+      "fill_ratio": 0.8399999863,
       "normalized_bounds": [
-        -0.1510787313,
-        0.1510789415,
-        -0.4200001947,
-        0.4199997964
+        -0.1494718816,
+        0.1494719185,
+        -0.4199999686,
+        0.4200000177
       ],
-      "ortho_scale": 5.387635231
+      "ortho_scale": 4.8575024605
     },
     "front": {
       "center_error_x": 0.0,
-      "center_error_y": -2.27e-08,
-      "fill_ratio": 0.8399999619,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999708,
       "normalized_bounds": [
-        -0.1616758368,
-        0.1616758368,
-        -0.4200000036,
-        0.4199999583
+        -0.1624973404,
+        0.1624973404,
+        -0.4199999854,
+        0.4199999854
       ],
-      "ortho_scale": 5.2574338913
+      "ortho_scale": 5.2308549881
     },
     "rear": {
-      "center_error_x": 7.37e-08,
-      "center_error_y": -4.53e-08,
-      "fill_ratio": 0.8400000073,
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999708,
       "normalized_bounds": [
-        -0.1616758028,
-        0.1616759502,
-        -0.420000049,
-        0.4199999583
+        -0.1624973404,
+        0.1624973404,
+        -0.4199999854,
+        0.4199999854
       ],
-      "ortho_scale": 5.2574338913
+      "ortho_scale": 5.2308549881
     },
     "left": {
-      "center_error_x": -2.18e-08,
-      "center_error_y": -8.73e-08,
-      "fill_ratio": 0.8400000349,
+      "center_error_x": 2.8e-09,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999708,
       "normalized_bounds": [
-        -0.038259704,
-        0.0382596604,
-        -0.4200001047,
-        0.4199999302
+        -0.0399552484,
+        0.0399552541,
+        -0.4199999854,
+        0.4199999854
       ],
-      "ortho_scale": 5.4626774788
+      "ortho_scale": 5.2308549881
     },
     "right": {
-      "center_error_x": 2.18e-08,
-      "center_error_y": -8.73e-08,
-      "fill_ratio": 0.8400000349,
+      "center_error_x": -2.8e-09,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999708,
       "normalized_bounds": [
-        -0.0382596604,
-        0.038259704,
-        -0.4200001047,
-        0.4199999302
+        -0.0399552541,
+        0.0399552484,
+        -0.4199999854,
+        0.4199999854
       ],
-      "ortho_scale": 5.4626774788
+      "ortho_scale": 5.2308549881
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -3.27061e-05,
+      "center_error_y": 0.0,
       "fill_ratio": 0.8399999623,
       "normalized_bounds": [
         -0.4199999812,
         0.4199999812,
-        -0.1054915811,
-        0.1054261688
+        -0.1042362979,
+        0.1042362979
       ],
       "ortho_scale": 2.0238096714
     }
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "utility-pole-01.blend": "f7be93235caae0267ca862dca6e04035af6b2ce4d9643c0bf5dd1c6b3226ea20",
+    "utility-pole-01.blend": "a7393e8fff8a9fbfe07e710ead52b0ea25bf56d0e364e4f28040e298f865c2a3",
     "utility-pole-01.glb": "806a55a861f374fa3b92a144e0f61344169c41e9a5645e98e0a999f5821497ab",
-    "utility-pole-01.fbx": "a2e6a36508de8c5d4be30a36c8ff5b9db2bb46a4d4f9633507405e540c9fbcc8",
-    "thumbnail.png": "e553b83bbc3445f82f0a198191ab89f7a496e87a8fc62f47e6aede8274d379c5",
-    "view-hero.png": "e553b83bbc3445f82f0a198191ab89f7a496e87a8fc62f47e6aede8274d379c5",
-    "view-front.png": "b1ed50cdcc43ec609aa2bb01c58eff4f233b05f27a23e1ba7e18f9e48f147362",
-    "view-rear.png": "b6fa7bba5651a30e50a2e9fd20a37087ef5d6849d832d478d4668e542b8928cd",
-    "view-left.png": "e82a9b97a31947baa6c40f697fc45c48f91bf84a8184775755d5b6436bcb3223",
-    "view-right.png": "f09cbaf337c932d4fbc919ca8a211d619c88405d4d359bea4f074a25acca936b",
-    "view-top.png": "4caddf689825d1eac8bf24c7524d572263bf3367d2a820969e5a88804fdfcc05"
+    "utility-pole-01.fbx": "7c28543b779e628cee439d972922912580c9b2c5b3c0b27a8a295f81bf5dfb9c",
+    "thumbnail.png": "2c1aba49fc945e079ad2111470267d390471f7712a15f21986e444aaea9c50da",
+    "view-hero.png": "2c1aba49fc945e079ad2111470267d390471f7712a15f21986e444aaea9c50da",
+    "view-front.png": "ccf6264241a61a751ef94dc9f492d884f04a2854de6ead4abb9b397820717ca0",
+    "view-rear.png": "d16cdfbac0933fecd2abc3a491bd7c249f7142a558b9b54636458514ba47456d",
+    "view-left.png": "03c13fd78a35c5d303c16d062c27f2767e6c6ee1044ddadbaf94eba1a18170d5",
+    "view-right.png": "c085303de520908bebcecfa2a225901c37a6a989f6a42918ad4eea47a2c48088",
+    "view-top.png": "28d96fd671e562b613ffbe408ebb06970ffe0bcd05ef424641c1df022d7faa59"
   }
 }

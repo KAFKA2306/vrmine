@@ -1,15 +1,104 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "minimal-ladder-shelf-01",
   "source_spec": "config/world-items/minimal-ladder-shelf-01.json",
   "spec_sha256": "1173e287088398e2ec37bf48766c8f8c19ccf87a0499ec8d74524c400f804581",
   "blender": "4.2.0",
   "units": "metres",
   "dimensions_m_actual": [
-    0.7845945358276367,
+    0.7530839443206787,
     0.3799999952316284,
-    1.522517204284668
+    1.4784646034240723
   ],
+  "bounds_min_m": [
+    -0.37654197216033936,
+    -0.1899999976158142,
+    0.0007676761597394943
+  ],
+  "bounds_max_m": [
+    0.37654197216033936,
+    0.1899999976158142,
+    1.4792323112487793
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.7400000095367432
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 3.34e-08,
+      "center_error_y": -8.34e-08,
+      "fill_ratio": 0.839999996,
+      "normalized_bounds": [
+        -0.1975798434,
+        0.1975799101,
+        -0.4200000814,
+        0.4199999146
+      ],
+      "ortho_scale": 1.7866592407
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": 1.7e-08,
+      "fill_ratio": 0.8400000041,
+      "normalized_bounds": [
+        -0.2146743646,
+        0.2146743646,
+        -0.419999985,
+        0.420000019
+      ],
+      "ortho_scale": 1.7540146112
+    },
+    "rear": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.839999981,
+      "normalized_bounds": [
+        -0.21467435,
+        0.21467435,
+        -0.4199999905,
+        0.4199999905
+      ],
+      "ortho_scale": 1.7540147305
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": -1.62e-08,
+      "fill_ratio": 0.8400000117,
+      "normalized_bounds": [
+        -0.1033728263,
+        0.1033728263,
+        -0.4200000221,
+        0.4199999896
+      ],
+      "ortho_scale": 1.8380073309
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 3.24e-08,
+      "fill_ratio": 0.8399999896,
+      "normalized_bounds": [
+        -0.1033728196,
+        0.1033728196,
+        -0.4199999624,
+        0.4200000272
+      ],
+      "ortho_scale": 1.8380074501
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 8.3e-09,
+      "fill_ratio": 0.8400000213,
+      "normalized_bounds": [
+        -0.4200000106,
+        0.4200000106,
+        -0.2119696718,
+        0.2119696884
+      ],
+      "ortho_scale": 0.8965284824
+    }
+  },
   "triangles": 1128,
   "parts_count": 6,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-ladder-shelf-01.blend": "529f5b82cd98667de90cbd30c74d1761e3fbe09bf6eff46e6a7b0e7ef4cb4173",
+    "minimal-ladder-shelf-01.blend": "9f41c139e436766be2c52b406dd0d176c2b50656529d55d4cb4c32a599fcb6b0",
     "minimal-ladder-shelf-01.glb": "d2e1d3e27955683a3552f7ec5de5e082e2e8a7f5d9d36114f942d5bbc0575cf1",
-    "minimal-ladder-shelf-01.fbx": "b3d90387e90d4f44b21f74b7ceda724908418c5646aa6f9f5182584124023f94",
-    "thumbnail.png": "d69f9a80961b9f74b0c45c6e9a8664027e65e9c8da1c0a5292b1667cffc8478c",
-    "view-hero.png": "d69f9a80961b9f74b0c45c6e9a8664027e65e9c8da1c0a5292b1667cffc8478c",
-    "view-front.png": "a9a1beeea367ddedb52ffee60658e4a48698fab71e020e96ee8980eb1fba18bc",
-    "view-rear.png": "c3a61389881d92e24906c492fff270c5d57932bf44ec16445062f6ca5f9fbaae",
-    "view-left.png": "c66fcc16afca0f792bf281ec5cca4a2e9c37083ee080c113f8f1222f4fa00523",
-    "view-right.png": "c174e5760f033db08567a99208421e5f3227c24d9c8dc60d7bb974abc46c090d",
-    "view-top.png": "96c6e3da750b6057b5074e9326417b9e60574c13d07cab5448394b32d94fb25d"
+    "minimal-ladder-shelf-01.fbx": "c0e542da8843a306e2056bcd1ef22072f034fe430bf4a7ba791d77625b296fb0",
+    "thumbnail.png": "cf1c445417d13a874f3f6a6fef5c0966f032530fdbd1d2d13be62ad3563889a4",
+    "view-hero.png": "cf1c445417d13a874f3f6a6fef5c0966f032530fdbd1d2d13be62ad3563889a4",
+    "view-front.png": "a20aa9edc5d03b576f57e6be1b3da84fa7aef258eab07e9c728d2f2682cdce74",
+    "view-rear.png": "0522d7565ca5a94fbbfd88a22ee99fd9de91b2d1658518d47252a24018f3f80e",
+    "view-left.png": "6b45a7ef14f324725f92f11f96f65f8cafe94ee614c98cb99752021be87077ee",
+    "view-right.png": "78cc656f3714d49a9c4f72add11daef6ee1258052e9afd5e1197951c08f82fd6",
+    "view-top.png": "808af21b21a974a9fa947ddc2d9780fce17c864c6dbada5b5fb96235519248c3"
   }
 }

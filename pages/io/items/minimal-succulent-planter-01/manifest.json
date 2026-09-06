@@ -27,76 +27,76 @@
   ],
   "render_framing": {
     "hero": {
-      "center_error_x": 6.893e-07,
-      "center_error_y": -1.1931e-06,
-      "fill_ratio": 0.8399999936,
+      "center_error_x": 4.03e-08,
+      "center_error_y": 3.71e-07,
+      "fill_ratio": 0.840000009,
       "normalized_bounds": [
-        -0.2977154916,
-        0.2977168703,
-        -0.4200011899,
-        0.4199988037
+        -0.2596326138,
+        0.2596326944,
+        -0.4199996335,
+        0.4200003755
       ],
-      "ortho_scale": 0.5620335937
+      "ortho_scale": 0.4618794918
     },
     "front": {
       "center_error_x": 0.0,
-      "center_error_y": -1.609e-07,
-      "fill_ratio": 0.8400000051,
+      "center_error_y": 1.66e-08,
+      "fill_ratio": 0.8399999747,
       "normalized_bounds": [
-        -0.2591223675,
-        0.2591223675,
-        -0.4200001635,
-        0.4199998417
+        -0.2678273569,
+        0.2678273569,
+        -0.4199999707,
+        0.420000004
       ],
-      "ortho_scale": 0.4631016552
+      "ortho_scale": 0.4480498135
     },
     "rear": {
-      "center_error_x": 8.929e-07,
-      "center_error_y": -1.609e-07,
-      "fill_ratio": 0.8400000051,
+      "center_error_x": 0.0,
+      "center_error_y": 1.66e-08,
+      "fill_ratio": 0.8399999747,
       "normalized_bounds": [
-        -0.2591215309,
-        0.2591233168,
-        -0.4200001635,
-        0.4199998417
+        -0.2678273735,
+        0.2678273735,
+        -0.4199999707,
+        0.420000004
       ],
-      "ortho_scale": 0.4631016552
+      "ortho_scale": 0.4480498135
     },
     "left": {
-      "center_error_x": -2.494e-07,
-      "center_error_y": -1.1905e-06,
-      "fill_ratio": 0.8400000051,
+      "center_error_x": 0.0,
+      "center_error_y": -1.164e-07,
+      "fill_ratio": 0.84000002,
       "normalized_bounds": [
-        -0.2591226732,
-        0.2591221745,
-        -0.4200011931,
-        0.419998812
+        -0.2678274092,
+        0.2678274092,
+        -0.4200001264,
+        0.4199998936
       ],
-      "ortho_scale": 0.4631016552
+      "ortho_scale": 0.4480497539
     },
     "right": {
-      "center_error_x": 2.494e-07,
-      "center_error_y": -1.1905e-06,
-      "fill_ratio": 0.8400000051,
+      "center_error_x": 0.0,
+      "center_error_y": -1.164e-07,
+      "fill_ratio": 0.84000002,
       "normalized_bounds": [
-        -0.2591221745,
-        0.2591226732,
-        -0.4200011931,
-        0.419998812
+        -0.2678274092,
+        0.2678274092,
+        -0.4200001264,
+        0.4199998936
       ],
-      "ortho_scale": 0.4631016552
+      "ortho_scale": 0.4480497539
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -0.0002309713,
-      "fill_ratio": 0.8399999917,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999583,
       "normalized_bounds": [
-        -0.4187363351,
-        0.4187363351,
-        -0.4202309672,
-        0.4197690245
+        -0.4194660015,
+        0.4194660015,
+        -0.4199999792,
+        0.4199999792
       ],
-      "ortho_scale": 0.2865765095
+      "ortho_scale": 0.286078006
     }
   },
   "triangles": 6876,
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-succulent-planter-01.blend": "b9d490eab45d983ddd908a180b914adfda8452314e3df49dcdd51e1839b62e03",
+    "minimal-succulent-planter-01.blend": "9a20910b93d4cfa781c791dad1a529d6f1ffa0dbf8afc38a1df3ea3a0fda656d",
     "minimal-succulent-planter-01.glb": "f80adfda8aa2a7599a5657a7951b211db0906eebb3ddc18a777c71b79fb3a01b",
-    "minimal-succulent-planter-01.fbx": "e25b783074d44db734802e806329a2187e7ae10f8b5edc0eb01e1fdabdaa831a",
-    "thumbnail.png": "62d5996b95a218f545e53880a5c674f0184667f050c036bd1d618298c17fd00e",
-    "view-hero.png": "62d5996b95a218f545e53880a5c674f0184667f050c036bd1d618298c17fd00e",
-    "view-front.png": "e531b2511032e00dfae474e4a452629488bca4f3e106f6ebfc7d03c9a3b592d9",
-    "view-rear.png": "aea08c17f24238fd94fb5b99624a8fec58d67034a88bfb4903d3b7acea2436e4",
-    "view-left.png": "ea98477ef361abe65ab66405b12f549f69c9f04b69a21199017b4740a4c94de1",
-    "view-right.png": "4ff2f3bef665957b457b00e879cf54dfe617675f0273ac56f0854689d29a85ca",
-    "view-top.png": "2116da1ea71c65d9024926ab4261ce7463c2dcd4f7aaa426e7a089c5d26174ca"
+    "minimal-succulent-planter-01.fbx": "b413f9de13d6e7c0b2dae0ddc6422469d06639d4a8474517a3527093a6c717cb",
+    "thumbnail.png": "0005ea721e02aaafeb81ba17605b35b027fdab5bc74bb709e860fe630cafde9c",
+    "view-hero.png": "0005ea721e02aaafeb81ba17605b35b027fdab5bc74bb709e860fe630cafde9c",
+    "view-front.png": "74d631bb13e8da1600e4f120cf863e5afb82d49d3900dbc8662b88df7a1de532",
+    "view-rear.png": "085475021d26f238223d79d1590022eac4f1290f3f05d301f4973d147968db0b",
+    "view-left.png": "fe7a9b6e7deaf098319e6d17010081f1b7ab98b7dc821a6a0f590d0a8cbc91be",
+    "view-right.png": "a7c2c7039648708772bdf0ef82c04e0a6490e79447a92481caa63d7fbba177e9",
+    "view-top.png": "ee1306fad0629727d4d65cae22657c882b5de67710ccdbcfebcf5cffeb3f3a19"
   }
 }

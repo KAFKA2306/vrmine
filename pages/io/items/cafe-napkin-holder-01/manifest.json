@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "cafe-napkin-holder-01",
   "source_spec": "config/world-items/cafe-napkin-holder-01.json",
   "spec_sha256": "cf5e38f3232d3924bd7fc04025b3f91f557ada5833ba938c96fe0edc3a38c78f",
@@ -10,6 +10,95 @@
     0.10000000149011612,
     0.15000000596046448
   ],
+  "bounds_min_m": [
+    -0.09000000357627869,
+    -0.05000000074505806,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.09000000357627869,
+    0.05000000074505806,
+    0.15000000596046448
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.07500000298023224
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": -4.41e-08,
+      "center_error_y": -3.525e-07,
+      "fill_ratio": 0.8400000399,
+      "normalized_bounds": [
+        -0.3971207229,
+        0.3971206348,
+        -0.4200003725,
+        0.4199996675
+      ],
+      "ortho_scale": 0.2536534965
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": 3.48e-08,
+      "fill_ratio": 0.840000025,
+      "normalized_bounds": [
+        -0.4200000125,
+        0.4200000125,
+        -0.375689329,
+        0.3756893985
+      ],
+      "ortho_scale": 0.2142857164
+    },
+    "rear": {
+      "center_error_x": 0.0,
+      "center_error_y": 3.48e-08,
+      "fill_ratio": 0.8399999777,
+      "normalized_bounds": [
+        -0.4199999889,
+        0.4199999889,
+        -0.3756892767,
+        0.3756893462
+      ],
+      "ortho_scale": 0.2142857462
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": 3.64e-08,
+      "fill_ratio": 0.8399999767,
+      "normalized_bounds": [
+        -0.2445155782,
+        0.2445155782,
+        -0.4199999519,
+        0.4200000248
+      ],
+      "ortho_scale": 0.2044859976
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 3.64e-08,
+      "fill_ratio": 0.8399999767,
+      "normalized_bounds": [
+        -0.2445155782,
+        0.2445155782,
+        -0.4199999519,
+        0.4200000248
+      ],
+      "ortho_scale": 0.2044859976
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.840000025,
+      "normalized_bounds": [
+        -0.4200000125,
+        0.4200000125,
+        -0.2339999156,
+        0.2339999156
+      ],
+      "ortho_scale": 0.2142857164
+    }
+  },
   "triangles": 1128,
   "parts_count": 6,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-napkin-holder-01.blend": "76fbc299a7365a3df61bf07d52476e738c08cbcf75df4912f269bd5f0fc0914a",
+    "cafe-napkin-holder-01.blend": "a1ecd6f8ebab7a5a1fcbf5210e66c33cd5ffe7c7165559d18cca56698e96520b",
     "cafe-napkin-holder-01.glb": "f170022899466bd55445690e2dc37d5ac0b23ab58a23aa3ccc669614681694a8",
-    "cafe-napkin-holder-01.fbx": "d2e5a5ef2f38b7186ca3df06cdf045322511ee328b41307ca90d4aea4019e3c0",
-    "thumbnail.png": "f83514f710b4a675ee98bc7d1d4e40757bca46374328fea14aa114fd387d8228",
-    "view-hero.png": "f83514f710b4a675ee98bc7d1d4e40757bca46374328fea14aa114fd387d8228",
-    "view-front.png": "c40663730784c4c7598cb22e0620636d8346e4f69eb126171430bb264935e792",
-    "view-rear.png": "1b9aab674efd0ade7e830f5a7f19d522ee606e7fd983472d72a3da07404b6903",
-    "view-left.png": "1632f20363aa9b3952364749005fc7c3c68c22386ecc9241517eaf40b776b81a",
-    "view-right.png": "4f4a3ad2aa1fdfe39f83e2a1cac2258fc9d9e593c47b18e21c1f7c7685400223",
-    "view-top.png": "b6a5248e33f78b09ce60a0273b2065fd3914f1b7abc33aa1e05cef17f8c5bf3c"
+    "cafe-napkin-holder-01.fbx": "007b38e8b2cf733af4a00f66d59924b6aacb1672eb5b80324b10bf98871c3a02",
+    "thumbnail.png": "9d027249318b7cd68c0e7f5d6f6c012ab32383aa7d7d46a4dec424ca30d6eab9",
+    "view-hero.png": "9d027249318b7cd68c0e7f5d6f6c012ab32383aa7d7d46a4dec424ca30d6eab9",
+    "view-front.png": "d9534d286971a5d970f1c76e78bf5244621007e39fde08835234332ac5158ce1",
+    "view-rear.png": "fb33d0f5c006fd7f591d28ee60fbacf5726b6a98813f367a396c985ea9298a2d",
+    "view-left.png": "b7015a18167f2f1207f3c5c787fee8c3508bf8f06613596ee74f7cb9771a00e6",
+    "view-right.png": "ef4a90c2dbd38846c063cfd41f00b8448eda43cd100290e1a35185fb673f392d",
+    "view-top.png": "f62e34fbbe2107b51304c8b08aba42742c065ea611b4edbfc3db73149078d16b"
   }
 }

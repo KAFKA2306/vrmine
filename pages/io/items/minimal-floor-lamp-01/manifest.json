@@ -27,76 +27,76 @@
   ],
   "render_framing": {
     "hero": {
-      "center_error_x": 1.849e-07,
-      "center_error_y": -3.254e-07,
-      "fill_ratio": 0.8400000213,
+      "center_error_x": 9.12e-08,
+      "center_error_y": 4.76e-08,
+      "fill_ratio": 0.839999981,
       "normalized_bounds": [
-        -0.1453420943,
-        0.1453424641,
-        -0.4200003361,
-        0.4199996852
+        -0.1116472583,
+        0.1116474406,
+        -0.4199999429,
+        0.4200000381
       ],
-      "ortho_scale": 2.0147020817
+      "ortho_scale": 1.8796527386
     },
     "front": {
       "center_error_x": 0.0,
-      "center_error_y": -6.1e-08,
-      "fill_ratio": 0.8399999854,
+      "center_error_y": 6.14e-08,
+      "fill_ratio": 0.8399999877,
       "normalized_bounds": [
-        -0.1074333693,
-        0.1074333693,
-        -0.4200000537,
-        0.4199999317
+        -0.1082134704,
+        0.1082134704,
+        -0.4199999324,
+        0.4200000553
       ],
-      "ortho_scale": 1.9546998739
+      "ortho_scale": 1.9406086206
     },
     "rear": {
-      "center_error_x": 2.135e-07,
-      "center_error_y": -6.1e-08,
-      "fill_ratio": 0.8399999854,
+      "center_error_x": 0.0,
+      "center_error_y": 6.14e-08,
+      "fill_ratio": 0.8399999877,
       "normalized_bounds": [
-        -0.1074332016,
-        0.1074336285,
-        -0.4200000537,
-        0.4199999317
+        -0.1082134704,
+        0.1082134704,
+        -0.4199999324,
+        0.4200000553
       ],
-      "ortho_scale": 1.9546998739
+      "ortho_scale": 1.9406086206
     },
     "left": {
-      "center_error_x": -6.1e-08,
-      "center_error_y": -3.049e-07,
-      "fill_ratio": 0.8399999854,
+      "center_error_x": 0.0,
+      "center_error_y": -1.54e-08,
+      "fill_ratio": 0.8400000086,
       "normalized_bounds": [
-        -0.1074334837,
-        0.1074333617,
-        -0.4200002976,
-        0.4199996878
+        -0.108213477,
+        0.108213477,
+        -0.4200000197,
+        0.4199999889
       ],
-      "ortho_scale": 1.9546998739
+      "ortho_scale": 1.9406085014
     },
     "right": {
-      "center_error_x": 6.1e-08,
-      "center_error_y": -3.049e-07,
-      "fill_ratio": 0.8399999854,
+      "center_error_x": 0.0,
+      "center_error_y": -1.54e-08,
+      "fill_ratio": 0.8400000086,
       "normalized_bounds": [
-        -0.1074333617,
-        0.1074334837,
-        -0.4200002976,
-        0.4199996878
+        -0.108213477,
+        0.108213477,
+        -0.4200000197,
+        0.4199999889
       ],
-      "ortho_scale": 1.9546998739
+      "ortho_scale": 1.9406085014
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -0.0001313894,
-      "fill_ratio": 0.8400000485,
+      "center_error_y": 1.49e-08,
+      "fill_ratio": 0.8400000274,
       "normalized_bounds": [
-        -0.4168042226,
-        0.4168042226,
-        -0.4201314137,
-        0.4198686348
+        -0.4199264,
+        0.4199264,
+        -0.4199999988,
+        0.4200000286
       ],
-      "ortho_scale": 0.5038336515
+      "ortho_scale": 0.5000876188
     }
   },
   "triangles": 3308,
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-floor-lamp-01.blend": "2b12e1c9b47187c457bbe13b1b2664c97c680477340e95dd43f9c2c5a5d9ec89",
+    "minimal-floor-lamp-01.blend": "a7b3f8660e0800bbbc18c542e91179e6948baa70ccd7490739f80d07dbc8c969",
     "minimal-floor-lamp-01.glb": "eeb5bcdda46b1fa36d1aa22c8bb6cd702f836c63a3072ab087762a3979a4e539",
-    "minimal-floor-lamp-01.fbx": "ab1caf5c8bf4f10820016c1a876755972312523c1d437482660e712db66fb2ab",
-    "thumbnail.png": "55dd2b9ef5a14707043d65e5ae8e95373fa9e03b9479c2f52fe145de94eef274",
-    "view-hero.png": "55dd2b9ef5a14707043d65e5ae8e95373fa9e03b9479c2f52fe145de94eef274",
-    "view-front.png": "b82223c3b10cc2dd891f4075757077bd2fbad4acadc659d0eb29bacd0758e605",
-    "view-rear.png": "e2e803b000785a3d8a3cc776d0d0c59632d417d978a3be5f400aa8e180e7603e",
-    "view-left.png": "620a243466288e2098dd8d7d8cfa69fc786ed2af65f62effd1c06f847e125e34",
-    "view-right.png": "0c87d155d2203d728bf94cfe6682ed18c7818aeec7ee99addfe251120039deaa",
-    "view-top.png": "adebb51ae161847eef3685f59b6dd6eb39bd89ebdfcd86478a350e88fdad2c1c"
+    "minimal-floor-lamp-01.fbx": "ac3a67f591452dd3af31e7f1d9c4b616676bdce6eb9e414740ec6be7b2229d2b",
+    "thumbnail.png": "38928179f5d2fd1f0f617cf6b99b3ac59083f8b8b861fa67968617676931bc3d",
+    "view-hero.png": "38928179f5d2fd1f0f617cf6b99b3ac59083f8b8b861fa67968617676931bc3d",
+    "view-front.png": "08c2626ec066fc76cbeb61e9e7b19d97d82ad262431ad362bc98bdb198a42e4f",
+    "view-rear.png": "e50ad9bfaae9c4e888383821fcb24ef64d43825a50067f0d5e555bef918aa623",
+    "view-left.png": "ee1ca1142e081da9196d0b648d98895a5ed577fc4b4e57901e048728f1d9f9dd",
+    "view-right.png": "30ab79618982586768611c9747ea3759af19c0f7fd9d664920b19d346065914c",
+    "view-top.png": "8746fedfa74f818ac1db8b3da54ef12e3f2094a9ba6672cf7c30093ae0ea678f"
   }
 }

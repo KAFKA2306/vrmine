@@ -27,76 +27,76 @@
   ],
   "render_framing": {
     "hero": {
-      "center_error_x": 3.836e-07,
-      "center_error_y": -5.684e-07,
-      "fill_ratio": 0.8399999704,
+      "center_error_x": -1.496e-07,
+      "center_error_y": -4.6e-08,
+      "fill_ratio": 0.8400000037,
       "normalized_bounds": [
-        -0.1196649464,
-        0.1196657137,
-        -0.4200005536,
-        0.4199994169
+        -0.0926347005,
+        0.0926344012,
+        -0.4200000479,
+        0.4199999558
       ],
-      "ortho_scale": 1.0487155914
+      "ortho_scale": 0.9709039927
     },
     "front": {
       "center_error_x": 0.0,
-      "center_error_y": -1.143e-07,
-      "fill_ratio": 0.8399999543,
+      "center_error_y": 1.45e-08,
+      "fill_ratio": 0.8400000058,
       "normalized_bounds": [
-        -0.0862625199,
-        0.0862625199,
-        -0.4200000914,
-        0.4199998629
+        -0.087280772,
+        0.087280772,
+        -0.4199999884,
+        0.4200000173
       ],
-      "ortho_scale": 1.0433268547
+      "ortho_scale": 1.0311549902
     },
     "rear": {
-      "center_error_x": 3.999e-07,
-      "center_error_y": -1.143e-07,
-      "fill_ratio": 0.8400000114,
+      "center_error_x": 0.0,
+      "center_error_y": 1.45e-08,
+      "fill_ratio": 0.8400000058,
       "normalized_bounds": [
-        -0.0862621629,
-        0.0862629627,
-        -0.42000012,
-        0.4199998915
+        -0.087280772,
+        0.087280772,
+        -0.4199999884,
+        0.4200000173
       ],
-      "ortho_scale": 1.0433268547
+      "ortho_scale": 1.0311549902
     },
     "left": {
-      "center_error_x": -1.107e-07,
-      "center_error_y": -5.713e-07,
-      "fill_ratio": 0.8399999543,
+      "center_error_x": 3.6e-09,
+      "center_error_y": 1.45e-08,
+      "fill_ratio": 0.8400000058,
       "normalized_bounds": [
-        -0.0862626842,
-        0.0862624628,
-        -0.4200005484,
-        0.4199994059
+        -0.087280772,
+        0.0872807792,
+        -0.4199999884,
+        0.4200000173
       ],
-      "ortho_scale": 1.0433268547
+      "ortho_scale": 1.0311549902
     },
     "right": {
-      "center_error_x": 1.107e-07,
-      "center_error_y": -5.713e-07,
-      "fill_ratio": 0.8399999543,
+      "center_error_x": -3.6e-09,
+      "center_error_y": 1.45e-08,
+      "fill_ratio": 0.8400000058,
       "normalized_bounds": [
-        -0.0862624628,
-        0.0862626842,
-        -0.4200005484,
-        0.4199994059
+        -0.0872807792,
+        0.087280772,
+        -0.4199999884,
+        0.4200000173
       ],
-      "ortho_scale": 1.0433268547
+      "ortho_scale": 1.0311549902
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -0.0003059489,
-      "fill_ratio": 0.8400000276,
+      "center_error_y": 1.74e-08,
+      "fill_ratio": 0.8399999736,
       "normalized_bounds": [
-        -0.4159994325,
-        0.4159994325,
-        -0.4203059627,
-        0.4196940649
+        -0.41975669,
+        0.41975669,
+        -0.4199999694,
+        0.4200000042
       ],
-      "ortho_scale": 0.2163464576
+      "ortho_scale": 0.2144099325
     }
   },
   "triangles": 4328,
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "street-safety-bollard-01.blend": "a765ba93bea59a57edb5185f6bcfea0d8e50512883781c384bdcc50f76241c89",
+    "street-safety-bollard-01.blend": "2863141064ff92d48103d1b04c080272c5b2e0bbc63edfb81eac202d8067f3c5",
     "street-safety-bollard-01.glb": "a91cd3d469d0dd1462103b6cc78217ea4767d42d5266aa6897891ad792fe2fa2",
-    "street-safety-bollard-01.fbx": "4128715180bcb68ea5b8d385bf798f037ef57138f404ce4cd5afbb0e4a386a10",
-    "thumbnail.png": "6e20e83565dfc02a553986343935defa62b22532fd33c68026a7ff3a7d95f37f",
-    "view-hero.png": "6e20e83565dfc02a553986343935defa62b22532fd33c68026a7ff3a7d95f37f",
-    "view-front.png": "1ef33d7bdc2a9c01c152c9d8c84d54261cc12d817433a2f7f8e826e5d3aa4100",
-    "view-rear.png": "0b3c2717beb67d05e55871b0df9fab65b7fb57c8c0bd792f2a357645c90d6f5d",
-    "view-left.png": "2db3b5b99f4589e45401248b0558d867493b793518bf5c281aa989a778903ce4",
-    "view-right.png": "46a121a4a3df3e1d9c2f976aa4703e3ff33c4af944ab472f7580612ffa930f28",
-    "view-top.png": "20250fb4f87ba01c171d22d233ec71c7953af7171fdef4a3eb8ec3fb3b267aa0"
+    "street-safety-bollard-01.fbx": "b5e51a6bc5092def8ebd8e12a86ee733f58d04f1867485dc57a58f86f8b129b0",
+    "thumbnail.png": "7bccdea7835cf7271c86cd4388032c855a12571bc9b2a94cb1242aae9aeacd6a",
+    "view-hero.png": "7bccdea7835cf7271c86cd4388032c855a12571bc9b2a94cb1242aae9aeacd6a",
+    "view-front.png": "6b89d7f174b392f7e5468b383e8561628a798168917ecf4728394ed44eb3d56f",
+    "view-rear.png": "d04720209a022ada00ccdab054d3187125aca3f66e5898cd75dab76f5685e3a5",
+    "view-left.png": "02625146e7d70aead042822964d59635fc65191505351bf597aeec3fc86c2d6e",
+    "view-right.png": "fad970ad6b1a88287f8c4eca7fc2451b19541443c843db27b9fb9ab61e91f75a",
+    "view-top.png": "40c16ebab03724e5f18bd04549e6e448a8b7e1ab560aafcd3ea06759fb48534e"
   }
 }

@@ -27,76 +27,76 @@
   ],
   "render_framing": {
     "hero": {
-      "center_error_x": 5.362e-07,
-      "center_error_y": -7.943e-07,
-      "fill_ratio": 0.8399999936,
+      "center_error_x": -1.758e-07,
+      "center_error_y": -1.172e-07,
+      "fill_ratio": 0.8400000019,
       "normalized_bounds": [
-        -0.2787363151,
-        0.2787373875,
-        -0.4200007912,
-        0.4199992025
+        -0.2358455969,
+        0.2358452452,
+        -0.4200001182,
+        0.4199998837
       ],
-      "ortho_scale": 0.7503784895
+      "ortho_scale": 0.6355805397
     },
     "front": {
       "center_error_x": 0.0,
-      "center_error_y": -1.651e-07,
-      "fill_ratio": 0.8399999943,
+      "center_error_y": -7.28e-08,
+      "fill_ratio": 0.8400000369,
       "normalized_bounds": [
-        -0.237356142,
-        0.237356142,
-        -0.4200001622,
-        0.4199998321
+        -0.2443528808,
+        0.2443528808,
+        -0.4200000913,
+        0.4199999456
       ],
-      "ortho_scale": 0.6319617629
+      "ortho_scale": 0.6138663292
     },
     "rear": {
-      "center_error_x": 6.602e-07,
-      "center_error_y": -1.651e-07,
-      "fill_ratio": 0.8400000094,
+      "center_error_x": 0.0,
+      "center_error_y": -7.28e-08,
+      "fill_ratio": 0.8400000369,
       "normalized_bounds": [
-        -0.2373555066,
-        0.237356827,
-        -0.4200001698,
-        0.4199998397
+        -0.2443528808,
+        0.2443528808,
+        -0.4200000913,
+        0.4199999456
       ],
-      "ortho_scale": 0.6319618225
+      "ortho_scale": 0.6138663292
     },
     "left": {
-      "center_error_x": -1.768e-07,
-      "center_error_y": -9.196e-07,
-      "fill_ratio": 0.8399999943,
+      "center_error_x": 0.0,
+      "center_error_y": -4.85e-08,
+      "fill_ratio": 0.8399999883,
       "normalized_bounds": [
-        -0.2373563778,
-        0.2373560241,
-        -0.4200009168,
-        0.4199990776
+        -0.2443528808,
+        0.2443528808,
+        -0.4200000427,
+        0.4199999456
       ],
-      "ortho_scale": 0.6319617629
+      "ortho_scale": 0.6138663292
     },
     "right": {
-      "center_error_x": 1.768e-07,
-      "center_error_y": -9.196e-07,
-      "fill_ratio": 0.8399999943,
+      "center_error_x": 0.0,
+      "center_error_y": -4.85e-08,
+      "fill_ratio": 0.8399999883,
       "normalized_bounds": [
-        -0.2373560241,
-        0.2373563778,
-        -0.4200009168,
-        0.4199990776
+        -0.2443528808,
+        0.2443528808,
+        -0.4200000427,
+        0.4199999456
       ],
-      "ortho_scale": 0.6319617629
+      "ortho_scale": 0.6138663292
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -0.0001847214,
-      "fill_ratio": 0.83999998,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999867,
       "normalized_bounds": [
-        -0.4186102545,
-        0.4186102545,
-        -0.4201847114,
-        0.4198152686
+        -0.4199247381,
+        0.4199247381,
+        -0.4199999933,
+        0.4199999933
       ],
-      "ortho_scale": 0.3583285511
+      "ortho_scale": 0.357206881
     }
   },
   "triangles": 2544,
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-desk-lamp-01.blend": "ea2b452f3cb48223d91ea16e9690095c41bbec4655a3c8250e638ab4aa18ef3a",
+    "minimal-desk-lamp-01.blend": "c85f5798159991e1546e8d588aff34ce13204ae418cf46bdbd0c46cd1f5770d7",
     "minimal-desk-lamp-01.glb": "9cbbe8db6341b0b3fe0c0a31031c699871fae97e90dfbe09c235ab3e83b4486f",
-    "minimal-desk-lamp-01.fbx": "1056845d8215cc6adbdb21b526e31b3fac9e02307663f3ce97a4d691f1d429e4",
-    "thumbnail.png": "238eeb44b1261f44945ee7547f56ff480ebb3bb17321d4627a1e260afb3215f7",
-    "view-hero.png": "238eeb44b1261f44945ee7547f56ff480ebb3bb17321d4627a1e260afb3215f7",
-    "view-front.png": "9bcebfd2639981a3d259668faa3e17cee3aaa5c2897e4d2406dcf6bffd519940",
-    "view-rear.png": "05309bc1e747193ad850dc03560f285498c85eea74d221f38b627b9a87e3c19b",
-    "view-left.png": "77e64f06da8f5a688d2530dd7f96f11baefb9e8dc1277e719f104ab59f33097a",
-    "view-right.png": "76d0f76ae81c7b92bfa7432782efce70639b4617eb5e179ddd3a9d56438d8df7",
-    "view-top.png": "20ae8d7ce8fd848bb191ab8d485427ddc44acdeae7df6b7073907f84c83a1067"
+    "minimal-desk-lamp-01.fbx": "3e681c376db6f13ba830e03b509a7415330e425ac821805766d903d53ef979e1",
+    "thumbnail.png": "80f99eb5323cf2ec288f2a440ecfb15593b331a5493fc6472162ff288707041a",
+    "view-hero.png": "80f99eb5323cf2ec288f2a440ecfb15593b331a5493fc6472162ff288707041a",
+    "view-front.png": "62c5c32b7eeae80646a9501321c945577d0ae94e6888bdae8c0f554fc8543b80",
+    "view-rear.png": "e13f04f18800048e0ae062991206973f7277471b4d42ea575b4244ff03f86012",
+    "view-left.png": "f1ceb315a9c21bd084172cd807db04dff85c6a6865637ee022eebe7ae24f3071",
+    "view-right.png": "1d58917d12482a4e7dcc772ff259927ded24c6e1776985ad5d593b2c7eed24aa",
+    "view-top.png": "f0414b0bd986fb8ed7d2d1c5534956268df25669f2a4b698996060e057f0f6bc"
   }
 }
