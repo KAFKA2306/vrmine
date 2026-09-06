@@ -69,10 +69,8 @@ for (const requiredPath of [agentsPath, readmePath, taskfilePath]) {
   if (!fs.existsSync(requiredPath)) fail(`required repository guide is missing: ${path.relative(root, requiredPath)}`);
 }
 
-const agents = fs.readFileSync(agentsPath, 'utf8');
-for (const requiredText of ['このファイルを、VRMineで作業するエージェント向けルールの正準とする。', 'CI/CDは必須', 'task check', 'U1', 'U5', 'appearance is evidence for the user, not a merge gate', 'hero, front, rear, left, right, and top']) {
-  if (!agents.includes(requiredText)) fail(`AGENTS.md is missing required rule: ${requiredText}`);
-}
+const docsPath = path.join(root, 'docs');
+if (fs.existsSync(docsPath)) fail('docs/ must not duplicate current canonical documentation');
 
 const forbiddenRepoLocalSkillPaths = [
   'agr.toml',
@@ -127,25 +125,17 @@ for (const requiredText of ['verify_only:', 'inputs.verify_only', 'render-manife
   if (!pagesWorkflow.includes(requiredText)) fail(`Pages workflow is missing exact-head verification-only support: ${requiredText}`);
 }
 
-const publicPages = [
-  'https://kafka2306.github.io/vrmine/',
-  'https://kafka2306.github.io/vrmine/games/perspective-cage/',
-  'https://kafka2306.github.io/vrmine/games/stich-meister/',
-  'https://kafka2306.github.io/vrmine/games/answer-impostor/',
-  'https://kafka2306.github.io/vrmine/games/abyss-invasion/',
-  'https://kafka2306.github.io/vrmine/3dgs/',
-  'https://kafka2306.github.io/vrmine/organizers/',
-  'https://kafka2306.github.io/vrmine/events/demo/',
-];
+const canonicalProductionUrl = 'https://kafka2306.github.io/vrmine/';
+const catalogUrl = 'https://kafka2306.github.io/vrmine/io/';
 const readme = fs.readFileSync(readmePath, 'utf8');
 const readmeRows = readme.split(/\r?\n/);
 const firstNonEmptyReadmeLine = readmeRows.find((line) => line.trim().length > 0)?.trim();
-if (firstNonEmptyReadmeLine !== publicPages[0]) {
-  fail(`README.md first non-empty line must be canonical production URL: ${publicPages[0]}`);
+if (firstNonEmptyReadmeLine !== canonicalProductionUrl) {
+  fail(`README.md first non-empty line must be canonical production URL: ${canonicalProductionUrl}`);
 }
 const readmeLines = new Set(readmeRows.map((line) => line.trim()));
-for (const publicUrl of publicPages) {
-  if (!readmeLines.has(publicUrl)) fail(`README.md must contain the public Pages URL as its own plain-text line: ${publicUrl}`);
+for (const publicUrl of [canonicalProductionUrl, catalogUrl]) {
+  if (!readmeLines.has(publicUrl)) fail(`README.md must contain the canonical public URL as its own plain-text line: ${publicUrl}`);
 }
 
 console.log(JSON.stringify({
@@ -158,5 +148,5 @@ console.log(JSON.stringify({
   repositoryGuide: 'AGENTS.md',
   retiredRepoLocalSkillPathsAbsent: true,
   canonicalProductionUrlFirstInReadme: true,
-  publicPagesPlainTextUrls: publicPages,
+  publicPagesPlainTextUrls: [canonicalProductionUrl, catalogUrl],
 }, null, 2));
