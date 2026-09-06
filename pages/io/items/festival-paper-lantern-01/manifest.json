@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "festival-paper-lantern-01",
   "source_spec": "config/world-items/festival-paper-lantern-01.json",
   "spec_sha256": "47d93f9cc57df07b50738c02167518d9b75fef6b7bd9e2801a7cc67a62bc9cf4",
@@ -10,6 +10,95 @@
     0.3100000023841858,
     0.4039999842643738
   ],
+  "bounds_min_m": [
+    -0.1550000011920929,
+    -0.1550000011920929,
+    0.04500000178813934
+  ],
+  "bounds_max_m": [
+    0.1550000011920929,
+    0.1550000011920929,
+    0.4490000009536743
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.24700000882148743
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 5.748e-07,
+      "center_error_y": -8.114e-07,
+      "fill_ratio": 0.8400000036,
+      "normalized_bounds": [
+        -0.326916941,
+        0.3269180905,
+        -0.4200008132,
+        0.4199991904
+      ],
+      "ortho_scale": 0.6611149907
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -3.257e-07,
+      "fill_ratio": 0.8399999921,
+      "normalized_bounds": [
+        -0.2945572345,
+        0.2945572345,
+        -0.4200003217,
+        0.4199996704
+      ],
+      "ortho_scale": 0.5262135267
+    },
+    "rear": {
+      "center_error_x": 7.929e-07,
+      "center_error_y": -3.257e-07,
+      "fill_ratio": 0.8399999536,
+      "normalized_bounds": [
+        -0.2945564649,
+        0.2945580507,
+        -0.4200003024,
+        0.4199996511
+      ],
+      "ortho_scale": 0.5262135863
+    },
+    "left": {
+      "center_error_x": -2.549e-07,
+      "center_error_y": -3.257e-07,
+      "fill_ratio": 0.8399999536,
+      "normalized_bounds": [
+        -0.2945575126,
+        0.2945570029,
+        -0.4200003024,
+        0.4199996511
+      ],
+      "ortho_scale": 0.5262135863
+    },
+    "right": {
+      "center_error_x": 2.549e-07,
+      "center_error_y": -3.257e-07,
+      "fill_ratio": 0.8399999536,
+      "normalized_bounds": [
+        -0.2945570029,
+        0.2945575126,
+        -0.4200003024,
+        0.4199996511
+      ],
+      "ortho_scale": 0.5262135863
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -0.0001789073,
+      "fill_ratio": 0.8400000145,
+      "normalized_bounds": [
+        -0.4189017762,
+        0.4189017762,
+        -0.4201789145,
+        0.4198211
+      ],
+      "ortho_scale": 0.3700151443
+    }
+  },
   "triangles": 3608,
   "parts_count": 10,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "festival-paper-lantern-01.blend": "1f92b27c9b2ac063105fd9a6f137a1532cd3bd65eba0c006814d1d830551996c",
+    "festival-paper-lantern-01.blend": "aef8332bd12083d3db41cebe8f8670496f3ad0959b4b34dd1237a4722788c283",
     "festival-paper-lantern-01.glb": "5f6332653b9e167f1f38f3b8eef3720257c5a91160eabdc15d4cf398577c4903",
-    "festival-paper-lantern-01.fbx": "73a109f965a3658504bf259c0e9b5fe9c6b5a1044d89b604008ca8663183ea7b",
-    "thumbnail.png": "bd4fed84ef7ca08bcc66c0cffa0459bca71cec68ebca77a7e603dd56c663e508",
-    "view-hero.png": "bd4fed84ef7ca08bcc66c0cffa0459bca71cec68ebca77a7e603dd56c663e508",
-    "view-front.png": "77aae33328757a06a1d8cf1d2cda20fa3d3b90aa00a60076cbaecb593dd5d007",
-    "view-rear.png": "06710f4a273c0724d7882fde7ca77ade896db91bcb20b0f67c2a4c927b2241f0",
-    "view-left.png": "92adc260cfd6a64df7b3e99709a0aa5fa8d787d4292108d05d2c451f912f84be",
-    "view-right.png": "f58f448745c9a4b0301d5169f99ef0d1818410098162e26ba12821be40a96f9a",
-    "view-top.png": "69738fa1026a0fff8c7b25902a5b3bff86db044a86e86729e4f5bdde36d23b21"
+    "festival-paper-lantern-01.fbx": "163f237a355a1ca3c11ec095bc8cadf2eb679c706540909d49f82ee593ed05eb",
+    "thumbnail.png": "49ede13d7bd2c7d52e994efd121444af7c83be1eefd63bcf152cef9e6fb80c92",
+    "view-hero.png": "49ede13d7bd2c7d52e994efd121444af7c83be1eefd63bcf152cef9e6fb80c92",
+    "view-front.png": "3c799b4b40c6539f472eb111bd0d7011a077b271ecc7a9482e065c6b4fbd84f8",
+    "view-rear.png": "dbeacc1bcb4f8697ffa26963c18506d9313af7293f4d2d1e69de9b54ed97761b",
+    "view-left.png": "cbb353ddc9728b206ef06b80250f67a26f2c18a1f60d36c0771b1d0d6dc29831",
+    "view-right.png": "2f5e94779177aac4e14fe861767e4f31c8baee1a11be118644ec45beec958d22",
+    "view-top.png": "7a192b134eeb9eaadd1de0d53c9c47478cf647a33e0c60bc62c9634bae145641"
   }
 }

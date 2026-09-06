@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "tissue-box-01",
   "source_spec": "config/world-items/tissue-box-01.json",
   "spec_sha256": "e079005093f1c281aefb4881869ad5ff79896f579e434c1eafe0a934ef58602a",
@@ -10,6 +10,95 @@
     0.12999999523162842,
     0.18550001084804535
   ],
+  "bounds_min_m": [
+    -0.11999999731779099,
+    -0.06499999761581421,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.11999999731779099,
+    0.06499999761581421,
+    0.18550001084804535
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.09275000542402267
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 1.2475e-06,
+      "center_error_y": -1.6785e-06,
+      "fill_ratio": 0.8399999819,
+      "normalized_bounds": [
+        -0.4124139955,
+        0.4124164905,
+        -0.4200016694,
+        0.4199983125
+      ],
+      "ortho_scale": 0.3284798563
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -4.955e-07,
+      "fill_ratio": 0.8400000313,
+      "normalized_bounds": [
+        -0.4200000156,
+        0.4200000156,
+        -0.3522712314,
+        0.3522702405
+      ],
+      "ortho_scale": 0.2857142687
+    },
+    "rear": {
+      "center_error_x": 1.4603e-06,
+      "center_error_y": -4.955e-07,
+      "fill_ratio": 0.8399999604,
+      "normalized_bounds": [
+        -0.4199985199,
+        0.4200014405,
+        -0.352271184,
+        0.3522701931
+      ],
+      "ortho_scale": 0.2857143283
+    },
+    "left": {
+      "center_error_x": -4.489e-07,
+      "center_error_y": -2.4039e-06,
+      "fill_ratio": 0.8399999629,
+      "normalized_bounds": [
+        -0.2526724134,
+        0.2526715156,
+        -0.4200023853,
+        0.4199975776
+      ],
+      "ortho_scale": 0.257250607
+    },
+    "right": {
+      "center_error_x": 4.489e-07,
+      "center_error_y": -2.4039e-06,
+      "fill_ratio": 0.8399999629,
+      "normalized_bounds": [
+        -0.2526715156,
+        0.2526724134,
+        -0.4200023853,
+        0.4199975776
+      ],
+      "ortho_scale": 0.257250607
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -0.0002316814,
+      "fill_ratio": 0.8400000313,
+      "normalized_bounds": [
+        -0.4200000156,
+        0.4200000156,
+        -0.2283847729,
+        0.2279214101
+      ],
+      "ortho_scale": 0.2857142687
+    }
+  },
   "triangles": 1128,
   "parts_count": 6,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "tissue-box-01.blend": "ac59c40a6a6a6233b280300271cb99d6ccaf5ee38114f85b7e6ae4427d677a82",
+    "tissue-box-01.blend": "75857fcfe0cd3be3f2c1419bab8b899ab1c1c5bde8da05db9bf80cb62d17f65c",
     "tissue-box-01.glb": "f12604edf54efc076c3dbf955af59377d07a6dcec06953a2e2206f6f40debd52",
-    "tissue-box-01.fbx": "35144f3c3fea8a06469db7b5128e376b34bb6f5962922a6bb0afbc8364980953",
-    "thumbnail.png": "c865a80031f65435b19b1a04160775f580836024a3c2118e14194200e4acaa60",
-    "view-hero.png": "c865a80031f65435b19b1a04160775f580836024a3c2118e14194200e4acaa60",
-    "view-front.png": "fb643b041d47a1a704bb00a663c1114f2b763147fe481eae99caa4a0a9c22bdf",
-    "view-rear.png": "2e4f40008cfe35ce6dfe77d338912743ed680ac308c00a6c5f8f131de1a02b11",
-    "view-left.png": "eba4c219f3545d6e0367e778cf14c60431032df08595903cae9595f88224a2b6",
-    "view-right.png": "0f0fc47540acfbf62f25072923ecd85dbb83cb0becdbcc2d90b2c67a1b0044c7",
-    "view-top.png": "c8b2c74ae578e29f538221f6ae1d2d387a2953dc304f1f177452f13ddd93ec39"
+    "tissue-box-01.fbx": "8a1030b14e93b2113f0df69d5fc4068fe0540eb55c11dbb96782c6f6d40aa073",
+    "thumbnail.png": "aa5f990dd3af6ac76a8c74192b48231b56792b39a68a8f70ab156ca93bf69900",
+    "view-hero.png": "aa5f990dd3af6ac76a8c74192b48231b56792b39a68a8f70ab156ca93bf69900",
+    "view-front.png": "f36832ea350d0e7c88d373b136faeeceaef472818db6d41b38ea3c14c4af25d1",
+    "view-rear.png": "1682f438d56d41a1d93a8a4c4af759ceb278e18533562f7567f3313ddb460396",
+    "view-left.png": "bb2b4e04b56958c63f808ae5cb0a4363a8dd7f16399d206f31a80b4952b5afcc",
+    "view-right.png": "f7f3a5b1a382419e881e0daf57d491e0a5f69a7f1e3ba7842a22686b9cd6a1a4",
+    "view-top.png": "a37d7c26c9af0ef5025f2fb9947250f428c87412a9a9dbd603963ff8938315e0"
   }
 }

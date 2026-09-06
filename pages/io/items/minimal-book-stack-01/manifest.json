@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "minimal-book-stack-01",
   "source_spec": "config/world-items/minimal-book-stack-01.json",
   "spec_sha256": "be16e33668261be1dd614f87b325b3250714511788060ecdb054004c35c9cae7",
@@ -10,6 +10,95 @@
     0.20999999344348907,
     0.17999999225139618
   ],
+  "bounds_min_m": [
+    -0.15000000596046448,
+    -0.10899999737739563,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.15000000596046448,
+    0.10099999606609344,
+    0.17999999225139618
+  ],
+  "bounds_center_m": [
+    0.0,
+    -0.0040000006556510925,
+    0.08999999612569809
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 7.52e-07,
+      "center_error_y": -1.1109e-06,
+      "fill_ratio": 0.8400000164,
+      "normalized_bounds": [
+        -0.4199992562,
+        0.4200007602,
+        -0.3624528196,
+        0.3624505978
+      ],
+      "ortho_scale": 0.4359376132
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -1.147e-07,
+      "fill_ratio": 0.8400000134,
+      "normalized_bounds": [
+        -0.4200000067,
+        0.4200000067,
+        -0.2892485192,
+        0.2892482897
+      ],
+      "ortho_scale": 0.3571428657
+    },
+    "rear": {
+      "center_error_x": 1.1683e-06,
+      "center_error_y": -3.129e-07,
+      "fill_ratio": 0.8400000267,
+      "normalized_bounds": [
+        -0.4199988451,
+        0.4200011816,
+        -0.2892487245,
+        0.2892480987
+      ],
+      "ortho_scale": 0.3571428955
+    },
+    "left": {
+      "center_error_x": -4.435e-07,
+      "center_error_y": -2.232e-06,
+      "fill_ratio": 0.8399999931,
+      "normalized_bounds": [
+        -0.4032754674,
+        0.4032745803,
+        -0.4200022286,
+        0.4199977646
+      ],
+      "ortho_scale": 0.2603682578
+    },
+    "right": {
+      "center_error_x": 4.435e-07,
+      "center_error_y": -2.232e-06,
+      "fill_ratio": 0.8399999931,
+      "normalized_bounds": [
+        -0.4032745803,
+        0.4032754674,
+        -0.4200022286,
+        0.4199977646
+      ],
+      "ortho_scale": 0.2603682578
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -0.0001853347,
+      "fill_ratio": 0.8400000134,
+      "normalized_bounds": [
+        -0.4200000067,
+        0.4200000067,
+        -0.2946920682,
+        0.2943213989
+      ],
+      "ortho_scale": 0.3571428657
+    }
+  },
   "triangles": 1692,
   "parts_count": 9,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-book-stack-01.blend": "9d2da126de0ae53d8218d7417ebff60af17b4014dde44f6212ec8e13caca199c",
+    "minimal-book-stack-01.blend": "d29b70b6e98138b8491f54940cbeaf8ba32db341f7ceacc2f0a63be015ec24f8",
     "minimal-book-stack-01.glb": "6ed66109e1d39eed68855057355a4a6828b8f0339d2888da0e6d3f5517f33e3b",
-    "minimal-book-stack-01.fbx": "2cdd277c0ff34db2a71792cf0508fdd54b17dedfd81cb0f0715cb61033b0152f",
-    "thumbnail.png": "07b71b20b410ea39b6c47d149a04dc91a9a6adbefa84e51d4ba1b8eb3bf35e54",
-    "view-hero.png": "07b71b20b410ea39b6c47d149a04dc91a9a6adbefa84e51d4ba1b8eb3bf35e54",
-    "view-front.png": "32ce95e77600de4759ef1a0b354fe5b6a2ff0a33b167accb9a553636956b91f1",
-    "view-rear.png": "3e5830026b444cc852bdf2bfc85c689314bd7a5ce514550283f24ca0abe0b1f8",
-    "view-left.png": "c8738c217b84bc04b4a0d4a45b609c7cd7aa6a46360f324f2e36250a45d54822",
-    "view-right.png": "d33aa9a358326aae4543bc9c1f0a8a4fdb630c3cb25f2d082aab65c178205b7f",
-    "view-top.png": "22fe0365b6d38dd6e49dfe47b748dc1cbdaa57dada0ae3835f761474d9abedab"
+    "minimal-book-stack-01.fbx": "169fb6c9a022345bf258d9836a79d1cb14833ebe5cdb8f2dde77a8c561798555",
+    "thumbnail.png": "947f19d81f5398100ad8ad2e4e4d3be6cb88951ec485a9e81fe04118d6d9e430",
+    "view-hero.png": "947f19d81f5398100ad8ad2e4e4d3be6cb88951ec485a9e81fe04118d6d9e430",
+    "view-front.png": "9831acc8a6c7e36a4f62bd52c87a25d0e217a2b6c5a70c16df15b65d1b304e7d",
+    "view-rear.png": "5a069cf8503b73132b7a0c8cac7b104219379a1ca26757c852329b891b80f5a4",
+    "view-left.png": "4fb290bf4d0425d422be636af316c4b36864477fdbb2cfc84e0342d1aeb71b0a",
+    "view-right.png": "57601a1e039afa853570a3de60687baccaaae61e6ba445ba379c1ed874aa6dca",
+    "view-top.png": "f2501f37322e9b9a71af6eadbae306405ccc570dff30b027b4f5a05b3fb3d861"
   }
 }

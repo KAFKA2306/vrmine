@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "minimal-succulent-planter-01",
   "source_spec": "config/world-items/minimal-succulent-planter-01.json",
   "spec_sha256": "05592c841b4a3fcca4c543db7e2eb2e3149dafed44f5ee4c8afdf1b8554629e2",
@@ -10,6 +10,95 @@
     0.23999999463558197,
     0.36000001430511475
   ],
+  "bounds_min_m": [
+    -0.11999999731779099,
+    -0.11999999731779099,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.11999999731779099,
+    0.11999999731779099,
+    0.36000001430511475
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.18000000715255737
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 6.893e-07,
+      "center_error_y": -1.1931e-06,
+      "fill_ratio": 0.8399999936,
+      "normalized_bounds": [
+        -0.2977154916,
+        0.2977168703,
+        -0.4200011899,
+        0.4199988037
+      ],
+      "ortho_scale": 0.5620335937
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -1.609e-07,
+      "fill_ratio": 0.8400000051,
+      "normalized_bounds": [
+        -0.2591223675,
+        0.2591223675,
+        -0.4200001635,
+        0.4199998417
+      ],
+      "ortho_scale": 0.4631016552
+    },
+    "rear": {
+      "center_error_x": 8.929e-07,
+      "center_error_y": -1.609e-07,
+      "fill_ratio": 0.8400000051,
+      "normalized_bounds": [
+        -0.2591215309,
+        0.2591233168,
+        -0.4200001635,
+        0.4199998417
+      ],
+      "ortho_scale": 0.4631016552
+    },
+    "left": {
+      "center_error_x": -2.494e-07,
+      "center_error_y": -1.1905e-06,
+      "fill_ratio": 0.8400000051,
+      "normalized_bounds": [
+        -0.2591226732,
+        0.2591221745,
+        -0.4200011931,
+        0.419998812
+      ],
+      "ortho_scale": 0.4631016552
+    },
+    "right": {
+      "center_error_x": 2.494e-07,
+      "center_error_y": -1.1905e-06,
+      "fill_ratio": 0.8400000051,
+      "normalized_bounds": [
+        -0.2591221745,
+        0.2591226732,
+        -0.4200011931,
+        0.419998812
+      ],
+      "ortho_scale": 0.4631016552
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -0.0002309713,
+      "fill_ratio": 0.8399999917,
+      "normalized_bounds": [
+        -0.4187363351,
+        0.4187363351,
+        -0.4202309672,
+        0.4197690245
+      ],
+      "ortho_scale": 0.2865765095
+    }
+  },
   "triangles": 6876,
   "parts_count": 9,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-succulent-planter-01.blend": "23e02c8ccba1c09247ea7e0853b1a33d8c8868eef419176ec77bd9f36b53c402",
+    "minimal-succulent-planter-01.blend": "b9d490eab45d983ddd908a180b914adfda8452314e3df49dcdd51e1839b62e03",
     "minimal-succulent-planter-01.glb": "f80adfda8aa2a7599a5657a7951b211db0906eebb3ddc18a777c71b79fb3a01b",
-    "minimal-succulent-planter-01.fbx": "205fe8611856b778bfeb783d67935f3183fb67c76933ca281c7bada5318be4f3",
-    "thumbnail.png": "cb910fa0c576d538df01019d3a289d491e4bd05725b6d57cceb56317b2255ebb",
-    "view-hero.png": "cb910fa0c576d538df01019d3a289d491e4bd05725b6d57cceb56317b2255ebb",
-    "view-front.png": "5b6a2179309b3a8638fc722acbf241b4e3adaf39f0427bcb003c2d7915bcae51",
-    "view-rear.png": "9e75d30f5b86da5368a03662d72c13c0165a489dcf9595298b442208ae2cff86",
-    "view-left.png": "f121ae7ae1c1c40f9bad97bb6e46fee4364db170bfa32ab39b3971484d1d4c90",
-    "view-right.png": "7eee2ed8c3e1c246807b8554fafa81d1ce2d06d81c45a9f1da2546731d0f3bc0",
-    "view-top.png": "070030a1575eedff79aefe7ff3653b57911ff6f1e2a7f5a764e3be95db305916"
+    "minimal-succulent-planter-01.fbx": "e25b783074d44db734802e806329a2187e7ae10f8b5edc0eb01e1fdabdaa831a",
+    "thumbnail.png": "62d5996b95a218f545e53880a5c674f0184667f050c036bd1d618298c17fd00e",
+    "view-hero.png": "62d5996b95a218f545e53880a5c674f0184667f050c036bd1d618298c17fd00e",
+    "view-front.png": "e531b2511032e00dfae474e4a452629488bca4f3e106f6ebfc7d03c9a3b592d9",
+    "view-rear.png": "aea08c17f24238fd94fb5b99624a8fec58d67034a88bfb4903d3b7acea2436e4",
+    "view-left.png": "ea98477ef361abe65ab66405b12f549f69c9f04b69a21199017b4740a4c94de1",
+    "view-right.png": "4ff2f3bef665957b457b00e879cf54dfe617675f0273ac56f0854689d29a85ca",
+    "view-top.png": "2116da1ea71c65d9024926ab4261ce7463c2dcd4f7aaa426e7a089c5d26174ca"
   }
 }

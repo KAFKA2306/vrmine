@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "compact-toolbox-01",
   "source_spec": "config/world-items/compact-toolbox-01.json",
   "spec_sha256": "f7a324ee98cc6bb4b17dc158ec5af22938252f7090ed1ce6273b9c944ed2868c",
@@ -10,6 +10,95 @@
     0.21799999475479126,
     0.25999999046325684
   ],
+  "bounds_min_m": [
+    -0.20999999344348907,
+    -0.11800000071525574,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.20999999344348907,
+    0.10000000149011612,
+    0.25999999046325684
+  ],
+  "bounds_center_m": [
+    0.0,
+    -0.008999999612569809,
+    0.12999999523162842
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 8.68e-07,
+      "center_error_y": -1.1351e-06,
+      "fill_ratio": 0.8399999754,
+      "normalized_bounds": [
+        -0.4199991197,
+        0.4200008558,
+        -0.3779059239,
+        0.3779036536
+      ],
+      "ortho_scale": 0.557908237
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -2.682e-07,
+      "fill_ratio": 0.8400000238,
+      "normalized_bounds": [
+        -0.4200000119,
+        0.4200000119,
+        -0.2869554333,
+        0.2869548969
+      ],
+      "ortho_scale": 0.4999999702
+    },
+    "rear": {
+      "center_error_x": 8.345e-07,
+      "center_error_y": -1.49e-07,
+      "fill_ratio": 0.8400000334,
+      "normalized_bounds": [
+        -0.4199991822,
+        0.4200008512,
+        -0.2869553268,
+        0.2869550288
+      ],
+      "ortho_scale": 0.5
+    },
+    "left": {
+      "center_error_x": -3.088e-07,
+      "center_error_y": -1.6338e-06,
+      "fill_ratio": 0.84,
+      "normalized_bounds": [
+        -0.2914809797,
+        0.2914803621,
+        -0.4200016338,
+        0.4199983662
+      ],
+      "ortho_scale": 0.3739528358
+    },
+    "right": {
+      "center_error_x": 3.088e-07,
+      "center_error_y": -1.6338e-06,
+      "fill_ratio": 0.84,
+      "normalized_bounds": [
+        -0.2914803621,
+        0.2914809797,
+        -0.4200016338,
+        0.4199983662
+      ],
+      "ortho_scale": 0.3739528358
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -0.0001323894,
+      "fill_ratio": 0.8400000238,
+      "normalized_bounds": [
+        -0.4200000119,
+        0.4200000119,
+        -0.2186554056,
+        0.2183906268
+      ],
+      "ortho_scale": 0.4999999702
+    }
+  },
   "triangles": 1128,
   "parts_count": 6,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "compact-toolbox-01.blend": "92e93f1c31aae68605105c105c61dff1b128f1283816b121c1803ea4922b5e64",
+    "compact-toolbox-01.blend": "4951527d9ba721d1e368b92fd1adc84a285dfea2c8c0d73f1e3b3b856bfed6fc",
     "compact-toolbox-01.glb": "99c99f3bc67e5b75131ba926ec3233662efdd4bcdcf08f6d8324f4488465c863",
-    "compact-toolbox-01.fbx": "bbfb5487c2ddebfe7274cef7a9bf784fa3da90c4e83ce42e5eecb0f65642e5f8",
-    "thumbnail.png": "873ed074f8fa377563c563d05e1448e34b1b630b57dfc75388dab4c0a2eb8ed3",
-    "view-hero.png": "873ed074f8fa377563c563d05e1448e34b1b630b57dfc75388dab4c0a2eb8ed3",
-    "view-front.png": "21ec0382324425dc1f7e81c48378102544c91b10e4658e5cb98750a411972a87",
-    "view-rear.png": "cdf62253750645ed208cac992c514c39261cc3dba538c42bf091d605056721a1",
-    "view-left.png": "2b9ee154a26ebf0d99300a3ce4a37a134a3a38025bd55d124c406a91c88f03e2",
-    "view-right.png": "959278c1e0f4d88db2b031fe7c0ce9ad92a26e6d36a5e7b0cf31bf5602220427",
-    "view-top.png": "29c93a08004fe5facf3f70fd506c5464a5a7c4a9accf1fe2416c1efc68967a9f"
+    "compact-toolbox-01.fbx": "7d5ce006168a6c044687e8dff31d39d3000989bc0911cf64a79e37acc8c3ce60",
+    "thumbnail.png": "89b7ae83fb7cbef0b62e2496a0bc8d01b54f2b5ae594cb602e78c63a73e3868e",
+    "view-hero.png": "89b7ae83fb7cbef0b62e2496a0bc8d01b54f2b5ae594cb602e78c63a73e3868e",
+    "view-front.png": "3cd3aff07dbd977c7ba25663281f07c609a787c60196edfd012a50563dc8e69f",
+    "view-rear.png": "8d4bd6531394c6d32269eefcb7b91ef23cbbf970451b9bf070579f3f9e82ff18",
+    "view-left.png": "7649354ba61db0a2afc5919bebc201111885ef66eec7df17b57b20a51872e6cb",
+    "view-right.png": "a848360b710ff0f805ba225f6f966438d56bce3e462311ea2fe5afa9642e4852",
+    "view-top.png": "aba816c79614781a96b367dd183ebcffea2a0bf0bb2d9b067b1633ea2aa19c93"
   }
 }

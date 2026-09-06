@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "minimal-tissue-box-01",
   "source_spec": "config/world-items/minimal-tissue-box-01.json",
   "spec_sha256": "b5ae7f3b2bc21447eef9d6ef8f5a9d2c42eeae721dc2584f608a6aca85d5d72e",
@@ -10,6 +10,95 @@
     0.12999999523162842,
     0.16864559054374695
   ],
+  "bounds_min_m": [
+    -0.11999999731779099,
+    -0.06499999761581421,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.11999999731779099,
+    0.06499999761581421,
+    0.16864559054374695
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.08432279527187347
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 1.2474e-06,
+      "center_error_y": -1.3167e-06,
+      "fill_ratio": 0.839999963,
+      "normalized_bounds": [
+        -0.4199987342,
+        0.4200012289,
+        -0.4043954907,
+        0.4043928574
+      ],
+      "ortho_scale": 0.322547853
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -4.694e-07,
+      "fill_ratio": 0.8400000313,
+      "normalized_bounds": [
+        -0.4200000156,
+        0.4200000156,
+        -0.3230438835,
+        0.3230429447
+      ],
+      "ortho_scale": 0.2857142687
+    },
+    "rear": {
+      "center_error_x": 1.4603e-06,
+      "center_error_y": -4.694e-07,
+      "fill_ratio": 0.8399999604,
+      "normalized_bounds": [
+        -0.4199985199,
+        0.4200014405,
+        -0.3230438422,
+        0.3230429034
+      ],
+      "ortho_scale": 0.2857143283
+    },
+    "left": {
+      "center_error_x": -4.865e-07,
+      "center_error_y": -2.5738e-06,
+      "fill_ratio": 0.84000001,
+      "normalized_bounds": [
+        -0.2738368892,
+        0.2738359161,
+        -0.4200025789,
+        0.4199974312
+      ],
+      "ortho_scale": 0.2373680621
+    },
+    "right": {
+      "center_error_x": 4.865e-07,
+      "center_error_y": -2.5738e-06,
+      "fill_ratio": 0.84000001,
+      "normalized_bounds": [
+        -0.2738359161,
+        0.2738368892,
+        -0.4200025789,
+        0.4199974312
+      ],
+      "ortho_scale": 0.2373680621
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -0.0002316814,
+      "fill_ratio": 0.8400000313,
+      "normalized_bounds": [
+        -0.4200000156,
+        0.4200000156,
+        -0.2283253955,
+        0.2278620327
+      ],
+      "ortho_scale": 0.2857142687
+    }
+  },
   "triangles": 752,
   "parts_count": 4,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-tissue-box-01.blend": "51851a62409a72a386a32894b44e821a34470f4844b0ace14b207c5804da70ef",
+    "minimal-tissue-box-01.blend": "d049fc8fd23aeb58120201a77e1820155c08533879edb7a7535b9de832d4c122",
     "minimal-tissue-box-01.glb": "f282a5a020298a6371ea014cfb3d4a2643ee1e72944c787cb0116217ddb122d6",
-    "minimal-tissue-box-01.fbx": "cd0936a5664e6e262d00d45c3638d62dcc5693d70ae5fbe894b25e4169b06057",
-    "thumbnail.png": "5f14d221c50d78dadf1b44e758a002dfbd4994b7c0a2c71d4bc1da0ccc34d260",
-    "view-hero.png": "5f14d221c50d78dadf1b44e758a002dfbd4994b7c0a2c71d4bc1da0ccc34d260",
-    "view-front.png": "2c1b5451f6465afc56788b865e564b15cb0755b6b1f8c1458267a2a3df9c792e",
-    "view-rear.png": "969fba317cea9cf94a4f0056a52e554c7125013d716ee2796928c947123ff0c8",
-    "view-left.png": "55d521305df0444c7e64aecbb4363d09da6575b9c09675b6696687df200ba174",
-    "view-right.png": "081ae3508259cb1ae13b33deda275bf66908ead573b11b99a215e2282ea0e2d9",
-    "view-top.png": "d1b8629f7b2697eaa3186989c3af667ffb50a8f0b19702fc0f9290053e784ac1"
+    "minimal-tissue-box-01.fbx": "088500252e2a90fae9ddfa32d5b562ffa971d76b762360e32b921553d2296c16",
+    "thumbnail.png": "59f013626c7972dbac3cfe0dbcbade5949f92756e9ca010c025fffb8749a8562",
+    "view-hero.png": "59f013626c7972dbac3cfe0dbcbade5949f92756e9ca010c025fffb8749a8562",
+    "view-front.png": "c142e5bf7a089fa49165f508289251dc22230f848a4718e87604161db143d9d8",
+    "view-rear.png": "4f2e49763a25fabf709760572ecdefa82b575cf015bd98cd3a95c4ed964727ae",
+    "view-left.png": "83758136a5dba8d7a920c06b7ff22e38c288cafc18316b11d64c585afc27616d",
+    "view-right.png": "f9d54ce11df1737879c5eef5018cadf903aed7cc469cae3fd8d7ab82a30644c7",
+    "view-top.png": "ba7471bbcfd654ffe91e24c9d802ae941cfecba5ea4307b8d819a376b42d6a10"
   }
 }

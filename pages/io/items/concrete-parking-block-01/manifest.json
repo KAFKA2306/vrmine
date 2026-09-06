@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "concrete-parking-block-01",
   "source_spec": "config/world-items/concrete-parking-block-01.json",
   "spec_sha256": "d471c9188505094cc99c044326fb054e6706eda7697418d9c44b47c4c31c25eb",
@@ -10,6 +10,95 @@
     0.164000004529953,
     0.12462364137172699
   ],
+  "bounds_min_m": [
+    -0.3769376277923584,
+    -0.0820000022649765,
+    -0.012623634189367294
+  ],
+  "bounds_max_m": [
+    0.3769376277923584,
+    0.0820000022649765,
+    0.1120000034570694
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.0496881827712059
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 4.587e-07,
+      "center_error_y": -5.645e-07,
+      "fill_ratio": 0.8400000169,
+      "normalized_bounds": [
+        -0.4199995498,
+        0.4200004671,
+        -0.2178485368,
+        0.2178474077
+      ],
+      "ortho_scale": 0.8446835876
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -7.89e-08,
+      "fill_ratio": 0.840000008,
+      "normalized_bounds": [
+        -0.420000004,
+        0.420000004,
+        -0.0810871607,
+        0.0810870029
+      ],
+      "ortho_scale": 0.8974705338
+    },
+    "rear": {
+      "center_error_x": 4.649e-07,
+      "center_error_y": -7.89e-08,
+      "fill_ratio": 0.840000008,
+      "normalized_bounds": [
+        -0.4199995391,
+        0.4200004689,
+        -0.0810871939,
+        0.0810870361
+      ],
+      "ortho_scale": 0.8974705338
+    },
+    "left": {
+      "center_error_x": -4.314e-07,
+      "center_error_y": -2.0317e-06,
+      "fill_ratio": 0.8400000178,
+      "normalized_bounds": [
+        -0.3063057464,
+        0.3063048837,
+        -0.4200020406,
+        0.4199979772
+      ],
+      "ortho_scale": 0.2677068412
+    },
+    "right": {
+      "center_error_x": 4.314e-07,
+      "center_error_y": -2.0317e-06,
+      "fill_ratio": 0.8400000178,
+      "normalized_bounds": [
+        -0.3063048837,
+        0.3063057464,
+        -0.4200020406,
+        0.4199979772
+      ],
+      "ortho_scale": 0.2677068412
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -7.37569e-05,
+      "fill_ratio": 0.840000008,
+      "normalized_bounds": [
+        -0.420000004,
+        0.420000004,
+        -0.0915812599,
+        0.091433746
+      ],
+      "ortho_scale": 0.8974705338
+    }
+  },
   "triangles": 940,
   "parts_count": 5,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "concrete-parking-block-01.blend": "0723354b4401183878c4bb5eaa6556be038134b7953eb9c036b7f9b8805bebb8",
+    "concrete-parking-block-01.blend": "09f13b1cd944078055a01face434c732f4929644ff9f35ce4c346e9bb5640a46",
     "concrete-parking-block-01.glb": "f9bfb667c81bceada7248ec67ac063f8262e8de2b85e867c3f3ba7b6b409e95d",
-    "concrete-parking-block-01.fbx": "550d8b954b30c4a16c5fdff0e1eca31ab7529afdb8d3cf3d8c5d5c746857c7ff",
-    "thumbnail.png": "7f960029aa7c04777ea9c035eaf8f1f4d0cd10af35e8aec28e77d76d4b063c7c",
-    "view-hero.png": "7f960029aa7c04777ea9c035eaf8f1f4d0cd10af35e8aec28e77d76d4b063c7c",
-    "view-front.png": "7f21840d67fbb3716d77d7ca05b89e1bb37f99c51d7b81d095b4081549fe648d",
-    "view-rear.png": "3813379e03f52d97d1ea9888007f1cc8c61d9d4b88204d271ba03a94b1314ef1",
-    "view-left.png": "33be1b931a6c91edef7dbbfa42bfeebda612854e388586cf30dfe1e90f5f3565",
-    "view-right.png": "268bc31d7279f7d34b9b05dc0c0fe6600dfc84433a6bb3a81281fcca251ac5fd",
-    "view-top.png": "1c92bf47d25a039f3337b942b4dcf7950c4657d8b2788991309cc5dc6aa71b93"
+    "concrete-parking-block-01.fbx": "0899f53fe33a3b6a678f13383b1635c79316a50448e3a64c493344229419a14f",
+    "thumbnail.png": "ac1bef2272c90413fa9ce62374990bb978ddc8e978a4ea499c9bfc5f0220e2fd",
+    "view-hero.png": "ac1bef2272c90413fa9ce62374990bb978ddc8e978a4ea499c9bfc5f0220e2fd",
+    "view-front.png": "bb163d444623020f0cdda64b122b836d818766bc8951d0be6174104aa4b1ea09",
+    "view-rear.png": "d1dc7b85b3b632da9a768751d1e62ab7cd8d201222fe109a90fc9d1b2e491020",
+    "view-left.png": "c8f817ab0e04a2b392fb380edc20c0da0ea7e7f95ab979f0af5ba5ac1fd0a60a",
+    "view-right.png": "9a5142b907267621fc9e663dcc3dd5e10c05ea4ac5c186b3737c909e2366d5fd",
+    "view-top.png": "61334edc5ed53be98fb73b71e880d514d31db57ebaa2ec36011effd31eb00d1d"
   }
 }

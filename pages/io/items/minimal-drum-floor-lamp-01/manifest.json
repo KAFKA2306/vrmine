@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "minimal-drum-floor-lamp-01",
   "source_spec": "config/world-items/minimal-drum-floor-lamp-01.json",
   "spec_sha256": "390195ae26ee5688554ae7a2e3bccc4e090959d3417d322b8b4a3ee4a77e9f1b",
@@ -10,6 +10,95 @@
     0.4399999976158142,
     1.590000033378601
   ],
+  "bounds_min_m": [
+    -0.2199999988079071,
+    -0.2199999988079071,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.2199999988079071,
+    0.2199999988079071,
+    1.590000033378601
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.7950000166893005
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 1.993e-07,
+      "center_error_y": -3.543e-07,
+      "fill_ratio": 0.8400000425,
+      "normalized_bounds": [
+        -0.1519377369,
+        0.1519381354,
+        -0.4200003755,
+        0.419999667
+      ],
+      "ortho_scale": 2.0190169811
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -9.19e-08,
+      "fill_ratio": 0.8400000147,
+      "normalized_bounds": [
+        -0.1130463009,
+        0.1130463009,
+        -0.4200000992,
+        0.4199999155
+      ],
+      "ortho_scale": 1.9461052418
+    },
+    "rear": {
+      "center_error_x": 2.144e-07,
+      "center_error_y": -9.19e-08,
+      "fill_ratio": 0.8400000245,
+      "normalized_bounds": [
+        -0.1130461256,
+        0.1130465543,
+        -0.4200001041,
+        0.4199999204
+      ],
+      "ortho_scale": 1.946105361
+    },
+    "left": {
+      "center_error_x": -6.13e-08,
+      "center_error_y": -3.369e-07,
+      "fill_ratio": 0.8400000147,
+      "normalized_bounds": [
+        -0.1130464158,
+        0.1130462933,
+        -0.4200003443,
+        0.4199996704
+      ],
+      "ortho_scale": 1.9461052418
+    },
+    "right": {
+      "center_error_x": 6.13e-08,
+      "center_error_y": -3.369e-07,
+      "fill_ratio": 0.8400000147,
+      "normalized_bounds": [
+        -0.1130462933,
+        0.1130464158,
+        -0.4200003443,
+        0.4199996704
+      ],
+      "ortho_scale": 1.9461052418
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -0.0001254521,
+      "fill_ratio": 0.8399999571,
+      "normalized_bounds": [
+        -0.4169673526,
+        0.4169673526,
+        -0.4201254307,
+        0.4198745264
+      ],
+      "ortho_scale": 0.5276192427
+    }
+  },
   "triangles": 3052,
   "parts_count": 5,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-drum-floor-lamp-01.blend": "f1948f58d2b7dcdb4c968878c75c570cb47254b5a32ac4dafeaddadcd931c99a",
+    "minimal-drum-floor-lamp-01.blend": "7ec89814796c01fd35b9b2b6a3d1cdd348a635c7102b00af2b507c22593d1df7",
     "minimal-drum-floor-lamp-01.glb": "80c88b2ff84d64dcf4d3a057ed2785fe24bef95a2a1bc425eea20a052ca6858f",
-    "minimal-drum-floor-lamp-01.fbx": "54a19beb4b84804bad88c464eb6e4aa33bd403dff7a91c2b2e78e63b34cd44f4",
-    "thumbnail.png": "8f9a412129e5db4eb3d579ec2a87ece786ce80066bc0f10767f9ce89ea672212",
-    "view-hero.png": "8f9a412129e5db4eb3d579ec2a87ece786ce80066bc0f10767f9ce89ea672212",
-    "view-front.png": "58b1fdb5ab825ef478bb21e65d6761579a3f0ee10295000d61d26eebac538625",
-    "view-rear.png": "dd0b75036985e99d26c41eb81ed1ebed4c8a04b2e3ccda92e52eb598446ee1c8",
-    "view-left.png": "d052844c68890f0a1a6903d25dd09876635e32546fca14a41efec7b356d1999c",
-    "view-right.png": "5ff0f921533fc22b9bd0502850ae15039b71a4638bbe4cdf89ca0fd6bfbf47f3",
-    "view-top.png": "0c4214bd7d13e630466d4101b7c6930dd98be8826330ad9fa037b96b2698d4ad"
+    "minimal-drum-floor-lamp-01.fbx": "8878cc74a467832ef8a4f1dc37596acf0fff22942312ddaab3317c0e731be783",
+    "thumbnail.png": "323ca0cb4e5e421fcced3c292ce58d7b45f61b40ec2742cad734e74cdc8419e9",
+    "view-hero.png": "323ca0cb4e5e421fcced3c292ce58d7b45f61b40ec2742cad734e74cdc8419e9",
+    "view-front.png": "dd8f5a5e2564d3f0de9d0cf29f85f32a303d3b5eb507d5c386a8970ac8a4cf2d",
+    "view-rear.png": "1df2407feb641225f32ec01f83d6b0bb5136902dbdb6c6d69cd7de34ea645761",
+    "view-left.png": "a0c13c70a4e86fec46824840f1db7d6088743fa2499f44257bf82c74ec51d3e3",
+    "view-right.png": "1c819974b6d9d1f703ac31849a53dda7fb6dd3df722a13fbfae529a445b2839f",
+    "view-top.png": "b1bb6039d420d4982fefc573896d95e5a17a7a5fc271e453cc42fda88e9ffaf8"
   }
 }

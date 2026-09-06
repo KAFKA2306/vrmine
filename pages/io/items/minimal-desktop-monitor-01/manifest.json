@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "minimal-desktop-monitor-01",
   "source_spec": "config/world-items/minimal-desktop-monitor-01.json",
   "spec_sha256": "d1c9f656d6979309d71b543dcd901bc629f0bdfb7c23ac25526759021d4c3cc0",
@@ -10,6 +10,95 @@
     0.20000000298023224,
     0.46000000834465027
   ],
+  "bounds_min_m": [
+    -0.2800000011920929,
+    -0.06499999761581421,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.2800000011920929,
+    0.13500000536441803,
+    0.46000000834465027
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.03500000387430191,
+    0.23000000417232513
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 4.171e-07,
+      "center_error_y": -8.144e-07,
+      "fill_ratio": 0.8399999984,
+      "normalized_bounds": [
+        -0.3814644612,
+        0.3814652955,
+        -0.4200008136,
+        0.4199991848
+      ],
+      "ortho_scale": 0.7501901984
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -7.82e-08,
+      "fill_ratio": 0.8399999785,
+      "normalized_bounds": [
+        -0.4199999893,
+        0.4199999893,
+        -0.3620383483,
+        0.3620381918
+      ],
+      "ortho_scale": 0.6666666865
+    },
+    "rear": {
+      "center_error_x": 6.258e-07,
+      "center_error_y": -1.453e-07,
+      "fill_ratio": 0.8399999928,
+      "normalized_bounds": [
+        -0.4199993706,
+        0.4200006223,
+        -0.3620384276,
+        0.3620381371
+      ],
+      "ortho_scale": 0.6666667461
+    },
+    "left": {
+      "center_error_x": -1.826e-07,
+      "center_error_y": -9.191e-07,
+      "fill_ratio": 0.8399999755,
+      "normalized_bounds": [
+        -0.1581533187,
+        0.1581529535,
+        -0.4200009068,
+        0.4199990686
+      ],
+      "ortho_scale": 0.6322988272
+    },
+    "right": {
+      "center_error_x": 1.826e-07,
+      "center_error_y": -9.191e-07,
+      "fill_ratio": 0.8399999755,
+      "normalized_bounds": [
+        -0.1581529535,
+        0.1581533187,
+        -0.4200009068,
+        0.4199990686
+      ],
+      "ortho_scale": 0.6322988272
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -9.92808e-05,
+      "fill_ratio": 0.8399999785,
+      "normalized_bounds": [
+        -0.4199999893,
+        0.4199999893,
+        -0.1507935405,
+        0.1505949788
+      ],
+      "ortho_scale": 0.6666666865
+    }
+  },
   "triangles": 940,
   "parts_count": 5,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-desktop-monitor-01.blend": "b6c9e737d192680d557feac688bd320e78d026add72a434ecaf790f0189a6f31",
+    "minimal-desktop-monitor-01.blend": "8071d080fc1e58895c43f472472faf7364ecb0c3b4d65c1f0deddfcd1b3a75f6",
     "minimal-desktop-monitor-01.glb": "d6992b460c2f685e0fc2e197728f0e62443cfa02db9c9fa2618ac46c6e8572a7",
-    "minimal-desktop-monitor-01.fbx": "c75e8cca1bffeac82b773342af635865e016fe6acb6be131e5cdd6b3bc634911",
-    "thumbnail.png": "136ade192c4eee0700b3817d5b4af6abf15b48df95641ad6c5cbeeee4b096d8d",
-    "view-hero.png": "136ade192c4eee0700b3817d5b4af6abf15b48df95641ad6c5cbeeee4b096d8d",
-    "view-front.png": "03497831c6b40ad082a6cf9562bb18f7186f417832bf03347b94299e34e8ca5f",
-    "view-rear.png": "bdc26d275a5c2817d473abccb68b8df951a7452ae78e3e3708968731d0fd8f79",
-    "view-left.png": "0827d28755d9550801d667c2eaf9d97efb826f6fcd814e7069d3e219a77467e6",
-    "view-right.png": "05eb9d012168b20eaca57f2fc77fb1f3b9eb9f28eade5eca4b8b3aa8fa2b11b6",
-    "view-top.png": "62943e4c61dd828f0f5a99b8b1aadff9b370e28ceaeb7d1cfe8bf189d3adc9f5"
+    "minimal-desktop-monitor-01.fbx": "ca67bc221973c99005b1843ce37be51c0b626679f2c5b68cad517fe34f66825f",
+    "thumbnail.png": "4ad1556a647a7863ec9e19976c8073e5c3ac18d8ab6e759f8e34fd32eb39d2d6",
+    "view-hero.png": "4ad1556a647a7863ec9e19976c8073e5c3ac18d8ab6e759f8e34fd32eb39d2d6",
+    "view-front.png": "b604ba93f583c13ca454dc8c63781f298225fde91882c2ae4c5b2cc8c46cc2eb",
+    "view-rear.png": "fb8293fbc20b5e099e5af6a2d3d33b45f42336e25dff419e3250c39f3a864164",
+    "view-left.png": "93c2a24ed5c5575dbe87032f712d0d8a6bb8563a30cc43345645be93a7353402",
+    "view-right.png": "e97cc62b3d1a1ee2570b44b96f39865c810254bf40a315c3f576f4d339f66c1f",
+    "view-top.png": "12c7b17c65fd4e69b9e4ff121822e1b436ae5661f7fe8231aa661692b4bdab07"
   }
 }

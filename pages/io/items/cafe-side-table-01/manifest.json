@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "cafe-side-table-01",
   "source_spec": "config/world-items/cafe-side-table-01.json",
   "spec_sha256": "02052ea0d089423c68305f886455755af3c63b92dd29098d08407f21bc93750b",
@@ -10,6 +10,95 @@
     0.6200000047683716,
     0.7199999690055847
   ],
+  "bounds_min_m": [
+    -0.3100000023841858,
+    -0.3100000023841858,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.3100000023841858,
+    0.3100000023841858,
+    0.7199999690055847
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.35999998450279236
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 3.274e-07,
+      "center_error_y": -4.366e-07,
+      "fill_ratio": 0.8400000233,
+      "normalized_bounds": [
+        -0.3518074086,
+        0.3518080635,
+        -0.4200004482,
+        0.419999575
+      ],
+      "ortho_scale": 1.2286828756
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -6.28e-08,
+      "fill_ratio": 0.8399999899,
+      "normalized_bounds": [
+        -0.3267915996,
+        0.3267915996,
+        -0.4200000578,
+        0.4199999321
+      ],
+      "ortho_scale": 0.9486168027
+    },
+    "rear": {
+      "center_error_x": 4.398e-07,
+      "center_error_y": -6.28e-08,
+      "fill_ratio": 0.84,
+      "normalized_bounds": [
+        -0.3267912021,
+        0.3267920818,
+        -0.4200000628,
+        0.4199999372
+      ],
+      "ortho_scale": 0.9486168623
+    },
+    "left": {
+      "center_error_x": -1.257e-07,
+      "center_error_y": -5.655e-07,
+      "fill_ratio": 0.8399999899,
+      "normalized_bounds": [
+        -0.3267917881,
+        0.3267915368,
+        -0.4200005605,
+        0.4199994295
+      ],
+      "ortho_scale": 0.9486168027
+    },
+    "right": {
+      "center_error_x": 1.257e-07,
+      "center_error_y": -5.655e-07,
+      "fill_ratio": 0.8399999899,
+      "normalized_bounds": [
+        -0.3267915368,
+        0.3267917881,
+        -0.4200005605,
+        0.4199994295
+      ],
+      "ortho_scale": 0.9486168027
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -8.94691e-05,
+      "fill_ratio": 0.8399999678,
+      "normalized_bounds": [
+        -0.4190211817,
+        0.4190211817,
+        -0.420089453,
+        0.4199105148
+      ],
+      "ortho_scale": 0.7398194075
+    }
+  },
   "triangles": 1692,
   "parts_count": 9,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-side-table-01.blend": "a620eae70125ce84d14560645654dd54ad4a4b1de672d66d78bc9c0834d68614",
+    "cafe-side-table-01.blend": "710e2ac2282c16b0d275d237b18209b7946eb5159de30d1bd6b00ec596a9e7e3",
     "cafe-side-table-01.glb": "712b3e057ae5006aa414f161bb5aff655485a2dc82260b2dbead0ad5eccbd373",
-    "cafe-side-table-01.fbx": "05680d6da21b25384418b0623ac54015e168d59c790c934016bb0a56482593d3",
-    "thumbnail.png": "edbbdb9db788978de3a75d1b0a0e0f178c1bee5ab03f733a490967cb614ee30c",
-    "view-hero.png": "edbbdb9db788978de3a75d1b0a0e0f178c1bee5ab03f733a490967cb614ee30c",
-    "view-front.png": "19ced9565f7dbdef2d0e375d523248128b1261712f7a42511269700947d20c54",
-    "view-rear.png": "ed4f8a9d3c5cc03907332180cf8b72f751ace05cb68b1ac76c92e74c9a5eba39",
-    "view-left.png": "89a6d8edce5f628ed3faa3f4cb711b71e5b69a95b40649bb1084aee46e39f6fe",
-    "view-right.png": "497b2cbc7e0d1aa970ca6c1e6c1f1cf1a4498e130b1da42ed8992419dcdd4771",
-    "view-top.png": "6568ed68f0d978ced3980847b00c39bd3944449669ad1e3df0b55edd9848530f"
+    "cafe-side-table-01.fbx": "2e4a88673759a8eb5c24dd91584b60e35f9239c23d27cb4b9f4cc360bb446515",
+    "thumbnail.png": "2d271d5af5745b0dae88d6cc0e9e01333645f27d9d7610986c351eb2b04f0968",
+    "view-hero.png": "2d271d5af5745b0dae88d6cc0e9e01333645f27d9d7610986c351eb2b04f0968",
+    "view-front.png": "8486099ed1d86df90439ad699f96983f58d3a2a850e726ce4914f7205ffe12da",
+    "view-rear.png": "2bd2446a0d0295b3218e11a2a6b72bb736b119a62a704aa2b26e41ea718e5b4c",
+    "view-left.png": "3b257a048003c35284a5c600f660e8ccb5f4d4fee392b372020326f5dfab4840",
+    "view-right.png": "e4623dbf04c4c89f8f17c62dfd6fe9c819e8efc98632ecba0cac8a353f8c062f",
+    "view-top.png": "bd190df8ca3ada58971bb216e8740bada9246dd7a6810251148a5b77b352d70e"
   }
 }

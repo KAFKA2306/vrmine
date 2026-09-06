@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "retail-display-crate-01",
   "source_spec": "config/world-items/retail-display-crate-01.json",
   "spec_sha256": "e1189d9c7215097662c7a41057992650b7802dab0d31d44b1ecff43ab6a2b163",
@@ -10,6 +10,95 @@
     0.3400000035762787,
     0.2800000011920929
   ],
+  "bounds_min_m": [
+    -0.23999999463558197,
+    -0.17000000178813934,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.23999999463558197,
+    0.17000000178813934,
+    0.2800000011920929
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.14000000059604645
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 5.958e-07,
+      "center_error_y": -9.363e-07,
+      "fill_ratio": 0.839999966,
+      "normalized_bounds": [
+        -0.4199993871,
+        0.4200005788,
+        -0.3569724477,
+        0.3569705751
+      ],
+      "ortho_scale": 0.7002583146
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -2.086e-07,
+      "fill_ratio": 0.8400000313,
+      "normalized_bounds": [
+        -0.4200000156,
+        0.4200000156,
+        -0.2827829254,
+        0.2827825082
+      ],
+      "ortho_scale": 0.5714285374
+    },
+    "rear": {
+      "center_error_x": 7.302e-07,
+      "center_error_y": -2.086e-07,
+      "fill_ratio": 0.8399999604,
+      "normalized_bounds": [
+        -0.41999925,
+        0.4200007103,
+        -0.2827828925,
+        0.2827824752
+      ],
+      "ortho_scale": 0.5714286566
+    },
+    "left": {
+      "center_error_x": -2.928e-07,
+      "center_error_y": -1.4639e-06,
+      "fill_ratio": 0.8400000117,
+      "normalized_bounds": [
+        -0.4175349485,
+        0.4175343629,
+        -0.4200014698,
+        0.4199985419
+      ],
+      "ortho_scale": 0.4071519077
+    },
+    "right": {
+      "center_error_x": 2.928e-07,
+      "center_error_y": -1.4639e-06,
+      "fill_ratio": 0.8400000117,
+      "normalized_bounds": [
+        -0.4175343629,
+        0.4175349485,
+        -0.4200014698,
+        0.4199985419
+      ],
+      "ortho_scale": 0.4071519077
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -0.0001158342,
+      "fill_ratio": 0.8400000313,
+      "normalized_bounds": [
+        -0.4200000156,
+        0.4200000156,
+        -0.2981085024,
+        0.297876834
+      ],
+      "ortho_scale": 0.5714285374
+    }
+  },
   "triangles": 2068,
   "parts_count": 11,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "retail-display-crate-01.blend": "67bb2650cb96a2d1d61c22d7f858d0f596f6e8e9af1abcaa5cf4a6617b481ae3",
+    "retail-display-crate-01.blend": "21ca44fa2c61cc737a1143f284010a4769bd7b382acb07e2d4300ac0d15616ce",
     "retail-display-crate-01.glb": "bc60113c9908a5631b97217393a53e0132706431772448dd658e921884045d15",
-    "retail-display-crate-01.fbx": "59488191d4a70b3376ea2ad230ddb9bb9cd46a4d43ad0937ed721f00f9344f10",
-    "thumbnail.png": "67a5661865ced15d7e4b06aba7a4f0df9250cb057b65a3203767b6bf8d36b084",
-    "view-hero.png": "67a5661865ced15d7e4b06aba7a4f0df9250cb057b65a3203767b6bf8d36b084",
-    "view-front.png": "37943a794a43a86cbedcfc936d5674504d3cf9ab3347c2bd8c8578d49d0a23c7",
-    "view-rear.png": "25c212c3f7402b424cc8dc01b461b695a03fdb7aff62bf0b4651bf12dba681fc",
-    "view-left.png": "ba42edb5bade02207eea15cb97b8d0927f75046084219060d9cf06eed990cb54",
-    "view-right.png": "4c74d9b5b0d8862b90485332784edbe6d9f42503d67e0636dd55876039d254aa",
-    "view-top.png": "03171d64e3a9d0d75b46d4a762a6c8b6742dfbf2db7a929b3ccf4ebeb4d13f15"
+    "retail-display-crate-01.fbx": "bf3e239dc433cdd6459c25a35607a1762bec5d10292b1886483cd308ac25ab4e",
+    "thumbnail.png": "cd481d3303b9c5e726496b314cd19a4397de4b638e6c0a65124500240dc00fa2",
+    "view-hero.png": "cd481d3303b9c5e726496b314cd19a4397de4b638e6c0a65124500240dc00fa2",
+    "view-front.png": "d828db4c3621baa1f3c4231db01276467228cb191fc6efef694535234e87a48d",
+    "view-rear.png": "ae342f40226d6327a7294f51687dfbfebee87ad9d33d3b078e762637c0b65a9b",
+    "view-left.png": "90402dacccb12f9b98e78bbf32f23bc0aa1942f1a01727e75b63e68d463041e8",
+    "view-right.png": "71ae8a6d9038d93f9494b24d7a03a0dfb58e2435e0f494078aca11a4aea863f2",
+    "view-top.png": "93c831ad600ed00b0525d8c5e6a621598c88096cc691031e42ccb4215122be93"
   }
 }
