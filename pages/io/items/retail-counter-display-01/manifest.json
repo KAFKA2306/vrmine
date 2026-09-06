@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "retail-counter-display-01",
+  "source_spec": "config/world-items/retail-counter-display-01.json",
+  "spec_sha256": "88ecf99151a3af2299d00facf404a246d6020cd5e2d3a8d7a9d559bdec2f0318",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.7200000286102295,
+    0.3799999952316284,
+    0.9275000095367432
+  ],
+  "triangles": 1504,
+  "parts_count": 8,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "retail-counter-display-01.blend": "504bd985e8c2b7c2d5495bbc86472b30130574c3cc76732a3aa59ce81ff0cb86",
+    "retail-counter-display-01.glb": "28ff130d85f0002d0fe69b3997028174b52f3f919060bcb72789a9e4572e2c67",
+    "retail-counter-display-01.fbx": "1d53246d30705262eeae24be95ab127ae54ef4b1ae27156726e2c50b1fba5add",
+    "thumbnail.png": "e628c016dc1c1357191e3a63bdeb1d00a0088bdf501c06ccec02c33f1748190a",
+    "view-hero.png": "e628c016dc1c1357191e3a63bdeb1d00a0088bdf501c06ccec02c33f1748190a",
+    "view-front.png": "ee136401ba340a42d42a1cc5be3bebc148b675136438c99f749ca7588ae3e30c",
+    "view-rear.png": "4e9915b51b91ae1a2a1bb811584f8074ff4ef37af482e7b542fd7565f5f513d1",
+    "view-left.png": "45f4265a415d7e9aa5beb61d6a3779e435f41bafed698d3a0cd6c66741e790ab",
+    "view-right.png": "c3b508df54bf0972e6441912d6f9791e304b26137dcf0a0c73d2a8b39c827175",
+    "view-top.png": "7967e10f173357d446ab86ac412e4c8973e2f5a6773658ad2a44285bac2c8a8d"
+  }
+}
