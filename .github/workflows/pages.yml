@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - "pages/**"
+      - "config/world-items/**"
+      - "scripts/*product-pages*"
       - "config/gaussian-splats.json"
       - "config/gaussian-artifacts.yaml"
       - "config/gaussian-basis-contract.json"
@@ -19,6 +21,8 @@ on:
   pull_request:
     paths:
       - "pages/**"
+      - "config/world-items/**"
+      - "scripts/*product-pages*"
       - "config/gaussian-splats.json"
       - "config/gaussian-artifacts.yaml"
       - "config/gaussian-basis-contract.json"
@@ -60,6 +64,9 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
+
+      - name: Test product publication failures
+        run: node --test scripts/product-pages.test.mjs
 
       - name: Test game logic
         run: node --test pages/games/answer-impostor/engine.test.mjs
@@ -227,24 +234,8 @@ jobs:
           set -euo pipefail
           rm -rf _site
           cp -R pages _site
-          jq -s '
-            [.[]
-              | {
-                  id,
-                  display_name,
-                  family,
-                  dimensions_m,
-                  formats,
-                  license,
-                  unity_status,
-                  vrchat_status,
-                  booth_status,
-                  price_hypothesis
-                }]
-            | sort_by(.display_name // .id)
-          ' pages/io/items/*/spec.json > _site/io/catalog.json
-          test -s _site/io/catalog.json
-          jq -e 'length > 0 and all(.[]; (.id | type == "string") and (.id | length > 0))' _site/io/catalog.json >/dev/null
+          node scripts/build-product-pages.mjs _site
+          node scripts/verify-product-pages.mjs _site
           cp config/gaussian-splats.json _site/3dgs/gaussian-splats.json
           mkdir -p _site/3d/retro-cafe
           cp .artifacts/retro-cafe/*.png _site/3d/retro-cafe/
@@ -412,9 +403,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
       - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+
+      - name: Verify all published product routes and evidence
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: node scripts/verify-product-pages.mjs "$PAGE_URL"
 
       - name: Verify public game hub
         env:
