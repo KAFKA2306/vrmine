@@ -45,10 +45,45 @@ for (const url of [canonicalProductionUrl, catalogUrl]) {
   if (!readmeLines.has(url)) fail(`README.md missing canonical public URL: ${url}`);
 }
 
+const publicHomePath = path.join(root, 'pages', 'index.html');
+if (!fs.existsSync(publicHomePath)) fail('missing public Home: pages/index.html');
+const publicHome = fs.readFileSync(publicHomePath, 'utf8');
+
+const allowedHomeSections = new Set(['games', 'assets']);
+const homeSections = [...publicHome.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map((match) => match[1]);
+if (homeSections.length !== allowedHomeSections.size) {
+  fail(`public Home section count must be ${allowedHomeSections.size}: ${homeSections.join(', ')}`);
+}
+for (const section of homeSections) {
+  if (!allowedHomeSections.has(section)) fail(`public Home contains non-product section: ${section}`);
+}
+for (const section of allowedHomeSections) {
+  if (!homeSections.includes(section)) fail(`public Home missing required section: ${section}`);
+}
+
+if (/https:\/\/github\.com\/KAFKA2306\/vrmine(?:[/"?#]|$)/.test(publicHome)) {
+  fail('public Home must not link to repository, Issue, or PR surfaces');
+}
+
+const forbiddenHomeFragments = [
+  'VR development',
+  '実装途中も、成果として見える',
+  'Platform',
+  '増やしやすく、壊れにくい',
+  'release gate',
+  'ClientSim',
+  'workstream',
+  'mainへ統合済み',
+];
+for (const fragment of forbiddenHomeFragments) {
+  if (publicHome.includes(fragment)) fail(`public Home contains engineering-status prose: ${fragment}`);
+}
+
 console.log(JSON.stringify({
   status: 'PASS',
   policy: policy.policy,
   canonicalProductionUrl,
   catalogUrl,
+  publicHomeSections: homeSections,
   docsDirectoryAbsent: true
 }, null, 2));

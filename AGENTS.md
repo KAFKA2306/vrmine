@@ -21,6 +21,7 @@ current GitHub `main`、このファイル、実装、machine-readable config、
 - superseded code、docs、scripts、workflowsは残さない。
 - documentationは現在の実装だけを書く。日付、進捗、Issue履歴、変更履歴、差分説明、旧仕様の注釈を正本へ残さない。
 - machine-readableに表現できる状態はproseへ重複させない。
+- Public Pagesはproduct surfaceとし、engineering status dashboardにしない。内部進捗、CI/release gate、Issue/PR識別子、repository構造、machine-readable stateは、ユーザー操作や安全に直接必要な場合を除き公開説明文へ重複させない。
 - silent fallbackや根拠のないdefaultで失敗を隠さない。
 - Unityのserialized referenceとtracked `.meta` を意図せず変更しない。
 

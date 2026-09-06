@@ -18,8 +18,6 @@
       <a class="btn btn-small" href="#games"><span>ゲーム一覧</span></a>
       <a class="btn btn-small" href="#assets"><span>3D素材</span></a>
       <a class="btn btn-small" href="./organizers/"><span>イベント主催者向け</span></a>
-      <a class="btn btn-small" href="#development"><span>VR開発状況</span></a>
-      <a class="btn btn-small" href="https://github.com/KAFKA2306/vrmine">GitHub</a>
     </nav>
   </header>
 
@@ -27,11 +25,11 @@
     <section class="hero">
       <p class="eyebrow">Local-first tabletop platform</p>
       <h1>ひとつの場所で、<br>何度でも遊ぶ。</h1>
-      <p class="lead">ブラウザで遊べるゲームとVRChat向け空間体験、再利用できる3D素材を同じ公開ハブから辿れます。インストール不要の作品はその場で遊べ、VRChat向けの成果は実装済み・実機未検証などの状態を分けて公開します。</p>
+      <p class="lead">ブラウザで遊べるゲーム、VRChat向け空間体験、3D素材をひとつの場所から選べます。</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="./games/answer-impostor/">Answer Impostorを遊ぶ</a>
         <a class="btn" href="./games/perspective-cage/">視点の檻を見る</a>
-        <a class="btn" href="./3d/retro-cafe/pendant-light/">3D素材を取得する</a>
+        <a class="btn" href="./io/">3D素材を見る</a>
         <a class="btn" href="./organizers/">イベントで使う</a>
       </div>
     </section>
@@ -39,89 +37,22 @@
     <section class="section" id="games">
       <div class="section-head">
         <div><p class="eyebrow">Game library</p><h2>ゲーム一覧 <span class="badge"><span data-game-count>4</span> titles</span></h2></div>
-        <p>各ゲームは独立したモジュールです。共通のデザイン、保存方式、公開経路を使いながら、ゲーム固有の進行ロジックを分離しています。</p>
+        <p>遊びたい作品を選んで、そのまま始められます。</p>
       </div>
       <div class="game-grid" data-game-grid></div>
     </section>
 
     <section class="section asset-market" id="assets">
       <div class="section-head asset-market-head">
-        <div><p class="eyebrow">3D assets</p><h2>作品から選ぶ3D素材</h2></div>
-        <p>説明より先に、現在のBlender生成結果を見せます。WebPで作品を見てから、必要な素材だけ詳細・配布条件・検証範囲を確認できます。</p>
+        <div><p class="eyebrow">3D assets</p><h2>3D素材</h2></div>
+        <p>レンダリング画像から、使いたい3Dアイテムを選べます。</p>
       </div>
-      <div class="asset-market-grid">
-        <article class="asset-listing">
-          <a class="asset-listing-media" href="./3d/retro-cafe/pendant-light/" aria-label="Retro Cafe Pendant Light の詳細を見る">
-            <picture>
-              <source srcset="./3d/retro-cafe/view-hero.webp" type="image/webp">
-              <img src="./3d/retro-cafe/view-hero.png" alt="Retro Café 3D assets のBlender実レンダリング" width="600" height="500" loading="lazy">
-            </picture>
-            <span class="asset-listing-badge">CC0</span>
-            <span class="asset-listing-badge asset-listing-badge-right">FREE</span>
-          </a>
-          <div class="asset-listing-body">
-            <p class="asset-listing-kicker">RETRO CAFÉ · 3D MODEL</p>
-            <h3>Retro Cafe Pendant Light</h3>
-            <p class="asset-listing-copy">レトロ喫茶や小さな店舗向けのオリジナル照明小物。商品画像は同じ生成パイプラインで作ったRetro Café利用例の実レンダーです。</p>
-            <div class="asset-listing-meta">
-              <span>OBJ + MTL</span>
-              <span>0.60 × 0.60 × 0.95 m</span>
-              <span>Unity / VRChat: UNVERIFIED</span>
-            </div>
-            <div class="asset-listing-footer">
-              <span class="asset-listing-price">¥0</span>
-              <a class="asset-listing-link" href="./3d/retro-cafe/pendant-light/">詳細・取得 →</a>
-            </div>
-          </div>
-        </article>
-      </div>
+      <p><a class="btn btn-primary" href="./io/">3D素材一覧を見る</a></p>
     </section>
 
-    <section class="section" id="development">
-      <div class="section-head">
-        <div><p class="eyebrow">VR development</p><h2>実装途中も、成果として見える</h2></div>
-        <p>ここでは「プレイ可能」と「開発・検証中」を分けて表示します。途中成果を隠さず、どの証拠レベルまで到達しているかを確認できます。</p>
-      </div>
-      <div class="feature-grid">
-        <article class="feature-card">
-          <div class="badges"><span class="badge">実装済み</span><span class="badge">VRChat実機未検証</span></div>
-          <h3>視点の檻</h3>
-          <p>見る位置・順序・対応・不在を手掛かりに進む15〜30分の空間謎解き。world runtimeとdeterministic builderはmainへ統合済みで、actual-client release gateを分離して管理しています。</p>
-          <p><a class="btn" href="./games/perspective-cage/">作品を見る</a></p>
-        </article>
-        <article class="feature-card">
-          <div class="badges"><span class="badge">browser検証中</span><span class="badge">3DGS</span></div>
-          <h3>Huejotzingo Gaussian Splat</h3>
-          <p>AutoPhotogrammetryの実PLYを1つのsource/hash authorityへ固定し、SuperSplat Viewer 1.28.0でbrowser表示する経路です。Unity / VRChat statusは独立して未検証のまま扱います。</p>
-          <p><a class="btn" href="./3dgs/">3DGS viewerを開く</a></p>
-        </article>
-        <article class="feature-card">
-          <div class="badges"><span class="badge">開発中</span><span class="badge">VRChat</span></div>
-          <h3>Stich-Meister VRChat版</h3>
-          <p>盤面生成、UdonSharp配線、ゲーム状態同期を分離して実装中。Pagesでは設計資料を公開し、VRChat実行証拠は別gateとして扱います。</p>
-          <p><a class="btn" href="./games/stich-meister/">現在の成果を見る</a></p>
-        </article>
-        <article class="feature-card">
-          <div class="badges"><span class="badge">U1 実装済み</span><span class="badge">U2–U4 移行中</span></div>
-          <h3>Unity / VRChat 自動検証</h3>
-          <p>VPM解決からUnity compile、ClientSim、実VRChat 2-client検証までを証拠レベル別に自動化するworkstreamです。</p>
-          <p><a class="btn" href="https://github.com/KAFKA2306/vrmine/issues/54">Issue #54 を見る</a></p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" id="platform">
-      <div class="section-head"><div><p class="eyebrow">Platform</p><h2>増やしやすく、壊れにくい</h2></div></div>
-      <div class="feature-grid">
-        <article class="feature-card"><h3>ゲーム登録制</h3><p>レジストリに1件追加するだけで、ポータルへ新しいゲームカードを表示できます。</p></article>
-        <article class="feature-card"><h3>ローカル保存</h3><p>ゲームごとに名前空間を分けて自動保存。途中離脱しても同じ端末から再開できます。</p></article>
-        <article class="feature-card"><h3>PWAキャッシュ</h3><p>一度読み込んだ主要画面はキャッシュされ、通信が不安定な場所でも開きやすい構成です。</p></article>
-        <article class="feature-card"><h3>静的配信</h3><p>サーバーを持たずGitHub Pagesだけで動作。個人情報や回答を外部へ送信しません。</p></article>
-      </div>
-    </section>
   </main>
 
-  <footer class="site-footer">VRMine Game Hub — source on <a href="https://github.com/KAFKA2306/vrmine">GitHub</a></footer>
+  <footer class="site-footer">VRMine</footer>
   <script type="module" src="./assets/app.js"></script>
 </body>
 </html>
