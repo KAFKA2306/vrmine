@@ -172,7 +172,7 @@ def setup_scene(dimensions, center):
     return scene, camera
 
 
-def render_views(scene, camera, out: Path, center: Vector, corners):
+def render_views(scene, camera, out: Path, center: Vector, points):
     aspect = scene.render.resolution_x / scene.render.resolution_y
     framing = {}
     for name, offset in VIEW_OFFSETS.items():
@@ -181,7 +181,20 @@ def render_views(scene, camera, out: Path, center: Vector, corners):
         bpy.context.view_layer.update()
 
         inverse_camera = camera.matrix_world.inverted()
-        projected = [inverse_camera @ point for point in corners]
+        projected = [inverse_camera @ point for point in points]
+        min_x = min(point.x for point in projected)
+        max_x = max(point.x for point in projected)
+        min_y = min(point.y for point in projected)
+        max_y = max(point.y for point in projected)
+
+        projected_center_x = (min_x + max_x) * 0.5
+        projected_center_y = (min_y + max_y) * 0.5
+        camera_basis = camera.matrix_world.to_3x3()
+        camera.location += camera_basis @ Vector((projected_center_x, projected_center_y, 0.0))
+        bpy.context.view_layer.update()
+
+        inverse_camera = camera.matrix_world.inverted()
+        projected = [inverse_camera @ point for point in points]
         min_x = min(point.x for point in projected)
         max_x = max(point.x for point in projected)
         min_y = min(point.y for point in projected)
@@ -249,11 +262,11 @@ def main():
     )
 
     product.data.calc_loop_triangles()
-    bbox_min, bbox_max, bounds_center, bounds_size, bounds_corners = world_bounds(product)
+    bbox_min, bbox_max, bounds_center, bounds_size, bounds_points = world_bounds(product)
     dimensions = [float(value) for value in bounds_size]
     scene, camera = setup_scene(dimensions, bounds_center)
     bpy.ops.wm.save_as_mainfile(filepath=str(out / f"{sku}.blend"))
-    framing = render_views(scene, camera, out, bounds_center, bounds_corners)
+    framing = render_views(scene, camera, out, bounds_center, bounds_points)
 
     expected = [f"{sku}.{ext}" for ext in ("blend", "glb", "fbx")]
     expected += ["thumbnail.png"] + [f"view-{name}.png" for name in VIEW_OFFSETS]
