@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f5f0">
-  <meta name="description" content="VRChat向け物理トリックテイキングゲームStich-Meisterの概要、設計資料、検証境界。">
+  <meta name="description" content="VRChat向け物理トリックテイキングゲームStich-Meister。">
   <title>Stich-Meister | VRMine Game Hub</title>
   <link rel="stylesheet" href="../../assets/styles.css">
 </head>
@@ -20,7 +20,7 @@
         <p class="eyebrow">VRChat · Physical trick-taking</p>
         <h1>Stich-Meister</h1>
         <p class="lead">カードを出すたびに、切り札・トリックの勝敗条件・得点方法が物理的に書き換わるVRボードゲーム。</p>
-        <div class="game-meta"><span class="badge">VRChat SDK3</span><span class="badge">UdonSharp 1.1.x</span><span class="badge">設計資料公開</span></div>
+        <div class="game-meta"><span class="badge">VRChat SDK3</span><span class="badge">UdonSharp</span></div>
       </div>
       <a class="btn" href="https://github.com/KAFKA2306/vrmine">リポジトリ</a>
     </section>
@@ -30,26 +30,8 @@
         <article class="feature-card"><h3>切り札を変える</h3><p>現在のトリックで強いスートや優先条件をカードで更新します。</p></article>
         <article class="feature-card"><h3>勝敗条件を変える</h3><p>通常の強弱だけでなく、その場のトリックルールを読み直します。</p></article>
         <article class="feature-card"><h3>得点方法を変える</h3><p>取ったトリックが常に利益とは限らず、得点規則まで変化します。</p></article>
-        <article class="feature-card"><h3>盤面から理解する</h3><p>変更された規則をUIだけでなく、カード・盤面・表示物の状態として示します。</p></article>
+        <article class="feature-card"><h3>盤面から理解する</h3><p>変更された規則をカードと盤面の状態として示します。</p></article>
       </div>
-    </section>
-    <section class="panel">
-      <div class="panel-heading"><div><p class="eyebrow">System path</p><h2>生成して、配線して、同期する</h2></div></div>
-      <div class="score-list">
-        <div class="score-row"><span><strong>VisualBuilder.cs</strong><br><span class="help">盤面、カード、宝石、ポスター等を生成</span></span><span class="badge">VISUAL</span></div>
-        <div class="score-row"><span><strong>VRMineBridge.cs</strong><br><span class="help">生成オブジェクトをUdonSharpへ自動配線</span></span><span class="badge">WIRING</span></div>
-        <div class="score-row"><span><strong>BoardState / GameController</strong><br><span class="help">ビットパック状態で進行とネットワーク同期を管理</span></span><span class="badge">STATE</span></div>
-      </div>
-      <div class="callout" style="margin-top:16px"><strong>Unity Editor:</strong> <code>VRMine &gt; build_visuals</code> → <code>VRMine &gt; wire_scene</code></div>
-    </section>
-    <section class="panel">
-      <div class="panel-heading"><div><p class="eyebrow">Evidence</p><h2>設計資料</h2></div></div>
-      <div class="game-grid">
-        <a class="game-card" style="grid-column:span 4;min-height:210px" href="https://github.com/KAFKA2306/vrmine/blob/main/docs/Rulebook.md"><div><p class="eyebrow">PLAY</p><h3>Rulebook</h3><p>目的、進行、カード、得点。</p></div></a>
-        <a class="game-card" style="grid-column:span 4;min-height:210px" href="https://github.com/KAFKA2306/vrmine/blob/main/docs/STATE.md"><div><p class="eyebrow">SYNC</p><h3>STATE</h3><p>状態とネットワーク同期構造。</p></div></a>
-        <a class="game-card" style="grid-column:span 4;min-height:210px" href="https://github.com/KAFKA2306/vrmine/blob/main/docs/ARCHITECTURE_RULES.md"><div><p class="eyebrow">BUILD</p><h3>Architecture Rules</h3><p>生成・配線の設計原則。</p></div></a>
-      </div>
-      <p class="help" style="margin-top:16px">このPagesで確認できるのは資料導線と静的表示です。VRChatへの最新アップロード、複数クライアント同期、途中参加、通しプレイはUnity側の検証証跡が別途必要です。</p>
     </section>
   </main>
   <footer class="site-footer"><a href="../../">ゲーム一覧へ戻る</a></footer>
