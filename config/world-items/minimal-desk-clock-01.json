@@ -1,0 +1,49 @@
+{
+  "id": "minimal-desk-clock-01",
+  "family": "Home / Office Basics",
+  "display_name": "Minimal Desk Clock",
+  "dimensions_m": [0.24, 0.08, 0.18],
+  "parts": [
+    {"component": "box", "name": "body", "size": [0.24, 0.07, 0.16], "position": [0.0, 0.0, 0.09], "material": "body_dark"},
+    {"component": "box", "name": "face", "size": [0.205, 0.012, 0.125], "position": [0.0, -0.041, 0.095], "material": "face_light"},
+    {"component": "box", "name": "hour_hand", "size": [0.012, 0.006, 0.045], "position": [0.0, -0.049, 0.113], "material": "hand_dark"},
+    {"component": "box", "name": "minute_hand", "size": [0.055, 0.006, 0.010], "position": [0.023, -0.049, 0.095], "material": "hand_dark"},
+    {"component": "box", "name": "foot_left", "size": [0.07, 0.05, 0.018], "position": [-0.07, 0.01, 0.009], "material": "body_dark"},
+    {"component": "box", "name": "foot_right", "size": [0.07, 0.05, 0.018], "position": [0.07, 0.01, 0.009], "material": "body_dark"}
+  ],
+  "materials": {
+    "body_dark": {"base_color": [0.08, 0.09, 0.10], "roughness": 0.55, "metallic": 0.0},
+    "face_light": {"base_color": [0.84, 0.82, 0.76], "roughness": 0.72, "metallic": 0.0},
+    "hand_dark": {"base_color": [0.03, 0.03, 0.03], "roughness": 0.45, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "black-cream", "planned": true},
+    {"id": "white-gray", "planned": true},
+    {"id": "wood-black", "planned": true},
+    {"id": "home-office-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH currently offers VRChat clock products around JPY 200-300, including Halo Clock at JPY 200 and Chrono Shader clock assets at JPY 300",
+      "Issue #200 lists clock under Home / Office Basics",
+      "This SKU uses only the existing box component, is highly thumbnail-readable, and can bundle with tissue box, books, monitor, and other desk props"
+    ],
+    "source_urls": [
+      "https://booth.pm/ja/items/8741819",
+      "https://booth.pm/ja/items/8049016"
+    ],
+    "expected_production_minutes": 4,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
