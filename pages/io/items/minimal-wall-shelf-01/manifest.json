@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-wall-shelf-01",
+  "source_spec": "config/world-items/minimal-wall-shelf-01.json",
+  "spec_sha256": "b6e994b24261119fad0a921183df5219a65b3842afaab1b31be38f48336e8fb1",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.7200000286102295,
+    0.24249999225139618,
+    0.5199999809265137
+  ],
+  "triangles": 940,
+  "parts_count": 5,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-wall-shelf-01.blend": "fd7b3e0da061b560c513f9970212cab441f1b7dc784d4b51fc27dee31d5d7c23",
+    "minimal-wall-shelf-01.glb": "e4d46d430b46f28d64bc73c2bf0079996e1dc1ecfc14c9dbe47bf0406ea04b5c",
+    "minimal-wall-shelf-01.fbx": "3a65fa46e7271b245abb9640dfcdab35acb4f1d570587402bcf24c539cf4b574",
+    "thumbnail.png": "007097453d7a79bf13cff10ab63350afb887731c873d027fe27483b88822f663",
+    "view-hero.png": "007097453d7a79bf13cff10ab63350afb887731c873d027fe27483b88822f663",
+    "view-front.png": "24b3b0b75a0a7e4931178463691b117e538411377845d4ebd6903122f3dbf43e",
+    "view-rear.png": "894943fb68992d7446b29b78f18aab43f9fa9fa83f660c7940a81c27002a21ec",
+    "view-left.png": "44f18a9c39c23c4c57cadd5506312c48f310ce2614a65fac83476f554045c1f1",
+    "view-right.png": "8345ab940a417f62934d67f2a49799201398d729239c3de0c89b788878313156",
+    "view-top.png": "dffc1b48f6f3e87ec09d1bee418f83cbf2794663cc1f92eefb8a56c9f93b3aa4"
+  }
+}
