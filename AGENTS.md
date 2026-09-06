@@ -1,6 +1,6 @@
 # VRMine Agent Contract
 
-current GitHub `main`、このファイル、実装、machine-readable config、current CI、productionを正本とする。
+current GitHub `main` is the integration base. Machine-readable owners define policy, implementation defines behavior for an exact revision, and CI / production are evidence only for the exact revision they tested or deployed.
 
 ## Canonical paths
 
@@ -12,7 +12,7 @@ current GitHub `main`、このファイル、実装、machine-readable config、
 - Config: `config/`
 - Automation / verification: `scripts/`
 - Commands: `Taskfile.yml`
-- Release policy: `config/quality-gates.json`
+- Verification / release policy: `config/quality-gates.json`
 
 ## Rules
 
@@ -27,8 +27,8 @@ current GitHub `main`、このファイル、実装、machine-readable config、
 
 ## Generated assets
 
-生成開始後は、生成、実ファイル検証、多面render、PR/Issue掲載、merge、main read-back、Pages公開確認まで進める。見た目の評価はmerge blockerにしない。生成物が構造的に不正な場合はfail loudlyとする。
+Use the existing generation path and preserve the direct render evidence it produces. Merge/release behavior for generated assets is owned by `config/quality-gates.json`; do not restate that policy here.
 
 ## Verification
 
-変更surfaceに対応するexact-head checkを実行する。repository全体の入口は `task check`、Pagesは `task pages:test` とする。merge後はexact `main` を再取得する。Pages変更はproduction URLを直接確認する。未実行のUnity / VRChat runtimeは `UNVERIFIED` とする。
+Use the smallest `Taskfile.yml` command for the changed surface and the verifier selected by `config/quality-gates.json`. Tie CI, main read-back, production, Unity, and VRChat claims to the exact revision that produced the evidence; never infer an unobserved runtime result.

@@ -5,10 +5,13 @@
 
 ## Verification
 
-- [ ] exact-head checks pass
-- [ ] changed surface is verified
-- [ ] superseded paths are removed
-- [ ] exact main is read back after merge
-- [ ] production is checked when Pages changes
+Record observed evidence rather than restating policy.
 
-Generated assets must include direct multi-angle renders. Visual review does not block merge.
+- Checks run:
+- Exact revision / CI evidence:
+- Render or artifact evidence:
+- Main / production evidence, when applicable:
+- Runtime evidence, when applicable:
+
+Policy owner: `config/quality-gates.json`
+Command owner: `Taskfile.yml`
