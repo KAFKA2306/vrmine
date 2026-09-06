@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "industrial-pallet-01",
+  "source_spec": "config/world-items/industrial-pallet-01.json",
+  "spec_sha256": "9b157b91e45873a7afe28653cb60bff35ead475d9781901225aa9cd5d6ba38fa",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    1.2000000476837158,
+    1.0,
+    0.1274999976158142
+  ],
+  "triangles": 1504,
+  "parts_count": 8,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "industrial-pallet-01.blend": "88ce1c9cfbc829e9f8f217171a8c13cad14986f8d28d4da42f6f39e696d74cee",
+    "industrial-pallet-01.glb": "e1454ba05930a95620dc9adc0bb1f5ce600b58931cb4b9b336d17de947755ff2",
+    "industrial-pallet-01.fbx": "e2a8e5b9e383f79a53c6ff401d7bd8eddd4d54caee68ec59103e6a592640936a",
+    "thumbnail.png": "3d776604c1097c16dbe438c98ca58012bbe9a2334da14f624566805c007e4d95",
+    "view-hero.png": "3d776604c1097c16dbe438c98ca58012bbe9a2334da14f624566805c007e4d95",
+    "view-front.png": "882f678f93a71d062f26a3fef5fbde65d57c1b62d907b53fe87ec77f705a3e76",
+    "view-rear.png": "04c66d6007afd2327127f8093b4b3e6ae172267d974fbd5fb71029c4fccd6719",
+    "view-left.png": "0c8b76b0eafac686ba48dc26fb054dadc6298a9222975b57edbb25b3a2289f4f",
+    "view-right.png": "8b286644ef0cac9fe4027a7680db93591bb89b56a3b2574155654e48e71433f7",
+    "view-top.png": "60f2ac02557a66385cf96507f01203d35177c38d0d993f7254bca16b50106c07"
+  }
+}
