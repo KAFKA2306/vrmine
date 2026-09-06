@@ -41,6 +41,9 @@ self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
   if (requestUrl.origin !== self.location.origin) return;
 
+  // Product specs, catalog and renders must describe the same current release.
+  if (requestUrl.pathname.startsWith(new URL('./io/', scope).pathname)) return;
+
   const isPublishedRender = requestUrl.pathname.includes('/3d/')
     && /\.(?:png|webp)$/i.test(requestUrl.pathname);
   if (isPublishedRender) {

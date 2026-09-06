@@ -18,13 +18,22 @@ h1{font-size:clamp(36px,7vw,76px);line-height:.95;letter-spacing:-.045em;margin:
 .meta p{margin:0;color:#8994a1;font-size:13px;line-height:1.5}.error{padding:18px;border:1px solid #f85149;border-radius:12px;color:#ffb3ad}
 @media(max-width:600px){.wrap{padding:30px 14px 56px}.grid{grid-template-columns:1fr 1fr;gap:10px}.meta{padding:12px}.meta h2{font-size:15px}.meta p{font-size:12px}}
 @media(max-width:420px){.grid{grid-template-columns:1fr}}
+.site-nav{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;margin:0 0 28px;padding:12px 0;border-bottom:1px solid #303946}.site-nav a{padding:8px 0;text-decoration:none;color:#c5ced8}.site-nav a[aria-current]{color:#fff;border-bottom:2px solid #91c9ff}a:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #91c9ff;outline-offset:4px}.breadcrumb{display:flex;flex-wrap:wrap;gap:8px;padding:0;list-style:none;color:#aeb8c4}.breadcrumb li+li::before{content:'›';margin-right:8px}.breadcrumb [aria-current]{color:#f0f4f8}
+.filters{display:flex;flex-wrap:wrap;gap:16px;align-items:end;margin-top:28px}.filters label{display:grid;gap:8px;flex:1;min-width:180px}.filters input,.filters select,.filters button{font:inherit;padding:12px;border:1px solid #4d6076;border-radius:8px;color:inherit;background:#121821;max-width:100%;min-height:44px}.filters button{cursor:pointer}#count{color:#aeb8c4}.card[hidden]{display:none}
 </style>
 </head>
 <body>
 <main class="wrap">
+<nav class="site-nav" aria-label="主要ナビゲーション"><a href="../">Home</a><a href="../#games">ゲーム一覧</a><a href="./" aria-current="page">3D素材</a><a href="../organizers/">イベント主催者向け</a></nav>
   <div class="eyebrow">VRMine / 3D World Items</div>
-  <h1>World Item Gallery</h1>
+  <h1>3D素材</h1>
   <p class="lead">実際に生成・公開された3Dアイテムを、まず見た目から選べます。商品ページでは多面レンダリング、寸法、配布形式、検証状態を確認できます。</p>
+  <form id="filters" class="filters" role="search">
+    <label>商品を検索<input id="search" type="search" name="q" placeholder="商品名・カテゴリ・形式" autocomplete="off"></label>
+    <label>カテゴリ<select id="family" name="family"><option value="">すべて</option></select></label>
+    <button type="reset">条件をクリア</button>
+  </form>
+  <p id="count" role="status">商品を読み込み中…</p>
   <section class="grid" id="grid" aria-live="polite"></section>
 </main>
 <script>
@@ -37,16 +46,46 @@ fetch('catalog.json',{cache:'no-store'})
     if(!Array.isArray(entries)||!entries.length)throw new Error('公開商品がありません');
     grid.innerHTML=entries.map(spec=>{
       const id=String(spec.id||'');
-      if(!/^[a-z0-9-]+$/.test(id))return '';
+      if(!/^[a-z0-9-]+$/.test(id))throw new Error('不正な商品ID: '+id);
       const name=spec.display_name||spec.name||spec.title||humanTitle(id);
       const family=spec.family||'3D World Item';
       const formats=Array.isArray(spec.formats)?spec.formats.map(x=>String(x).toUpperCase()).join(' / '):'';
       const detail=[family,formats].filter(Boolean).join(' · ');
-      return `<a class="card" href="view.html?item=${encodeURIComponent(id)}"><img src="items/${encodeURIComponent(id)}/view-hero.png" alt="${esc(name)} hero render" loading="lazy"><div class="meta"><h2>${esc(name)}</h2><p>${esc(detail)}</p></div></a>`;
+      return `<a class="card" data-product="${id}" data-family="${esc(family)}" data-search="${esc([name,id,family,formats].join(' ').toLowerCase())}" href="view.html?item=${encodeURIComponent(id)}"><img src="items/${encodeURIComponent(id)}/view-hero.png" alt="${esc(name)} hero render" loading="lazy"><div class="meta"><h2>${esc(name)}</h2><p>${esc(detail)}</p></div></a>`;
     }).join('');
-    if(!grid.children.length)throw new Error('有効な公開商品がありません');
+    const form=document.getElementById('filters');
+    const search=document.getElementById('search');
+    const family=document.getElementById('family');
+    const params=new URLSearchParams(location.search);
+    const families=[...new Set(entries.map(s=>s.family))].sort();
+    for(const value of families)family.add(new Option(value,value));
+    search.value=params.get('q')||'';
+    const requestedFamily=params.get('family');
+    if(requestedFamily&&!families.includes(requestedFamily))family.add(new Option(requestedFamily,requestedFamily));
+    family.value=requestedFamily||'';
+    function filter(){
+      const query=search.value.trim().toLowerCase();
+      const state=new URLSearchParams();
+      if(search.value)state.set('q',search.value);
+      if(family.value)state.set('family',family.value);
+      history.replaceState(null,'',location.pathname+(state.size?'?'+state:''));
+      let count=0;
+      for(const card of grid.children){
+        card.hidden=!(card.dataset.search.includes(query)&&(!family.value||card.dataset.family===family.value));
+        if(!card.hidden)count++;
+        const target=new URLSearchParams({item:card.dataset.product});
+        for(const [key,value] of state)target.set(key,value);
+        card.href='view.html?'+target;
+      }
+      document.getElementById('count').textContent=count?`${count} / ${entries.length} 商品`:'該当する商品がありません。検索条件を変えてください。';
+    }
+    form.addEventListener('submit',event=>event.preventDefault());
+    search.addEventListener('input',filter);
+    family.addEventListener('change',filter);
+    form.addEventListener('reset',()=>{search.value='';family.value='';filter();});
+    filter();
   })
-  .catch(error=>{grid.innerHTML=`<p class="error">商品一覧を取得できません: ${esc(error.message)}</p>`;console.error(error);});
+  .catch(error=>{document.getElementById('count').textContent='読み込みに失敗しました';grid.innerHTML=`<p class="error">商品一覧を取得できません: ${esc(error.message)}</p>`;console.error(error);});
 </script>
 </body>
 </html>

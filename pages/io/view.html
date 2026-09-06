@@ -21,10 +21,11 @@ h1{font-size:clamp(38px,6vw,72px);line-height:.95;letter-spacing:-.045em;margin:
 .tech{margin-top:38px;border-top:1px solid #252d38;padding-top:18px;color:#8f9aa7;font-size:13px;line-height:1.7}.tech summary{cursor:pointer;color:#c5ced8}.tech a{color:#a8bdd4}.error{padding:28px;border:1px solid #f85149;border-radius:14px}
 @media(max-width:780px){.hero{grid-template-columns:1fr}.top{align-items:flex-start}.facts{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.wrap{padding:18px 14px 56px}.facts{grid-template-columns:1fr}.views{grid-template-columns:1fr 1fr;gap:9px}}
+.site-nav{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;margin:0 0 28px;padding:12px 0;border-bottom:1px solid #303946}.site-nav a{padding:8px 0;text-decoration:none;color:#c5ced8}.site-nav a[aria-current]{color:#fff;border-bottom:2px solid #91c9ff}a:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #91c9ff;outline-offset:4px}.breadcrumb{display:flex;flex-wrap:wrap;gap:8px;padding:0;list-style:none;color:#aeb8c4}.breadcrumb li+li::before{content:'›';margin-right:8px}.breadcrumb [aria-current]{color:#f0f4f8}
 </style>
 </head>
 <body>
-<main class="wrap" id="app"><div class="top"><a class="back" href="./">← World Item Gallery</a></div><p>読み込み中…</p></main>
+<div class="wrap" style="padding-bottom:0"><nav class="site-nav" aria-label="主要ナビゲーション"><a href="../">Home</a><a href="../#games">ゲーム一覧</a><a href="./" aria-current="page">3D素材</a><a href="../organizers/">イベント主催者向け</a></nav><nav aria-label="パンくず"><ol class="breadcrumb"><li><a href="../">Home</a></li><li><a href="./" id="gallery-link">3D素材</a></li><li aria-current="page" id="product-name">商品</li></ol></nav></div><main class="wrap" id="app"><p>読み込み中…</p></main>
 <script>
 (async()=>{
   const p=new URLSearchParams(location.search);
@@ -40,7 +41,7 @@ h1{font-size:clamp(38px,6vw,72px);line-height:.95;letter-spacing:-.045em;margin:
     if(!r.ok)throw new Error(`HTTP ${r.status}`);
     spec=await r.json();
   }catch(e){
-    app.innerHTML=`<div class="top"><a class="back" href="./">← World Item Gallery</a></div><div class="error">spec.json を取得できません: ${esc(e.message)}</div>`;
+    app.innerHTML=`<div class="error">spec.json を取得できません: ${esc(e.message)}</div>`;
     return;
   }
 
@@ -49,6 +50,10 @@ h1{font-size:clamp(38px,6vw,72px);line-height:.95;letter-spacing:-.045em;margin:
   const family=spec.family||'3D World Item';
   const description=spec.description||`${family}向けの3Dワールドアイテム。実レンダリングと配布ファイルを同じページで確認できます。`;
   document.title=`${title} — VRMine`;
+  document.getElementById('product-name').textContent=title;
+  const filters=new URLSearchParams();
+  for(const key of ['q','family'])if(p.has(key))filters.set(key,p.get(key));
+  document.getElementById('gallery-link').href='./'+(filters.size?'?'+filters:'');
   document.querySelector('meta[name="description"]').setAttribute('content',description);
 
   const dims=spec.dimensions_m||spec.dimensions||spec.size||spec.bounds||null;
@@ -94,7 +99,7 @@ h1{font-size:clamp(38px,6vw,72px);line-height:.95;letter-spacing:-.045em;margin:
 
   const views=[['front','Front'],['rear','Rear'],['left','Left'],['right','Right'],['top','Top']];
   app.innerHTML=`
-    <div class="top"><a class="back" href="./">← World Item Gallery</a></div>
+
     <section class="hero">
       <a class="hero-media" href="${base}view-hero.png"><img src="${base}view-hero.png" alt="${esc(title)} hero render"></a>
       <div>
