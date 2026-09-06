@@ -11,6 +11,7 @@ on:
       - "config/vrchat-toolchain.json"
       - "config/quality-gates.json"
       - "config/perspective-cage.json"
+      - "config/factory-timing.json"
       - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
       - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs"
@@ -20,6 +21,7 @@ on:
       - "scripts/install-vrc-get.mjs"
       - "scripts/verify-vpm.mjs"
       - "scripts/verify-quality-gates.mjs"
+      - "scripts/verify-factory-timing.mjs"
       - "scripts/verify-perspective-cage.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
@@ -38,6 +40,7 @@ on:
       - "config/vrchat-toolchain.json"
       - "config/quality-gates.json"
       - "config/perspective-cage.json"
+      - "config/factory-timing.json"
       - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
       - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs"
@@ -47,6 +50,7 @@ on:
       - "scripts/install-vrc-get.mjs"
       - "scripts/verify-vpm.mjs"
       - "scripts/verify-quality-gates.mjs"
+      - "scripts/verify-factory-timing.mjs"
       - "scripts/verify-perspective-cage.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
@@ -79,6 +83,9 @@ jobs:
 
       - name: Verify repository and quality gate contracts
         run: node scripts/verify-quality-gates.mjs
+
+      - name: Verify World Item Factory timing evidence
+        run: node scripts/verify-factory-timing.mjs
 
       - name: Verify Perspective Cage contract and implementation shape
         run: node scripts/verify-perspective-cage.mjs
