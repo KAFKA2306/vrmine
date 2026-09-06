@@ -1,0 +1,43 @@
+{
+  "id": "minimal-desk-organizer-01",
+  "family": "Home / Office Basics",
+  "display_name": "Minimal Desk Organizer",
+  "dimensions_m": [0.28, 0.14, 0.12],
+  "parts": [
+    {"component": "box", "name": "base", "size": [0.28, 0.14, 0.018], "position": [0.0, 0.0, 0.009], "material": "warm_white"},
+    {"component": "box", "name": "back", "size": [0.28, 0.018, 0.102], "position": [0.0, 0.061, 0.069], "material": "warm_white"},
+    {"component": "box", "name": "left_wall", "size": [0.018, 0.122, 0.075], "position": [-0.131, 0.0, 0.0555], "material": "warm_white"},
+    {"component": "box", "name": "right_wall", "size": [0.018, 0.122, 0.075], "position": [0.131, 0.0, 0.0555], "material": "warm_white"},
+    {"component": "box", "name": "divider_left", "size": [0.014, 0.122, 0.065], "position": [-0.047, 0.0, 0.0505], "material": "warm_white"},
+    {"component": "box", "name": "divider_right", "size": [0.014, 0.122, 0.065], "position": [0.047, 0.0, 0.0505], "material": "warm_white"},
+    {"component": "box", "name": "front_lip", "size": [0.28, 0.014, 0.036], "position": [0.0, -0.063, 0.036], "material": "warm_white"}
+  ],
+  "materials": {
+    "warm_white": {"base_color": [0.78, 0.76, 0.70], "roughness": 0.42, "metallic": 0.02}
+  },
+  "variants": [
+    {"id": "charcoal", "planned": true},
+    {"id": "two-compartment", "planned": true},
+    {"id": "office-desk-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 ranks Home / Office Basics as a target family for simple generic reusable props",
+      "This organizer is generic original geometry and uses only the existing box component",
+      "It complements the existing Minimal Monitor and can bundle into an office desk mini set"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}

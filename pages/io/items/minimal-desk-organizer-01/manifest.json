@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-desk-organizer-01",
+  "source_spec": "config/world-items/minimal-desk-organizer-01.json",
+  "spec_sha256": "1ac47a31f92a509cd6b21790176317294348bee6f25871280fb0bca848136e24",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.2800000011920929,
+    0.14000000059604645,
+    0.12000000476837158
+  ],
+  "triangles": 1316,
+  "parts_count": 7,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-desk-organizer-01.blend": "a3af372733cf19603e8da7be51405ef981c94ec9c3465e3dc89258bcfde7684a",
+    "minimal-desk-organizer-01.glb": "bf952157e28407da4f75b6cead56fd929201531d673c0bc50e4303f335b4794f",
+    "minimal-desk-organizer-01.fbx": "a0cc3c525ae75e1d8cf5d322712797674229c38cf6d7ec3d42c1fb8becb0f4fc",
+    "thumbnail.png": "505baad02709f6146ee47afe559d27d8d1e0566f71d3f7b8ca05396cd19eb685",
+    "view-hero.png": "505baad02709f6146ee47afe559d27d8d1e0566f71d3f7b8ca05396cd19eb685",
+    "view-front.png": "5757262be20cb4c09d83dc6ed05250bde8c77d6f22ee99ff6f7a3a58849e6af4",
+    "view-rear.png": "70f3176faec5f6cfbc35fe590d1a15fdfc780ebed78b82bce04edd54cbc44344",
+    "view-left.png": "64dbea077fb38c4794d65f5641a6da2ab78d916e3cc057e8e51b3f88f4d69d7f",
+    "view-right.png": "a79b53bb1f074a93c18dad8cc74e43a39dabaf886982988d618fb91b037b61ec",
+    "view-top.png": "d5ecdcb0f1f8c009c0c13f28a2667487f5bea43055dea08f046d8c49b549290f"
+  }
+}
