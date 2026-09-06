@@ -6,7 +6,9 @@ on:
     paths:
       - "pages/**"
       - "config/world-items/**"
-      - "scripts/*product-pages*"\n      - "scripts/world_item_visual_loop.py"\n      - "scripts/test_world_item_visual_loop.py"
+      - "scripts/*product-pages*"
+      - "scripts/world_item_visual_loop.py"
+      - "scripts/test_world_item_visual_loop.py"
       - "config/gaussian-splats.json"
       - "config/gaussian-artifacts.yaml"
       - "config/gaussian-basis-contract.json"
@@ -22,7 +24,9 @@ on:
     paths:
       - "pages/**"
       - "config/world-items/**"
-      - "scripts/*product-pages*"\n      - "scripts/world_item_visual_loop.py"\n      - "scripts/test_world_item_visual_loop.py"
+      - "scripts/*product-pages*"
+      - "scripts/world_item_visual_loop.py"
+      - "scripts/test_world_item_visual_loop.py"
       - "config/gaussian-splats.json"
       - "config/gaussian-artifacts.yaml"
       - "config/gaussian-basis-contract.json"
@@ -68,7 +72,16 @@ jobs:
       - name: Test product publication failures
         run: node --test scripts/product-pages.test.mjs
 
-      - name: Test World Item visual improvement loop\n        run: |\n          python -m unittest scripts/test_world_item_visual_loop.py -v\n          python scripts/world_item_visual_loop.py bundle \\\n            --spec config/world-items/minimal-desk-clock-01.json \\\n            --render-root pages/io/items/minimal-desk-clock-01 \\\n            --output /tmp/minimal-desk-clock-review-bundle.json\n          test "$(jq -r .productId /tmp/minimal-desk-clock-review-bundle.json)" = "minimal-desk-clock-01"\n\n      - name: Test game logic
+      - name: Test World Item visual improvement loop
+        run: |
+          python -m unittest scripts/test_world_item_visual_loop.py -v
+          python scripts/world_item_visual_loop.py bundle \
+            --spec config/world-items/minimal-desk-clock-01.json \
+            --render-root pages/io/items/minimal-desk-clock-01 \
+            --output /tmp/minimal-desk-clock-review-bundle.json
+          test "$(jq -r .productId /tmp/minimal-desk-clock-review-bundle.json)" = "minimal-desk-clock-01"
+
+      - name: Test game logic
         run: node --test pages/games/answer-impostor/engine.test.mjs
 
       - name: Validate 3DGS fixture contract
