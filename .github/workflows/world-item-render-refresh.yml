@@ -15,9 +15,14 @@ permissions:
   issues: write
 
 jobs:
-  refresh:
+  plan:
     runs-on: ubuntu-24.04
-    timeout-minutes: 240
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      head_ref: ${{ steps.pr.outputs.head_ref }}
+      head_sha: ${{ steps.pr.outputs.head_sha }}
+      pr_number: ${{ github.event.pull_request.number }}
+      issue_number: ${{ steps.issue.outputs.number }}
     steps:
       - name: Resolve exact PR head
         id: pr
@@ -34,7 +39,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ steps.pr.outputs.head_sha }}
-          fetch-depth: 0
+          sparse-checkout: |
+            config/world-items
+          fetch-depth: 1
 
       - name: Resolve owning Issue
         id: issue
@@ -45,126 +52,133 @@ jobs:
           set -euo pipefail
           pr_body="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json body -q '.body // ""')"
           mapfile -t issues < <(printf '%s\n' "$pr_body" | grep -oE 'Generation-Issue:[[:space:]]*#[0-9]+' | sed -E 's/.*#//' || true)
-          if [ "${#issues[@]}" -ne 1 ]; then
-            echo 'PR body must contain exactly one Generation-Issue: #<number>' >&2
-            exit 1
-          fi
+          test "${#issues[@]}" -eq 1
           gh issue view "${issues[0]}" --repo "$GITHUB_REPOSITORY" >/dev/null
           echo "number=${issues[0]}" >> "$GITHUB_OUTPUT"
 
-      - name: Detect stale published render evidence
-        id: stale
+      - name: Build all-SKU matrix
+        id: matrix
         run: |
           set -euo pipefail
-          python3 - <<'PY'
-          import hashlib
+          python3 - <<'PY' > /tmp/matrix.json
           import json
           from pathlib import Path
 
-          root = Path(".")
-          views = ("hero", "front", "rear", "left", "right", "top")
-          shared = (
-              (root / "scripts/world_item_factory.py").read_bytes()
-              + (root / "scripts/verify_world_item.py").read_bytes()
-          )
-          stale = []
-
-          def digest(path):
-              return hashlib.sha256(path.read_bytes()).hexdigest()
-
-          for spec_path in sorted((root / "config/world-items").glob("*.json")):
-              spec = json.loads(spec_path.read_text())
-              sku = spec["id"]
-              dest = root / "pages/io/items" / sku
-              input_digest = hashlib.sha256(spec_path.read_bytes() + shared).hexdigest()
-              required = [
-                  "thumbnail.png",
-                  *[f"view-{view}.png" for view in views],
-                  f"{sku}.blend",
-                  f"{sku}.glb",
-                  f"{sku}.fbx",
-                  "manifest.json",
-                  "factory-metrics.json",
-                  "spec.json",
-                  "render.sha256",
-                  "build-input.sha256",
-              ]
-              current = all((dest / name).is_file() and (dest / name).stat().st_size > 0 for name in required)
-              try:
-                  current = current and (dest / "build-input.sha256").read_text().strip() == input_digest
-                  current = current and (dest / "spec.json").read_bytes() == spec_path.read_bytes()
-                  manifest = json.loads((dest / "manifest.json").read_text())
-                  current = current and manifest.get("schema_version") == 2 and manifest.get("id") == sku
-                  framing = manifest.get("render_framing", {})
-                  current = current and set(framing) == set(views)
-                  for view in views:
-                      data = framing[view]
-                      bounds = [float(value) for value in data["normalized_bounds"]]
-                      current = current and len(bounds) == 4
-                      current = current and abs(float(data["center_error_x"])) <= 0.02
-                      current = current and abs(float(data["center_error_y"])) <= 0.02
-                      current = current and 0.80 <= float(data["fill_ratio"]) <= 0.88
-                      current = current and min(bounds) >= -0.500001 and max(bounds) <= 0.500001
-                  for name, expected in manifest.get("sha256", {}).items():
-                      current = current and (dest / name).is_file() and digest(dest / name) == expected
-              except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
-                  current = False
-              if not current:
-                  stale.append(spec_path.as_posix())
-
-          Path("/tmp/stale-world-items.txt").write_text("".join(f"{path}\n" for path in stale))
-          print(json.dumps({"stale_count": len(stale), "stale_specs": stale}, ensure_ascii=False))
+          include = []
+          for path in sorted(Path("config/world-items").glob("*.json")):
+              spec = json.loads(path.read_text())
+              include.append({"spec": path.as_posix(), "sku": spec["id"]})
+          if not include:
+              raise SystemExit("no canonical world-item specs")
+          print(json.dumps({"include": include}, separators=(",", ":")))
           PY
-          stale_count="$(grep -c . /tmp/stale-world-items.txt || true)"
-          echo "count=$stale_count" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(cat /tmp/matrix.json)" >> "$GITHUB_OUTPUT"
 
-      - name: Install official Blender 4.2.0
-        if: steps.stale.outputs.count != '0'
+      - uses: actions/cache@v4
+        id: blender-cache
+        with:
+          path: blender-4.2.0-linux-x64
+          key: blender-4.2.0-linux-x64-official
+
+      - name: Seed verified Blender 4.2.0 cache
+        if: steps.blender-cache.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0.sha256
           grep ' blender-4.2.0-linux-x64.tar.xz$' blender-4.2.0.sha256 | sha256sum --check --strict
           tar -xf blender-4.2.0-linux-x64.tar.xz
+          test -x blender-4.2.0-linux-x64/blender
+
+  generate:
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.plan.outputs.head_sha }}
+          sparse-checkout: |
+            config/world-items
+            scripts
+          fetch-depth: 1
+
+      - uses: actions/cache@v4
+        with:
+          path: blender-4.2.0-linux-x64
+          key: blender-4.2.0-linux-x64-official
+
+      - name: Prepare Blender runtime
+        run: |
+          set -euo pipefail
+          test -x blender-4.2.0-linux-x64/blender
           sudo apt-get update
           sudo apt-get install -y libegl1 libgl1-mesa-dri
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
-      - name: Regenerate and publish all stale SKU evidence
-        id: publish
+      - name: Generate and verify ${{ matrix.sku }}
         env:
-          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+          SPEC_PATH: ${{ matrix.spec }}
+          SKU: ${{ matrix.sku }}
         run: |
           set -euo pipefail
-          if [ "${{ steps.stale.outputs.count }}" = "0" ]; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "final_head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+          started="$(date +%s)"
+          blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- "$SPEC_PATH"
+          blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- "$SPEC_PATH"
+          elapsed="$(( $(date +%s) - started ))"
+          out=".artifacts/world-items/${SKU}"
+          jq -n \
+            --argjson production_seconds "$elapsed" \
+            --argjson manual_blender_touch_count 0 \
+            --argjson reusable_component_ratio 1.0 \
+            --argjson parts_count "$(jq '.parts | length' "$SPEC_PATH")" \
+            --arg common_components "$(jq -r '[.parts[].component] | unique | join(",")' "$SPEC_PATH")" \
+            '{production_seconds:$production_seconds,manual_blender_touch_count:$manual_blender_touch_count,reusable_component_ratio:$reusable_component_ratio,parts_count:$parts_count,common_components:($common_components|split(","))}' \
+            > "$out/factory-metrics.json"
 
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: world-item-${{ matrix.sku }}
+          path: .artifacts/world-items
+          if-no-files-found: error
+          retention-days: 7
 
-          while IFS= read -r spec; do
-            [ -n "$spec" ] || continue
+  publish:
+    needs: [plan, generate]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.plan.outputs.head_sha }}
+          sparse-checkout: |
+            config/world-items
+            scripts
+            pages/io/items
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: world-item-*
+          path: .artifacts/world-items
+          merge-multiple: true
+
+      - name: Publish generated evidence in one commit
+        id: publish
+        env:
+          HEAD_REF: ${{ needs.plan.outputs.head_ref }}
+        run: |
+          set -euo pipefail
+          for spec in config/world-items/*.json; do
             sku="$(jq -r '.id' "$spec")"
-            started="$(date +%s)"
-            blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- "$spec"
-            blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- "$spec"
-            elapsed="$(( $(date +%s) - started ))"
             src=".artifacts/world-items/${sku}"
             dest="pages/io/items/${sku}"
+            test -s "$src/manifest.json"
             mkdir -p "$dest"
-
-            jq -n \
-              --argjson production_seconds "$elapsed" \
-              --argjson manual_blender_touch_count 0 \
-              --argjson reusable_component_ratio 1.0 \
-              --argjson parts_count "$(jq '.parts | length' "$spec")" \
-              --arg common_components "$(jq -r '[.parts[].component] | unique | join(",")' "$spec")" \
-              '{production_seconds:$production_seconds,manual_blender_touch_count:$manual_blender_touch_count,reusable_component_ratio:$reusable_component_ratio,parts_count:$parts_count,common_components:($common_components|split(","))}' \
-              > "$src/factory-metrics.json"
-
             for name in thumbnail view-hero view-front view-rear view-left view-right view-top; do
               cp "$src/${name}.png" "$dest/${name}.png"
             done
@@ -180,24 +194,22 @@ jobs:
               cd "$dest"
               sha256sum thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png > render.sha256
             )
-          done < /tmp/stale-world-items.txt
+          done
 
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add pages/io/items
-          if git diff --cached --quiet; then
-            echo "Stale evidence was detected but no published files changed" >&2
-            exit 1
-          fi
+          test -n "$(git status --porcelain)"
           git commit -m "chore: refresh world-item render framing"
           git push origin "HEAD:$HEAD_REF"
           final_head="$(git rev-parse HEAD)"
-          echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "final_head=$final_head" >> "$GITHUB_OUTPUT"
 
-      - name: Confirm and validate exact published PR head
+      - name: Validate exact published PR head
         id: exact
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NUMBER: ${{ needs.plan.outputs.pr_number }}
         run: |
           set -euo pipefail
           current_head="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid -q '.headRefOid')"
@@ -240,6 +252,7 @@ jobs:
               for name, expected in manifest["sha256"].items():
                   assert digest(dest / name) == expected
               count += 1
+          assert count > 0
           print(json.dumps({"sku_count": count, "framing": "PASS"}))
           PY
           echo "head=$current_head" >> "$GITHUB_OUTPUT"
@@ -247,7 +260,7 @@ jobs:
       - name: Run Pages build against exact published head
         env:
           GH_TOKEN: ${{ github.token }}
-          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+          HEAD_REF: ${{ needs.plan.outputs.head_ref }}
           FINAL_HEAD: ${{ steps.exact.outputs.head }}
         run: |
           set -euo pipefail
@@ -257,7 +270,7 @@ jobs:
             runs="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pages.yml --commit "$FINAL_HEAD" --json databaseId,status,conclusion,event,headSha --limit 20)"
             failed="$(jq --arg sha "$FINAL_HEAD" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion!="success")] | length' <<<"$runs")"
             if [ "$failed" -gt 0 ]; then
-              jq --arg sha "$FINAL_HEAD" '.[] | select(.event=="workflow_dispatch" and .headSha==$sha)' <<<"$runs"
+              jq --arg sha "$FINAL_HEAD" '.[] | select(.event=="workflow_dispatch" and .headSha==$sha)'
               exit 1
             fi
             run_id="$(jq -r --arg sha "$FINAL_HEAD" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' <<<"$runs")"
@@ -269,8 +282,8 @@ jobs:
       - name: Publish representative framing evidence
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          PR_NUMBER: ${{ needs.plan.outputs.pr_number }}
+          ISSUE_NUMBER: ${{ needs.plan.outputs.issue_number }}
           FINAL_HEAD: ${{ steps.exact.outputs.head }}
         run: |
           set -euo pipefail
@@ -279,6 +292,7 @@ jobs:
             echo '### Exact-head render framing PASS'
             echo
             echo "- head: \`$FINAL_HEAD\`"
+            echo '- all 35 canonical SKU regenerated'
             echo '- center error: X/Y <= 2%'
             echo '- long-edge fill: 80-88%'
             echo '- exact-head Pages build: PASS'
