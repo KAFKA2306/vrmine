@@ -1,0 +1,52 @@
+{
+  "id": "utility-pole-01",
+  "family": "Japanese Street",
+  "display_name": "Generic Utility Pole",
+  "dimensions_m": [1.80, 0.52, 4.60],
+  "parts": [
+    {"component": "cylinder", "name": "main_pole", "radius": 0.13, "height": 4.40, "position": [0.0, 0.0, 2.20], "rotation_deg": [0, 0, 0], "vertices": 48, "material": "concrete"},
+    {"component": "box", "name": "crossarm", "size": [1.70, 0.12, 0.12], "position": [0.0, 0.0, 4.05], "rotation_deg": [0, 0, 0], "material": "dark_steel"},
+    {"component": "box", "name": "support_left", "size": [0.08, 0.08, 0.46], "position": [-0.48, 0.0, 3.84], "rotation_deg": [0, 0, -18], "material": "dark_steel"},
+    {"component": "box", "name": "support_right", "size": [0.08, 0.08, 0.46], "position": [0.48, 0.0, 3.84], "rotation_deg": [0, 0, 18], "material": "dark_steel"},
+    {"component": "cylinder", "name": "insulator_left", "radius": 0.055, "height": 0.22, "position": [-0.58, 0.0, 4.20], "rotation_deg": [0, 0, 0], "vertices": 32, "material": "ceramic"},
+    {"component": "cylinder", "name": "insulator_center", "radius": 0.055, "height": 0.22, "position": [0.0, 0.0, 4.20], "rotation_deg": [0, 0, 0], "vertices": 32, "material": "ceramic"},
+    {"component": "cylinder", "name": "insulator_right", "radius": 0.055, "height": 0.22, "position": [0.58, 0.0, 4.20], "rotation_deg": [0, 0, 0], "vertices": 32, "material": "ceramic"},
+    {"component": "box", "name": "service_box", "size": [0.34, 0.20, 0.46], "position": [0.0, -0.17, 2.65], "rotation_deg": [0, 0, 0], "material": "service_gray"},
+    {"component": "box", "name": "service_box_lid", "size": [0.30, 0.018, 0.40], "position": [0.0, -0.279, 2.65], "rotation_deg": [0, 0, 0], "material": "panel_gray"},
+    {"component": "box", "name": "warning_plate", "size": [0.24, 0.018, 0.18], "position": [0.0, -0.149, 1.68], "rotation_deg": [0, 0, 0], "material": "warning_yellow"}
+  ],
+  "materials": {
+    "concrete": {"base_color": [0.46, 0.47, 0.45], "roughness": 0.88, "metallic": 0.0},
+    "dark_steel": {"base_color": [0.07, 0.075, 0.08], "roughness": 0.46, "metallic": 0.62},
+    "ceramic": {"base_color": [0.72, 0.67, 0.57], "roughness": 0.54, "metallic": 0.0},
+    "service_gray": {"base_color": [0.36, 0.39, 0.39], "roughness": 0.52, "metallic": 0.42},
+    "panel_gray": {"base_color": [0.48, 0.51, 0.50], "roughness": 0.50, "metallic": 0.38},
+    "warning_yellow": {"base_color": [0.78, 0.58, 0.08], "roughness": 0.60, "metallic": 0.05}
+  },
+  "variants": [
+    {"id": "weathered-concrete", "planned": true},
+    {"id": "slim-residential", "planned": true},
+    {"id": "japanese-alley-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 700},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted signage, or branded utility hardware.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH currently lists a Unity/VRChat utility-pole 3D model at JPY 150.",
+      "BOOTH currently lists a 33-item Japanese alley prop set containing utility poles at JPY 1000, supporting bundle demand for street props.",
+      "Issue #200 gives Japanese Street A priority; current canonical code search found no utility-pole SKU.",
+      "The design uses only existing box/cylinder primitives, has a strong vertical thumbnail silhouette, and can bundle with outdoor AC units, parking blocks, signs, fences, and alley props."
+    ],
+    "expected_production_minutes": 6,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
