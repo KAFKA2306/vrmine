@@ -1,0 +1,42 @@
+{
+  "id": "minimal-wall-shelf-01",
+  "family": "Tables / Stools / Shelves",
+  "display_name": "Minimal Wall Shelf",
+  "dimensions_m": [0.72, 0.24, 0.52],
+  "parts": [
+    {"component": "box", "name": "back_panel", "size": [0.72, 0.035, 0.52], "position": [0.0, 0.105, 0.26], "rotation_deg": [0, 0, 0], "material": "warm_wood"},
+    {"component": "box", "name": "lower_shelf", "size": [0.66, 0.24, 0.045], "position": [0.0, 0.0, 0.12], "rotation_deg": [0, 0, 0], "material": "warm_wood"},
+    {"component": "box", "name": "upper_shelf", "size": [0.66, 0.24, 0.045], "position": [0.0, 0.0, 0.39], "rotation_deg": [0, 0, 0], "material": "warm_wood"},
+    {"component": "box", "name": "left_bracket", "size": [0.05, 0.20, 0.19], "position": [-0.285, 0.0, 0.235], "rotation_deg": [0, 0, 0], "material": "charcoal_steel"},
+    {"component": "box", "name": "right_bracket", "size": [0.05, 0.20, 0.19], "position": [0.285, 0.0, 0.235], "rotation_deg": [0, 0, 0], "material": "charcoal_steel"}
+  ],
+  "materials": {
+    "warm_wood": {"base_color": [0.42, 0.24, 0.11], "roughness": 0.58, "metallic": 0.0},
+    "charcoal_steel": {"base_color": [0.055, 0.06, 0.065], "roughness": 0.40, "metallic": 0.60}
+  },
+  "variants": [
+    {"id": "light-oak", "planned": true},
+    {"id": "all-black", "planned": true},
+    {"id": "shelf-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded furniture geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 marks Tables / Stools / Shelves as S priority with very high reuse",
+      "Current main has open-frame and cafe shelf/table variants but no minimal wall-mounted shelf SKU",
+      "The design reuses only the existing box component and can bundle with current table, stool, and retail display families"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
