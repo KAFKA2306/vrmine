@@ -47,6 +47,7 @@ on:
         type: boolean
 
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -60,19 +61,87 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       pages_enabled: ${{ steps.pages.outputs.enabled }}
-      gaussian_count: ${{ steps.gaussian-registry.outputs.count }}
-      retro_cafe_review_sha256: ${{ steps.retro-cafe-review.outputs.sha256 }}
-      retro_cafe_webp_sha256: ${{ steps.retro-cafe-webp.outputs.sha256 }}
+      source_tree_sha: ${{ steps.identity.outputs.tree_sha }}
+      build_source_sha: ${{ steps.deployment_evidence.outputs.build_source_sha }}
+      gaussian_count: ${{ steps.deployment_evidence.outputs.gaussian_count }}
+      retro_cafe_review_sha256: ${{ steps.deployment_evidence.outputs.retro_cafe_review_sha256 }}
+      retro_cafe_webp_sha256: ${{ steps.deployment_evidence.outputs.retro_cafe_webp_sha256 }}
+      reused_verified_artifact: ${{ steps.reuse.outputs.reused }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
 
+      - name: Record source tree identity
+        id: identity
+        run: echo "tree_sha=$(git show -s --format=%T HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Reuse verified exact-tree Pages artifact
+        id: reuse
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TREE_SHA: ${{ steps.identity.outputs.tree_sha }}
+        run: |
+          set -euo pipefail
+          artifact_name="vrmine-pages-tree-${TREE_SHA}"
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts?name=${artifact_name}&per_page=100"
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$api" -o /tmp/pages-artifacts.json
+          artifact_id="$(
+            jq -r '
+              [.artifacts[] | select(.expired == false)]
+              | sort_by(.created_at)
+              | reverse
+              | .[0].id // empty
+            ' /tmp/pages-artifacts.json
+          )"
+          if [ -z "$artifact_id" ]; then
+            echo "reused=false" >> "$GITHUB_OUTPUT"
+            echo "No verified Pages artifact exists for tree ${TREE_SHA}; rebuilding once on main." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          rm -rf _site /tmp/pages-artifact.zip
+          mkdir -p _site
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}/zip" \
+            -o /tmp/pages-artifact.zip
+          unzip -q /tmp/pages-artifact.zip -d _site
+
+          test -s _site/build-provenance.json
+          test "$(jq -r '.source_tree_sha' _site/build-provenance.json)" = "$TREE_SHA"
+          expected_site_sha="$(jq -r '.site_content_sha256' _site/build-provenance.json)"
+          actual_site_sha="$(
+            find _site -type f ! -name build-provenance.json -print0 \
+              | sort -z \
+              | xargs -0 sha256sum \
+              | sha256sum \
+              | awk '{print $1}'
+          )"
+          test "$actual_site_sha" = "$expected_site_sha"
+          test -s _site/3d/retro-cafe/render-manifest.json
+          test "$(jq -r '.source_tree_sha' _site/3d/retro-cafe/render-manifest.json)" = "$TREE_SHA"
+          node scripts/verify-product-pages.mjs _site
+          test -s _site/3dgs/viewer/index.html
+          grep -F 'vrmine:3dgs:first-frame' _site/3dgs/viewer/index.html
+
+          echo "reused=true" >> "$GITHUB_OUTPUT"
+          echo "Reused verified Pages artifact ${artifact_id} for exact tree ${TREE_SHA}." >> "$GITHUB_STEP_SUMMARY"
+
       - name: Test product publication failures
+        if: steps.reuse.outputs.reused != 'true'
         run: node --test scripts/product-pages.test.mjs
 
       - name: Test World Item visual improvement loop
+        if: steps.reuse.outputs.reused != 'true'
         run: |
           python -m unittest scripts/test_world_item_visual_loop.py -v
           python scripts/world_item_visual_loop.py bundle \
@@ -82,16 +151,15 @@ jobs:
           test "$(jq -r .productId /tmp/minimal-desk-clock-review-bundle.json)" = "minimal-desk-clock-01"
 
       - name: Test game logic
+        if: steps.reuse.outputs.reused != 'true'
         run: node --test pages/games/answer-impostor/engine.test.mjs
 
       - name: Validate 3DGS fixture contract
+        if: steps.reuse.outputs.reused != 'true'
         run: node scripts/verify-gaussian-fixtures.mjs
 
-      - name: Record Gaussian registry cardinality
-        id: gaussian-registry
-        run: echo "count=$(jq '.environments | length' config/gaussian-splats.json)" >> "$GITHUB_OUTPUT"
-
       - name: Validate static game hub
+        if: steps.reuse.outputs.reused != 'true'
         run: |
           set -euo pipefail
           required=(
@@ -167,6 +235,7 @@ jobs:
           grep -F 'vrmine-game-hub-v4' pages/service-worker.js
 
       - name: Install official Blender 4.2.0 for Retro Cafe preview
+        if: steps.reuse.outputs.reused != 'true'
         run: |
           set -euo pipefail
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
@@ -178,6 +247,7 @@ jobs:
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
       - name: Generate verified Retro Cafe public renders
+        if: steps.reuse.outputs.reused != 'true'
         run: |
           set -euo pipefail
           blender -b --python-exit-code 1 --python scripts/build-retro-cafe.py
@@ -187,6 +257,7 @@ jobs:
           done
 
       - name: Derive WebP gallery from verified renders
+        if: steps.reuse.outputs.reused != 'true'
         run: |
           set -euo pipefail
           cat > /tmp/retro-cafe-webp.py <<'PY'
@@ -210,6 +281,7 @@ jobs:
 
       - name: Record Retro Cafe public render hash
         id: retro-cafe-review
+        if: steps.reuse.outputs.reused != 'true'
         run: |
           set -euo pipefail
           files=(
@@ -225,6 +297,7 @@ jobs:
 
       - name: Record Retro Cafe public WebP hash
         id: retro-cafe-webp
+        if: steps.reuse.outputs.reused != 'true'
         run: |
           set -euo pipefail
           files=(
@@ -239,8 +312,10 @@ jobs:
           echo "sha256=$(sha256sum "${files[@]}" | awk '{print $1}' | sha256sum | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - name: Assemble Pages artifact
+        if: steps.reuse.outputs.reused != 'true'
         env:
           SOURCE_SHA: ${{ github.sha }}
+          SOURCE_TREE_SHA: ${{ steps.identity.outputs.tree_sha }}
           PNG_SHA256: ${{ steps.retro-cafe-review.outputs.sha256 }}
           WEBP_SHA256: ${{ steps.retro-cafe-webp.outputs.sha256 }}
         run: |
@@ -255,15 +330,22 @@ jobs:
           cp .artifacts/retro-cafe/*.webp _site/3d/retro-cafe/
           jq -n \
             --arg source_sha "$SOURCE_SHA" \
+            --arg source_tree_sha "$SOURCE_TREE_SHA" \
             --arg png_combined_sha256 "$PNG_SHA256" \
             --arg webp_combined_sha256 "$WEBP_SHA256" \
-            '{source_sha: $source_sha, png_combined_sha256: $png_combined_sha256, webp_combined_sha256: $webp_combined_sha256}' \
+            '{
+              source_sha: $source_sha,
+              source_tree_sha: $source_tree_sha,
+              png_combined_sha256: $png_combined_sha256,
+              webp_combined_sha256: $webp_combined_sha256
+            }' \
             > _site/3d/retro-cafe/render-manifest.json
           test -s _site/3d/retro-cafe/render-manifest.json
           test ! -e _site/404.html
           touch _site/.nojekyll
 
       - name: Materialize pinned SuperSplat viewer
+        if: steps.reuse.outputs.reused != 'true'
         run: |
           set -euo pipefail
           npm install --no-save --package-lock=false --ignore-scripts @playcanvas/supersplat-viewer@1.28.0
@@ -275,6 +357,7 @@ jobs:
           grep -F 'vrmine:3dgs:first-frame' _site/3dgs/viewer/index.html
 
       - name: Check out pinned hf-cache-hub artifact resolver
+        if: steps.reuse.outputs.reused != 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: KAFKA2306/hf-cache-hub
@@ -282,10 +365,12 @@ jobs:
           path: .hf-cache-hub
 
       - name: Install artifact resolver dependencies
+        if: steps.reuse.outputs.reused != 'true'
         run: python -m pip install "PyYAML>=6.0,<7" "huggingface-hub>=1.19,<2" "filelock>=3.0"
 
       - name: Resolve private artifact authentication
         id: artifact-access
+        if: steps.reuse.outputs.reused != 'true'
         env:
           HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
         run: |
@@ -308,7 +393,7 @@ jobs:
           fi
 
       - name: Materialize hash-verified real PLY for runtime proof
-        if: steps.artifact-access.outputs.available == 'true'
+        if: steps.reuse.outputs.reused != 'true' && steps.artifact-access.outputs.available == 'true'
         env:
           HF_HOME: ${{ runner.temp }}/hf-cache
           HF_CACHE_HUB_ROOT: ${{ github.workspace }}/.hf-cache-hub
@@ -322,7 +407,7 @@ jobs:
           test -s _site/3dgs/ci/settings.json
 
       - name: Render real 3DGS first frame in headless Chrome
-        if: steps.artifact-access.outputs.available == 'true'
+        if: steps.reuse.outputs.reused != 'true' && steps.artifact-access.outputs.available == 'true'
         run: |
           set -euo pipefail
           if command -v google-chrome >/dev/null 2>&1; then
@@ -374,6 +459,98 @@ jobs:
             exit 1
           fi
           rm -rf _site/3dgs/ci
+
+      - name: Record immutable Pages build provenance
+        if: steps.reuse.outputs.reused != 'true'
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          SOURCE_TREE_SHA: ${{ steps.identity.outputs.tree_sha }}
+          PNG_SHA256: ${{ steps.retro-cafe-review.outputs.sha256 }}
+          WEBP_SHA256: ${{ steps.retro-cafe-webp.outputs.sha256 }}
+        run: |
+          set -euo pipefail
+          site_content_sha256="$(
+            find _site -type f ! -name build-provenance.json -print0 \
+              | sort -z \
+              | xargs -0 sha256sum \
+              | sha256sum \
+              | awk '{print $1}'
+          )"
+          jq -n \
+            --arg source_sha "$SOURCE_SHA" \
+            --arg source_tree_sha "$SOURCE_TREE_SHA" \
+            --arg site_content_sha256 "$site_content_sha256" \
+            --arg png_combined_sha256 "$PNG_SHA256" \
+            --arg webp_combined_sha256 "$WEBP_SHA256" \
+            '{
+              source_sha: $source_sha,
+              source_tree_sha: $source_tree_sha,
+              site_content_sha256: $site_content_sha256,
+              png_combined_sha256: $png_combined_sha256,
+              webp_combined_sha256: $webp_combined_sha256
+            }' \
+            > _site/build-provenance.json
+
+      - name: Publish verified exact-tree Pages artifact
+        if: steps.reuse.outputs.reused != 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: vrmine-pages-tree-${{ steps.identity.outputs.tree_sha }}
+          path: _site
+          if-no-files-found: error
+          retention-days: 14
+          include-hidden-files: true
+
+      - name: Record deployment evidence
+        id: deployment_evidence
+        env:
+          TREE_SHA: ${{ steps.identity.outputs.tree_sha }}
+        run: |
+          set -euo pipefail
+          test -s _site/build-provenance.json
+          test -s _site/3d/retro-cafe/render-manifest.json
+          test "$(jq -r '.source_tree_sha' _site/build-provenance.json)" = "$TREE_SHA"
+          test "$(jq -r '.source_tree_sha' _site/3d/retro-cafe/render-manifest.json)" = "$TREE_SHA"
+
+          expected_site_sha="$(jq -r '.site_content_sha256' _site/build-provenance.json)"
+          actual_site_sha="$(
+            find _site -type f ! -name build-provenance.json -print0 \
+              | sort -z \
+              | xargs -0 sha256sum \
+              | sha256sum \
+              | awk '{print $1}'
+          )"
+          test "$actual_site_sha" = "$expected_site_sha"
+
+          review_files=(
+            _site/3d/retro-cafe/thumbnail.png
+            _site/3d/retro-cafe/view-hero.png
+            _site/3d/retro-cafe/view-front.png
+            _site/3d/retro-cafe/view-rear.png
+            _site/3d/retro-cafe/view-left.png
+            _site/3d/retro-cafe/view-right.png
+            _site/3d/retro-cafe/view-top.png
+          )
+          webp_files=(
+            _site/3d/retro-cafe/thumbnail.webp
+            _site/3d/retro-cafe/view-hero.webp
+            _site/3d/retro-cafe/view-front.webp
+            _site/3d/retro-cafe/view-rear.webp
+            _site/3d/retro-cafe/view-left.webp
+            _site/3d/retro-cafe/view-right.webp
+            _site/3d/retro-cafe/view-top.webp
+          )
+          review_sha="$(sha256sum "${review_files[@]}" | awk '{print $1}' | sha256sum | awk '{print $1}')"
+          webp_sha="$(sha256sum "${webp_files[@]}" | awk '{print $1}' | sha256sum | awk '{print $1}')"
+          test "$review_sha" = "$(jq -r '.png_combined_sha256' _site/build-provenance.json)"
+          test "$webp_sha" = "$(jq -r '.webp_combined_sha256' _site/build-provenance.json)"
+          test "$review_sha" = "$(jq -r '.png_combined_sha256' _site/3d/retro-cafe/render-manifest.json)"
+          test "$webp_sha" = "$(jq -r '.webp_combined_sha256' _site/3d/retro-cafe/render-manifest.json)"
+
+          echo "build_source_sha=$(jq -r '.source_sha' _site/build-provenance.json)" >> "$GITHUB_OUTPUT"
+          echo "gaussian_count=$(jq '.environments | length' _site/3dgs/gaussian-splats.json)" >> "$GITHUB_OUTPUT"
+          echo "retro_cafe_review_sha256=$review_sha" >> "$GITHUB_OUTPUT"
+          echo "retro_cafe_webp_sha256=$webp_sha" >> "$GITHUB_OUTPUT"
 
       - name: Detect GitHub Pages configuration
         id: pages
@@ -433,6 +610,8 @@ jobs:
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_SHA: ${{ github.sha }}
+          EXPECTED_BUILD_SHA: ${{ needs.build.outputs.build_source_sha }}
+          EXPECTED_TREE_SHA: ${{ needs.build.outputs.source_tree_sha }}
           EXPECTED_GAUSSIAN_COUNT: ${{ needs.build.outputs.gaussian_count }}
           EXPECTED_RETRO_CAFE_REVIEW_SHA256: ${{ needs.build.outputs.retro_cafe_review_sha256 }}
           EXPECTED_RETRO_CAFE_WEBP_SHA256: ${{ needs.build.outputs.retro_cafe_webp_sha256 }}
@@ -464,8 +643,12 @@ jobs:
           curl "${curl_retry[@]}" "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
           curl "${curl_retry[@]}" "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
           curl "${curl_retry[@]}" "$base/3dgs/?smoke=${EXPECTED_SHA}" -o "$tmp/3dgs.html"
+          curl "${curl_retry[@]}" "$base/build-provenance.json?smoke=${EXPECTED_SHA}" -o "$tmp/build-provenance.json"
           curl "${curl_retry[@]}" "$base/3d/retro-cafe/render-manifest.json?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-render-manifest.json"
-          test "$(jq -r '.source_sha' "$tmp/retro-cafe-render-manifest.json")" = "$EXPECTED_SHA"
+          test "$(jq -r '.source_sha' "$tmp/build-provenance.json")" = "$EXPECTED_BUILD_SHA"
+          test "$(jq -r '.source_tree_sha' "$tmp/build-provenance.json")" = "$EXPECTED_TREE_SHA"
+          test "$(jq -r '.source_sha' "$tmp/retro-cafe-render-manifest.json")" = "$EXPECTED_BUILD_SHA"
+          test "$(jq -r '.source_tree_sha' "$tmp/retro-cafe-render-manifest.json")" = "$EXPECTED_TREE_SHA"
           test "$(jq -r '.png_combined_sha256' "$tmp/retro-cafe-render-manifest.json")" = "$EXPECTED_RETRO_CAFE_REVIEW_SHA256"
           test "$(jq -r '.webp_combined_sha256' "$tmp/retro-cafe-render-manifest.json")" = "$EXPECTED_RETRO_CAFE_WEBP_SHA256"
           for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
