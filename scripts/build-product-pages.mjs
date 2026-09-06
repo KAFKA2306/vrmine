@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync, writeFileSync, statSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { resolve, join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { pathToFileURL } from 'node:url';
@@ -6,6 +7,7 @@ import { pathToFileURL } from 'node:url';
 export const origin = 'https://kafka2306.github.io/vrmine/';
 export const views = ['hero', 'front', 'rear', 'left', 'right', 'top'];
 export const escapeHtml = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
+const sha256 = path => createHash('sha256').update(readFileSync(path)).digest('hex');
 export function canonicalProducts(root = '.') {
   const products = readdirSync(join(root, 'config/world-items')).filter(f => f.endsWith('.json')).sort().map(file => {
     const spec = JSON.parse(readFileSync(join(root, 'config/world-items', file), 'utf8'));
@@ -20,25 +22,65 @@ export function validateEvidence(products, site) {
   for (const spec of products) {
     const dir = join(site, 'io/items', spec.id);
     const published = JSON.parse(readFileSync(join(dir, 'spec.json'), 'utf8'));
+    const manifest = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'));
     if (!isDeepStrictEqual(spec, published)) throw new Error(`Published spec differs from canonical: ${spec.id}`);
+    if (manifest.id !== spec.id || typeof manifest.spec_sha256 !== 'string' || !manifest.sha256)
+      throw new Error(`Invalid manifest provenance: ${spec.id}`);
     for (const view of views) {
-      const path = join(dir, `view-${view}.png`);
+      const name = `view-${view}.png`;
+      const path = join(dir, name);
       const bytes = readFileSync(path);
       if (bytes.length < 24 || bytes.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a')
         throw new Error(`Missing or invalid render: ${path}`);
+      if (manifest.sha256[name] !== sha256(path)) throw new Error(`Render hash mismatch: ${spec.id}/${name}`);
     }
     for (const format of spec.formats) {
       if (!['glb', 'fbx', 'blend'].includes(format)) throw new Error(`Unsupported format: ${spec.id}/${format}`);
-      const path = join(dir, `${spec.id}.${format}`);
+      const name = `${spec.id}.${format}`;
+      const path = join(dir, name);
       if (!statSync(path).isFile() || !statSync(path).size) throw new Error(`Empty model: ${path}`);
+      if (manifest.sha256[name] !== sha256(path)) throw new Error(`Model hash mismatch: ${spec.id}/${name}`);
     }
   }
+}
+export function distributionLedger(products, site) {
+  return products.map(spec => {
+    const dir = join(site, 'io/items', spec.id);
+    const manifest = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'));
+    const licenseStatus = String(spec.license?.status || 'UNVERIFIED').toUpperCase();
+    const ready = licenseStatus === 'VERIFIED' || licenseStatus === 'PUBLISHED';
+    const models = spec.formats.map(format => {
+      const name = `${spec.id}.${format}`;
+      const path = join(dir, name);
+      return {format, path: `items/${spec.id}/${name}`, bytes: statSync(path).size, sha256: manifest.sha256[name]};
+    });
+    return {
+      id: spec.id,
+      display_name: spec.display_name,
+      status: ready ? 'READY' : 'BLOCKED_LICENSE',
+      source_spec: manifest.source_spec,
+      spec_sha256: manifest.spec_sha256,
+      blender: manifest.blender,
+      license: spec.license || {status: 'UNVERIFIED'},
+      models,
+      renders: views.map(view => {
+        const name = `view-${view}.png`;
+        const path = join(dir, name);
+        return {view, path: `items/${spec.id}/${name}`, bytes: statSync(path).size, sha256: manifest.sha256[name]};
+      }),
+      unity_status: spec.unity_status || 'UNVERIFIED',
+      vrchat_status: spec.vrchat_status || 'UNVERIFIED',
+      booth_status: spec.booth_status || 'UNVERIFIED',
+      price_hypothesis: spec.price_hypothesis || null
+    };
+  });
 }
 export function buildProductPages(site = '_site', root = '.') {
   const products = canonicalProducts(root);
   validateEvidence(products, site);
   const fields = ['id', 'display_name', 'family', 'description', 'dimensions_m', 'formats', 'license', 'unity_status', 'vrchat_status', 'booth_status', 'price_hypothesis'];
   writeFileSync(join(site, 'io/catalog.json'), JSON.stringify(products.map(s => Object.fromEntries(fields.filter(k => k in s).map(k => [k, s[k]]))), null, 2) + '\n');
+  writeFileSync(join(site, 'io/distributions.json'), JSON.stringify(distributionLedger(products, site), null, 2) + '\n');
   const fixed = [...readFileSync(join(root, 'pages/sitemap.xml'), 'utf8').matchAll(/<loc>(.*?)<\/loc>/g)].map(m => m[1]).filter(url => !url.startsWith(origin + 'io/'));
   const urls = [...new Set([...fixed, origin + 'io/', ...products.map(s => origin + 'io/view.html?item=' + s.id)])];
   writeFileSync(join(site, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls.map(url => `  <url><loc>${escapeHtml(url)}</loc></url>`).join('\n') + '\n</urlset>\n');
@@ -48,7 +90,7 @@ export function buildProductPages(site = '_site', root = '.') {
   const home = readFileSync(homePath, 'utf8');
   if (!home.includes('<!-- product-previews:start -->')) throw new Error('Home product preview marker missing');
   writeFileSync(homePath, home.replace(/<!-- product-previews:start -->[\s\S]*?<!-- product-previews:end -->/, `<!-- product-previews:start -->\n${cards}\n<!-- product-previews:end -->`));
-  console.log(`Product Pages: ${products.length} canonical products, catalog and sitemap generated; ${selected.length} Home previews`);
+  console.log(`Product Pages: ${products.length} canonical products, catalog, distribution ledger and sitemap generated; ${selected.length} Home previews`);
   return products;
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) buildProductPages(process.argv[2]);
