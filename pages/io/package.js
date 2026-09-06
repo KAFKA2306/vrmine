@@ -69,15 +69,13 @@
   function packageReadme(spec, manifest) {
     const dimensions = Array.isArray(spec.dimensions_m) ? spec.dimensions_m.join(" x ") : "UNVERIFIED";
     const formats = Array.isArray(spec.formats) ? spec.formats.join(", ") : "UNVERIFIED";
-    const licenseName = spec.license?.name || "UNVERIFIED";
-    const licenseStatus = spec.license?.status || "UNVERIFIED";
     return [
       `${spec.display_name || spec.id}`,
       "",
       `SKU: ${spec.id}`,
       `Dimensions (m): ${dimensions}`,
       `Formats: ${formats}`,
-      `License: ${licenseName} / ${licenseStatus}`,
+      `License: ${spec.license?.name || "UNVERIFIED"} / ${spec.license?.status || "UNVERIFIED"}`,
       `Unity: ${spec.unity_status || "UNVERIFIED"}`,
       `VRChat: ${spec.vrchat_status || "UNVERIFIED"}`,
       `BOOTH: ${spec.booth_status || "UNVERIFIED"}`,
@@ -105,32 +103,26 @@
       if (!/^(VERIFIED|PUBLISHED)$/i.test(licenseStatus)) throw new Error(`distribution blocked by license status: ${licenseStatus}`);
 
       const specBytes = encoder.encode(specResult.text);
-      const actualSpecSha = await sha256Hex(specBytes);
-      if (!manifest.spec_sha256 || actualSpecSha !== manifest.spec_sha256) throw new Error("spec.json: SHA-256 mismatch");
+      if (!manifest.spec_sha256 || await sha256Hex(specBytes) !== manifest.spec_sha256) throw new Error("spec.json: SHA-256 mismatch");
 
       const assetNames = Object.keys(manifest.sha256 || {}).filter(name => /\.(blend|glb|fbx)$/i.test(name));
       const declaredFormats = new Set((spec.formats || []).map(format => String(format).toLowerCase()));
       const actualFormats = new Set(assetNames.map(name => name.split(".").pop().toLowerCase()));
       if (assetNames.length === 0) throw new Error("manifest has no distributable 3D formats");
-      if (declaredFormats.size !== actualFormats.size || [...declaredFormats].some(format => !actualFormats.has(format))) {
-        throw new Error("spec/manifest format mismatch");
-      }
+      if (declaredFormats.size !== actualFormats.size || [...declaredFormats].some(format => !actualFormats.has(format))) throw new Error("spec/manifest format mismatch");
 
       const entries = [];
       for (const name of assetNames) {
         status.textContent = `${name} をSHA-256で照合しています…`;
         const bytes = await fetchBytes(base + name);
-        const actual = await sha256Hex(bytes);
-        const expected = manifest.sha256[name];
-        if (actual !== expected) throw new Error(`${name}: SHA-256 mismatch`);
+        if (await sha256Hex(bytes) !== manifest.sha256[name]) throw new Error(`${name}: SHA-256 mismatch`);
         entries.push({name, data: bytes});
       }
       entries.push({name: "manifest.json", data: encoder.encode(manifestResult.text)});
       entries.push({name: "spec.json", data: specBytes});
       entries.push({name: "README.txt", data: encoder.encode(packageReadme(spec, manifest))});
 
-      const archive = buildTar(entries);
-      const blob = new Blob([archive], {type: "application/x-tar"});
+      const blob = new Blob([buildTar(entries)], {type: "application/x-tar"});
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -148,16 +140,41 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const button = document.querySelector("[data-package-download]");
-    const status = document.querySelector("[data-package-status]");
-    if (!button || !status) return;
+  function waitForSelector(selector) {
+    const existing = document.querySelector(selector);
+    if (existing) return Promise.resolve(existing);
+    return new Promise(resolve => {
+      const observer = new MutationObserver(() => {
+        const found = document.querySelector(selector);
+        if (!found) return;
+        observer.disconnect();
+        resolve(found);
+      });
+      observer.observe(document.documentElement, {childList: true, subtree: true});
+    });
+  }
+
+  async function install() {
     const id = new URLSearchParams(location.search).get("item");
-    if (!/^[a-z0-9-]+$/.test(id || "")) {
-      status.textContent = "取得失敗: 商品IDが不正です。";
-      return;
-    }
+    if (!/^[a-z0-9-]+$/.test(id || "")) return;
     const base = `items/${id}/`;
-    button.addEventListener("click", () => downloadPackage(button, status, base, id));
-  });
+    const specResult = await fetchJson(base + "spec.json");
+    const spec = JSON.parse(specResult.text);
+    if (spec.id !== id || !/^(VERIFIED|PUBLISHED)$/i.test(String(spec.license?.status || ""))) return;
+
+    const actions = await waitForSelector(".actions");
+    const note = await waitForSelector(".distribution-note");
+    actions.replaceChildren();
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn primary";
+    button.dataset.packageDownload = "";
+    button.textContent = "検証済み配布パッケージを取得";
+    actions.appendChild(button);
+    note.dataset.packageStatus = "";
+    note.textContent = "BLEND / GLB / FBX をmanifestのSHA-256と照合して1つのTARにまとめます。";
+    button.addEventListener("click", () => downloadPackage(button, note, base, id));
+  }
+
+  install().catch(error => console.error("package installer failed", error));
 })();
