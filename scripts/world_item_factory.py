@@ -124,12 +124,14 @@ def join_parts(parts, sku):
 
 
 def world_bounds(obj):
-    corners = [obj.matrix_world @ Vector(corner) for corner in obj.bound_box]
-    bbox_min = Vector(tuple(min(point[index] for point in corners) for index in range(3)))
-    bbox_max = Vector(tuple(max(point[index] for point in corners) for index in range(3)))
+    points = [obj.matrix_world @ vertex.co for vertex in obj.data.vertices]
+    if not points:
+        raise ValueError("product mesh has no vertices")
+    bbox_min = Vector(tuple(min(point[index] for point in points) for index in range(3)))
+    bbox_max = Vector(tuple(max(point[index] for point in points) for index in range(3)))
     center = (bbox_min + bbox_max) * 0.5
     size = bbox_max - bbox_min
-    return bbox_min, bbox_max, center, size, corners
+    return bbox_min, bbox_max, center, size, points
 
 
 def setup_scene(dimensions, center):
