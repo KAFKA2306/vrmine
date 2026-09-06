@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "cafe-sugar-jar-01",
+  "source_spec": "config/world-items/cafe-sugar-jar-01.json",
+  "spec_sha256": "c2af33b9c57d3f571d9c318c2cb2be1b63a879121c286d49113b54b90e0d3e51",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.14000000059604645,
+    0.14000000059604645,
+    0.16500000655651093
+  ],
+  "triangles": 4588,
+  "parts_count": 5,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "cafe-sugar-jar-01.blend": "3595d39ce300ca0d9e2e02b73f8f801529287be65069098e6b9f839560cc2fcc",
+    "cafe-sugar-jar-01.glb": "c848ed93dfbcf92e952b53c6f2fc855b9fc660da62839e0fe1f27da8fa06b552",
+    "cafe-sugar-jar-01.fbx": "8d126d51b6121f97fe4dfaa68c6face6766051bc334002881c9a68df76c1f4ec",
+    "thumbnail.png": "035aaac5330d7d502721b139df169ccef5b81f0a85fae9f5c5aec06b90b6e301",
+    "view-hero.png": "035aaac5330d7d502721b139df169ccef5b81f0a85fae9f5c5aec06b90b6e301",
+    "view-front.png": "f5b707dcfd0a723872c487dd63269ce84feb79128a35b07fe27ce9115c6b534e",
+    "view-rear.png": "6e04eab144672ffd6b2f95e77ccb9fe36fd8468095bd91c6ae767eb4a000f4d7",
+    "view-left.png": "4cd99cce65b38c8c8c345b92e784445893cb030ac0fb6b2efc214f76a28b04eb",
+    "view-right.png": "209c9f6ababbb4a9755ba09b070e083d5e6e31aa2d2f05683c8b243e7c8d3dfd",
+    "view-top.png": "6536242ff05ba0afc85ee7fc982dc0b918ad2fdc92cd3b254289aa803135d737"
+  }
+}
