@@ -1,0 +1,47 @@
+{
+  "id": "cafe-condiment-caddy-01",
+  "family": "Café / Foodware",
+  "display_name": "Cafe Condiment Caddy",
+  "dimensions_m": [0.22, 0.12, 0.18],
+  "parts": [
+    {"component": "box", "name": "base", "size": [0.22, 0.12, 0.02], "position": [0.0, 0.0, 0.01], "material": "warm_wood"},
+    {"component": "box", "name": "left_side", "size": [0.018, 0.12, 0.12], "position": [-0.101, 0.0, 0.08], "material": "warm_wood"},
+    {"component": "box", "name": "right_side", "size": [0.018, 0.12, 0.12], "position": [0.101, 0.0, 0.08], "material": "warm_wood"},
+    {"component": "box", "name": "rear_rail", "size": [0.184, 0.018, 0.07], "position": [0.0, 0.051, 0.065], "material": "warm_wood"},
+    {"component": "box", "name": "front_rail", "size": [0.184, 0.018, 0.045], "position": [0.0, -0.051, 0.0525], "material": "warm_wood"},
+    {"component": "box", "name": "center_divider", "size": [0.014, 0.084, 0.075], "position": [0.0, 0.0, 0.0675], "material": "warm_wood"},
+    {"component": "cylinder", "name": "handle_post_left", "radius": 0.012, "height": 0.075, "position": [-0.065, 0.0, 0.1375], "material": "charcoal_metal", "vertices": 32},
+    {"component": "cylinder", "name": "handle_post_right", "radius": 0.012, "height": 0.075, "position": [0.065, 0.0, 0.1375], "material": "charcoal_metal", "vertices": 32},
+    {"component": "box", "name": "handle_grip", "size": [0.15, 0.022, 0.022], "position": [0.0, 0.0, 0.164], "material": "charcoal_metal"}
+  ],
+  "materials": {
+    "warm_wood": {"base_color": [0.42, 0.24, 0.12], "roughness": 0.52, "metallic": 0.0},
+    "charcoal_metal": {"base_color": [0.055, 0.06, 0.065], "roughness": 0.38, "metallic": 0.72}
+  },
+  "variants": [
+    {"id": "walnut-charcoal", "planned": true},
+    {"id": "light-wood-brass", "planned": true},
+    {"id": "cafe-counter-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 ranks Café / Foodware as S priority and favors low-complexity props with strong set compatibility.",
+      "Current canonical catalog includes tableware, serving props, menu stand, napkin holder and sugar jar but no condiment-caddy SKU.",
+      "This generic original design reuses only existing box and cylinder components and requires no SKU-specific generator or one-off script.",
+      "The divided carry-caddy silhouette reads clearly in thumbnails and can bundle with cafe counter and tableware props."
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
