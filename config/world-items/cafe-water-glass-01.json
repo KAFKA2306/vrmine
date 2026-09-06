@@ -1,0 +1,40 @@
+{
+  "id": "cafe-water-glass-01",
+  "family": "Café / Foodware",
+  "display_name": "Cafe Water Glass",
+  "dimensions_m": [0.082, 0.082, 0.118],
+  "parts": [
+    {"component": "cylinder", "name": "glass_base", "radius": 0.041, "height": 0.010, "position": [0.0, 0.0, 0.005], "material": "clear_glass", "vertices": 64},
+    {"component": "cylinder", "name": "glass_body", "radius": 0.038, "height": 0.105, "position": [0.0, 0.0, 0.0625], "material": "clear_glass", "vertices": 64},
+    {"component": "cylinder", "name": "rim", "radius": 0.041, "height": 0.006, "position": [0.0, 0.0, 0.115], "material": "clear_glass", "vertices": 64}
+  ],
+  "materials": {
+    "clear_glass": {"base_color": [0.92, 0.97, 1.0], "roughness": 0.12, "metallic": 0.0, "transmission": 0.85, "ior": 1.45}
+  },
+  "variants": [
+    {"id": "clear", "planned": true},
+    {"id": "smoke", "planned": true},
+    {"id": "cafe-table-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 marks Cafe / Foodware as S priority and explicitly lists glass as a low-complexity reusable prop suitable for set sales",
+      "Current config/world-items contains cup, saucer, tray and plate SKUs but no cafe-water-glass SKU, so this is a non-duplicate complementary item",
+      "This SKU reuses only the existing cylinder component and requires no product-specific generator or one-off script",
+      "The simple cylindrical silhouette is intended to remain readable in small gallery thumbnails and reusable in cafe table bundles"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
