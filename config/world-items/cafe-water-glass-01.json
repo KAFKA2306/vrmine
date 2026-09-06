@@ -30,7 +30,8 @@
     "observed_2026_09_06": [
       "Issue #200 marks Cafe / Foodware as S priority and explicitly lists glass as a low-complexity reusable prop suitable for set sales",
       "Current config/world-items contains cup, saucer, tray and plate SKUs but no cafe-water-glass SKU, so this is a non-duplicate complementary item",
-      "This SKU reuses only the existing cylinder component and requires no product-specific generator or one-off script"
+      "This SKU reuses only the existing cylinder component and requires no product-specific generator or one-off script",
+      "The simple cylindrical silhouette is intended to remain readable in small gallery thumbnails and reusable in cafe table bundles"
     ],
     "expected_production_minutes": 5,
     "manual_touch_target": 0,
