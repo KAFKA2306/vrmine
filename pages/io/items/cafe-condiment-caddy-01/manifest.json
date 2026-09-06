@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "id": "cafe-condiment-caddy-01",
+  "source_spec": "config/world-items/cafe-condiment-caddy-01.json",
+  "spec_sha256": "7bfcfe1dd44d95644324a0c0c48f0a894ed19927fbe59bc2b1fbf7498f02a8e9",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.2199999988079071,
+    0.11999999731779099,
+    0.17499999701976776
+  ],
+  "bounds_min_m": [
+    -0.10999999940395355,
+    -0.05999999865889549,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.10999999940395355,
+    0.05999999865889549,
+    0.17499999701976776
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.08749999850988388
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 6.37e-08,
+      "center_error_y": 2.166e-07,
+      "fill_ratio": 0.8400000357,
+      "normalized_bounds": [
+        -0.4199999541,
+        0.4200000815,
+        -0.386491051,
+        0.3864914841
+      ],
+      "ortho_scale": 0.2924445271
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": 4.552e-07,
+      "fill_ratio": 0.8400000455,
+      "normalized_bounds": [
+        -0.4200000228,
+        0.4200000228,
+        -0.3474818689,
+        0.3474827792
+      ],
+      "ortho_scale": 0.2619047463
+    },
+    "rear": {
+      "center_error_x": -1.42e-08,
+      "center_error_y": 4.552e-07,
+      "fill_ratio": 0.8400000353,
+      "normalized_bounds": [
+        -0.4200000319,
+        0.4200000034,
+        -0.3474818578,
+        0.3474827681
+      ],
+      "ortho_scale": 0.2619047761
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": 1.585e-07,
+      "fill_ratio": 0.8400000254,
+      "normalized_bounds": [
+        -0.2552159113,
+        0.2552159113,
+        -0.4199998542,
+        0.4200001711
+      ],
+      "ortho_scale": 0.2350950986
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 1.585e-07,
+      "fill_ratio": 0.8400000254,
+      "normalized_bounds": [
+        -0.2552159113,
+        0.2552159113,
+        -0.4199998542,
+        0.4200001711
+      ],
+      "ortho_scale": 0.2350950986
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8400000455,
+      "normalized_bounds": [
+        -0.4200000228,
+        0.4200000228,
+        -0.229597784,
+        0.229597784
+      ],
+      "ortho_scale": 0.2619047463
+    }
+  },
+  "triangles": 2332,
+  "parts_count": 9,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "cafe-condiment-caddy-01.blend": "98470c10dfc79e1689141176c83a2c1cab62d6a0bb5c46f68d3a13e4d3ea4f27",
+    "cafe-condiment-caddy-01.glb": "543ce59ef771cea025fdb0d4aa83b2b9ec0149d4618da9af8fa425870dc79d20",
+    "cafe-condiment-caddy-01.fbx": "e9942cd02a9ecaf78e22264a5bd65675947788e400d5ec93a1db3d79e94f23a0",
+    "thumbnail.png": "8a1a3dc1cf5318ac3ccab25ce6a9a4e7b35eb22e9dc38501f54d172900ccd5e3",
+    "view-hero.png": "8a1a3dc1cf5318ac3ccab25ce6a9a4e7b35eb22e9dc38501f54d172900ccd5e3",
+    "view-front.png": "52454794e70e9027f16bae2191df74cf8476afa0577aa1d8f950850f5cfa4d49",
+    "view-rear.png": "003c95c6f5e1f5a4b9c8078021e4be6cf2d64b3ed6d937ac68a988a0906d750c",
+    "view-left.png": "8678762b3b5f6ff2a3374a175399ebdbcd4070303df509cdbdc489e74302714d",
+    "view-right.png": "c6eb028f3c741b5e60d6443c2d95e907838ae72ee258138d75e5aee2cf7aa05c",
+    "view-top.png": "3658c0e43b55fd17eba8ab2453762e79e79b3e1f1f90ac72e2f2641aead821da"
+  }
+}
