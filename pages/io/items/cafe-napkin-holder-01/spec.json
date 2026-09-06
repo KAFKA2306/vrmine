@@ -1,0 +1,44 @@
+{
+  "id": "cafe-napkin-holder-01",
+  "family": "Café / Foodware",
+  "display_name": "Cafe Napkin Holder",
+  "dimensions_m": [0.18, 0.10, 0.15],
+  "parts": [
+    {"component": "box", "name": "base", "size": [0.18, 0.10, 0.02], "position": [0.0, 0.0, 0.01], "material": "charcoal_metal"},
+    {"component": "box", "name": "left_side", "size": [0.02, 0.10, 0.13], "position": [-0.08, 0.0, 0.085], "material": "charcoal_metal"},
+    {"component": "box", "name": "right_side", "size": [0.02, 0.10, 0.13], "position": [0.08, 0.0, 0.085], "material": "charcoal_metal"},
+    {"component": "box", "name": "rear_panel", "size": [0.14, 0.015, 0.13], "position": [0.0, 0.0425, 0.085], "material": "charcoal_metal"},
+    {"component": "box", "name": "front_retainer", "size": [0.14, 0.015, 0.045], "position": [0.0, -0.0425, 0.0425], "material": "charcoal_metal"},
+    {"component": "box", "name": "napkin_stack", "size": [0.12, 0.07, 0.09], "position": [0.0, 0.0, 0.065], "material": "paper_ivory"}
+  ],
+  "materials": {
+    "charcoal_metal": {"base_color": [0.055, 0.06, 0.065], "roughness": 0.38, "metallic": 0.72},
+    "paper_ivory": {"base_color": [0.92, 0.90, 0.84], "roughness": 0.82, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "black-ivory", "planned": true},
+    {"id": "brass-white", "planned": true},
+    {"id": "cafe-counter-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 700},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 ranks Café / Foodware as S priority and favors low-complexity props that bundle well into cafe sets.",
+      "Current canonical catalog contains cups, saucers, trays, plates, dessert props, menu stand, cake stand and sugar jar but no napkin-holder SKU.",
+      "Current BOOTH lamp and world-prop examples confirm lightweight world props commonly occupy the low-hundreds-of-yen price band; this SKU uses a conservative JPY 200 single hypothesis.",
+      "The design reuses only the existing box component, has a clear thumbnail silhouette and can bundle with existing cafe counter/tableware props."
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
