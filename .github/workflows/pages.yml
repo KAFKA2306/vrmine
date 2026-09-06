@@ -137,7 +137,8 @@ jobs:
           grep -F 'spec.dimensions_m' pages/io/view.html
           grep -F 'price_hypothesis' pages/io/view.html
           grep -F 'Retro Cafe Pendant Light' pages/3d/retro-cafe/pendant-light/index.html
-          grep -F './3d/retro-cafe/view-hero.webp' pages/index.html
+          grep -F 'href="./io/"' pages/index.html
+          node scripts/verify-quality-gates.mjs
           grep -F '../view-hero.webp' pages/3d/retro-cafe/pendant-light/index.html
           grep -F '../view-front.webp' pages/3d/retro-cafe/pendant-light/index.html
           grep -F "href: './games/answer-impostor/'" pages/games/registry.js
