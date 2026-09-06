@@ -1,101 +1,33 @@
 # VRMine Agent Contract
 
-このファイルを、VRMineで作業するエージェント向けルールの正準とする。
-CI/CDは必須。変更したsurfaceのexact headを既存gateで検証する。
+current GitHub `main`、このファイル、実装、machine-readable config、current CI、productionを正本とする。
 
-## Short-context start
+## Canonical paths
 
-Read this file, then only the files that own the current task. Do not preload all scenes, scripts, Pages, Issues, PR history, or docs.
-
-Before editing, identify:
-
-1. requested outcome
-2. affected runtime: browser / Unity / ClientSim / VRChat client / uploaded world
-3. canonical implementation/config
-4. smallest verifier required for that claim
-5. existing Issue/PR/workline, if any
-
-Continue an existing workline when it owns the same outcome. README/Issue prose does not override current code, config, CI, or runtime evidence.
-
-## Canonical surfaces
-
-- Unity/VRChat assets: `Assets/`
-- VRMine-owned Unity code: `Assets/KafkaMade/VRMine/`
-- browser surface: `pages/`
-- package config: `Packages/`
+- Unity / VRChat: `Assets/KafkaMade/VRMine/`
+- Pages: `pages/`
+- 3D item specs: `config/world-items/`
+- Unity packages: `Packages/`
 - Unity version: `ProjectSettings/ProjectVersion.txt`
-- machine-readable config: `config/`
-- verification/automation: `scripts/`
-- operator entry point: `Taskfile.yml`
+- Config: `config/`
+- Automation / verification: `scripts/`
+- Commands: `Taskfile.yml`
+- Release policy: `config/quality-gates.json`
 
-Do not commit `Library/`, downloaded packages, temporary reports, or runtime artifacts.
+## Rules
 
-## Verification levels
+- one responsibility, one implementation, one config, one verification path.
+- `DELETE > MERGE > REPLACE > ADD`.
+- superseded code、docs、scripts、workflowsは残さない。
+- documentationは現在の実装だけを書く。日付、進捗、Issue履歴、変更履歴、差分説明、旧仕様の注釈を正本へ残さない。
+- machine-readableに表現できる状態はproseへ重複させない。
+- silent fallbackや根拠のないdefaultで失敗を隠さない。
+- Unityのserialized referenceとtracked `.meta` を意図せず変更しない。
 
-Never promote evidence from a lower runtime to a higher one.
+## Generated assets
 
-- **U1** — package/config/static contract
-- **U2** — specified Unity compile/EditMode
-- **U3** — PlayMode/ClientSim
-- **U4** — real VRChat Build & Test / multi-client
-- **U5** — uploaded private/public world
+生成開始後は、生成、実ファイル検証、多面render、PR/Issue掲載、merge、main read-back、Pages公開確認まで進める。見た目の評価はmerge blockerにしない。生成物が構造的に不正な場合はfail loudlyとする。
 
-ClientSim does not prove real-client sync, ownership transfer, late join, owner departure behavior, PC/Android parity, or uploaded-world behavior. Unrun verification is not PASS.
+## Verification
 
-## Commands
-
-Use existing Taskfile entries instead of adding parallel wrappers.
-
-```text
-task setup
-task check
-task vpm:check
-task release:perspective-cage:u2
-task gaussian:open
-task gaussian:verify-u2
-task gaussian:verify-sdk
-task pages:test
-```
-
-Read `Taskfile.yml` only as needed for the current surface.
-
-## Change rules
-
-- one responsibility, one implementation/config/state/verification path.
-- `DELETE > MERGE > REPLACE > ADD`; remove superseded paths after current references prove them unused.
-- prefer existing standard APIs/frameworks and canonical implementations.
-- do not hide invalid state with plausible defaults, silent fallback, broad exception handling, or unverified success.
-- keep retries/recovery at the execution/workflow boundary when possible.
-- preserve Unity serialized references and GUIDs; do not change tracked `.meta` files unintentionally.
-- make ownership, serialization, synced state, and late-join behavior explicit when relevant.
-- comments should explain non-obvious rationale/external constraints, not narrate code.
-
-## Generated assets: render first, never stop on appearance
-
-For generated 3D/image assets, appearance is evidence for the user, not a merge gate.
-
-- Once generation starts, continue mechanically through generation, file-integrity verification, multi-angle rendering, PR/Issue/comment publication, merge, exact-main read-back, and public Pages verification. Do not pause for visual approval.
-- Visual PASS/FAIL, taste, polish, product-readiness, or reviewer preference must never cause Draft conversion, REQUEST_CHANGES, manual-approval waiting, or a merge hold.
-- A generated-asset PR must not require an unresolved-review-free state. Technical generation failure may fail loudly only when the requested result was not produced or the produced files are structurally invalid.
-- Every generated-asset workline must publish rendered images in the PR body, the owning Issue body, and comments on both. Use direct-render URLs, not artifact ZIP/workflow/repository-file pages.
-- For a 3D scene or asset set, publish multiple viewpoints. Retro Café requires at least hero, front, rear, left, right, and top.
-- If no owning Issue is linked, automation creates one rather than stopping the merge.
-- Missing U2-U5 runtime evidence remains `UNVERIFIED`; it is recorded, not used to hold generated work outside `main`.
-- If automation commits generated review files back to the PR branch, that commit is a new head: do not use `[skip ci]`, rerun technical checks on that exact head, and merge only when the expected head SHA still matches.
-- A merge performed with `GITHUB_TOKEN` must not assume a downstream push workflow will start. Explicitly dispatch the existing Pages workflow, bind the run and public render manifest to the merge SHA, and verify the published image hashes from that manifest before claiming production PASS.
-
-## CI, Pages, and release
-
-Use a PR for traceability and run the exact-head checks required by the changed surface. `task check` is the repository-level gate when applicable. Generated-asset PRs follow the automatic integration rule above and do not wait for visual/manual approval.
-
-After merge, read back exact `main`. Pages changes additionally require deployment success and direct verification of `https://kafka2306.github.io/vrmine/`. Browser evidence never proves Unity/VRChat behavior.
-
-When a workflow produces a PNG intended for review, the PNG must also have a stable public URL that opens the image itself in one click. GitHub Actions artifact ZIPs, workflow pages, or repository file pages are not substitutes. The public PNG must be verified after deployment; for generated assets, CI must also prove that the published PNG matches the current generated PNG.
-
-CI, merge, Pages deployment, U2-U5 verification, and world release are separate claims. Report only the layer directly observed.
-
-## Continuation and completion
-
-If work stops, update the existing Issue/PR with the last verified commit, outcome, achieved verification level, blocker/failure, and one exact next action. Do not create a second agent-state database.
-
-Complete only when the requested outcome exists, the required verification level has direct evidence, exact-head CI/main read-back are complete when applicable, Pages production is checked when affected, and obsolete task-created paths are removed. Separate new ideas into new outcomes.
+変更surfaceに対応するexact-head checkを実行する。repository全体の入口は `task check`、Pagesは `task pages:test` とする。merge後はexact `main` を再取得する。Pages変更はproduction URLを直接確認する。未実行のUnity / VRChat runtimeは `UNVERIFIED` とする。

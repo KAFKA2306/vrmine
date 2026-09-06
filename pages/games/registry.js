@@ -19,7 +19,7 @@ export const games = [
     href: './games/stich-meister/',
     players: 'VRChat',
     duration: '開発中',
-    status: '設計資料公開',
+    status: '開発中',
     tone: 'abyss',
     tags: ['トリックテイキング', 'UdonSharp', 'VRChat']
   },
