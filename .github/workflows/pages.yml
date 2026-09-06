@@ -427,42 +427,51 @@ jobs:
           set -euo pipefail
           base="${PAGE_URL%/}"
           tmp="$(mktemp -d)"
+          curl_retry=(--fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --connect-timeout 15 --max-time 60)
           matched=false
           for attempt in $(seq 1 36); do
-            curl --fail --silent --show-error --location "$base/?smoke=${EXPECTED_SHA}-${attempt}" -o "$tmp/index.html"
-            if grep -Fq 'vrmine-game-hub-2026-08-15-1' "$tmp/index.html"; then
-              matched=true
-              break
+            if curl "${curl_retry[@]}" "$base/?smoke=${EXPECTED_SHA}-${attempt}" -o "$tmp/index.html"; then
+              if grep -Fq 'vrmine-game-hub-2026-08-15-1' "$tmp/index.html"; then
+                matched=true
+                break
+              fi
             fi
             sleep 10
           done
           test "$matched" = true
-          curl --fail --silent --show-error --location "$base/service-worker.js?smoke=${EXPECTED_SHA}" -o "$tmp/service-worker.js"
-          curl --fail --silent --show-error --location "$base/games/answer-impostor/?smoke=${EXPECTED_SHA}" -o "$tmp/answer.html"
-          curl --fail --silent --show-error --location "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
-          curl --fail --silent --show-error --location "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
-          curl --fail --silent --show-error --location "$base/3dgs/?smoke=${EXPECTED_SHA}" -o "$tmp/3dgs.html"
-          curl --fail --silent --show-error --location "$base/3d/retro-cafe/render-manifest.json?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-render-manifest.json"
+          grep -F 'href="./io/"' "$tmp/index.html"
+          ! grep -Fq 'VR development' "$tmp/index.html"
+          ! grep -Fq '実装途中も、成果として見える' "$tmp/index.html"
+          ! grep -Fq 'id="development"' "$tmp/index.html"
+          ! grep -Fq 'id="platform"' "$tmp/index.html"
+          ! grep -Fq 'source on GitHub' "$tmp/index.html"
+          ! grep -Fq 'github.com/KAFKA2306/vrmine' "$tmp/index.html"
+          curl "${curl_retry[@]}" "$base/service-worker.js?smoke=${EXPECTED_SHA}" -o "$tmp/service-worker.js"
+          curl "${curl_retry[@]}" "$base/games/answer-impostor/?smoke=${EXPECTED_SHA}" -o "$tmp/answer.html"
+          curl "${curl_retry[@]}" "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
+          curl "${curl_retry[@]}" "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
+          curl "${curl_retry[@]}" "$base/3dgs/?smoke=${EXPECTED_SHA}" -o "$tmp/3dgs.html"
+          curl "${curl_retry[@]}" "$base/3d/retro-cafe/render-manifest.json?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-render-manifest.json"
           test "$(jq -r '.source_sha' "$tmp/retro-cafe-render-manifest.json")" = "$EXPECTED_SHA"
           test "$(jq -r '.png_combined_sha256' "$tmp/retro-cafe-render-manifest.json")" = "$EXPECTED_RETRO_CAFE_REVIEW_SHA256"
           test "$(jq -r '.webp_combined_sha256' "$tmp/retro-cafe-render-manifest.json")" = "$EXPECTED_RETRO_CAFE_WEBP_SHA256"
           for image in thumbnail view-hero view-front view-rear view-left view-right view-top; do
-            curl --fail --silent --show-error --location "$base/3d/retro-cafe/${image}.png?smoke=${EXPECTED_SHA}" -o "$tmp/${image}.png"
-            curl --fail --silent --show-error --location "$base/3d/retro-cafe/${image}.webp?smoke=${EXPECTED_SHA}" -o "$tmp/${image}.webp"
+            curl "${curl_retry[@]}" "$base/3d/retro-cafe/${image}.png?smoke=${EXPECTED_SHA}" -o "$tmp/${image}.png"
+            curl "${curl_retry[@]}" "$base/3d/retro-cafe/${image}.webp?smoke=${EXPECTED_SHA}" -o "$tmp/${image}.webp"
           done
-          curl --fail --silent --show-error --location "$base/3d/retro-cafe/pendant-light/?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-pendant.html"
-          curl --fail --silent --show-error --location "$base/3dgs/gallery.js?smoke=${EXPECTED_SHA}" -o "$tmp/gallery.js"
-          curl --fail --silent --show-error --location "$base/3dgs/gaussian-splats.json?smoke=${EXPECTED_SHA}" -o "$tmp/gaussian-splats.json"
-          curl --fail --silent --show-error --location "$base/3dgs/viewer/?smoke=${EXPECTED_SHA}" -o "$tmp/viewer.html"
-          curl --fail --silent --show-error --location "$base/3dgs/viewer/index.js?smoke=${EXPECTED_SHA}" -o "$tmp/viewer.js"
-          curl --fail --silent --show-error --location "$base/events/demo/?smoke=${EXPECTED_SHA}" -o "$tmp/event.html"
-          curl --fail --silent --show-error --location "$base/organizers/?smoke=${EXPECTED_SHA}" -o "$tmp/organizers.html"
-          curl --fail --silent --show-error --location "$base/io/?smoke=${EXPECTED_SHA}" -o "$tmp/io.html"
-          curl --fail --silent --show-error --location "$base/io/catalog.json?smoke=${EXPECTED_SHA}" -o "$tmp/io-catalog.json"
-          curl --fail --silent --show-error --location "$base/io/view.html?item=minimal-book-stack-01&smoke=${EXPECTED_SHA}" -o "$tmp/io-view.html"
-          curl --fail --silent --show-error --location "$base/io/items/minimal-book-stack-01/spec.json?smoke=${EXPECTED_SHA}" -o "$tmp/io-book-spec.json"
-          curl --fail --silent --show-error --location "$base/games/answer-impostor/engine.mjs?smoke=${EXPECTED_SHA}" -o "$tmp/engine.mjs"
-          curl --fail --silent --show-error --location "$base/games/abyss-invasion/tracker.js?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.js"
+          curl "${curl_retry[@]}" "$base/3d/retro-cafe/pendant-light/?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-pendant.html"
+          curl "${curl_retry[@]}" "$base/3dgs/gallery.js?smoke=${EXPECTED_SHA}" -o "$tmp/gallery.js"
+          curl "${curl_retry[@]}" "$base/3dgs/gaussian-splats.json?smoke=${EXPECTED_SHA}" -o "$tmp/gaussian-splats.json"
+          curl "${curl_retry[@]}" "$base/3dgs/viewer/?smoke=${EXPECTED_SHA}" -o "$tmp/viewer.html"
+          curl "${curl_retry[@]}" "$base/3dgs/viewer/index.js?smoke=${EXPECTED_SHA}" -o "$tmp/viewer.js"
+          curl "${curl_retry[@]}" "$base/events/demo/?smoke=${EXPECTED_SHA}" -o "$tmp/event.html"
+          curl "${curl_retry[@]}" "$base/organizers/?smoke=${EXPECTED_SHA}" -o "$tmp/organizers.html"
+          curl "${curl_retry[@]}" "$base/io/?smoke=${EXPECTED_SHA}" -o "$tmp/io.html"
+          curl "${curl_retry[@]}" "$base/io/catalog.json?smoke=${EXPECTED_SHA}" -o "$tmp/io-catalog.json"
+          curl "${curl_retry[@]}" "$base/io/view.html?item=minimal-book-stack-01&smoke=${EXPECTED_SHA}" -o "$tmp/io-view.html"
+          curl "${curl_retry[@]}" "$base/io/items/minimal-book-stack-01/spec.json?smoke=${EXPECTED_SHA}" -o "$tmp/io-book-spec.json"
+          curl "${curl_retry[@]}" "$base/games/answer-impostor/engine.mjs?smoke=${EXPECTED_SHA}" -o "$tmp/engine.mjs"
+          curl "${curl_retry[@]}" "$base/games/abyss-invasion/tracker.js?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.js"
           grep -F 'vrmine-game-hub-v4' "$tmp/service-worker.js"
           grep -F 'Answer Impostor' "$tmp/answer.html"
           grep -F '深淵侵蝕' "$tmp/abyss.html"
@@ -508,7 +517,7 @@ jobs:
           grep -F 'scoreRound' "$tmp/engine.mjs"
           grep -F 'new WebSocket(server)' "$tmp/abyss.js"
           broken_url="$base/3d/retro-cafe/organizers/3d/retro-cafe/pendant-light/3d/retro-cafe/pendant-light/?smoke=${EXPECTED_SHA}"
-          broken_status="$(curl --silent --show-error --location -o "$tmp/broken-route.html" -w '%{http_code}' "$broken_url")"
+          broken_status="$(curl --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --connect-timeout 15 --max-time 60 -o "$tmp/broken-route.html" -w '%{http_code}' "$broken_url")"
           test "$broken_status" = "404"
           ! grep -Fq 'vrmine-game-hub-2026-08-15-1' "$tmp/broken-route.html"
           echo "Live VRMine game hub verification passed: $base/"
