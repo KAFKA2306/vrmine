@@ -7,6 +7,8 @@ on:
       - "pages/**"
       - "config/world-items/**"
       - "scripts/*product-pages*"
+      - "scripts/world_item_visual_loop.py"
+      - "scripts/test_world_item_visual_loop.py"
       - "config/gaussian-splats.json"
       - "config/gaussian-artifacts.yaml"
       - "config/gaussian-basis-contract.json"
@@ -23,6 +25,8 @@ on:
       - "pages/**"
       - "config/world-items/**"
       - "scripts/*product-pages*"
+      - "scripts/world_item_visual_loop.py"
+      - "scripts/test_world_item_visual_loop.py"
       - "config/gaussian-splats.json"
       - "config/gaussian-artifacts.yaml"
       - "config/gaussian-basis-contract.json"
@@ -67,6 +71,15 @@ jobs:
 
       - name: Test product publication failures
         run: node --test scripts/product-pages.test.mjs
+
+      - name: Test World Item visual improvement loop
+        run: |
+          python -m unittest scripts/test_world_item_visual_loop.py -v
+          python scripts/world_item_visual_loop.py bundle \
+            --spec config/world-items/minimal-desk-clock-01.json \
+            --render-root pages/io/items/minimal-desk-clock-01 \
+            --output /tmp/minimal-desk-clock-review-bundle.json
+          test "$(jq -r .productId /tmp/minimal-desk-clock-review-bundle.json)" = "minimal-desk-clock-01"
 
       - name: Test game logic
         run: node --test pages/games/answer-impostor/engine.test.mjs
