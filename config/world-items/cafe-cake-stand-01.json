@@ -1,0 +1,41 @@
+{
+  "id": "cafe-cake-stand-01",
+  "family": "Café / Foodware",
+  "display_name": "Cafe Cake Stand",
+  "dimensions_m": [0.28, 0.28, 0.162],
+  "parts": [
+    {"component": "cylinder", "name": "base", "radius": 0.09, "height": 0.018, "position": [0.0, 0.0, 0.009], "material": "warm_ceramic", "vertices": 64},
+    {"component": "cylinder", "name": "stem", "radius": 0.018, "height": 0.12, "position": [0.0, 0.0, 0.078], "material": "accent_ceramic", "vertices": 48},
+    {"component": "cylinder", "name": "serving_plate", "radius": 0.14, "height": 0.016, "position": [0.0, 0.0, 0.146], "material": "warm_ceramic", "vertices": 64},
+    {"component": "cylinder", "name": "top_inset", "radius": 0.125, "height": 0.008, "position": [0.0, 0.0, 0.158], "material": "accent_ceramic", "vertices": 64}
+  ],
+  "materials": {
+    "warm_ceramic": {"base_color": [0.88, 0.83, 0.74], "roughness": 0.40, "metallic": 0.0},
+    "accent_ceramic": {"base_color": [0.34, 0.22, 0.15], "roughness": 0.44, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "ivory-brown", "planned": true},
+    {"id": "white-charcoal", "planned": true},
+    {"id": "dessert-service-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 marks Café / Foodware as S priority and favors low-complexity rotational props that bundle naturally into sets",
+      "Current canonical specs contain plates, saucers, trays, cups and a water glass but no cafe-cake-stand SKU",
+      "This generic original design reuses only the existing cylinder component and requires no SKU-specific generator or one-off script"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
