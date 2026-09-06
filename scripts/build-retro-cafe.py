@@ -81,7 +81,6 @@ def lathe(profile, mat):
     bpy.ops.object.select_all(action='DESELECT')
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
-    # Profile direction differs between shade and vessel; orient closed shells outward.
     bpy.ops.object.mode_set(mode='EDIT')
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.normals_make_consistent(inside=False)
@@ -128,7 +127,6 @@ def build(name, mats):
         cylinder(.033, .006, .003, cream)
         lathe([(.004, 0), (.035, 0), (.043, .085), (.038, .085),
                (.030, .006), (.004, .006)], cream)
-        # A half torus attaches at the two ends, with no handle crossing the cavity.
         curve = bpy.data.curves.new('Cup handle', 'CURVE')
         curve.dimensions, curve.bevel_depth, curve.bevel_resolution = '3D', .005, 3
         spline = curve.splines.new('POLY')
@@ -244,12 +242,17 @@ def main():
     camera.data.ortho_scale = hero_scale
     bpy.ops.wm.save_as_mainfile(filepath=str(OUT / 'retro-cafe.blend'))
 
+    # thumbnail and hero are intentionally the same camera. Render once and derive the
+    # thumbnail byte-for-byte instead of paying for an identical seventh Blender render.
     for filename, (location, target, ortho_scale) in views.items():
+        if filename == 'thumbnail.png':
+            continue
         camera.location = location
         camera.rotation_euler = (Vector(target) - camera.location).to_track_quat('-Z', 'Y').to_euler()
         camera.data.ortho_scale = ortho_scale
         scene.render.filepath = str(OUT / filename)
         bpy.ops.render.render(write_still=True)
+    (OUT / 'thumbnail.png').write_bytes((OUT / 'view-hero.png').read_bytes())
 
     files = [f'{name}.{ext}' for name in NAMES for ext in ('glb', 'fbx')]
     files += ['retro-cafe.blend', *views.keys()]
