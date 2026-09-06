@@ -21,6 +21,13 @@ test('actual catalog, sitemap and navigation agree after the Pages build',()=>{
     }
   } finally {rmSync(site,{recursive:true,force:true});}
 });
+test('product view gates model downloads on verified or published license status',()=>{
+  const view=readFileSync('pages/io/view.html','utf8');
+  assert.match(view,/const licenseReady=\/\^\(VERIFIED\|PUBLISHED\)\$\/i\.test\(licenseStatus\)/);
+  assert.match(view,/const formatButtons=licenseReady/);
+  assert.match(view,/ライセンスが確定するまでモデルファイルの取得リンクは公開しません/);
+  assert.match(view,/\['License',licenseStatus\]/);
+});
 test('all canonical products have matching real publication evidence',()=>validateEvidence(products,'pages'));
 for (const failure of ['missing hero','corrupt side image','stale spec','missing model']) {
   test(`publication rejects ${failure}`,()=>{
