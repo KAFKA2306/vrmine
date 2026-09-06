@@ -1,0 +1,31 @@
+{
+  "id": "industrial-pallet-01",
+  "family": "Storage / Industrial",
+  "display_name": "Industrial Wood Pallet",
+  "dimensions_m": [1.20, 1.00, 0.14],
+  "parts": [
+    {"component":"box","name":"deck_1","size":[1.20,0.14,0.025],"position":[0.0,-0.43,0.1275],"material":"wood"},
+    {"component":"box","name":"deck_2","size":[1.20,0.14,0.025],"position":[0.0,-0.215,0.1275],"material":"wood"},
+    {"component":"box","name":"deck_3","size":[1.20,0.14,0.025],"position":[0.0,0.0,0.1275],"material":"wood"},
+    {"component":"box","name":"deck_4","size":[1.20,0.14,0.025],"position":[0.0,0.215,0.1275],"material":"wood"},
+    {"component":"box","name":"deck_5","size":[1.20,0.14,0.025],"position":[0.0,0.43,0.1275],"material":"wood"},
+    {"component":"box","name":"runner_left","size":[0.10,1.00,0.09],"position":[-0.48,0.0,0.0575],"material":"wood"},
+    {"component":"box","name":"runner_center","size":[0.10,1.00,0.09],"position":[0.0,0.0,0.0575],"material":"wood"},
+    {"component":"box","name":"runner_right","size":[0.10,1.00,0.09],"position":[0.48,0.0,0.0575],"material":"wood"}
+  ],
+  "materials": {
+    "wood": {"base_color":[0.48,0.30,0.15],"roughness":0.78,"metallic":0.0}
+  },
+  "variants": [
+    {"id":"light-wood","planned":true},
+    {"id":"weathered","planned":true},
+    {"id":"warehouse-mini-set","planned":true}
+  ],
+  "price_hypothesis":{"currency":"JPY","single":200,"mini_set_target":700},
+  "license":{"name":"Proprietary / BOOTH terms pending","provenance":"Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.","status":"DRAFT"},
+  "formats":["blend","glb","fbx"],
+  "unity_status":"UNVERIFIED",
+  "vrchat_status":"UNVERIFIED",
+  "booth_status":"UNVERIFIED",
+  "selection_evidence":{"observed_2026_09_06":["Issue #200 lists pallet explicitly in Storage / Industrial and prioritizes reusable low-complexity shapes","Current canonical specs include toolbox and cabinet but no industrial-pallet SKU","This design uses only the existing box component, has a strong thumbnail silhouette, and bundles naturally with cabinet, toolbox and future warehouse props"],"expected_production_minutes":5,"manual_touch_target":0,"reusable_component_ratio_target":1.0}
+}
