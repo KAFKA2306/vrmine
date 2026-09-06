@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-ladder-shelf-01",
+  "source_spec": "config/world-items/minimal-ladder-shelf-01.json",
+  "spec_sha256": "1173e287088398e2ec37bf48766c8f8c19ccf87a0499ec8d74524c400f804581",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.7845945358276367,
+    0.3799999952316284,
+    1.522517204284668
+  ],
+  "triangles": 1128,
+  "parts_count": 6,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-ladder-shelf-01.blend": "529f5b82cd98667de90cbd30c74d1761e3fbe09bf6eff46e6a7b0e7ef4cb4173",
+    "minimal-ladder-shelf-01.glb": "d2e1d3e27955683a3552f7ec5de5e082e2e8a7f5d9d36114f942d5bbc0575cf1",
+    "minimal-ladder-shelf-01.fbx": "b3d90387e90d4f44b21f74b7ceda724908418c5646aa6f9f5182584124023f94",
+    "thumbnail.png": "d69f9a80961b9f74b0c45c6e9a8664027e65e9c8da1c0a5292b1667cffc8478c",
+    "view-hero.png": "d69f9a80961b9f74b0c45c6e9a8664027e65e9c8da1c0a5292b1667cffc8478c",
+    "view-front.png": "a9a1beeea367ddedb52ffee60658e4a48698fab71e020e96ee8980eb1fba18bc",
+    "view-rear.png": "c3a61389881d92e24906c492fff270c5d57932bf44ec16445062f6ca5f9fbaae",
+    "view-left.png": "c66fcc16afca0f792bf281ec5cca4a2e9c37083ee080c113f8f1222f4fa00523",
+    "view-right.png": "c174e5760f033db08567a99208421e5f3227c24d9c8dc60d7bb974abc46c090d",
+    "view-top.png": "96c6e3da750b6057b5074e9326417b9e60574c13d07cab5448394b32d94fb25d"
+  }
+}
