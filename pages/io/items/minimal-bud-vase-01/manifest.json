@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-bud-vase-01",
+  "source_spec": "config/world-items/minimal-bud-vase-01.json",
+  "spec_sha256": "90e6a5b9436fdc609b6e3773ac0ab7ebcdfdc5e1efe572218b7e12463245a266",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.18000000715255737,
+    0.18000000715255737,
+    0.28999999165534973
+  ],
+  "triangles": 2800,
+  "parts_count": 4,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-bud-vase-01.blend": "257b425ec6cd29f77a79a25de99346c7208a6993b212b1c14dee1e48a1fe1989",
+    "minimal-bud-vase-01.glb": "d523f323e3d54b01eb82dd253ff9778db47dc4608215e17b37f1b35eae7bdd2f",
+    "minimal-bud-vase-01.fbx": "1ef3c96900aa972326258212dc34c173b2c59802df1e768c3607b3bfdcd38dde",
+    "thumbnail.png": "07db243282f0996a8e14c89161d3399dcf2031de6fe3b2ca1b0b144cd7bec860",
+    "view-hero.png": "07db243282f0996a8e14c89161d3399dcf2031de6fe3b2ca1b0b144cd7bec860",
+    "view-front.png": "1c14d416e58a379e42df1f24f07ce694d79595f4390fd282157338b376e9f2a7",
+    "view-rear.png": "2356ec2b7ab5a0d3d53e7e269b7badaee56981097ef4b6743b240c2969c408cb",
+    "view-left.png": "d671b537ba50949d0cd53e6156d3a63b55b0fe2fdec2595d847c059030788c06",
+    "view-right.png": "1ba171a515e7b98735921a385e867edc4bd1c38c32157a571baeb810b21f2f00",
+    "view-top.png": "b781c4dd835879af32a7a83961b4e32400d93c20a28ffad99f687842ed406df9"
+  }
+}

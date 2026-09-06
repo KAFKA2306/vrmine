@@ -1,0 +1,41 @@
+{
+  "id": "minimal-bud-vase-01",
+  "family": "Decorative Props",
+  "display_name": "Minimal Bud Vase",
+  "dimensions_m": [0.18, 0.18, 0.28],
+  "parts": [
+    {"component": "cylinder", "name": "base", "radius": 0.09, "height": 0.045, "position": [0.0, 0.0, 0.0225], "material": "matte_ceramic", "vertices": 48},
+    {"component": "cylinder", "name": "body", "radius": 0.072, "height": 0.145, "position": [0.0, 0.0, 0.1175], "material": "matte_ceramic", "vertices": 48},
+    {"component": "cylinder", "name": "neck", "radius": 0.036, "height": 0.080, "position": [0.0, 0.0, 0.2300], "material": "matte_ceramic", "vertices": 40},
+    {"component": "cylinder", "name": "lip", "radius": 0.044, "height": 0.020, "position": [0.0, 0.0, 0.2800], "material": "matte_ceramic", "vertices": 40}
+  ],
+  "materials": {
+    "matte_ceramic": {"base_color": [0.78, 0.72, 0.64], "roughness": 0.62, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "warm-white", "planned": true},
+    {"id": "charcoal", "planned": true},
+    {"id": "decorative-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 lists Decorative Props such as vases as low-complexity, high-reuse candidates",
+      "Current main has no vase SKU, so this expands Decorative Props without duplicating an existing canonical item",
+      "Current BOOTH examples show vase/interior-decoration props around JPY 200, supporting a JPY 200 single-item hypothesis",
+      "The design reuses only the existing cylinder component and can bundle with plants, shelves, cafe tables, picture frames, and office props"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
