@@ -253,7 +253,7 @@ jobs:
           PY
 
       - name: Verify regenerated and tracked evidence against canonical inputs
-        id: publish
+        id: verify
         run: |
           set -euo pipefail
           python3 - <<'PY'
