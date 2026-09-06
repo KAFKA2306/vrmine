@@ -10,7 +10,7 @@ on:
 
 permissions:
   actions: write
-  contents: read
+  contents: write
   pull-requests: write
   issues: write
 
@@ -23,6 +23,7 @@ jobs:
       head_sha: ${{ steps.pr.outputs.head_sha }}
       pr_number: ${{ github.event.pull_request.number }}
       issue_number: ${{ steps.issue.outputs.number }}
+      sku_count: ${{ steps.matrix.outputs.sku_count }}
     steps:
       - name: Resolve exact PR head
         id: pr
@@ -73,6 +74,7 @@ jobs:
           print(json.dumps({"include": include}, separators=(",", ":")))
           PY
           echo "matrix=$(cat /tmp/matrix.json)" >> "$GITHUB_OUTPUT"
+          echo "sku_count=$(jq '.include | length' /tmp/matrix.json)" >> "$GITHUB_OUTPUT"
 
       - uses: actions/cache@v4
         id: blender-cache
@@ -167,6 +169,89 @@ jobs:
           path: .artifacts/world-items
           merge-multiple: true
 
+      - name: Refresh tracked Pages evidence from regenerated artifacts
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import shutil
+          from pathlib import Path
+
+          root = Path('.')
+          generated_root = root / '.artifacts/world-items'
+          tracked_root = root / 'pages/io/items'
+          specs = sorted((root / 'config/world-items').glob('*.json'))
+          renders = (
+              'thumbnail.png',
+              'view-hero.png',
+              'view-front.png',
+              'view-rear.png',
+              'view-left.png',
+              'view-right.png',
+              'view-top.png',
+          )
+          shared = (
+              (root / 'scripts/world_item_factory.py').read_bytes()
+              + (root / 'scripts/verify_world_item.py').read_bytes()
+          )
+
+          canonical = {}
+          for spec_path in specs:
+              spec = json.loads(spec_path.read_text())
+              sku = spec['id']
+              if sku in canonical:
+                  raise SystemExit(f'duplicate canonical sku: {sku}')
+              canonical[sku] = spec_path
+
+          generated_ids = {
+              path.name for path in generated_root.iterdir()
+              if path.is_dir()
+          }
+          canonical_ids = set(canonical)
+          if generated_ids != canonical_ids:
+              missing = sorted(canonical_ids - generated_ids)
+              extra = sorted(generated_ids - canonical_ids)
+              raise SystemExit(f'generated/canonical mismatch missing={missing} extra={extra}')
+
+          def digest(path):
+              return hashlib.sha256(path.read_bytes()).hexdigest()
+
+          for sku, spec_path in sorted(canonical.items()):
+              src = generated_root / sku
+              dst = tracked_root / sku
+              dst.mkdir(parents=True, exist_ok=True)
+              required = [
+                  f'{sku}.blend',
+                  f'{sku}.glb',
+                  f'{sku}.fbx',
+                  'manifest.json',
+                  'factory-metrics.json',
+                  *renders,
+              ]
+              for name in required:
+                  source = src / name
+                  if not source.is_file():
+                      raise SystemExit(f'missing generated artifact: {source}')
+                  shutil.copy2(source, dst / name)
+
+              shutil.copy2(spec_path, dst / 'spec.json')
+              build_input = hashlib.sha256(spec_path.read_bytes() + shared).hexdigest()
+              (dst / 'build-input.sha256').write_text(build_input + '\n')
+
+              render_hashes = ''.join(
+                  f'{digest(src / name)}  {name}\n'
+                  for name in renders
+              )
+              (dst / 'render.sha256').write_text(render_hashes)
+
+          print(json.dumps({
+              'canonical_sku_count': len(canonical),
+              'generated_sku_count': len(generated_ids),
+              'tracked_refresh': 'PASS',
+          }))
+          PY
+
       - name: Verify regenerated and tracked evidence against canonical inputs
         id: publish
         run: |
@@ -223,10 +308,26 @@ jobs:
 
           print(json.dumps({'sku_count': len(specs), 'generated_framing': 'PASS', 'tracked_exact_input': 'PASS'}))
           PY
-          final_head="$(git rev-parse HEAD)"
-          test "$final_head" = "${{ needs.plan.outputs.head_sha }}"
-          test -z "$(git status --porcelain)"
+      - name: Commit refreshed all-SKU evidence to PR branch
+        id: publish
+        env:
+          HEAD_REF: ${{ needs.plan.outputs.head_ref }}
+          START_HEAD: ${{ needs.plan.outputs.head_sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$START_HEAD"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pages/io/items
+          if git diff --cached --quiet; then
+            final_head="$(git rev-parse HEAD)"
+          else
+            git commit -m "chore: refresh all world-item render framing"
+            final_head="$(git rev-parse HEAD)"
+            git push origin "HEAD:$HEAD_REF"
+          fi
           echo "final_head=$final_head" >> "$GITHUB_OUTPUT"
+
       - name: Validate exact PR head
         id: exact
         env:
@@ -239,6 +340,18 @@ jobs:
           test "$current_head" = "$(git rev-parse HEAD)"
           test -z "$(git status --porcelain)"
           echo "head=$current_head" >> "$GITHUB_OUTPUT"
+      - name: Reject stale canonical snapshot against current main
+        run: |
+          set -euo pipefail
+          git fetch origin main --depth=1
+          head_tree="$(git rev-parse HEAD:config/world-items)"
+          main_tree="$(git rev-parse origin/main:config/world-items)"
+          if [ "$head_tree" != "$main_tree" ]; then
+            echo "canonical world-item specs changed on main during refresh"
+            git diff --name-status HEAD origin/main -- config/world-items
+            exit 1
+          fi
+
       - name: Run Pages build against exact published head
         env:
           GH_TOKEN: ${{ github.token }}
@@ -274,7 +387,7 @@ jobs:
             echo '### Exact-head render framing PASS'
             echo
             echo "- head: \`$FINAL_HEAD\`"
-            echo '- all 35 canonical SKU regenerated'
+            echo "- all ${{ needs.plan.outputs.sku_count }} canonical SKU regenerated"
             echo '- center error: X/Y <= 2%'
             echo '- long-edge fill: 80-88%'
             echo '- exact-head Pages build: PASS'
