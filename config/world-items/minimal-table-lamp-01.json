@@ -1,0 +1,45 @@
+{
+  "id": "minimal-table-lamp-01",
+  "family": "Lighting",
+  "display_name": "Minimal Table Lamp",
+  "dimensions_m": [0.34, 0.34, 0.52],
+  "parts": [
+    {"component": "cylinder", "name": "base", "radius": 0.13, "height": 0.026, "position": [0.0, 0.0, 0.013], "vertices": 64, "material": "matte_charcoal"},
+    {"component": "cylinder", "name": "base_cap", "radius": 0.095, "height": 0.020, "position": [0.0, 0.0, 0.036], "vertices": 64, "material": "warm_brass"},
+    {"component": "cylinder", "name": "stem", "radius": 0.018, "height": 0.300, "position": [0.0, 0.0, 0.196], "vertices": 32, "material": "warm_brass"},
+    {"component": "cylinder", "name": "shade_neck", "radius": 0.055, "height": 0.050, "position": [0.0, 0.0, 0.371], "vertices": 48, "material": "matte_charcoal"},
+    {"component": "cylinder", "name": "shade_upper", "radius": 0.105, "height": 0.070, "position": [0.0, 0.0, 0.431], "vertices": 64, "material": "warm_diffuser"},
+    {"component": "cylinder", "name": "shade_lower", "radius": 0.170, "height": 0.075, "position": [0.0, 0.0, 0.4885], "vertices": 64, "material": "warm_diffuser"},
+    {"component": "cylinder", "name": "shade_rim", "radius": 0.172, "height": 0.012, "position": [0.0, 0.0, 0.514], "vertices": 64, "material": "matte_charcoal"}
+  ],
+  "materials": {
+    "matte_charcoal": {"base_color": [0.055, 0.06, 0.065], "roughness": 0.40, "metallic": 0.62},
+    "warm_brass": {"base_color": [0.46, 0.28, 0.09], "roughness": 0.30, "metallic": 0.76},
+    "warm_diffuser": {"base_color": [0.88, 0.78, 0.58], "roughness": 0.52, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "matte-white", "planned": true},
+    {"id": "all-charcoal", "planned": true},
+    {"id": "lighting-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 marks Lighting as S priority with very high component reuse and table lamps as an explicit target",
+      "Current main has no minimal-table-lamp-01 canonical spec",
+      "The design reuses only the existing cylinder component and requires no SKU-specific generator or one-off script"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
