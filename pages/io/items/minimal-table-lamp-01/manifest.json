@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-table-lamp-01",
+  "source_spec": "config/world-items/minimal-table-lamp-01.json",
+  "spec_sha256": "5643a01fb02f758ee8501c6aaed7c457f925122667574f3caff8eac429898df0",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.3440000116825104,
+    0.3440000116825104,
+    0.5260000228881836
+  ],
+  "triangles": 6372,
+  "parts_count": 7,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-table-lamp-01.blend": "2e796ef802a46774b7a1b3d30179169884236fc9a6a315ca9ea18cb456b79d06",
+    "minimal-table-lamp-01.glb": "bf0d3e6d4ec2e4599f4a4e971c3afcb8002f7bd4c892142662d0aadf29a9e888",
+    "minimal-table-lamp-01.fbx": "17eb249f8ce724b61b0c8b9228b04fe28d4110bcaf146305f7c0428a523019d8",
+    "thumbnail.png": "cc788974744019af381b961ff0c9e1e0120c489b4c794f76655cd98de8cb8f6b",
+    "view-hero.png": "cc788974744019af381b961ff0c9e1e0120c489b4c794f76655cd98de8cb8f6b",
+    "view-front.png": "9b318a45374a4c5f3f0fa26f0699dbb0e94ea951178d47c6512a712449144c99",
+    "view-rear.png": "9033798c4e81c4aa2e6d3d92075b9172d3fb1218c548c98b3375012df5c70a0d",
+    "view-left.png": "e1dc2bf4e6cf65ba1544d1a0c15f88cbfde169da6f14d1ee3df0227bd83f09a2",
+    "view-right.png": "86e69d7bf84a6033b3227f7c799be30c51b1d5e2d5ab4b7757509c33579c079e",
+    "view-top.png": "aa63f983acecd1bcae2c0b75682bf043fa2d3020ded454f8c687c36b44f514ab"
+  }
+}
