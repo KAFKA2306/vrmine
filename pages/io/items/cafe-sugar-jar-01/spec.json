@@ -1,0 +1,43 @@
+{
+  "id": "cafe-sugar-jar-01",
+  "family": "Café / Foodware",
+  "display_name": "Cafe Sugar Jar",
+  "dimensions_m": [0.14, 0.14, 0.165],
+  "parts": [
+    {"component": "cylinder", "name": "base_foot", "radius": 0.052, "height": 0.012, "position": [0.0, 0.0, 0.006], "material": "warm_ceramic", "vertices": 64},
+    {"component": "cylinder", "name": "jar_body", "radius": 0.070, "height": 0.105, "position": [0.0, 0.0, 0.0645], "material": "warm_ceramic", "vertices": 64},
+    {"component": "cylinder", "name": "lid_plate", "radius": 0.066, "height": 0.018, "position": [0.0, 0.0, 0.126], "material": "accent_ceramic", "vertices": 64},
+    {"component": "cylinder", "name": "lid_cap", "radius": 0.045, "height": 0.012, "position": [0.0, 0.0, 0.141], "material": "warm_ceramic", "vertices": 48},
+    {"component": "cylinder", "name": "knob", "radius": 0.018, "height": 0.018, "position": [0.0, 0.0, 0.156], "material": "accent_ceramic", "vertices": 48}
+  ],
+  "materials": {
+    "warm_ceramic": {"base_color": [0.90, 0.86, 0.78], "roughness": 0.38, "metallic": 0.0},
+    "accent_ceramic": {"base_color": [0.28, 0.18, 0.12], "roughness": 0.42, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "ivory-brown", "planned": true},
+    {"id": "white-charcoal", "planned": true},
+    {"id": "cafe-tableware-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 700},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "Issue #200 marks Café / Foodware as S priority and favors low-complexity rotational props with strong set compatibility",
+      "Current canonical specs include cups, saucers, trays, plates, glassware, dessert props and cake stand but no sugar jar SKU",
+      "This generic original design reuses only the existing cylinder component and needs no SKU-specific generator or one-off script",
+      "The compact lidded silhouette reads clearly in thumbnails and can bundle with existing cafe tableware"
+    ],
+    "expected_production_minutes": 5,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
