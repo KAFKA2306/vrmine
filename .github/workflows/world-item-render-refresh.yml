@@ -10,7 +10,7 @@ on:
 
 permissions:
   actions: write
-  contents: write
+  contents: read
   pull-requests: write
   issues: write
 
@@ -167,7 +167,7 @@ jobs:
           path: .artifacts/world-items
           merge-multiple: true
 
-      - name: Publish generated evidence in one commit
+      - name: Verify generated evidence matches the PR head
         id: publish
         env:
           HEAD_REF: ${{ needs.plan.outputs.head_ref }}
@@ -196,13 +196,15 @@ jobs:
             )
           done
 
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add pages/io/items
-          test -n "$(git status --porcelain)"
-          git commit -m "chore: refresh world-item render framing"
-          git push origin "HEAD:$HEAD_REF"
+          changed="$(git status --porcelain -- pages/io/items)"
+          if [ -n "$changed" ]; then
+            echo "::error::Generated world-item evidence differs from the files tracked by the PR head."
+            printf '%s\n' "$changed"
+            echo "Regenerate and commit the evidence before CI; PR workflows must not mutate their own head with GITHUB_TOKEN."
+            exit 1
+          fi
           final_head="$(git rev-parse HEAD)"
+          test "$final_head" = "${{ needs.plan.outputs.head_sha }}"
           echo "final_head=$final_head" >> "$GITHUB_OUTPUT"
 
       - name: Validate exact published PR head
