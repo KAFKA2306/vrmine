@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "minimal-desk-clock-01",
+  "source_spec": "config/world-items/minimal-desk-clock-01.json",
+  "spec_sha256": "7ee04087d0bce1c9654898c3532d1cbd0f8d6c022499b6ed9f19df1968275b97",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.23999999463558197,
+    0.08699999749660492,
+    0.17000000178813934
+  ],
+  "triangles": 1128,
+  "parts_count": 6,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "minimal-desk-clock-01.blend": "bda5dc90dd3999b87ab5559dd8309ee0d91c21b664dccd8b40c8598bfcbf70be",
+    "minimal-desk-clock-01.glb": "cb86f3afb60267374ed6787f477582efa6dfc2f58c39350c96e9664d889f9282",
+    "minimal-desk-clock-01.fbx": "30b5093788f074450afaab613fc25f70dc2736a061cc3b6651e9007afb1d5957",
+    "thumbnail.png": "711430a448d91f933f239ac6e5ce389048689e9a456773fbd9c6847f28364b16",
+    "view-hero.png": "711430a448d91f933f239ac6e5ce389048689e9a456773fbd9c6847f28364b16",
+    "view-front.png": "76cff0f7efc947241a7585f161c4ce54bee80a056467f8836af29e8d7f4f53a3",
+    "view-rear.png": "02b61b168574cb52690a9a8ed9a4ec234c740eb013ea162e11fe65e1dd039e60",
+    "view-left.png": "2b6e814580f0be3c48c4e8f19cc5ef7811153f025b20ab00b6ba3c7ea3d417c1",
+    "view-right.png": "70541894418a9306a5c7d6d2c7fb7500c391642210853942dddd59a69e44b31b",
+    "view-top.png": "425ad4caa76c2921abab81f7e7ba488bfc24fe1a11529ccded39cb42fc73f185"
+  }
+}
