@@ -5,10 +5,10 @@ import { execFileSync } from 'node:child_process';
 import { Script } from 'node:vm';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { canonicalProducts, validateEvidence, buildProductPages } from './build-product-pages.mjs';
+import { canonicalProducts, validateEvidence, distributionLedger, buildProductPages } from './build-product-pages.mjs';
 
 const products = canonicalProducts();
-test('actual catalog, sitemap and navigation agree after the Pages build',()=>{
+test('actual catalog, distribution ledger, sitemap and navigation agree after the Pages build',()=>{
   const site=mkdtempSync(join(tmpdir(),'vrmine-site-'));
   mkdirSync(join(site,'io'));
   try {
@@ -16,6 +16,16 @@ test('actual catalog, sitemap and navigation agree after the Pages build',()=>{
     symlinkSync(resolve('pages/io/items'),join(site,'io/items'),'junction');
     buildProductPages(site);
     execFileSync(process.execPath,['scripts/verify-product-pages.mjs',site],{stdio:'pipe'});
+    const ledger=JSON.parse(readFileSync(join(site,'io/distributions.json'),'utf8'));
+    assert.equal(ledger.length,products.length);
+    assert.deepEqual(ledger.map(x=>x.id),products.map(x=>x.id));
+    for(const entry of ledger){
+      assert.match(entry.status,/^(READY|BLOCKED_LICENSE)$/);
+      assert.ok(entry.spec_sha256);
+      assert.ok(entry.models.length>0);
+      assert.equal(entry.renders.length,6);
+      for(const file of [...entry.models,...entry.renders])assert.match(file.sha256,/^[0-9a-f]{64}$/);
+    }
     for(const file of ['pages/io/index.html','pages/io/view.html']) {
       for(const script of readFileSync(file,'utf8').matchAll(/<script>([\s\S]*?)<\/script>/g))new Script(script[1],{filename:file});
     }
@@ -27,6 +37,16 @@ test('product view gates model downloads on verified or published license status
   assert.match(view,/const formatButtons=licenseReady/);
   assert.match(view,/ライセンスが確定するまでモデルファイルの取得リンクは公開しません/);
   assert.match(view,/\['License',licenseStatus\]/);
+});
+test('distribution ledger binds current model and render files to the generation manifest',()=>{
+  const ledger=distributionLedger(products,'pages');
+  for(const entry of ledger){
+    const spec=products.find(x=>x.id===entry.id);
+    const expectedReady=/^(VERIFIED|PUBLISHED)$/i.test(spec.license?.status||'');
+    assert.equal(entry.status,expectedReady?'READY':'BLOCKED_LICENSE');
+    assert.equal(entry.models.length,spec.formats.length);
+    assert.equal(entry.renders.length,6);
+  }
 });
 test('all canonical products have matching real publication evidence',()=>validateEvidence(products,'pages'));
 for (const failure of ['missing hero','corrupt side image','stale spec','missing model']) {
