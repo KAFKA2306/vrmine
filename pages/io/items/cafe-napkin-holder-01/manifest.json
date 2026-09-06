@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "cafe-napkin-holder-01",
+  "source_spec": "config/world-items/cafe-napkin-holder-01.json",
+  "spec_sha256": "cf5e38f3232d3924bd7fc04025b3f91f557ada5833ba938c96fe0edc3a38c78f",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.18000000715255737,
+    0.10000000149011612,
+    0.15000000596046448
+  ],
+  "triangles": 1128,
+  "parts_count": 6,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "cafe-napkin-holder-01.blend": "76fbc299a7365a3df61bf07d52476e738c08cbcf75df4912f269bd5f0fc0914a",
+    "cafe-napkin-holder-01.glb": "f170022899466bd55445690e2dc37d5ac0b23ab58a23aa3ccc669614681694a8",
+    "cafe-napkin-holder-01.fbx": "d2e5a5ef2f38b7186ca3df06cdf045322511ee328b41307ca90d4aea4019e3c0",
+    "thumbnail.png": "f83514f710b4a675ee98bc7d1d4e40757bca46374328fea14aa114fd387d8228",
+    "view-hero.png": "f83514f710b4a675ee98bc7d1d4e40757bca46374328fea14aa114fd387d8228",
+    "view-front.png": "c40663730784c4c7598cb22e0620636d8346e4f69eb126171430bb264935e792",
+    "view-rear.png": "1b9aab674efd0ade7e830f5a7f19d522ee606e7fd983472d72a3da07404b6903",
+    "view-left.png": "1632f20363aa9b3952364749005fc7c3c68c22386ecc9241517eaf40b776b81a",
+    "view-right.png": "4f4a3ad2aa1fdfe39f83e2a1cac2258fc9d9e593c47b18e21c1f7c7685400223",
+    "view-top.png": "b6a5248e33f78b09ce60a0273b2065fd3914f1b7abc33aa1e05cef17f8c5bf3c"
+  }
+}
