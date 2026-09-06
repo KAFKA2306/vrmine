@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "minimal-floor-lamp-01",
   "source_spec": "config/world-items/minimal-floor-lamp-01.json",
   "spec_sha256": "23be994aecf9c3e00812bd9a932f16c344e7e3cb115a3414f2983b1f7117adc0",
@@ -10,6 +10,95 @@
     0.41999998688697815,
     1.5999999046325684
   ],
+  "bounds_min_m": [
+    -0.20999999344348907,
+    -0.20999999344348907,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.20999999344348907,
+    0.20999999344348907,
+    1.5999999046325684
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.7999999523162842
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 1.849e-07,
+      "center_error_y": -3.254e-07,
+      "fill_ratio": 0.8400000213,
+      "normalized_bounds": [
+        -0.1453420943,
+        0.1453424641,
+        -0.4200003361,
+        0.4199996852
+      ],
+      "ortho_scale": 2.0147020817
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -6.1e-08,
+      "fill_ratio": 0.8399999854,
+      "normalized_bounds": [
+        -0.1074333693,
+        0.1074333693,
+        -0.4200000537,
+        0.4199999317
+      ],
+      "ortho_scale": 1.9546998739
+    },
+    "rear": {
+      "center_error_x": 2.135e-07,
+      "center_error_y": -6.1e-08,
+      "fill_ratio": 0.8399999854,
+      "normalized_bounds": [
+        -0.1074332016,
+        0.1074336285,
+        -0.4200000537,
+        0.4199999317
+      ],
+      "ortho_scale": 1.9546998739
+    },
+    "left": {
+      "center_error_x": -6.1e-08,
+      "center_error_y": -3.049e-07,
+      "fill_ratio": 0.8399999854,
+      "normalized_bounds": [
+        -0.1074334837,
+        0.1074333617,
+        -0.4200002976,
+        0.4199996878
+      ],
+      "ortho_scale": 1.9546998739
+    },
+    "right": {
+      "center_error_x": 6.1e-08,
+      "center_error_y": -3.049e-07,
+      "fill_ratio": 0.8399999854,
+      "normalized_bounds": [
+        -0.1074333617,
+        0.1074334837,
+        -0.4200002976,
+        0.4199996878
+      ],
+      "ortho_scale": 1.9546998739
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -0.0001313894,
+      "fill_ratio": 0.8400000485,
+      "normalized_bounds": [
+        -0.4168042226,
+        0.4168042226,
+        -0.4201314137,
+        0.4198686348
+      ],
+      "ortho_scale": 0.5038336515
+    }
+  },
   "triangles": 3308,
   "parts_count": 5,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-floor-lamp-01.blend": "72589f6ac25eca18492835f7f29022e25166e1d9f08d588b20c0f8456cc2f8b6",
+    "minimal-floor-lamp-01.blend": "2b12e1c9b47187c457bbe13b1b2664c97c680477340e95dd43f9c2c5a5d9ec89",
     "minimal-floor-lamp-01.glb": "eeb5bcdda46b1fa36d1aa22c8bb6cd702f836c63a3072ab087762a3979a4e539",
-    "minimal-floor-lamp-01.fbx": "a465c7d10a71be09da94f600b2137dfa200a59e96dcb156e79a2e1ba1b70685d",
-    "thumbnail.png": "b82fd2fffa6d3e3f33264d5d3c5d9f3a1d42927f75213748d63cf7f7e3d18c66",
-    "view-hero.png": "b82fd2fffa6d3e3f33264d5d3c5d9f3a1d42927f75213748d63cf7f7e3d18c66",
-    "view-front.png": "6097588729712ea8202dc18f0ebefe2f4665e52fe76023acd9a067c3c7e2b82d",
-    "view-rear.png": "e464fc0a502bb5c5649fdd71554e9e943242f91ecd185e144b8ba5e99fe4b862",
-    "view-left.png": "6731b336a59e7ad1d0577ac6c37c39e400580bdcf8d0c7ab379e710bc6799d2c",
-    "view-right.png": "27b1f30e3e8050ffa9273c05e0daaef87038e93e00891222c7f793511b1075a9",
-    "view-top.png": "e5ac2c015fdcd98d90d2161537e441038c538a18658f495ede14c20a842d0226"
+    "minimal-floor-lamp-01.fbx": "ab1caf5c8bf4f10820016c1a876755972312523c1d437482660e712db66fb2ab",
+    "thumbnail.png": "55dd2b9ef5a14707043d65e5ae8e95373fa9e03b9479c2f52fe145de94eef274",
+    "view-hero.png": "55dd2b9ef5a14707043d65e5ae8e95373fa9e03b9479c2f52fe145de94eef274",
+    "view-front.png": "b82223c3b10cc2dd891f4075757077bd2fbad4acadc659d0eb29bacd0758e605",
+    "view-rear.png": "e2e803b000785a3d8a3cc776d0d0c59632d417d978a3be5f400aa8e180e7603e",
+    "view-left.png": "620a243466288e2098dd8d7d8cfa69fc786ed2af65f62effd1c06f847e125e34",
+    "view-right.png": "0c87d155d2203d728bf94cfe6682ed18c7818aeec7ee99addfe251120039deaa",
+    "view-top.png": "adebb51ae161847eef3685f59b6dd6eb39bd89ebdfcd86478a350e88fdad2c1c"
   }
 }

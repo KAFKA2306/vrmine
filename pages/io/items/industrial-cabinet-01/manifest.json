@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "industrial-cabinet-01",
   "source_spec": "config/world-items/industrial-cabinet-01.json",
   "spec_sha256": "9b58f1836cd22cd03b0703b1515cd2fcdbaff669f4c7f5b03aff330c1e15fc8e",
@@ -10,6 +10,95 @@
     0.3499999940395355,
     1.100000023841858
   ],
+  "bounds_min_m": [
+    -0.3199999928474426,
+    -0.1899999976158142,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.3199999928474426,
+    0.1599999964237213,
+    1.100000023841858
+  ],
+  "bounds_center_m": [
+    0.0,
+    -0.015000000596046448,
+    0.550000011920929
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 2.645e-07,
+      "center_error_y": -3.331e-07,
+      "fill_ratio": 0.8400000016,
+      "normalized_bounds": [
+        -0.2381618229,
+        0.2381623519,
+        -0.4200003339,
+        0.4199996677
+      ],
+      "ortho_scale": 1.5208926201
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -6.6e-08,
+      "fill_ratio": 0.8400000194,
+      "normalized_bounds": [
+        -0.2363957422,
+        0.2363957422,
+        -0.4200000757,
+        0.4199999436
+      ],
+      "ortho_scale": 1.3536622524
+    },
+    "rear": {
+      "center_error_x": 3.082e-07,
+      "center_error_y": -6.6e-08,
+      "fill_ratio": 0.8400000194,
+      "normalized_bounds": [
+        -0.236395478,
+        0.2363960945,
+        -0.4200000757,
+        0.4199999436
+      ],
+      "ortho_scale": 1.3536622524
+    },
+    "left": {
+      "center_error_x": -7.98e-08,
+      "center_error_y": -4.257e-07,
+      "fill_ratio": 0.8399999659,
+      "normalized_bounds": [
+        -0.1249920603,
+        0.1249919007,
+        -0.4200004087,
+        0.4199995573
+      ],
+      "ortho_scale": 1.400090456
+    },
+    "right": {
+      "center_error_x": 7.98e-08,
+      "center_error_y": -4.257e-07,
+      "fill_ratio": 0.8399999659,
+      "normalized_bounds": [
+        -0.1249919007,
+        0.1249920603,
+        -0.4200004087,
+        0.4199995573
+      ],
+      "ortho_scale": 1.400090456
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -8.68756e-05,
+      "fill_ratio": 0.8400000313,
+      "normalized_bounds": [
+        -0.4200000156,
+        0.4200000156,
+        -0.2312272152,
+        0.2310534639
+      ],
+      "ortho_scale": 0.7619047165
+    }
+  },
   "triangles": 2068,
   "parts_count": 11,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "industrial-cabinet-01.blend": "639e77436097a558d0fb4fd08d374299bfb2079e818067f51cce2bfa66bc4b84",
+    "industrial-cabinet-01.blend": "e7c5f04f16723b6522b7c6f99e0097177a6228a93f5c07eeedac1c34f9da37e7",
     "industrial-cabinet-01.glb": "d2511cac9b739ba99f066dc9b697c494433e3e0fec0ac1516d6bba30d19c6596",
-    "industrial-cabinet-01.fbx": "1b76fdf9be34ed0390a10578090c03440a58e806fdcf3c951d736f1669ad918d",
-    "thumbnail.png": "8a89a668db1f9061da4fbfe92dbafbe6c233676136f4571c33d998b9b2530544",
-    "view-hero.png": "8a89a668db1f9061da4fbfe92dbafbe6c233676136f4571c33d998b9b2530544",
-    "view-front.png": "7788d658603bb3f11c78dca1675b739578c5f880d0781bbb53e7c47560ec5cba",
-    "view-rear.png": "ac5ec17f8793d9d4ada5946464ecb8214eec1594d9e9d0bec4d786b6f1c72e75",
-    "view-left.png": "7893f5a4b54d1d1566f6e455fe1c771a9870f5fbafe299af4e586f24d3fa1dad",
-    "view-right.png": "0d71a5e9c36884761a5727b812d555d7429b88a7c8516615c34d813d58830762",
-    "view-top.png": "e34cba37a31ec51e17bc1e8bbb845dd21f048539b866c33f37baf11c7aa811c4"
+    "industrial-cabinet-01.fbx": "a853782a05b9620136e7c98526459d8b8effd676153f118d167b55a33192f56e",
+    "thumbnail.png": "653648c626992890d95c4a71b780673949238784e0bc361c61959b8ae08ea590",
+    "view-hero.png": "653648c626992890d95c4a71b780673949238784e0bc361c61959b8ae08ea590",
+    "view-front.png": "f39895bf355c8d73be7bd7025f82bf364e38748ae46fe742c4708d5cc6bb17bb",
+    "view-rear.png": "e85045683db45b5b79da3eef621affa1572536dc72c0eef9d7363b753ed24697",
+    "view-left.png": "5a2de3560529bf6c6c9560a499e24d17adab84bbcf0da5de072882e3f6a29f97",
+    "view-right.png": "3e634b8375883b639f1f7cd8f473c03b6ba800475ccf5dd6bafd7ff15c674b06",
+    "view-top.png": "68307f7d351262cb3c86641ff55b9d8c3f4f47e70dda4db22ce538a936be5b91"
   }
 }

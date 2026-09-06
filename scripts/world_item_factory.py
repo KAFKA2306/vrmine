@@ -15,14 +15,15 @@ import bpy
 from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[1]
-VIEWS = {
-    "hero": ((2.7, -3.8, 2.35), (0.0, 0.0, 0.58)),
-    "front": ((0.0, -4.2, 1.15), (0.0, 0.0, 0.58)),
-    "rear": ((0.0, 4.2, 1.15), (0.0, 0.0, 0.58)),
-    "left": ((-4.2, 0.0, 1.15), (0.0, 0.0, 0.58)),
-    "right": ((4.2, 0.0, 1.15), (0.0, 0.0, 0.58)),
-    "top": ((0.0, -0.01, 5.0), (0.0, 0.0, 0.55)),
+VIEW_OFFSETS = {
+    "hero": Vector((2.7, -3.8, 2.35)),
+    "front": Vector((0.0, -4.2, 0.57)),
+    "rear": Vector((0.0, 4.2, 0.57)),
+    "left": Vector((-4.2, 0.0, 0.57)),
+    "right": Vector((4.2, 0.0, 0.57)),
+    "top": Vector((0.0, -0.01, 5.0)),
 }
+FRAME_FILL = 0.84
 
 
 def args() -> Path:
@@ -122,7 +123,16 @@ def join_parts(parts, sku):
     return obj
 
 
-def setup_scene(obj, dimensions):
+def world_bounds(obj):
+    corners = [obj.matrix_world @ Vector(corner) for corner in obj.bound_box]
+    bbox_min = Vector(tuple(min(point[index] for point in corners) for index in range(3)))
+    bbox_max = Vector(tuple(max(point[index] for point in corners) for index in range(3)))
+    center = (bbox_min + bbox_max) * 0.5
+    size = bbox_max - bbox_min
+    return bbox_min, bbox_max, center, size, corners
+
+
+def setup_scene(dimensions, center):
     scene = bpy.context.scene
     scene.unit_settings.system = "METRIC"
     scene.unit_settings.scale_length = 1.0
@@ -138,10 +148,10 @@ def setup_scene(obj, dimensions):
     floor = bpy.context.object
     floor.data.materials.append(backdrop)
 
-    bpy.ops.object.camera_add(location=VIEWS["hero"][0])
+    bpy.ops.object.camera_add(location=center + VIEW_OFFSETS["hero"])
     camera = bpy.context.object
     camera.data.type = "ORTHO"
-    camera.data.ortho_scale = max(dimensions[0], dimensions[2]) * 1.65
+    camera.data.ortho_scale = 1.0
     scene.camera = camera
 
     for location, energy, size in [((2.5, -3.5, 4.0), 650, 3.5), ((-3.0, -1.0, 2.2), 260, 2.8)]:
@@ -150,7 +160,7 @@ def setup_scene(obj, dimensions):
         light.data.energy = energy
         light.data.shape = "DISK"
         light.data.size = size
-        light.rotation_euler = (Vector((0, 0, dimensions[2] * 0.5)) - light.location).to_track_quat("-Z", "Y").to_euler()
+        light.rotation_euler = (center - light.location).to_track_quat("-Z", "Y").to_euler()
 
     world = bpy.data.worlds.new("World item studio")
     world.use_nodes = True
@@ -160,15 +170,52 @@ def setup_scene(obj, dimensions):
     return scene, camera
 
 
-def render_views(scene, camera, out: Path, dimensions):
-    scale = max(dimensions[0], dimensions[2]) * 1.65
-    for name, (location, target) in VIEWS.items():
-        camera.location = location
-        camera.rotation_euler = (Vector(target) - camera.location).to_track_quat("-Z", "Y").to_euler()
-        camera.data.ortho_scale = scale if name != "top" else max(dimensions[0], dimensions[1]) * 1.8
+def render_views(scene, camera, out: Path, center: Vector, corners):
+    aspect = scene.render.resolution_x / scene.render.resolution_y
+    framing = {}
+    for name, offset in VIEW_OFFSETS.items():
+        camera.location = center + offset
+        camera.rotation_euler = (center - camera.location).to_track_quat("-Z", "Y").to_euler()
+        bpy.context.view_layer.update()
+
+        inverse_camera = camera.matrix_world.inverted()
+        projected = [inverse_camera @ point for point in corners]
+        min_x = min(point.x for point in projected)
+        max_x = max(point.x for point in projected)
+        min_y = min(point.y for point in projected)
+        max_y = max(point.y for point in projected)
+        projected_width = max_x - min_x
+        projected_height = max_y - min_y
+        if projected_width <= 0 or projected_height <= 0:
+            raise ValueError(f"invalid projected bounds for {name}: {projected_width} x {projected_height}")
+
+        camera.data.ortho_scale = max(projected_height, projected_width / aspect) / FRAME_FILL
+        frame_height = camera.data.ortho_scale
+        frame_width = frame_height * aspect
+        normalized_bounds = [
+            min_x / frame_width,
+            max_x / frame_width,
+            min_y / frame_height,
+            max_y / frame_height,
+        ]
+        center_error_x = (normalized_bounds[0] + normalized_bounds[1]) * 0.5
+        center_error_y = (normalized_bounds[2] + normalized_bounds[3]) * 0.5
+        fill_ratio = max(
+            normalized_bounds[1] - normalized_bounds[0],
+            normalized_bounds[3] - normalized_bounds[2],
+        )
+        framing[name] = {
+            "center_error_x": round(float(center_error_x), 10),
+            "center_error_y": round(float(center_error_y), 10),
+            "fill_ratio": round(float(fill_ratio), 10),
+            "normalized_bounds": [round(float(value), 10) for value in normalized_bounds],
+            "ortho_scale": round(float(camera.data.ortho_scale), 10),
+        }
+
         scene.render.filepath = str(out / f"view-{name}.png")
         bpy.ops.render.render(write_still=True)
     (out / "thumbnail.png").write_bytes((out / "view-hero.png").read_bytes())
+    return framing
 
 
 def sha256(path: Path) -> str:
@@ -200,21 +247,26 @@ def main():
     )
 
     product.data.calc_loop_triangles()
-    dimensions = [float(v) for v in product.dimensions]
-    scene, camera = setup_scene(product, dimensions)
+    bbox_min, bbox_max, bounds_center, bounds_size, bounds_corners = world_bounds(product)
+    dimensions = [float(value) for value in bounds_size]
+    scene, camera = setup_scene(dimensions, bounds_center)
     bpy.ops.wm.save_as_mainfile(filepath=str(out / f"{sku}.blend"))
-    render_views(scene, camera, out, dimensions)
+    framing = render_views(scene, camera, out, bounds_center, bounds_corners)
 
     expected = [f"{sku}.{ext}" for ext in ("blend", "glb", "fbx")]
-    expected += ["thumbnail.png"] + [f"view-{name}.png" for name in VIEWS]
+    expected += ["thumbnail.png"] + [f"view-{name}.png" for name in VIEW_OFFSETS]
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "id": sku,
         "source_spec": spec_path.relative_to(ROOT).as_posix(),
         "spec_sha256": sha256(spec_path),
         "blender": bpy.app.version_string,
         "units": "metres",
         "dimensions_m_actual": dimensions,
+        "bounds_min_m": [float(value) for value in bbox_min],
+        "bounds_max_m": [float(value) for value in bbox_max],
+        "bounds_center_m": [float(value) for value in bounds_center],
+        "render_framing": framing,
         "triangles": len(product.data.loop_triangles),
         "parts_count": len(spec["parts"]),
         "formats": spec["formats"],

@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "minimal-ceramic-vase-01",
   "source_spec": "config/world-items/minimal-ceramic-vase-01.json",
   "spec_sha256": "52ed4555730bbd4e6d8b44f846cbbce868fa9d87ada4e372a27e0989eba871d1",
@@ -10,6 +10,95 @@
     0.2199999988079071,
     0.4100000262260437
   ],
+  "bounds_min_m": [
+    -0.10999999940395355,
+    -0.10999999940395355,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.10999999940395355,
+    0.10999999940395355,
+    0.4100000262260437
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.20500001311302185
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 7.199e-07,
+      "center_error_y": -7.944e-07,
+      "fill_ratio": 0.8399999603,
+      "normalized_bounds": [
+        -0.255534683,
+        0.2555361228,
+        -0.4200007746,
+        0.4199991857
+      ],
+      "ortho_scale": 0.6002402306
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -1.149e-07,
+      "fill_ratio": 0.8399999931,
+      "normalized_bounds": [
+        -0.2119939167,
+        0.2119939167,
+        -0.4200001114,
+        0.4199998817
+      ],
+      "ortho_scale": 0.5188828111
+    },
+    "rear": {
+      "center_error_x": 8.041e-07,
+      "center_error_y": -1.149e-07,
+      "fill_ratio": 0.8399999931,
+      "normalized_bounds": [
+        -0.21199317,
+        0.2119947782,
+        -0.4200001114,
+        0.4199998817
+      ],
+      "ortho_scale": 0.5188828111
+    },
+    "left": {
+      "center_error_x": -2.226e-07,
+      "center_error_y": -1.0338e-06,
+      "fill_ratio": 0.8399999931,
+      "normalized_bounds": [
+        -0.2119941895,
+        0.2119937443,
+        -0.4200010304,
+        0.4199989627
+      ],
+      "ortho_scale": 0.5188828111
+    },
+    "right": {
+      "center_error_x": 2.226e-07,
+      "center_error_y": -1.0338e-06,
+      "fill_ratio": 0.8399999931,
+      "normalized_bounds": [
+        -0.2119937443,
+        0.2119941895,
+        -0.4200010304,
+        0.4199989627
+      ],
+      "ortho_scale": 0.5188828111
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -0.0002517991,
+      "fill_ratio": 0.8399999943,
+      "normalized_bounds": [
+        -0.4184309184,
+        0.4184309184,
+        -0.4202517963,
+        0.4197481981
+      ],
+      "ortho_scale": 0.2628868818
+    }
+  },
   "triangles": 2800,
   "parts_count": 4,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "minimal-ceramic-vase-01.blend": "3b840759c2dbbfdbb4e9baac4f3ac1575ca5ae7b2d3b98c4196646495cf8cc25",
+    "minimal-ceramic-vase-01.blend": "5356a3139f60bce75f9e807e8540efa9398494d6b04a52e1830216d986f7403b",
     "minimal-ceramic-vase-01.glb": "30959c7e79b081022b5ee0040d1138038028ce9c877f571a0944bea05ff83375",
-    "minimal-ceramic-vase-01.fbx": "e17c10aea9ce3a61f3cffa61152a4ee984aa3da5134351478c1c57a770d4d1e4",
-    "thumbnail.png": "35031550a7e68890c171e8bc36b7aac66d4bfdb4420a8b11cd63fe2b3ba09c2a",
-    "view-hero.png": "35031550a7e68890c171e8bc36b7aac66d4bfdb4420a8b11cd63fe2b3ba09c2a",
-    "view-front.png": "6ebde0a76324e17bd2a971f97e2003b9972d98b5bbe5f69c6ea44c88c1f59ee9",
-    "view-rear.png": "57e9f72c33a82807e9891d00a0ff7a9af15f0e4e1347fa791753980d97f22f59",
-    "view-left.png": "d35e5ac4fa8111c45dd9aa29006087cea7a8672897056ec3dfe51bec92f779c6",
-    "view-right.png": "582ed4b60ee32dd6ba4b7f390eef0c220eef90e5d06b57b4fe4ace100d12b786",
-    "view-top.png": "e58e699666fba0234533f791f60f67895f74ee25a9d0b8b501c0165d6804e735"
+    "minimal-ceramic-vase-01.fbx": "50fb32702d7e10f1b0f74e651700fb724457ac24abd16becc2bf728ba702b119",
+    "thumbnail.png": "c2ea6372fb54a116cfe4f820f779ce03d96b0392047fa109c1c663152e6e7fcd",
+    "view-hero.png": "c2ea6372fb54a116cfe4f820f779ce03d96b0392047fa109c1c663152e6e7fcd",
+    "view-front.png": "b6cebfe88ba603511970cd190a8f1255965a3c76dc9813fb36957388dc701bc8",
+    "view-rear.png": "6e6407eaa1edb43e5625220198397d9d1cefa36c1c9c204481ebd7fc81272d26",
+    "view-left.png": "3a8edc6b6b06f922a1b8e2d749ef1cca14713c6ddf4ef6b6ca46242709f415d3",
+    "view-right.png": "31ebaa779e1406678e5f8c6534401a2b0b89077e871d4e6bc027f554d8fe4bd7",
+    "view-top.png": "7e9231f8ddff75161158da46ebed7178ab880fbe62ef4a39c4d136cf089172aa"
   }
 }

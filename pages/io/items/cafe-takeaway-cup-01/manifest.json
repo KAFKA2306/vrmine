@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "cafe-takeaway-cup-01",
   "source_spec": "config/world-items/cafe-takeaway-cup-01.json",
   "spec_sha256": "42489d649adb9b944381557c471d391a306a8f077b4c558ce713afc856d70279",
@@ -10,6 +10,95 @@
     0.09000000357627869,
     0.13499999046325684
   ],
+  "bounds_min_m": [
+    -0.04500000178813934,
+    -0.04500000178813934,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.04500000178813934,
+    0.04500000178813934,
+    0.13499999046325684
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.06749999523162842
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 2.068e-06,
+      "center_error_y": -3.1109e-06,
+      "fill_ratio": 0.8400000057,
+      "normalized_bounds": [
+        -0.2977141676,
+        0.2977183036,
+        -0.4200031137,
+        0.419996892
+      ],
+      "ortho_scale": 0.2107625902
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -7.293e-07,
+      "fill_ratio": 0.840000024,
+      "normalized_bounds": [
+        -0.2591224225,
+        0.2591224225,
+        -0.4200007414,
+        0.4199992827
+      ],
+      "ortho_scale": 0.1736630946
+    },
+    "rear": {
+      "center_error_x": 2.3918e-06,
+      "center_error_y": -7.293e-07,
+      "fill_ratio": 0.840000024,
+      "normalized_bounds": [
+        -0.2591200843,
+        0.259124868,
+        -0.4200007414,
+        0.4199992827
+      ],
+      "ortho_scale": 0.1736630946
+    },
+    "left": {
+      "center_error_x": -6.65e-07,
+      "center_error_y": -3.4751e-06,
+      "fill_ratio": 0.840000024,
+      "normalized_bounds": [
+        -0.2591231519,
+        0.2591218219,
+        -0.4200034871,
+        0.4199965369
+      ],
+      "ortho_scale": 0.1736630946
+    },
+    "right": {
+      "center_error_x": 6.65e-07,
+      "center_error_y": -3.4751e-06,
+      "fill_ratio": 0.840000024,
+      "normalized_bounds": [
+        -0.2591218219,
+        0.2591231519,
+        -0.4200034871,
+        0.4199965369
+      ],
+      "ortho_scale": 0.1736630946
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -0.0006159581,
+      "fill_ratio": 0.8400000139,
+      "normalized_bounds": [
+        -0.4187363031,
+        0.4187363031,
+        -0.4206159651,
+        0.4193840488
+      ],
+      "ortho_scale": 0.107466206
+    }
+  },
   "triangles": 3044,
   "parts_count": 7,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-takeaway-cup-01.blend": "1bd873dba3c11e40abdeed799ff34a8c6e768c1a4d9b183feef40fedac75fff4",
+    "cafe-takeaway-cup-01.blend": "98d8b22d989f9fe046837ce454a795ca569487fb2e4806416d526fecfc00c217",
     "cafe-takeaway-cup-01.glb": "25aa19c58e1eceb0648a3c8fb3ebbeb61b526b4db7e0bb03452f4e77fb044f13",
-    "cafe-takeaway-cup-01.fbx": "fb053cdf4b72e9cb8da58694573658864efa982d5d53f5cd7cc7f0f3e8f7def2",
-    "thumbnail.png": "9735edc683bfaaf3b89ede6e24c17036df46f54034bfabac69bdaa11f7b695c0",
-    "view-hero.png": "9735edc683bfaaf3b89ede6e24c17036df46f54034bfabac69bdaa11f7b695c0",
-    "view-front.png": "dd7c75029e8a53143e6eb1e028b64b25b9de62d635620bee97aa4714fe7bd914",
-    "view-rear.png": "de220aa8f41737ea0637f93148a42a343cb0d752598b2e1a93f0af1139a5c853",
-    "view-left.png": "a6e817981931816c08af77a06d990b2ab39aeaa1fbb2e9abcb95811992d45ebf",
-    "view-right.png": "f8e1854d6bd65f793a2ba32498a5bb73caf4a9bbcd9da73f20bbf3d3cc49a118",
-    "view-top.png": "885ecd7c3d24a5001c3663c76225b5de8b350e9ed6aa5ad818cb88b7cc499959"
+    "cafe-takeaway-cup-01.fbx": "e7973d922379b88c52ef4e9e79c7dc7b1692b3fca530bac96d17ab1964f2f840",
+    "thumbnail.png": "c0f3d83dff45fdb8b939f3fb6055631df84fa7dc03853de39cd81c597a2bbc67",
+    "view-hero.png": "c0f3d83dff45fdb8b939f3fb6055631df84fa7dc03853de39cd81c597a2bbc67",
+    "view-front.png": "661a301611b0640515082451c1b931f3946e6e58df087a2c91921047a5d6256d",
+    "view-rear.png": "3db5f59ba3385ec19f919405b1e884711062c82ad991b4e4d4351ea0008bcd2e",
+    "view-left.png": "7aa56bb03b6c9c867875f3da263cb755907e696dfe981a2efaceb3e87bc8136d",
+    "view-right.png": "de5222a4a66d81854f7f67f9e67863986f474503f58c7ad395b080ba6e541e2f",
+    "view-top.png": "2950b9cf921e085976d38a2255f3b1955124c2c1701e0552c3a2e18f15f95ddb"
   }
 }

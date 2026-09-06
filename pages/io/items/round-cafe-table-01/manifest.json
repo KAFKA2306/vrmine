@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "id": "round-cafe-table-01",
   "source_spec": "config/world-items/round-cafe-table-01.json",
   "spec_sha256": "76213a2ba08cf439f300f489c9bd6922cfc956ec2aea09509d0aa3a1a29b1e02",
@@ -10,6 +10,95 @@
     0.699999988079071,
     0.7400000095367432
   ],
+  "bounds_min_m": [
+    -0.3499999940395355,
+    -0.3499999940395355,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.3499999940395355,
+    0.3499999940395355,
+    0.7400000095367432
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.3700000047683716
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 2.958e-07,
+      "center_error_y": -3.868e-07,
+      "fill_ratio": 0.8400000237,
+      "normalized_bounds": [
+        -0.3726244932,
+        0.3726250849,
+        -0.4200003987,
+        0.419999625
+      ],
+      "ortho_scale": 1.3097239733
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -9.08e-08,
+      "fill_ratio": 0.8400000073,
+      "normalized_bounds": [
+        -0.3553235091,
+        0.3553235091,
+        -0.4200000944,
+        0.4199999129
+      ],
+      "ortho_scale": 0.9850178361
+    },
+    "rear": {
+      "center_error_x": 4.236e-07,
+      "center_error_y": -9.08e-08,
+      "fill_ratio": 0.8400000169,
+      "normalized_bounds": [
+        -0.3553231245,
+        0.3553239717,
+        -0.4200000992,
+        0.4199999177
+      ],
+      "ortho_scale": 0.9850178957
+    },
+    "left": {
+      "center_error_x": -1.21e-07,
+      "center_error_y": -5.749e-07,
+      "fill_ratio": 0.8400000073,
+      "normalized_bounds": [
+        -0.3553236906,
+        0.3553234486,
+        -0.4200005785,
+        0.4199994288
+      ],
+      "ortho_scale": 0.9850178361
+    },
+    "right": {
+      "center_error_x": 1.21e-07,
+      "center_error_y": -5.749e-07,
+      "fill_ratio": 0.8400000073,
+      "normalized_bounds": [
+        -0.3553234486,
+        0.3553236906,
+        -0.4200005785,
+        0.4199994288
+      ],
+      "ortho_scale": 0.9850178361
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -7.92785e-05,
+      "fill_ratio": 0.8399999929,
+      "normalized_bounds": [
+        -0.4191088765,
+        0.4191088765,
+        -0.4200792749,
+        0.419920718
+      ],
+      "ortho_scale": 0.8351051807
+    }
+  },
   "triangles": 2292,
   "parts_count": 3,
   "formats": [
@@ -21,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "round-cafe-table-01.blend": "d83d0ab8ab3476fae10ba21373f4c92209478d077a20fd70032599d39989ba1e",
+    "round-cafe-table-01.blend": "cb65197b6fd56a5fc374e39c87dbf7c14b77de76be0fb47482cb49c37ddc080e",
     "round-cafe-table-01.glb": "c380a362ec647b0d8bd29cdf9d127a717001438326235852fa8e58c057a21f2a",
-    "round-cafe-table-01.fbx": "4d8f2e51d06a515c239e28da305ef9d7ec73592814739a935255a78a5eb7728d",
-    "thumbnail.png": "bd73981856794afa9fffddaaf4335a4f697038975143c761e936e797a129afc9",
-    "view-hero.png": "bd73981856794afa9fffddaaf4335a4f697038975143c761e936e797a129afc9",
-    "view-front.png": "13881f05a7e23328f2748b944a82037286fdd311dc3673b77730af9a38bac1a0",
-    "view-rear.png": "333a80ed8527b10ff79620327040a0da2e825cb31a303e0785b524a94308a87e",
-    "view-left.png": "2b2c9662d70fd93e05c99a07fe8953d32e4d4b1333c046f926e5c21799b13259",
-    "view-right.png": "71179fe0701a64286bb823a2cc7647dd9ac9e55942343aebfa21b2c501fbb4d8",
-    "view-top.png": "0ee06f612701751b6375e07dfbf18164083fbe6f168ad66def6ad04b6f26f0cd"
+    "round-cafe-table-01.fbx": "3a28bbd06a25eed74828790460baff35d3ca405b75faf7b0007f49deafda0e4d",
+    "thumbnail.png": "a737a68f9432632569ff2a9d89e5e89df92f00cd8afba07e690ddc7aa8e79a20",
+    "view-hero.png": "a737a68f9432632569ff2a9d89e5e89df92f00cd8afba07e690ddc7aa8e79a20",
+    "view-front.png": "49d2bcffcb23159fc196a1b729ba19767d10e8cec0bb499da75347a9a0c206f0",
+    "view-rear.png": "eb159c52b59c44e719bc7cd523a538a88f4c99cad269bbab8762f20ae027775c",
+    "view-left.png": "d62a7c1b7e263f12c632ded532a4fa623954d60f56889df12daa9258096ff5c1",
+    "view-right.png": "95df68e496159f021a9bfe73dfdfc00b3698d3b86f1556a0b4763998c2964165",
+    "view-top.png": "38534ac5f21df6badd4dcb5de77ec3a63bec53493f9025ada988619643d98357"
   }
 }

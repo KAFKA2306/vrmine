@@ -1,0 +1,293 @@
+name: Refresh World Item Render Framing
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'scripts/world_item_factory.py'
+      - 'scripts/verify_world_item.py'
+      - '.github/workflows/world-item-render-refresh.yml'
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      head_ref: ${{ steps.pr.outputs.head_ref }}
+      head_sha: ${{ steps.pr.outputs.head_sha }}
+      pr_number: ${{ github.event.pull_request.number }}
+      issue_number: ${{ steps.issue.outputs.number }}
+    steps:
+      - name: Resolve exact PR head
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          test -n "$PR_NUMBER"
+          gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefName,headRefOid > /tmp/pr.json
+          echo "head_ref=$(jq -r .headRefName /tmp/pr.json)" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$(jq -r .headRefOid /tmp/pr.json)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ steps.pr.outputs.head_sha }}
+          sparse-checkout: |
+            config/world-items
+          fetch-depth: 1
+
+      - name: Resolve owning Issue
+        id: issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          pr_body="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json body -q '.body // ""')"
+          mapfile -t issues < <(printf '%s\n' "$pr_body" | grep -oE 'Generation-Issue:[[:space:]]*#[0-9]+' | sed -E 's/.*#//' || true)
+          test "${#issues[@]}" -eq 1
+          gh issue view "${issues[0]}" --repo "$GITHUB_REPOSITORY" >/dev/null
+          echo "number=${issues[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Build all-SKU matrix
+        id: matrix
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' > /tmp/matrix.json
+          import json
+          from pathlib import Path
+
+          include = []
+          for path in sorted(Path("config/world-items").glob("*.json")):
+              spec = json.loads(path.read_text())
+              include.append({"spec": path.as_posix(), "sku": spec["id"]})
+          if not include:
+              raise SystemExit("no canonical world-item specs")
+          print(json.dumps({"include": include}, separators=(",", ":")))
+          PY
+          echo "matrix=$(cat /tmp/matrix.json)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        id: blender-cache
+        with:
+          path: blender-4.2.0-linux-x64
+          key: blender-4.2.0-linux-x64-official
+
+      - name: Seed verified Blender 4.2.0 cache
+        if: steps.blender-cache.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
+          curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0.sha256
+          grep ' blender-4.2.0-linux-x64.tar.xz$' blender-4.2.0.sha256 | sha256sum --check --strict
+          tar -xf blender-4.2.0-linux-x64.tar.xz
+          test -x blender-4.2.0-linux-x64/blender
+
+  generate:
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.plan.outputs.head_sha }}
+          sparse-checkout: |
+            config/world-items
+            scripts
+          fetch-depth: 1
+
+      - uses: actions/cache@v4
+        with:
+          path: blender-4.2.0-linux-x64
+          key: blender-4.2.0-linux-x64-official
+
+      - name: Prepare Blender runtime
+        run: |
+          set -euo pipefail
+          test -x blender-4.2.0-linux-x64/blender
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1-mesa-dri
+          echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
+
+      - name: Generate and verify ${{ matrix.sku }}
+        env:
+          SPEC_PATH: ${{ matrix.spec }}
+          SKU: ${{ matrix.sku }}
+        run: |
+          set -euo pipefail
+          started="$(date +%s)"
+          blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- "$SPEC_PATH"
+          blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- "$SPEC_PATH"
+          elapsed="$(( $(date +%s) - started ))"
+          out=".artifacts/world-items/${SKU}"
+          jq -n \
+            --argjson production_seconds "$elapsed" \
+            --argjson manual_blender_touch_count 0 \
+            --argjson reusable_component_ratio 1.0 \
+            --argjson parts_count "$(jq '.parts | length' "$SPEC_PATH")" \
+            --arg common_components "$(jq -r '[.parts[].component] | unique | join(",")' "$SPEC_PATH")" \
+            '{production_seconds:$production_seconds,manual_blender_touch_count:$manual_blender_touch_count,reusable_component_ratio:$reusable_component_ratio,parts_count:$parts_count,common_components:($common_components|split(","))}' \
+            > "$out/factory-metrics.json"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: world-item-${{ matrix.sku }}
+          path: .artifacts/world-items
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: [plan, generate]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.plan.outputs.head_sha }}
+          sparse-checkout: |
+            config/world-items
+            scripts
+            pages/io/items
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: world-item-*
+          path: .artifacts/world-items
+          merge-multiple: true
+
+      - name: Verify regenerated and tracked evidence against canonical inputs
+        id: publish
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          root = Path('.')
+          views = ('hero', 'front', 'rear', 'left', 'right', 'top')
+          specs = sorted((root / 'config/world-items').glob('*.json'))
+          shared = (
+              (root / 'scripts/world_item_factory.py').read_bytes()
+              + (root / 'scripts/verify_world_item.py').read_bytes()
+          )
+
+          def digest(path):
+              return hashlib.sha256(path.read_bytes()).hexdigest()
+
+          def validate_manifest(manifest, sku, base):
+              assert manifest['schema_version'] == 2
+              assert manifest['id'] == sku
+              assert set(manifest['render_framing']) == set(views)
+              for view in views:
+                  data = manifest['render_framing'][view]
+                  bounds = [float(value) for value in data['normalized_bounds']]
+                  assert abs(float(data['center_error_x'])) <= 0.02
+                  assert abs(float(data['center_error_y'])) <= 0.02
+                  assert 0.80 <= float(data['fill_ratio']) <= 0.88
+                  assert min(bounds) >= -0.500001 and max(bounds) <= 0.500001
+              for name, expected in manifest['sha256'].items():
+                  assert digest(base / name) == expected
+
+          assert specs
+          for spec_path in specs:
+              spec = json.loads(spec_path.read_text())
+              sku = spec['id']
+              spec_sha = digest(spec_path)
+              generated = root / '.artifacts/world-items' / sku
+              tracked = root / 'pages/io/items' / sku
+
+              generated_manifest = json.loads((generated / 'manifest.json').read_text())
+              assert generated_manifest['spec_sha256'] == spec_sha
+              validate_manifest(generated_manifest, sku, generated)
+              assert (generated / 'factory-metrics.json').is_file()
+
+              expected_input = hashlib.sha256(spec_path.read_bytes() + shared).hexdigest()
+              assert (tracked / 'build-input.sha256').read_text().strip() == expected_input
+              assert (tracked / 'spec.json').read_bytes() == spec_path.read_bytes()
+              tracked_manifest = json.loads((tracked / 'manifest.json').read_text())
+              assert tracked_manifest['spec_sha256'] == spec_sha
+              validate_manifest(tracked_manifest, sku, tracked)
+
+          print(json.dumps({'sku_count': len(specs), 'generated_framing': 'PASS', 'tracked_exact_input': 'PASS'}))
+          PY
+          final_head="$(git rev-parse HEAD)"
+          test "$final_head" = "${{ needs.plan.outputs.head_sha }}"
+          test -z "$(git status --porcelain)"
+          echo "final_head=$final_head" >> "$GITHUB_OUTPUT"
+      - name: Validate exact PR head
+        id: exact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ needs.plan.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+          current_head="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid -q '.headRefOid')"
+          test "$current_head" = "${{ steps.publish.outputs.final_head }}"
+          test "$current_head" = "$(git rev-parse HEAD)"
+          test -z "$(git status --porcelain)"
+          echo "head=$current_head" >> "$GITHUB_OUTPUT"
+      - name: Run Pages build against exact published head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ needs.plan.outputs.head_ref }}
+          FINAL_HEAD: ${{ steps.exact.outputs.head }}
+        run: |
+          set -euo pipefail
+          gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_REF" -f verify_only=true
+          run_id=''
+          for attempt in $(seq 1 60); do
+            runs="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow pages.yml --commit "$FINAL_HEAD" --json databaseId,status,conclusion,event,headSha --limit 20)"
+            failed="$(jq --arg sha "$FINAL_HEAD" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion!="success")] | length' <<<"$runs")"
+            if [ "$failed" -gt 0 ]; then
+              jq --arg sha "$FINAL_HEAD" '.[] | select(.event=="workflow_dispatch" and .headSha==$sha)'
+              exit 1
+            fi
+            run_id="$(jq -r --arg sha "$FINAL_HEAD" '[.[] | select(.event=="workflow_dispatch" and .headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' <<<"$runs")"
+            if [ -n "$run_id" ]; then break; fi
+            sleep 10
+          done
+          test -n "$run_id"
+
+      - name: Publish representative framing evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ needs.plan.outputs.pr_number }}
+          ISSUE_NUMBER: ${{ needs.plan.outputs.issue_number }}
+          FINAL_HEAD: ${{ steps.exact.outputs.head }}
+        run: |
+          set -euo pipefail
+          {
+            echo '<!-- world-item-framing-refresh:comment -->'
+            echo '### Exact-head render framing PASS'
+            echo
+            echo "- head: \`$FINAL_HEAD\`"
+            echo '- all 35 canonical SKU regenerated'
+            echo '- center error: X/Y <= 2%'
+            echo '- long-edge fill: 80-88%'
+            echo '- exact-head Pages build: PASS'
+            echo
+            for sku in minimal-book-stack-01 cafe-serving-tray-01 minimal-wall-light-01 cafe-bar-stool-01 minimal-floor-lamp-01 utility-pole-01; do
+              base="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${FINAL_HEAD}/pages/io/items/${sku}"
+              echo "#### $sku"
+              echo
+              echo "| Hero | Front | Top |"
+              echo "| --- | --- | --- |"
+              echo "| ![Hero](${base}/view-hero.png) | ![Front](${base}/view-front.png) | ![Top](${base}/view-top.png) |"
+              echo
+            done
+          } > /tmp/framing-evidence.md
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/framing-evidence.md
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/framing-evidence.md

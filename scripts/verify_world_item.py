@@ -10,6 +10,11 @@ import bpy
 
 ROOT = Path(__file__).resolve().parents[1]
 PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
+EXPECTED_VIEWS = ("hero", "front", "rear", "left", "right", "top")
+CENTER_ERROR_LIMIT = 0.02
+FILL_RATIO_MIN = 0.80
+FILL_RATIO_MAX = 0.88
+FRAME_LIMIT = 0.500001
 
 
 def arg_path() -> Path:
@@ -69,13 +74,35 @@ def main() -> None:
     assert_mesh_import(glb, "glb")
     assert_mesh_import(fbx, "fbx")
 
-    expected_pngs = ["thumbnail.png", "view-hero.png", "view-front.png", "view-rear.png", "view-left.png", "view-right.png", "view-top.png"]
+    expected_pngs = ["thumbnail.png"] + [f"view-{name}.png" for name in EXPECTED_VIEWS]
     for name in expected_pngs:
         path = out / name
         if not path.is_file() or path.stat().st_size < 1024:
             raise AssertionError(f"render missing or too small: {name}")
         if path.read_bytes()[:8] != PNG_MAGIC:
             raise AssertionError(f"not PNG: {name}")
+
+    if manifest.get("schema_version") != 2:
+        raise AssertionError(f"unexpected manifest schema: {manifest.get('schema_version')}")
+    framing = manifest.get("render_framing")
+    if not isinstance(framing, dict) or set(framing) != set(EXPECTED_VIEWS):
+        raise AssertionError("render framing metadata missing or incomplete")
+    for view in EXPECTED_VIEWS:
+        data = framing[view]
+        center_x = float(data["center_error_x"])
+        center_y = float(data["center_error_y"])
+        fill_ratio = float(data["fill_ratio"])
+        bounds = [float(value) for value in data["normalized_bounds"]]
+        if len(bounds) != 4:
+            raise AssertionError(f"{view}: normalized bounds must have four values")
+        if abs(center_x) > CENTER_ERROR_LIMIT or abs(center_y) > CENTER_ERROR_LIMIT:
+            raise AssertionError(
+                f"{view}: render center error exceeded: x={center_x}, y={center_y}"
+            )
+        if not FILL_RATIO_MIN <= fill_ratio <= FILL_RATIO_MAX:
+            raise AssertionError(f"{view}: unexpected fill ratio: {fill_ratio}")
+        if min(bounds) < -FRAME_LIMIT or max(bounds) > FRAME_LIMIT:
+            raise AssertionError(f"{view}: projected bounds exceed frame: {bounds}")
 
     for name, expected in manifest["sha256"].items():
         path = out / name
@@ -88,7 +115,7 @@ def main() -> None:
             raise AssertionError(f"unexpected dimensions: actual={dims}, spec={target}")
     if manifest["triangles"] <= 0 or manifest["triangles"] > 10000:
         raise AssertionError(f"triangle budget exceeded: {manifest['triangles']}")
-    print(json.dumps({"id": sku, "formats": "PASS", "geometry": "PASS", "renders": "PASS", "triangles": manifest["triangles"]}))
+    print(json.dumps({"id": sku, "formats": "PASS", "geometry": "PASS", "renders": "PASS", "framing": "PASS", "triangles": manifest["triangles"]}))
 
 
 if __name__ == "__main__":
