@@ -1,0 +1,50 @@
+{
+  "id": "minimal-picture-frame-01",
+  "family": "Decorative Props",
+  "display_name": "Minimal Picture Frame",
+  "dimensions_m": [0.30, 0.045, 0.40],
+  "parts": [
+    {"component": "box", "name": "backing", "size": [0.27, 0.016, 0.37], "position": [0.0, 0.010, 0.20], "material": "back_dark"},
+    {"component": "box", "name": "picture_panel", "size": [0.232, 0.010, 0.312], "position": [0.0, -0.012, 0.20], "material": "picture_neutral"},
+    {"component": "box", "name": "frame_top", "size": [0.30, 0.032, 0.028], "position": [0.0, -0.006, 0.386], "material": "frame_wood"},
+    {"component": "box", "name": "frame_bottom", "size": [0.30, 0.032, 0.028], "position": [0.0, -0.006, 0.014], "material": "frame_wood"},
+    {"component": "box", "name": "frame_left", "size": [0.028, 0.032, 0.344], "position": [-0.136, -0.006, 0.20], "material": "frame_wood"},
+    {"component": "box", "name": "frame_right", "size": [0.028, 0.032, 0.344], "position": [0.136, -0.006, 0.20], "material": "frame_wood"}
+  ],
+  "materials": {
+    "frame_wood": {"base_color": [0.30, 0.16, 0.08], "roughness": 0.62, "metallic": 0.0},
+    "picture_neutral": {"base_color": [0.62, 0.70, 0.72], "roughness": 0.78, "metallic": 0.0},
+    "back_dark": {"base_color": [0.10, 0.09, 0.08], "roughness": 0.74, "metallic": 0.0}
+  },
+  "variants": [
+    {"id": "dark-wood-neutral", "planned": true},
+    {"id": "black-frame-neutral", "planned": true},
+    {"id": "white-frame-neutral", "planned": true},
+    {"id": "gallery-wall-mini-set", "planned": true}
+  ],
+  "price_hypothesis": {"currency": "JPY", "single": 200, "mini_set_target": 600},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, photographs, illustrations, logos, trademarks, copyrighted artwork, or branded product geometry. The neutral picture panel is a plain material, not embedded artwork.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_06": [
+      "BOOTH currently lists generic VRChat photo-frame products around JPY 100-300, including a JPY 300 world photo frame and a JPY 100 VRChat photo frame",
+      "A current BOOTH acrylic wall-mounted portrait photo frame is offered at JPY 150, supporting small decorative wall props as an active category",
+      "Issue #200 lists picture frame under Decorative Props; this SKU uses only the existing box component, requires no product-specific generator, and can bundle into Home / Office, Cafe, and gallery-wall sets"
+    ],
+    "source_urls": [
+      "https://booth.pm/ja/items/2363257",
+      "https://booth.pm/ja/items/7774043",
+      "https://booth.pm/ko/items/6538080"
+    ],
+    "expected_production_minutes": 4,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
