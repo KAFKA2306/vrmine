@@ -1,0 +1,172 @@
+name: World Build generation and verification
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'config/world-design/generated/**'
+      - 'scripts/world-design-to-blender-plan.mjs'
+      - 'scripts/world_build_factory.py'
+      - 'scripts/verify_world_build.py'
+      - 'Taskfile.yml'
+      - '.github/workflows/world-build.yml'
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Existing World Build PR to generate and verify
+        required: true
+        type: string
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      final_head: ${{ steps.publish.outputs.final_head }}
+      changed: ${{ steps.publish.outputs.changed }}
+      world_id: ${{ steps.select.outputs.world_id }}
+    steps:
+      - name: Resolve PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_PR: ${{ inputs.pr_number }}
+          EVENT_PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          pr_number="${EVENT_PR:-${INPUT_PR:-}}"
+          test -n "$pr_number"
+          gh pr view "$pr_number" --repo "$GITHUB_REPOSITORY" --json headRefName,headRefOid,baseRefName > /tmp/pr.json
+          echo "number=$pr_number" >> "$GITHUB_OUTPUT"
+          echo "head_ref=$(jq -r .headRefName /tmp/pr.json)" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$(jq -r .headRefOid /tmp/pr.json)" >> "$GITHUB_OUTPUT"
+          echo "base_ref=$(jq -r .baseRefName /tmp/pr.json)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ steps.pr.outputs.head_sha }}
+          fetch-depth: 0
+
+      - name: Select one canonical World Design Spec
+        id: select
+        env:
+          BASE_REF: ${{ steps.pr.outputs.base_ref }}
+        run: |
+          set -euo pipefail
+          git fetch origin "$BASE_REF"
+          mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/${BASE_REF}...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
+          if [ "${#specs[@]}" -ne 1 ]; then
+            printf 'Expected exactly one changed generated World Design Spec, got %s\n' "${#specs[@]}" >&2
+            printf '%s\n' "${specs[@]:-}" >&2
+            exit 1
+          fi
+          spec="${specs[0]}"
+          world_id="$(basename "$spec" .json)"
+          echo "spec_path=$spec" >> "$GITHUB_OUTPUT"
+          echo "world_id=$world_id" >> "$GITHUB_OUTPUT"
+
+      - name: Materialize deterministic build plan
+        env:
+          SPEC_PATH: ${{ steps.select.outputs.spec_path }}
+          WORLD_ID: ${{ steps.select.outputs.world_id }}
+        run: |
+          set -euo pipefail
+          out=".artifacts/world-builds/${WORLD_ID}"
+          mkdir -p "$out"
+          node scripts/world-design-to-blender-plan.mjs "$SPEC_PATH" > "$out/build-plan.json"
+          test "$(jq -r .schema_version "$out/build-plan.json")" = 3
+
+      - name: Install official Blender 4.2.0
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
+          curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0.sha256
+          grep ' blender-4.2.0-linux-x64.tar.xz$' blender-4.2.0.sha256 | sha256sum --check --strict
+          tar -xf blender-4.2.0-linux-x64.tar.xz
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1-mesa-dri
+          echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
+
+      - name: Generate actual room and run spatial DRC
+        env:
+          WORLD_ID: ${{ steps.select.outputs.world_id }}
+          SOURCE_COMMIT: ${{ steps.pr.outputs.head_sha }}
+        run: |
+          set -euo pipefail
+          out=".artifacts/world-builds/${WORLD_ID}"
+          blender -b --python-exit-code 1 --python scripts/world_build_factory.py -- "$out/build-plan.json" "$out"
+          blender -b --python-exit-code 1 --python scripts/verify_world_build.py -- "$out/build-plan.json" "$out"
+
+      - name: Prove spatial DRC rejects a broken seat placement
+        env:
+          WORLD_ID: ${{ steps.select.outputs.world_id }}
+        run: |
+          set -euo pipefail
+          out=".artifacts/world-builds/${WORLD_ID}"
+          broken=".artifacts/world-builds/${WORLD_ID}-broken"
+          rm -rf "$broken"
+          cp -a "$out" "$broken"
+          jq '.social_core.seats[0].position_m=[2.9,3.2,0]' "$out/build-plan.json" > "$broken/build-plan.json"
+          digest="$(sha256sum "$broken/build-plan.json" | awk '{print $1}')"
+          jq --arg digest "$digest" '.build_plan_sha256=$digest' "$broken/manifest.json" > "$broken/manifest.tmp"
+          mv "$broken/manifest.tmp" "$broken/manifest.json"
+          if blender -b --python-exit-code 1 --python scripts/verify_world_build.py -- "$broken/build-plan.json" "$broken"; then
+            echo 'Broken seat placement unexpectedly passed spatial DRC' >&2
+            exit 1
+          fi
+          echo 'Expected negative spatial DRC failure observed.'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: world-build-${{ steps.select.outputs.world_id }}-${{ steps.pr.outputs.head_sha }}
+          path: .artifacts/world-builds/${{ steps.select.outputs.world_id }}/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Publish generated room evidence into PR branch
+        id: publish
+        env:
+          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+          WORLD_ID: ${{ steps.select.outputs.world_id }}
+          SPEC_PATH: ${{ steps.select.outputs.spec_path }}
+        run: |
+          set -euo pipefail
+          src=".artifacts/world-builds/${WORLD_ID}"
+          dest="pages/worlds/${WORLD_ID}"
+          mkdir -p "$dest"
+          for file in world.blend world.glb manifest.json build-plan.json view-hero.png view-top.png view-social-core.png view-retreat.png view-circulation.png; do
+            cp "$src/$file" "$dest/$file"
+          done
+          cp "$SPEC_PATH" "$dest/spec.json"
+          (
+            cd "$dest"
+            sha256sum view-hero.png view-top.png view-social-core.png view-retreat.png view-circulation.png > render.sha256
+          )
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$dest"
+          changed=false
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(world): publish ${WORLD_ID} generated room evidence"
+            git push origin "HEAD:${HEAD_REF}"
+            changed=true
+          fi
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+          echo "final_head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch exact-head verification after generated evidence commit
+        if: steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+        run: |
+          set -euo pipefail
+          current_head="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid -q .headRefOid)"
+          test "$current_head" = "${{ steps.publish.outputs.final_head }}"
+          gh workflow run world-build.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_REF" -f pr_number="$PR_NUMBER"
