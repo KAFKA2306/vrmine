@@ -2,7 +2,7 @@
   "schema_version": 2,
   "id": "cafe-pendant-lamp-01",
   "source_spec": "config/world-items/cafe-pendant-lamp-01.json",
-  "spec_sha256": "a8c19610dafafd85bbd6fe528f9d245101366065b9e8e5b1ccb35c33f9886695",
+  "spec_sha256": "9187b36d238a8678428f58a753a40b7409e7c3a77e9af8a5f063388d8cd801c9",
   "blender": "4.2.0",
   "units": "metres",
   "dimensions_m_actual": [
@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-pendant-lamp-01.blend": "d8ec91ef6ff1470afae8e16ee1e9471f1d5e051f0f379ffe05638f86b6cdbaef",
+    "cafe-pendant-lamp-01.blend": "24267b43d7fb6d09f7803d7b3b254166418d9690b3be3e5aba906d457e7f1d51",
     "cafe-pendant-lamp-01.glb": "f8925bf84368340257251544daaa907cad0249a4b3584e55753d0c2d2bdb18f8",
-    "cafe-pendant-lamp-01.fbx": "711a87ac76ffff638e8f8c8e2da4710d43d2c269bb2ba759b67463430ee2897d",
-    "thumbnail.png": "6fbf9aae5abb86509e579a6ce8c093e5b8f49ad4172da6a2942a7e6e26339f73",
-    "view-hero.png": "6fbf9aae5abb86509e579a6ce8c093e5b8f49ad4172da6a2942a7e6e26339f73",
-    "view-front.png": "0a8f5bc3389a2b91648fe629914fd66323060b830746eb93c58344642174ee17",
-    "view-rear.png": "735800cd9116d03e0bb0b8c6a93858bd9e69a7deb83e6aa743b9170f3ca60637",
-    "view-left.png": "695eb8b4f610ffa47219d722b9d81216d908ccf6f18dca2909979e6bb4c0b17c",
-    "view-right.png": "f38f0ca5efbe3e36dad70b668ae923321f70f37da1a14105d0c82f68aed2dfed",
-    "view-top.png": "2c2692c57d852e5b4882fb793ee6de2726bdf0049f487ec5f9954312371ab200"
+    "cafe-pendant-lamp-01.fbx": "db45b69395adec0104ec1f5832e18bbc4330398cfd5d8b654b732784e363c868",
+    "thumbnail.png": "ed46793f1401c6f0b5186a68f453663dab06f029042ee8191e6416a4f9e0fa1d",
+    "view-hero.png": "ed46793f1401c6f0b5186a68f453663dab06f029042ee8191e6416a4f9e0fa1d",
+    "view-front.png": "008965707ba36af29eeb3c1f9f06382fbc11ea697b8645e246c500bca7b44cf4",
+    "view-rear.png": "06058cc9e8b4d3617e86a5692169c28494d22c3d90d78ff2a149a39c9929d231",
+    "view-left.png": "1b2bfd24ad49af52db23fd77be1ac88097fee38fa7a9a71881336ac8cbe8d6fe",
+    "view-right.png": "83f6c044ddb74a499b381614c2722a195da1e5d34545659b454ff0705b3d5417",
+    "view-top.png": "85deff51a6a469b7ae1a4f0620bf5910a2ea515ae76b0b39bebce9cab2069515"
   }
 }
