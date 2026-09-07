@@ -10,15 +10,8 @@ on:
       - 'scripts/verify_world_build.py'
       - 'Taskfile.yml'
       - '.github/workflows/world-build.yml'
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: Existing World Build PR to generate and verify
-        required: true
-        type: string
 
 permissions:
-  actions: write
   contents: write
   pull-requests: write
 
@@ -26,20 +19,15 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    outputs:
-      final_head: ${{ steps.publish.outputs.final_head }}
-      changed: ${{ steps.publish.outputs.changed }}
-      world_id: ${{ steps.select.outputs.world_id }}
     steps:
       - name: Resolve PR
         id: pr
         env:
           GH_TOKEN: ${{ github.token }}
-          INPUT_PR: ${{ inputs.pr_number }}
           EVENT_PR: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
-          pr_number="${EVENT_PR:-${INPUT_PR:-}}"
+          pr_number="$EVENT_PR"
           test -n "$pr_number"
           gh pr view "$pr_number" --repo "$GITHUB_REPOSITORY" --json headRefName,headRefOid,baseRefName > /tmp/pr.json
           echo "number=$pr_number" >> "$GITHUB_OUTPUT"
@@ -150,7 +138,6 @@ jobs:
           retention-days: 7
 
       - name: Publish generated room evidence into PR branch
-        id: publish
         env:
           HEAD_REF: ${{ steps.pr.outputs.head_ref }}
           WORLD_ID: ${{ steps.select.outputs.world_id }}
@@ -171,23 +158,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add "$dest"
-          changed=false
           if ! git diff --cached --quiet; then
             git commit -m "chore(world): publish ${WORLD_ID} generated room evidence"
             git push origin "HEAD:${HEAD_REF}"
-            changed=true
           fi
-          echo "changed=$changed" >> "$GITHUB_OUTPUT"
-          echo "final_head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Dispatch exact-head verification after generated evidence commit
-        if: steps.publish.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
-          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
-        run: |
-          set -euo pipefail
-          current_head="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid -q .headRefOid)"
-          test "$current_head" = "${{ steps.publish.outputs.final_head }}"
-          gh workflow run world-build.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_REF" -f pr_number="$PR_NUMBER"
