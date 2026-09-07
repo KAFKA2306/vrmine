@@ -94,6 +94,7 @@ jobs:
 
       - name: Generate actual room and run spatial DRC
         env:
+          GH_TOKEN: ${{ github.token }}
           WORLD_ID: ${{ steps.select.outputs.world_id }}
           SOURCE_COMMIT: ${{ steps.pr.outputs.head_sha }}
         run: |
