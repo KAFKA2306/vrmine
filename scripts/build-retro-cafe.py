@@ -5,6 +5,9 @@ Run with Blender 4.2: blender -b --python-exit-code 1 --python scripts/build-ret
 import hashlib
 import json
 import math
+import subprocess
+import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import bpy
@@ -13,6 +16,15 @@ from mathutils import Vector
 OUT = Path(__file__).resolve().parents[1] / '.artifacts' / 'retro-cafe'
 NAMES = ('pendant-light', 'table-lamp', 'wall-light', 'round-table', 'stool',
          'side-table', 'cup', 'saucer', 'tray', 'vase')
+VIEWS = {
+    'thumbnail.png': ((3.2, -4.8, 3.1), (0, 0, 1.0), 3.3),
+    'view-hero.png': ((3.2, -4.8, 3.1), (0, 0, 1.0), 3.3),
+    'view-front.png': ((0, -5.2, 1.7), (0, 0, 1.0), 3.0),
+    'view-rear.png': ((0, 5.2, 1.7), (0, 0, 1.0), 3.0),
+    'view-left.png': ((-5.2, 0, 1.7), (0, 0, 1.0), 3.0),
+    'view-right.png': ((5.2, 0, 1.7), (0, 0, 1.0), 3.0),
+    'view-top.png': ((0, -0.05, 6.5), (0, 0, .72), 3.1),
+}
 
 
 def material(name, color, roughness, metallic=0, emission=0):
@@ -169,6 +181,41 @@ def build(name, mats):
     return obj
 
 
+def render_view(filename):
+    if filename not in VIEWS or filename == 'thumbnail.png':
+        raise RuntimeError(f'Unknown render view: {filename}')
+    scene = bpy.context.scene
+    camera = scene.camera
+    if camera is None:
+        raise RuntimeError('Saved Retro Cafe scene has no camera')
+    location, target, ortho_scale = VIEWS[filename]
+    camera.location = location
+    camera.rotation_euler = (Vector(target) - camera.location).to_track_quat('-Z', 'Y').to_euler()
+    camera.data.ortho_scale = ortho_scale
+    scene.render.filepath = str(OUT / filename)
+    bpy.ops.render.render(write_still=True)
+
+
+def render_views_parallel():
+    script = str(Path(__file__).resolve())
+    blend = str(OUT / 'retro-cafe.blend')
+    filenames = [name for name in VIEWS if name != 'thumbnail.png']
+
+    def run_worker(filename):
+        subprocess.run([
+            bpy.app.binary_path,
+            '-b', blend,
+            '--python-exit-code', '1',
+            '--python', script,
+            '--', '--render-view', filename,
+        ], check=True)
+
+    # GitHub-hosted runners have enough CPU/RAM for two independent Eevee views.
+    # Keeping this at two avoids turning rendering into a memory-contention benchmark.
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        list(executor.map(run_worker, filenames))
+
+
 def main():
     if bpy.app.version[:2] != (4, 2):
         raise RuntimeError('Use Blender / bpy 4.2 for reproducible exports')
@@ -227,35 +274,19 @@ def main():
     scene.render.resolution_percentage = 100
     scene.render.image_settings.file_format = 'PNG'
 
-    views = {
-        'thumbnail.png': ((3.2, -4.8, 3.1), (0, 0, 1.0), 3.3),
-        'view-hero.png': ((3.2, -4.8, 3.1), (0, 0, 1.0), 3.3),
-        'view-front.png': ((0, -5.2, 1.7), (0, 0, 1.0), 3.0),
-        'view-rear.png': ((0, 5.2, 1.7), (0, 0, 1.0), 3.0),
-        'view-left.png': ((-5.2, 0, 1.7), (0, 0, 1.0), 3.0),
-        'view-right.png': ((5.2, 0, 1.7), (0, 0, 1.0), 3.0),
-        'view-top.png': ((0, -0.05, 6.5), (0, 0, .72), 3.1),
-    }
-    hero_location, hero_target, hero_scale = views['view-hero.png']
+    hero_location, hero_target, hero_scale = VIEWS['view-hero.png']
     camera.location = hero_location
     camera.rotation_euler = (Vector(hero_target) - camera.location).to_track_quat('-Z', 'Y').to_euler()
     camera.data.ortho_scale = hero_scale
     bpy.ops.wm.save_as_mainfile(filepath=str(OUT / 'retro-cafe.blend'))
 
-    # thumbnail and hero are intentionally the same camera. Render once and derive the
-    # thumbnail byte-for-byte instead of paying for an identical seventh Blender render.
-    for filename, (location, target, ortho_scale) in views.items():
-        if filename == 'thumbnail.png':
-            continue
-        camera.location = location
-        camera.rotation_euler = (Vector(target) - camera.location).to_track_quat('-Z', 'Y').to_euler()
-        camera.data.ortho_scale = ortho_scale
-        scene.render.filepath = str(OUT / filename)
-        bpy.ops.render.render(write_still=True)
+    # Each view is independent once the deterministic scene is saved. Render two at a
+    # time in separate Blender processes, then derive the identical thumbnail from hero.
+    render_views_parallel()
     (OUT / 'thumbnail.png').write_bytes((OUT / 'view-hero.png').read_bytes())
 
     files = [f'{name}.{ext}' for name in NAMES for ext in ('glb', 'fbx')]
-    files += ['retro-cafe.blend', *views.keys()]
+    files += ['retro-cafe.blend', *VIEWS.keys()]
     manifest = {'blender': bpy.app.version_string, 'units': 'metres', 'models': records,
                 'unity_import': 'UNVERIFIED', 'vrchat_runtime': 'UNVERIFIED',
                 'sha256': {name: hashlib.sha256((OUT / name).read_bytes()).hexdigest() for name in files}}
@@ -263,4 +294,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if '--render-view' in sys.argv:
+        render_view(sys.argv[sys.argv.index('--render-view') + 1])
+    else:
+        main()
