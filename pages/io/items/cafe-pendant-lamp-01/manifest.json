@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-pendant-lamp-01.blend": "7bd5353b9a1cb94614d5de761e45a7bac66d778936aa4e068aced51ff41191e7",
+    "cafe-pendant-lamp-01.blend": "f7b9dc7832d7cb6484b19522062d2b91bc49d26cb40dd64e31d1c3c6fc673db1",
     "cafe-pendant-lamp-01.glb": "f8925bf84368340257251544daaa907cad0249a4b3584e55753d0c2d2bdb18f8",
-    "cafe-pendant-lamp-01.fbx": "9d90174c238eba0ddccc4d09cd3ccd81e4d0acc074f794bb1bb07df224d56e87",
-    "thumbnail.png": "65b09dcee8ced71a6f2cb134a0e4ce0c4bcadc397666d00c66760a44bcff1842",
-    "view-hero.png": "65b09dcee8ced71a6f2cb134a0e4ce0c4bcadc397666d00c66760a44bcff1842",
-    "view-front.png": "b23a4584c4e62a9fa7f4a0a4324fe46fae2842327a2d381a49dc04e60bf157a0",
-    "view-rear.png": "3d8ab4b793fe8c572828cc1cf51bab3150c96fa803a4a799fe1469a2d4c699b1",
-    "view-left.png": "b7d9a3b30cbb3b8b1d3e45f6f659098e3f5932c00313cba88286d7e9d93b5284",
-    "view-right.png": "4aa1f6391111c2aa7c8575654696c96e6ef0c8f2f862950574383b588a549d7b",
-    "view-top.png": "cd95c3574e3f5387149d73af1204c4c7ba345ba8e5ed7366a47a6c705c4535c7"
+    "cafe-pendant-lamp-01.fbx": "d52d606e2b1460cc7a21dfa2a7be8243deaa5a042ad443d6914fabd7bc11f69b",
+    "thumbnail.png": "271f8b1e7483a84a8fc5ad699b1d85cce08d4775084ff69fc85e5f7902d51c52",
+    "view-hero.png": "271f8b1e7483a84a8fc5ad699b1d85cce08d4775084ff69fc85e5f7902d51c52",
+    "view-front.png": "4393998362c31b91b97688baed453aa014436445f1b49387b4a7d8009ef80644",
+    "view-rear.png": "478c29351df43e99ad77b15083a42304bb3c5b2d2a24d234c392b89a3bfa60e0",
+    "view-left.png": "084d7ea022a168af39392f9317e49779e6f94d3d23c5a750048646f76c82f061",
+    "view-right.png": "17dc291a4f6097707cbe5c351dce33568f7548c07875a986550a3fe77618a9d9",
+    "view-top.png": "385dc8697861834488a482f8daa10149781439278d6d18a7ecffbd66c46285d4"
   }
 }
