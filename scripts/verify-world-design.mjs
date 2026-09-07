@@ -120,6 +120,21 @@ if (summary.download_size_mb.median !== median(downloadValues) || JSON.stringify
 if (summary.price_jpy.observed_count !== priceObserved) fail('summary price observed_count drift');
 if (summary.price_jpy.median !== median(priceValues) || JSON.stringify(summary.price_jpy.distribution) !== JSON.stringify(priceValues)) fail('summary price distribution drift');
 if (JSON.stringify(summary.primary_use_counts) !== JSON.stringify(useCounts)) fail('summary primary_use_counts drift');
+const popularityValues = (metric) => dataset.records
+  .flatMap(r => (r.source.public_popularity_signals ?? []).filter(s => s.metric === metric).map(s => s.value))
+  .sort((a,b)=>a-b);
+for (const metric of ['visits','favorites','booth_likes']) {
+  const values = popularityValues(metric);
+  const observed = summary.popularity_proxy?.[metric];
+  if (!observed || observed.observed_count !== values.length) fail(`summary popularity ${metric} observed_count drift`);
+  if (observed.median !== (values.length ? median(values) : null)) fail(`summary popularity ${metric} median drift`);
+  if (JSON.stringify(observed.distribution) !== JSON.stringify(values)) fail(`summary popularity ${metric} distribution drift`);
+}
+for (const record of dataset.records) for (const signal of record.source.public_popularity_signals ?? []) {
+  if (signal.proxy_only !== true || signal.confidence !== 'HIGH' || !signal.evidence_url) fail(`${record.id} popularity signal must remain an evidenced proxy`);
+}
+if (summary.popularity_proxy.design_feature_relationship_status !== 'INSUFFICIENT_PUBLISHED_FEATURE_COVERAGE') fail('popularity/design relationship must stay evidence-limited');
+if (summary.popularity_proxy.causal_claims_allowed !== false) fail('causal popularity claims are forbidden');
 if (summary.dimension_distribution_status !== 'UNVERIFIED_IN_PUBLIC_SOURCES') fail('unobserved market dimensions must stay unverified');
 
 console.log(JSON.stringify({
