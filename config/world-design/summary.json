@@ -9,14 +9,28 @@
   "quest_support": {
     "known_true": 10,
     "known_false": 2,
-    "unknown": 8
+    "unknown": 8,
+    "known_support_rate": 0.8333333333333334
   },
   "download_size_mb": {
-    "observed_count": 9
+    "observed_count": 9,
+    "median": 74.03,
+    "distribution": [28.44, 35.01, 38.03, 43.25, 74.03, 87, 92.91, 96.51, 117.53]
   },
   "price_jpy": {
-    "observed_count": 9
+    "observed_count": 9,
+    "median": 3000,
+    "distribution": [480, 1300, 2000, 2500, 3000, 3500, 3500, 3800, 7500]
+  },
+  "primary_use_counts": {
+    "home": 16,
+    "social": 17,
+    "sleep": 9,
+    "photo": 3,
+    "exhibition": 1,
+    "hotel": 2,
+    "video": 2
   },
   "dimension_distribution_status": "UNVERIFIED_IN_PUBLIC_SOURCES",
-  "interpretation": "Frequencies use only populated published fields. No causal success factor is inferred from popularity proxies."
+  "interpretation": "Frequencies and medians use only populated published fields. No causal success factor is inferred from popularity proxies."
 }
