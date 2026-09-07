@@ -2,6 +2,10 @@
 
 Usage:
   blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/<id>.json [variant]
+
+Without a variant id, the canonical base SKU and every declared variant are
+materialized through the same generator. Supplying a variant id materializes
+only that resolved variant.
 """
 from __future__ import annotations
 
@@ -48,6 +52,9 @@ def load_spec(path: Path) -> dict:
         raise ValueError("invalid id")
     if set(spec["formats"]) != {"blend", "glb", "fbx"}:
         raise ValueError("formats must be exactly blend/glb/fbx")
+    variant_ids = [variant.get("id") for variant in spec["variants"]]
+    if any(not value for value in variant_ids) or len(variant_ids) != len(set(variant_ids)):
+        raise ValueError("variant ids must be non-empty and unique")
     return spec
 
 
@@ -79,8 +86,10 @@ def resolve_variant(base: dict, variant_id: str | None):
 
 def make_material(name, data):
     rgb = data["base_color"]
-    if len(rgb) != 3: raise ValueError(f"material {name}: base_color must have 3 values")
-    mat = bpy.data.materials.new(name); mat.use_nodes = True
+    if len(rgb) != 3:
+        raise ValueError(f"material {name}: base_color must have 3 values")
+    mat = bpy.data.materials.new(name)
+    mat.use_nodes = True
     bsdf = mat.node_tree.nodes.get("Principled BSDF")
     bsdf.inputs["Base Color"].default_value = (*rgb, 1.0)
     bsdf.inputs["Roughness"].default_value = float(data["roughness"])
@@ -89,78 +98,201 @@ def make_material(name, data):
 
 
 def finish(obj, mat, bevel=0.004):
-    obj.data.materials.append(mat); bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    obj.data.materials.append(mat)
+    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     if bevel:
-        mod = obj.modifiers.new("Edge bevel", "BEVEL"); mod.width = bevel; mod.segments = 3; bpy.ops.object.modifier_apply(modifier=mod.name)
-    for poly in obj.data.polygons: poly.use_smooth = False
-    bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT"); bpy.ops.uv.smart_project(island_margin=0.02); bpy.ops.object.mode_set(mode="OBJECT")
+        mod = obj.modifiers.new("Edge bevel", "BEVEL")
+        mod.width = bevel
+        mod.segments = 3
+        bpy.ops.object.modifier_apply(modifier=mod.name)
+    for poly in obj.data.polygons:
+        poly.use_smooth = False
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_all(action="SELECT")
+    bpy.ops.uv.smart_project(island_margin=0.02)
+    bpy.ops.object.mode_set(mode="OBJECT")
     return obj
 
 
 def make_part(part, materials):
-    mat = materials[part["material"]]; position = tuple(float(v) for v in part.get("position", [0, 0, 0]))
+    mat = materials[part["material"]]
+    position = tuple(float(v) for v in part.get("position", [0, 0, 0]))
     if part["component"] == "box":
-        bpy.ops.mesh.primitive_cube_add(size=1, location=position); obj = bpy.context.object; obj.dimensions = tuple(float(v) for v in part["size"])
-        obj.rotation_euler = [math.radians(float(v)) for v in part.get("rotation_deg", [0, 0, 0])]; finish(obj, mat, min(0.004, min(obj.dimensions) / 5))
+        bpy.ops.mesh.primitive_cube_add(size=1, location=position)
+        obj = bpy.context.object
+        obj.dimensions = tuple(float(v) for v in part["size"])
+        obj.rotation_euler = [math.radians(float(v)) for v in part.get("rotation_deg", [0, 0, 0])]
+        finish(obj, mat, min(0.004, min(obj.dimensions) / 5))
     elif part["component"] == "cylinder":
-        bpy.ops.mesh.primitive_cylinder_add(vertices=int(part.get("vertices", 48)), radius=float(part["radius"]), depth=float(part["height"]), location=position); obj = finish(bpy.context.object, mat)
-    else: raise ValueError(f'unsupported component: {part["component"]}')
-    obj.name = part["name"]; return obj
+        bpy.ops.mesh.primitive_cylinder_add(
+            vertices=int(part.get("vertices", 48)), radius=float(part["radius"]),
+            depth=float(part["height"]), location=position,
+        )
+        obj = finish(bpy.context.object, mat)
+    else:
+        raise ValueError(f'unsupported component: {part["component"]}')
+    obj.name = part["name"]
+    return obj
 
 
 def join_parts(parts, sku):
     bpy.ops.object.select_all(action="DESELECT")
-    for obj in parts: obj.select_set(True)
-    bpy.context.view_layer.objects.active = parts[0]; bpy.ops.object.join(); obj = bpy.context.object; obj.name = sku
-    bpy.context.scene.cursor.location = (0, 0, 0); bpy.ops.object.origin_set(type="ORIGIN_CURSOR"); return obj
+    for obj in parts:
+        obj.select_set(True)
+    bpy.context.view_layer.objects.active = parts[0]
+    bpy.ops.object.join()
+    obj = bpy.context.object
+    obj.name = sku
+    bpy.context.scene.cursor.location = (0, 0, 0)
+    bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
+    return obj
 
 
 def world_bounds(obj):
     points = [obj.matrix_world @ vertex.co for vertex in obj.data.vertices]
-    if not points: raise ValueError("product mesh has no vertices")
-    lo = Vector(tuple(min(p[i] for p in points) for i in range(3))); hi = Vector(tuple(max(p[i] for p in points) for i in range(3)))
+    if not points:
+        raise ValueError("product mesh has no vertices")
+    lo = Vector(tuple(min(p[i] for p in points) for i in range(3)))
+    hi = Vector(tuple(max(p[i] for p in points) for i in range(3)))
     return lo, hi, (lo + hi) * .5, hi - lo, points
 
 
 def setup_scene(dimensions, center):
-    scene = bpy.context.scene; scene.unit_settings.system = "METRIC"; scene.unit_settings.scale_length = 1.0; scene.render.engine = "BLENDER_EEVEE_NEXT"
-    scene.render.resolution_x = scene.render.resolution_y = 640; scene.render.resolution_percentage = 100; scene.render.image_settings.file_format = "PNG"; scene.render.film_transparent = False
-    backdrop = make_material("Backdrop", {"base_color":[.70,.74,.73],"roughness":.9,"metallic":0}); bpy.ops.mesh.primitive_plane_add(size=max(dimensions)*4.2, location=(0,0,0)); bpy.context.object.data.materials.append(backdrop)
-    bpy.ops.object.camera_add(location=center + VIEW_OFFSETS["hero"]); camera=bpy.context.object; camera.data.type="ORTHO"; camera.data.ortho_scale=1.; scene.camera=camera
-    for location, energy, size in [((2.5,-3.5,4.),650,3.5),((-3.,-1.,2.2),260,2.8)]:
-        bpy.ops.object.light_add(type="AREA", location=location); light=bpy.context.object; light.data.energy=energy; light.data.shape="DISK"; light.data.size=size; light.rotation_euler=(center-light.location).to_track_quat("-Z","Y").to_euler()
-    world=bpy.data.worlds.new("World item studio"); world.use_nodes=True; world.node_tree.nodes["Background"].inputs[0].default_value=(.12,.14,.15,1); world.node_tree.nodes["Background"].inputs[1].default_value=.55; scene.world=world
-    return scene,camera
+    scene = bpy.context.scene
+    scene.unit_settings.system = "METRIC"
+    scene.unit_settings.scale_length = 1.0
+    scene.render.engine = "BLENDER_EEVEE_NEXT"
+    scene.render.resolution_x = scene.render.resolution_y = 640
+    scene.render.resolution_percentage = 100
+    scene.render.image_settings.file_format = "PNG"
+    scene.render.film_transparent = False
+    backdrop = make_material("Backdrop", {"base_color": [.70, .74, .73], "roughness": .9, "metallic": 0})
+    bpy.ops.mesh.primitive_plane_add(size=max(dimensions) * 4.2, location=(0, 0, 0))
+    bpy.context.object.data.materials.append(backdrop)
+    bpy.ops.object.camera_add(location=center + VIEW_OFFSETS["hero"])
+    camera = bpy.context.object
+    camera.data.type = "ORTHO"
+    camera.data.ortho_scale = 1.
+    scene.camera = camera
+    for location, energy, size in [((2.5, -3.5, 4.), 650, 3.5), ((-3., -1., 2.2), 260, 2.8)]:
+        bpy.ops.object.light_add(type="AREA", location=location)
+        light = bpy.context.object
+        light.data.energy = energy
+        light.data.shape = "DISK"
+        light.data.size = size
+        light.rotation_euler = (center - light.location).to_track_quat("-Z", "Y").to_euler()
+    world = bpy.data.worlds.new("World item studio")
+    world.use_nodes = True
+    world.node_tree.nodes["Background"].inputs[0].default_value = (.12, .14, .15, 1)
+    world.node_tree.nodes["Background"].inputs[1].default_value = .55
+    scene.world = world
+    return scene, camera
 
 
-def render_views(scene,camera,out,center,points):
-    aspect=scene.render.resolution_x/scene.render.resolution_y; framing={}
-    for name,offset in VIEW_OFFSETS.items():
-        camera.location=center+offset; camera.rotation_euler=(center-camera.location).to_track_quat("-Z","Y").to_euler(); bpy.context.view_layer.update(); inv=camera.matrix_world.inverted(); projected=[inv@p for p in points]
-        min_x,max_x=min(p.x for p in projected),max(p.x for p in projected); min_y,max_y=min(p.y for p in projected),max(p.y for p in projected); basis=camera.matrix_world.to_3x3(); camera.location += basis@Vector(((min_x+max_x)*.5,(min_y+max_y)*.5,0)); bpy.context.view_layer.update(); inv=camera.matrix_world.inverted(); projected=[inv@p for p in points]
-        min_x,max_x=min(p.x for p in projected),max(p.x for p in projected); min_y,max_y=min(p.y for p in projected),max(p.y for p in projected); w,h=max_x-min_x,max_y-min_y
-        if w<=0 or h<=0: raise ValueError(f"invalid projected bounds for {name}: {w} x {h}")
-        camera.data.ortho_scale=max(h,w/aspect)/FRAME_FILL; fh=camera.data.ortho_scale; fw=fh*aspect; bounds=[min_x/fw,max_x/fw,min_y/fh,max_y/fh]
-        framing[name]={"center_error_x":round((bounds[0]+bounds[1])*.5,10),"center_error_y":round((bounds[2]+bounds[3])*.5,10),"fill_ratio":round(max(bounds[1]-bounds[0],bounds[3]-bounds[2]),10),"normalized_bounds":[round(v,10) for v in bounds],"ortho_scale":round(float(camera.data.ortho_scale),10)}
-        scene.render.filepath=str(out/f"view-{name}.png"); bpy.ops.render.render(write_still=True)
-    (out/"thumbnail.png").write_bytes((out/"view-hero.png").read_bytes()); return framing
+def render_views(scene, camera, out, center, points):
+    aspect = scene.render.resolution_x / scene.render.resolution_y
+    framing = {}
+    for name, offset in VIEW_OFFSETS.items():
+        camera.location = center + offset
+        camera.rotation_euler = (center - camera.location).to_track_quat("-Z", "Y").to_euler()
+        bpy.context.view_layer.update()
+        inv = camera.matrix_world.inverted()
+        projected = [inv @ p for p in points]
+        min_x, max_x = min(p.x for p in projected), max(p.x for p in projected)
+        min_y, max_y = min(p.y for p in projected), max(p.y for p in projected)
+        basis = camera.matrix_world.to_3x3()
+        camera.location += basis @ Vector(((min_x + max_x) * .5, (min_y + max_y) * .5, 0))
+        bpy.context.view_layer.update()
+        inv = camera.matrix_world.inverted()
+        projected = [inv @ p for p in points]
+        min_x, max_x = min(p.x for p in projected), max(p.x for p in projected)
+        min_y, max_y = min(p.y for p in projected), max(p.y for p in projected)
+        w, h = max_x - min_x, max_y - min_y
+        if w <= 0 or h <= 0:
+            raise ValueError(f"invalid projected bounds for {name}: {w} x {h}")
+        camera.data.ortho_scale = max(h, w / aspect) / FRAME_FILL
+        fh = camera.data.ortho_scale
+        fw = fh * aspect
+        bounds = [min_x / fw, max_x / fw, min_y / fh, max_y / fh]
+        framing[name] = {
+            "center_error_x": round((bounds[0] + bounds[1]) * .5, 10),
+            "center_error_y": round((bounds[2] + bounds[3]) * .5, 10),
+            "fill_ratio": round(max(bounds[1] - bounds[0], bounds[3] - bounds[2]), 10),
+            "normalized_bounds": [round(v, 10) for v in bounds],
+            "ortho_scale": round(float(camera.data.ortho_scale), 10),
+        }
+        scene.render.filepath = str(out / f"view-{name}.png")
+        bpy.ops.render.render(write_still=True)
+    (out / "thumbnail.png").write_bytes((out / "view-hero.png").read_bytes())
+    return framing
 
 
-def sha256(path): return hashlib.sha256(path.read_bytes()).hexdigest()
-def digest(data): return hashlib.sha256(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+def sha256(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def digest(data):
+    return hashlib.sha256(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
+def generate_one(spec_path: Path, base: dict, variant_id: str | None):
+    spec, variant = resolve_variant(base, variant_id)
+    sku = spec["id"]
+    out = ROOT / ".artifacts" / "world-items" / sku
+    out.mkdir(parents=True, exist_ok=True)
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.context.preferences.filepaths.save_version = 0
+    materials = {name: make_material(name, data) for name, data in spec["materials"].items()}
+    parts = [make_part(part, materials) for part in spec["parts"]]
+    product = join_parts(parts, sku)
+    bpy.ops.object.select_all(action="DESELECT")
+    product.select_set(True)
+    bpy.context.view_layer.objects.active = product
+    bpy.ops.export_scene.gltf(filepath=str(out / f"{sku}.glb"), export_format="GLB", use_selection=True)
+    bpy.ops.export_scene.fbx(
+        filepath=str(out / f"{sku}.fbx"), use_selection=True, object_types={"MESH"},
+        axis_forward="-Z", axis_up="Y", bake_anim=False,
+    )
+    product.data.calc_loop_triangles()
+    lo, hi, center, size, points = world_bounds(product)
+    dimensions = [float(v) for v in size]
+    scene, camera = setup_scene(dimensions, center)
+    bpy.ops.wm.save_as_mainfile(filepath=str(out / f"{sku}.blend"))
+    framing = render_views(scene, camera, out, center, points)
+    expected = [f"{sku}.{ext}" for ext in ("blend", "glb", "fbx")] + ["thumbnail.png"] + [f"view-{name}.png" for name in VIEW_OFFSETS]
+    manifest = {
+        "schema_version": 2, "id": sku,
+        "source_spec": spec_path.relative_to(ROOT).as_posix(), "spec_sha256": sha256(spec_path),
+        "blender": bpy.app.version_string, "units": "metres", "dimensions_m_actual": dimensions,
+        "bounds_min_m": [float(v) for v in lo], "bounds_max_m": [float(v) for v in hi],
+        "bounds_center_m": [float(v) for v in center], "render_framing": framing,
+        "triangles": len(product.data.loop_triangles), "parts_count": len(spec["parts"]),
+        "formats": spec["formats"], "unity_status": spec["unity_status"],
+        "vrchat_status": spec["vrchat_status"], "booth_status": spec["booth_status"],
+        "sha256": {name: sha256(out / name) for name in expected},
+    }
+    if variant_id:
+        manifest.update({
+            "schema_version": 3, "base_id": base["id"], "variant_id": variant_id,
+            "resolved_spec_sha256": digest(spec), "variant_sha256": digest(variant),
+        })
+        (out / "resolved-spec.json").write_text(json.dumps(spec, indent=2) + "\n")
+    (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    print(json.dumps({"generated": sku, "variant": variant_id}))
 
 
 def main():
-    if bpy.app.version[:2] != (4,2): raise RuntimeError("Blender 4.2 is required")
-    spec_path, variant_id = args(); base=load_spec(spec_path); spec, variant=resolve_variant(base, variant_id); sku=spec["id"]; out=ROOT/".artifacts"/"world-items"/sku; out.mkdir(parents=True, exist_ok=True)
-    bpy.ops.wm.read_factory_settings(use_empty=True); bpy.context.preferences.filepaths.save_version=0; materials={n:make_material(n,d) for n,d in spec["materials"].items()}; parts=[make_part(p,materials) for p in spec["parts"]]; product=join_parts(parts,sku)
-    bpy.ops.object.select_all(action="DESELECT"); product.select_set(True); bpy.context.view_layer.objects.active=product; bpy.ops.export_scene.gltf(filepath=str(out/f"{sku}.glb"),export_format="GLB",use_selection=True); bpy.ops.export_scene.fbx(filepath=str(out/f"{sku}.fbx"),use_selection=True,object_types={"MESH"},axis_forward="-Z",axis_up="Y",bake_anim=False)
-    product.data.calc_loop_triangles(); lo,hi,center,size,points=world_bounds(product); dimensions=[float(v) for v in size]; scene,camera=setup_scene(dimensions,center); bpy.ops.wm.save_as_mainfile(filepath=str(out/f"{sku}.blend")); framing=render_views(scene,camera,out,center,points)
-    expected=[f"{sku}.{ext}" for ext in ("blend","glb","fbx")]+["thumbnail.png"]+[f"view-{n}.png" for n in VIEW_OFFSETS]
-    manifest={"schema_version":2,"id":sku,"source_spec":spec_path.relative_to(ROOT).as_posix(),"spec_sha256":sha256(spec_path),"blender":bpy.app.version_string,"units":"metres","dimensions_m_actual":dimensions,"bounds_min_m":[float(v) for v in lo],"bounds_max_m":[float(v) for v in hi],"bounds_center_m":[float(v) for v in center],"render_framing":framing,"triangles":len(product.data.loop_triangles),"parts_count":len(spec["parts"]),"formats":spec["formats"],"unity_status":spec["unity_status"],"vrchat_status":spec["vrchat_status"],"booth_status":spec["booth_status"],"sha256":{n:sha256(out/n) for n in expected}}
+    if bpy.app.version[:2] != (4, 2):
+        raise RuntimeError("Blender 4.2 is required")
+    spec_path, variant_id = args()
+    base = load_spec(spec_path)
     if variant_id:
-        manifest.update({"schema_version":3,"base_id":base["id"],"variant_id":variant_id,"resolved_spec_sha256":digest(spec),"variant_sha256":digest(variant)})
-        (out/"resolved-spec.json").write_text(json.dumps(spec,indent=2)+"\n")
-    (out/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
+        generate_one(spec_path, base, variant_id)
+        return
+    generate_one(spec_path, base, None)
+    for variant in base["variants"]:
+        generate_one(spec_path, base, variant["id"])
 
-if __name__ == "__main__": main()
+
+if __name__ == "__main__":
+    main()
