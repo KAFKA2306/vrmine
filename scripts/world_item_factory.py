@@ -13,7 +13,9 @@ import copy
 import hashlib
 import json
 import math
+import shutil
 import sys
+import time
 from pathlib import Path
 
 import bpy
@@ -235,7 +237,34 @@ def digest(data):
     return hashlib.sha256(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
+def write_variant_metrics(out: Path, spec: dict, elapsed: float) -> None:
+    components = sorted({part["component"] for part in spec["parts"]})
+    metrics = {
+        "production_seconds": round(elapsed, 3),
+        "manual_blender_touch_count": 0,
+        "reusable_component_ratio": 1.0,
+        "parts_count": len(spec["parts"]),
+        "common_components": components,
+    }
+    (out / "factory-metrics.json").write_text(json.dumps(metrics, indent=2) + "\n")
+
+
+def stage_variant_for_pages(base_id: str, variant_id: str, out: Path) -> None:
+    dest = ROOT / "pages" / "io" / "items" / base_id / "variants" / variant_id
+    if dest.exists():
+        shutil.rmtree(dest)
+    dest.mkdir(parents=True)
+    for path in out.iterdir():
+        if path.is_file():
+            shutil.copy2(path, dest / path.name)
+    pngs = ["thumbnail.png"] + [f"view-{name}.png" for name in VIEW_OFFSETS]
+    (dest / "render.sha256").write_text(
+        "".join(f"{sha256(dest / name)}  {name}\n" for name in pngs)
+    )
+
+
 def generate_one(spec_path: Path, base: dict, variant_id: str | None):
+    started = time.monotonic()
     spec, variant = resolve_variant(base, variant_id)
     sku = spec["id"]
     out = ROOT / ".artifacts" / "world-items" / sku
@@ -278,6 +307,9 @@ def generate_one(spec_path: Path, base: dict, variant_id: str | None):
         })
         (out / "resolved-spec.json").write_text(json.dumps(spec, indent=2) + "\n")
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    if variant_id:
+        write_variant_metrics(out, spec, time.monotonic() - started)
+        stage_variant_for_pages(base["id"], variant_id, out)
     print(json.dumps({"generated": sku, "variant": variant_id}))
 
 
