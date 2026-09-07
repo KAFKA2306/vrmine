@@ -41,6 +41,7 @@ tasks:
     desc: Validate World Design source records, schema, DRC, aggregate summary and generated spec provenance
     cmds:
       - node scripts/verify-world-design.mjs
+      - node scripts/world-design-to-blender-plan.mjs config/world-design/generated/cyber-alley-tea-nook.json
 
   merge:check:
     desc: PR Merge Gate — run repository checks that may decide integration into main
