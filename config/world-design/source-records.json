@@ -432,7 +432,16 @@
         "title": "Urban Slumber VRChat World [PCVR/Quest]",
         "creator": "Kaoch",
         "captured_at": "2026-09-07",
-        "public_popularity_signals": [],
+        "public_popularity_signals": [
+          {
+            "metric": "booth_likes",
+            "value": 289,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://booth.pm/ja/items/6499036",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
         "evidence_urls": [
           "https://booth.pm/ja/items/6499036"
         ]
@@ -1256,7 +1265,24 @@
         "title": "日本人向け 1対1お話しワールド NAGiSA [JP]",
         "creator": "エンジンかずみ",
         "captured_at": "2026-09-07",
-        "public_popularity_signals": [],
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 3443133,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://planetvrchat.net/archives/16389",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 75357,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://planetvrchat.net/archives/16389",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
         "evidence_urls": [
           "https://planetvrchat.net/archives/16389"
         ]
@@ -1363,7 +1389,24 @@
         "title": "ポピー横丁-Poppy Street-",
         "creator": "Coquelicotz",
         "captured_at": "2026-09-07",
-        "public_popularity_signals": [],
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 7304921,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_30716c54-3565-42f7-b7c5-d398ef4faac5",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 126007,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_30716c54-3565-42f7-b7c5-d398ef4faac5",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
         "evidence_urls": [
           "https://www.vrcw.net/world/detail/wrld_30716c54-3565-42f7-b7c5-d398ef4faac5"
         ]
@@ -1470,7 +1513,24 @@
         "title": "Luminous Hotel",
         "creator": "QuickBrown Design Studio",
         "captured_at": "2026-09-07",
-        "public_popularity_signals": [],
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 1039778,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://en.vrcw.net/world/detail/wrld_49a52af0-ecb1-469a-9e2e-b7217a625c4e",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 39301,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://en.vrcw.net/world/detail/wrld_49a52af0-ecb1-469a-9e2e-b7217a625c4e",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
         "evidence_urls": [
           "https://en.vrcw.net/world/detail/wrld_49a52af0-ecb1-469a-9e2e-b7217a625c4e"
         ]
@@ -1564,7 +1624,24 @@
         "title": "Cozy Home",
         "creator": "Benni1",
         "captured_at": "2026-09-07",
-        "public_popularity_signals": [],
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 161783,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_27bfa307-14dc-4d4b-a785-dcfdc0a1511a",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 2301,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_27bfa307-14dc-4d4b-a785-dcfdc0a1511a",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
         "evidence_urls": [
           "https://www.vrcw.net/world/detail/wrld_27bfa307-14dc-4d4b-a785-dcfdc0a1511a"
         ]
@@ -1673,7 +1750,24 @@
         "title": "at Home Chill by Ourai Inc.",
         "creator": "OURAI_VR",
         "captured_at": "2026-09-07",
-        "public_popularity_signals": [],
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 107377,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_946dadc7-122f-4f95-a34c-248f9732ec73",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 4689,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_946dadc7-122f-4f95-a34c-248f9732ec73",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
         "evidence_urls": [
           "https://www.vrcw.net/world/detail/wrld_946dadc7-122f-4f95-a34c-248f9732ec73"
         ]
@@ -1782,7 +1876,24 @@
         "title": "Cozy Calm",
         "creator": "~Sam",
         "captured_at": "2026-09-07",
-        "public_popularity_signals": [],
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 12395910,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_1e0e3667-af03-4ce2-9399-30014a109c48",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 141078,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_1e0e3667-af03-4ce2-9399-30014a109c48",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
         "evidence_urls": [
           "https://www.vrcw.net/world/detail/wrld_1e0e3667-af03-4ce2-9399-30014a109c48"
         ]
@@ -1892,7 +2003,24 @@
         "title": "宵帳 -Japanese chill room-",
         "creator": "もなぎ゜",
         "captured_at": "2026-09-07",
-        "public_popularity_signals": [],
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 57067,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_33cd61b3-1e66-4c97-8597-79651a0e9e4f",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 1562,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_33cd61b3-1e66-4c97-8597-79651a0e9e4f",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
         "evidence_urls": [
           "https://www.vrcw.net/world/detail/wrld_33cd61b3-1e66-4c97-8597-79651a0e9e4f"
         ]
@@ -2000,7 +2128,24 @@
         "title": "JUST Chill",
         "creator": "Nvia et al.",
         "captured_at": "2026-09-07",
-        "public_popularity_signals": [],
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 68419,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_a9934b54-e0c8-4a64-b8e2-dc1d217a7cfa",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 2551,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_a9934b54-e0c8-4a64-b8e2-dc1d217a7cfa",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
         "evidence_urls": [
           "https://www.vrcw.net/world/detail/wrld_a9934b54-e0c8-4a64-b8e2-dc1d217a7cfa"
         ]
