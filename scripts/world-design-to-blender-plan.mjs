@@ -34,9 +34,7 @@ const roomHeight = finite(build.ceiling_height_m, 'world_build.ceiling_height_m'
 const halfW = roomWidth / 2;
 const halfD = roomDepth / 2;
 const assertInside = (p, path) => {
-  if (Math.abs(p[0]) > halfW || Math.abs(p[1]) > halfD || p[2] < 0 || p[2] > roomHeight) {
-    fail(`${path} lies outside room bounds`);
-  }
+  if (Math.abs(p[0]) > halfW || Math.abs(p[1]) > halfD || p[2] < 0 || p[2] > roomHeight) fail(`${path} lies outside room bounds`);
 };
 
 const spawn = vec3(build.spawn?.position_m, 'world_build.spawn.position_m');
@@ -64,16 +62,35 @@ const circulation = waypoints.map((v, i) => {
   assertInside(p, `circulation[${i}]`);
   return p;
 });
+const clearance = finite(build.circulation?.minimum_clearance_m, 'world_build.circulation.minimum_clearance_m');
+if (clearance <= 0) fail('world_build.circulation.minimum_clearance_m must be > 0');
+for (const [i, p] of circulation.entries()) {
+  if (halfW - Math.abs(p[0]) < clearance / 2 || halfD - Math.abs(p[1]) < clearance / 2) fail(`circulation[${i}] violates half-clearance from room wall`);
+}
+const anchorDistance = Math.min(...circulation.map((p) => Math.hypot(p[0] - anchor[0], p[1] - anchor[1])));
+if (anchorDistance > finite(build.activity_anchor?.approach_clearance_m, 'world_build.activity_anchor.approach_clearance_m')) fail('circulation does not reach the activity anchor approach zone');
+const retreatDistance = Math.min(...circulation.map((p) => Math.hypot(p[0] - retreatCenter[0], p[1] - retreatCenter[1])));
+if (retreatDistance > clearance) fail('circulation does not reach the retreat zone');
+
+const windowZone = zones.find((z) => Number.isFinite(z.low_window_width_m) && Number.isFinite(z.low_window_height_m) && Number.isFinite(z.low_window_sill_m));
+if (!windowZone) fail('a physical view opening with width/height/sill is required');
 
 const roomPlan = {
-  schema_version: 2,
+  schema_version: 3,
   units: 'm',
   source_spec: specPath,
   source_spec_sha256: crypto.createHash('sha256').update(raw).digest('hex'),
   footprint: {width: roomWidth, depth: roomDepth, height: roomHeight},
+  view_opening: {
+    zone_id: requiredString(windowZone.zone_id, 'view opening zone_id'),
+    wall: 'positive_y',
+    width: finite(windowZone.low_window_width_m, `${windowZone.zone_id}.low_window_width_m`),
+    height: finite(windowZone.low_window_height_m, `${windowZone.zone_id}.low_window_height_m`),
+    sill: finite(windowZone.low_window_sill_m, `${windowZone.zone_id}.low_window_sill_m`)
+  },
   circulation_contract: {
     clearance: finite(spec.spatial_geometry?.corridor_clearance_m, 'spatial_geometry.corridor_clearance_m'),
-    minimum_clearance: finite(build.circulation?.minimum_clearance_m, 'world_build.circulation.minimum_clearance_m'),
+    minimum_clearance: clearance,
     door_height: finite(spec.spatial_geometry?.door_height_m, 'spatial_geometry.door_height_m'),
     door_width: finite(spec.spatial_geometry?.door_width_m, 'spatial_geometry.door_width_m'),
     waypoints_m: circulation
