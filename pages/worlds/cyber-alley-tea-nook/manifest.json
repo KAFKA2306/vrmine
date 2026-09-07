@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source_commit": "35098a83816b74a3446f82dc471abbb821bc9b0a",
+  "source_commit": "61cdf20324bac7fdb31ec1f022a7cd242a5c7ad3",
   "build_plan": ".artifacts/world-builds/cyber-alley-tea-nook/build-plan.json",
   "build_plan_sha256": "c874ac2ce6c417679fe7a0c28136ce6ea557486c7c0d7bcb921ac7303bd54953",
   "source_spec": "config/world-design/generated/cyber-alley-tea-nook.json",
@@ -160,7 +160,7 @@
   "outputs": {
     "blend": {
       "path": "world.blend",
-      "sha256": "6216e4feef2c19af3be69ca8be2efcad587c61d17da6c657fed05bcb5ea80c16"
+      "sha256": "f5643411b2f698a32383a06e5ae821942b8818f1060f416572c62b495f852250"
     },
     "glb": {
       "path": "world.glb",
@@ -169,23 +169,23 @@
     "renders": [
       {
         "path": "view-hero.png",
-        "sha256": "d479c1d227237efdba65a88a7ed43144ff112c4000c8dc2358fcfd7e3b8dc837"
+        "sha256": "5d172572b291a6ec4f80749e5db843099eb931c3e49baadc0dec998da3ad0bc1"
       },
       {
         "path": "view-top.png",
-        "sha256": "7e806f208792c275cca558bf96be34066d450ff8aca4247177e900377f6774b3"
+        "sha256": "7409972142f1ff0a8df89e3ee925194abd1a7fcc491dbbce679545d23553d7ff"
       },
       {
         "path": "view-social-core.png",
-        "sha256": "b379a8d2ded556f5c9e68d910e9ec7ad643011a9dcef1554e11ea00def8b0c0d"
+        "sha256": "6497841af1950efc4b1fa4f7fef6c3e2cc190ddb300d67dc672b7e097d5bf7ba"
       },
       {
         "path": "view-retreat.png",
-        "sha256": "ab1a53a08ca9c62fb6354b2a1f7e6b8a7a55d7fb7a831a75d3b9b217311ff162"
+        "sha256": "9948a403ce72cbd384f391979ad7ded89f3cc87f2541eb4cb4a0666c5f542c41"
       },
       {
         "path": "view-circulation.png",
-        "sha256": "365f4e34f8d6800191764cee05feb2b86c816e74d69c54598d406c099be985d9"
+        "sha256": "9addf3b7b128b5c94372030f839394b0f50801eb1d50102b460a338dbf4cea80"
       }
     ]
   }
