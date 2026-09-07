@@ -1,0 +1,128 @@
+{
+  "schema_version": 3,
+  "id": "cafe-pendant-lamp-01--short-cable",
+  "source_spec": "config/world-items/cafe-pendant-lamp-01.json",
+  "spec_sha256": "9187b36d238a8678428f58a753a40b7409e7c3a77e9af8a5f063388d8cd801c9",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.4399999976158142,
+    0.4399999976158142,
+    0.7949999570846558
+  ],
+  "bounds_min_m": [
+    -0.2199999988079071,
+    -0.2199999988079071,
+    0.4049999713897705
+  ],
+  "bounds_max_m": [
+    0.2199999988079071,
+    0.2199999988079071,
+    1.1999999284744263
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.8024999499320984
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 7.8e-09,
+      "center_error_y": 1.566e-07,
+      "fill_ratio": 0.8400000125,
+      "normalized_bounds": [
+        -0.2310871215,
+        0.2310871371,
+        -0.4199998497,
+        0.4200001628
+      ],
+      "ortho_scale": 0.9516295791
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": 3.07e-08,
+      "fill_ratio": 0.8400000098,
+      "normalized_bounds": [
+        -0.2269519269,
+        0.2269519269,
+        -0.4199999742,
+        0.4200000357
+      ],
+      "ortho_scale": 0.969368279
+    },
+    "rear": {
+      "center_error_x": 0.0,
+      "center_error_y": 3.07e-08,
+      "fill_ratio": 0.8400000098,
+      "normalized_bounds": [
+        -0.2269519269,
+        0.2269519269,
+        -0.4199999742,
+        0.4200000357
+      ],
+      "ortho_scale": 0.969368279
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": 4.61e-08,
+      "fill_ratio": 0.8399999791,
+      "normalized_bounds": [
+        -0.2269519269,
+        0.2269519269,
+        -0.4199999434,
+        0.4200000357
+      ],
+      "ortho_scale": 0.969368279
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 4.61e-08,
+      "fill_ratio": 0.8399999791,
+      "normalized_bounds": [
+        -0.2269519269,
+        0.2269519269,
+        -0.4199999434,
+        0.4200000357
+      ],
+      "ortho_scale": 0.969368279
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999954,
+      "normalized_bounds": [
+        -0.4199681956,
+        0.4199681956,
+        -0.4199999977,
+        0.4199999977
+      ],
+      "ortho_scale": 0.5238491893
+    }
+  },
+  "triangles": 7008,
+  "parts_count": 8,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "cafe-pendant-lamp-01--short-cable.blend": "f5a83d5f46445678b019ac3abf634a12a019bf368b3576ab0d84f430e0c736e9",
+    "cafe-pendant-lamp-01--short-cable.glb": "b6ca4f7143ce5fdf08f12d7f9b907815400ec8cfd92590f7307ede8f56f772c6",
+    "cafe-pendant-lamp-01--short-cable.fbx": "2f02c1239e968751e4535250b0365a144852f74848cd395ca01cf9e12e3a7bcd",
+    "thumbnail.png": "4c6f18c9488d4aaa114c517de9487597d19d4ffdb1e48cbfdeed281e64a3698b",
+    "view-hero.png": "4c6f18c9488d4aaa114c517de9487597d19d4ffdb1e48cbfdeed281e64a3698b",
+    "view-front.png": "515339fe221cafe0b10f41b2f9ec9ca4707fb5380afd5e02fdba2d43ad86cef2",
+    "view-rear.png": "f6c1bb442395b905d70a3e834f9e599118b830af04e9da538aeb9eb9df2f3eab",
+    "view-left.png": "c295791a633cf553097329b64fe7a922484d4e36ba44c913317898a499484c37",
+    "view-right.png": "56f5c4307f65cd5f7d823fe0a758ebc14f2241d56a70c7f9ca013f76c308a874",
+    "view-top.png": "89ae76ce5abcbf2de027ab67d497506531468ac24fe903766f2d206b1b00dac2"
+  },
+  "base_id": "cafe-pendant-lamp-01",
+  "variant_id": "short-cable",
+  "resolved_spec_sha256": "127e0fb948c40ba11989627db79d7d58a3d877a4feb70581b6ecfc488eb978f0",
+  "variant_sha256": "f88e3859d3898dfe596f40eb522adcdb14e6b57cf6f0edda9d10fa8a695d89db"
+}

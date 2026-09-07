@@ -1,23 +1,23 @@
 {
-  "schema_version": 2,
-  "id": "cafe-pendant-lamp-01",
+  "schema_version": 3,
+  "id": "cafe-pendant-lamp-01--wide-shade",
   "source_spec": "config/world-items/cafe-pendant-lamp-01.json",
   "spec_sha256": "9187b36d238a8678428f58a753a40b7409e7c3a77e9af8a5f063388d8cd801c9",
   "blender": "4.2.0",
   "units": "metres",
   "dimensions_m_actual": [
-    0.4399999976158142,
-    0.4399999976158142,
+    0.49000000953674316,
+    0.49000000953674316,
     1.0149998664855957
   ],
   "bounds_min_m": [
-    -0.2199999988079071,
-    -0.2199999988079071,
+    -0.24500000476837158,
+    -0.24500000476837158,
     0.1850000023841858
   ],
   "bounds_max_m": [
-    0.2199999988079071,
-    0.2199999988079071,
+    0.24500000476837158,
+    0.24500000476837158,
     1.1999999284744263
   ],
   "bounds_center_m": [
@@ -31,8 +31,8 @@
       "center_error_y": 0.0,
       "fill_ratio": 0.8399999859,
       "normalized_bounds": [
-        -0.1854996762,
-        0.1854996887,
+        -0.206579182,
+        0.2065791945,
         -0.419999993,
         0.419999993
       ],
@@ -43,8 +43,8 @@
       "center_error_y": -2.43e-08,
       "fill_ratio": 0.8399999942,
       "normalized_bounds": [
-        -0.1790227806,
-        0.1790227806,
+        -0.1993662834,
+        0.1993662834,
         -0.4200000213,
         0.4199999728
       ],
@@ -55,8 +55,8 @@
       "center_error_y": -2.43e-08,
       "fill_ratio": 0.8399999942,
       "normalized_bounds": [
-        -0.1790227806,
-        0.1790227806,
+        -0.1993662834,
+        0.1993662834,
         -0.4200000213,
         0.4199999728
       ],
@@ -67,8 +67,8 @@
       "center_error_y": -2.43e-08,
       "fill_ratio": 0.8399999942,
       "normalized_bounds": [
-        -0.1790227806,
-        0.1790227806,
+        -0.1993662834,
+        0.1993662834,
         -0.4200000213,
         0.4199999728
       ],
@@ -79,8 +79,8 @@
       "center_error_y": -2.43e-08,
       "fill_ratio": 0.8399999942,
       "normalized_bounds": [
-        -0.1790227806,
-        0.1790227806,
+        -0.1993662834,
+        0.1993662834,
         -0.4200000213,
         0.4199999728
       ],
@@ -88,15 +88,15 @@
     },
     "top": {
       "center_error_x": 0.0,
-      "center_error_y": -1.42e-08,
-      "fill_ratio": 0.8400000239,
+      "center_error_y": -1.28e-08,
+      "fill_ratio": 0.8399999581,
       "normalized_bounds": [
-        -0.4199681956,
-        0.4199681956,
-        -0.4200000262,
-        0.4199999977
+        -0.4199714857,
+        0.4199714857,
+        -0.4199999918,
+        0.4199999663
       ],
-      "ortho_scale": 0.5238491893
+      "ortho_scale": 0.5833729506
     }
   },
   "triangles": 7008,
@@ -110,15 +110,19 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-pendant-lamp-01.blend": "a331d50cf2fb3466eb4d93c236cbde88644b631963b6485c3c3cb3dda8b15607",
-    "cafe-pendant-lamp-01.glb": "f8925bf84368340257251544daaa907cad0249a4b3584e55753d0c2d2bdb18f8",
-    "cafe-pendant-lamp-01.fbx": "a80f65d67d7faf7e77de45e74ace73b23020126220ba92fa3362f422d5a67fa1",
-    "thumbnail.png": "67b29942ad41f39b7c5c81105fd221aea3453f600729dc9b6ea2d4a271831f83",
-    "view-hero.png": "67b29942ad41f39b7c5c81105fd221aea3453f600729dc9b6ea2d4a271831f83",
-    "view-front.png": "f63c525039c3ea047f6a817420d96c5e6f57ce6ad069542e3db6f3354776d4fa",
-    "view-rear.png": "bf4c67acdcf1c142b74c7ac66736aff29035f2e1e6b60ff192f8db4db29cea4f",
-    "view-left.png": "dad52aec567ef4bc4f38c44365c6a659bdd5a47048062c7ae43b71b759924c6e",
-    "view-right.png": "abea6bbcd825f6b5f19b5ed15dfd47891ab662e2e41d74dde522dbe4d1b33d95",
-    "view-top.png": "c2d9fc96287291af84dcf20510adaf65dc225d3dc53c053d82e8806e8fa29e67"
-  }
+    "cafe-pendant-lamp-01--wide-shade.blend": "b855f29c7d63322280cb70b8ce4dc7cc957f8072c105b9ff59f1d4fc48cd00de",
+    "cafe-pendant-lamp-01--wide-shade.glb": "03f2eb8096972d5cbce14f81f74e038995432231941646fd6227c271cae36960",
+    "cafe-pendant-lamp-01--wide-shade.fbx": "1b9124126815d62b2afb6efc7cd696ce73ebdd3c350173ea4a809061e6cffa5a",
+    "thumbnail.png": "5e20498bfcf160ffc372f9a58ac7d6d7d4620fa23c835817df3b1847e2ef568a",
+    "view-hero.png": "5e20498bfcf160ffc372f9a58ac7d6d7d4620fa23c835817df3b1847e2ef568a",
+    "view-front.png": "343ab85067797e95085e7e6baa0f7cddb988ea71e5016328899280411467f0f9",
+    "view-rear.png": "38cbf782813f7389cdde8f0baf19a0d552ab84f8b821a651b951ce097294ee5f",
+    "view-left.png": "b7a9e28936091556b738c8e3ccbcc8d27633d71c51fa01b6a9d580586a26347f",
+    "view-right.png": "0cf7b559bad408eb0dcaf7175365f5288283615c305e87394eda546f6aedee3c",
+    "view-top.png": "59515374f29821469fef6c9d23358bf249b0ad4b8701138da9894cc02e14527f"
+  },
+  "base_id": "cafe-pendant-lamp-01",
+  "variant_id": "wide-shade",
+  "resolved_spec_sha256": "0b2ead2b0b89dfde019f29368ec52d3413a35acee41e7b1e7b489dca6b87a918",
+  "variant_sha256": "4bad4eb67282e7c1fde7514b39898a61d0e955e4b04c2ddcda5e58bd6e4e5edf"
 }
