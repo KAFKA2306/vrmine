@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WorldDesignSpec",
+  "version": "1.1.0",
+  "type": "object",
+  "required": [
+    "meta",
+    "spatial_geometry",
+    "social_clusters",
+    "retreat_protocol",
+    "optical_lighting",
+    "media_governance",
+    "runtime_budget",
+    "provenance"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "spec_version",
+        "theme_name",
+        "primary_intents",
+        "capacity_target",
+        "platform_target"
+      ],
+      "properties": {
+        "spec_version": {
+          "type": "string"
+        },
+        "theme_name": {
+          "type": "string"
+        },
+        "primary_intents": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "home",
+              "social",
+              "sleep",
+              "cafe",
+              "hotel",
+              "exhibition",
+              "photo",
+              "video",
+              "music",
+              "game",
+              "other"
+            ]
+          }
+        },
+        "capacity_target": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 40
+        },
+        "platform_target": {
+          "enum": [
+            "PC_ONLY",
+            "CROSS_PLATFORM_QUEST"
+          ]
+        }
+      }
+    },
+    "spatial_geometry": {
+      "type": "object",
+      "required": [
+        "overall_width_m",
+        "overall_depth_m",
+        "corridor_clearance_m",
+        "door_height_m",
+        "door_width_m",
+        "furniture_scale_factor",
+        "zones"
+      ],
+      "properties": {
+        "overall_width_m": {
+          "type": "number"
+        },
+        "overall_depth_m": {
+          "type": "number"
+        },
+        "corridor_clearance_m": {
+          "type": "number",
+          "minimum": 1
+        },
+        "door_height_m": {
+          "type": "number",
+          "minimum": 1.5
+        },
+        "door_width_m": {
+          "type": "number",
+          "minimum": 0.7
+        },
+        "furniture_scale_factor": {
+          "type": "number"
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "social_clusters": {
+      "type": "object"
+    },
+    "retreat_protocol": {
+      "type": "object"
+    },
+    "optical_lighting": {
+      "type": "object"
+    },
+    "media_governance": {
+      "type": "object"
+    },
+    "runtime_budget": {
+      "type": "object"
+    },
+    "provenance": {
+      "type": "object"
+    }
+  }
+}
