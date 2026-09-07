@@ -132,34 +132,121 @@ jobs:
           sudo apt-get install -y libegl1 libgl1-mesa-dri
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
-      - name: Generate and verify canonical SKU
+      - name: Generate canonical SKU
+        id: generation
         if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
+        continue-on-error: true
+        env:
+          SPEC_PATH: ${{ steps.select.outputs.spec_path }}
+          SKU: ${{ steps.select.outputs.sku }}
+          INPUT_DIGEST: ${{ steps.evidence.outputs.input_digest }}
+        run: |
+          set -uo pipefail
+          out=".artifacts/world-items/${SKU}"
+          mkdir -p "$out"
+          started_epoch="$(date +%s)"
+          started_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          set +e
+          blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- "$SPEC_PATH"
+          exit_code=$?
+          set -e
+          ended_epoch="$(date +%s)"
+          ended_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          jq -n \
+            --arg sku "$SKU" \
+            --arg source_sha "$GITHUB_SHA" \
+            --arg input_digest "$INPUT_DIGEST" \
+            --arg run_id "$GITHUB_RUN_ID" \
+            --argjson run_attempt "$GITHUB_RUN_ATTEMPT" \
+            --arg started_at "$started_at" \
+            --arg ended_at "$ended_at" \
+            --argjson elapsed_seconds "$((ended_epoch-started_epoch))" \
+            --argjson generation_exit_code "$exit_code" \
+            '{schema_version:1,sku:$sku,source_sha:$source_sha,input_digest:$input_digest,run_id:$run_id,run_attempt:$run_attempt,stage:"generation",started_at:$started_at,ended_at:$ended_at,elapsed_seconds:$elapsed_seconds,generation_exit_code:$generation_exit_code,verification_exit_code:null,status:(if $generation_exit_code==0 then "generated" else "generation_failed" end),outputs:[]}' \
+            > "$out/factory-run-state.json.tmp"
+          mv "$out/factory-run-state.json.tmp" "$out/factory-run-state.json"
+          exit "$exit_code"
+
+      - name: Verify canonical SKU
+        id: verification
+        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true' && steps.generation.outcome == 'success'
+        continue-on-error: true
+        env:
+          SPEC_PATH: ${{ steps.select.outputs.spec_path }}
+          SKU: ${{ steps.select.outputs.sku }}
+        run: |
+          set -uo pipefail
+          out=".artifacts/world-items/${SKU}"
+          started_epoch="$(date +%s)"
+          started_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          set +e
+          blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- "$SPEC_PATH"
+          exit_code=$?
+          set -e
+          ended_epoch="$(date +%s)"
+          ended_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          jq \
+            --arg started_at "$started_at" \
+            --arg ended_at "$ended_at" \
+            --argjson elapsed_seconds "$((ended_epoch-started_epoch))" \
+            --argjson verification_exit_code "$exit_code" \
+            '.stage="verification" | .verification_started_at=$started_at | .verification_ended_at=$ended_at | .verification_elapsed_seconds=$elapsed_seconds | .verification_exit_code=$verification_exit_code | .status=(if $verification_exit_code==0 then "verified" else "verification_failed" end)' \
+            "$out/factory-run-state.json" > "$out/factory-run-state.json.tmp"
+          mv "$out/factory-run-state.json.tmp" "$out/factory-run-state.json"
+          exit "$exit_code"
+
+      - name: Finalize factory evidence
+        if: always() && steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
         env:
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
           SKU: ${{ steps.select.outputs.sku }}
         run: |
           set -euo pipefail
-          started="$(date +%s)"
-          blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- "$SPEC_PATH"
-          blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- "$SPEC_PATH"
-          elapsed="$(( $(date +%s) - started ))"
           out=".artifacts/world-items/${SKU}"
+          mkdir -p "$out"
+          if [ ! -s "$out/factory-run-state.json" ]; then
+            jq -n --arg sku "$SKU" --arg source_sha "$GITHUB_SHA" --arg run_id "$GITHUB_RUN_ID" --argjson run_attempt "$GITHUB_RUN_ATTEMPT" '{schema_version:1,sku:$sku,source_sha:$source_sha,run_id:$run_id,run_attempt:$run_attempt,stage:"pre_generation",status:"incomplete",generation_exit_code:null,verification_exit_code:null,outputs:[]}' > "$out/factory-run-state.json"
+          fi
+          outputs='[]'
+          while IFS= read -r -d '' file; do
+            rel="${file#${out}/}"
+            sha="$(sha256sum "$file" | awk '{print $1}')"
+            bytes="$(stat -c %s "$file")"
+            outputs="$(jq --arg path "$rel" --arg sha256 "$sha" --argjson bytes "$bytes" '. + [{path:$path,sha256:$sha256,bytes:$bytes}]' <<<"$outputs")"
+          done < <(find "$out" -maxdepth 1 -type f ! -name 'factory-run-state.json' ! -name 'factory-metrics.json' -print0 | sort -z)
+          jq --argjson outputs "$outputs" '.outputs=$outputs' "$out/factory-run-state.json" > "$out/factory-run-state.json.tmp"
+          mv "$out/factory-run-state.json.tmp" "$out/factory-run-state.json"
+          generation_seconds="$(jq -r '.elapsed_seconds // 0' "$out/factory-run-state.json")"
+          verification_seconds="$(jq -r '.verification_elapsed_seconds // 0' "$out/factory-run-state.json")"
           jq -n \
-            --argjson production_seconds "$elapsed" \
+            --argjson production_seconds "$((generation_seconds+verification_seconds))" \
             --argjson manual_blender_touch_count 0 \
             --argjson reusable_component_ratio 1.0 \
             --argjson parts_count "$(jq '.parts | length' "$SPEC_PATH")" \
             --arg common_components "$(jq -r '[.parts[].component] | unique | join(",")' "$SPEC_PATH")" \
-            '{production_seconds:$production_seconds,manual_blender_touch_count:$manual_blender_touch_count,reusable_component_ratio:$reusable_component_ratio,parts_count:$parts_count,common_components:($common_components|split(","))}' \
+            --arg status "$(jq -r .status "$out/factory-run-state.json")" \
+            '{production_seconds:$production_seconds,manual_blender_touch_count:$manual_blender_touch_count,reusable_component_ratio:$reusable_component_ratio,parts_count:$parts_count,common_components:($common_components|split(",")),run_status:$status}' \
             > "$out/factory-metrics.json"
 
       - uses: actions/upload-artifact@v4
-        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
+        if: always() && steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
         with:
           name: world-item-${{ steps.select.outputs.sku }}-${{ steps.pr.outputs.head_sha }}
           path: .artifacts/world-items/${{ steps.select.outputs.sku }}/
           if-no-files-found: error
           retention-days: 7
+
+      - name: Fail after preserving incomplete factory evidence
+        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true' && (steps.generation.outcome != 'success' || steps.verification.outcome != 'success')
+        env:
+          SKU: ${{ steps.select.outputs.sku }}
+        run: |
+          set -euo pipefail
+          state=".artifacts/world-items/${SKU}/factory-run-state.json"
+          test -s "$state"
+          jq . "$state"
+          echo "Generation/verification failed; partial real outputs and factory-run-state.json were preserved as the workflow artifact." >&2
+          exit 1
 
       - name: Publish product files and multi-angle renders into PR branch
         if: steps.select.outputs.run == 'true'
