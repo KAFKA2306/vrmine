@@ -97,10 +97,30 @@ jobs:
           WORLD_ID: ${{ steps.select.outputs.world_id }}
           SOURCE_COMMIT: ${{ steps.pr.outputs.head_sha }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
           out=".artifacts/world-builds/${WORLD_ID}"
-          blender -b --python-exit-code 1 --python scripts/world_build_factory.py -- "$out/build-plan.json" "$out"
-          blender -b --python-exit-code 1 --python scripts/verify_world_build.py -- "$out/build-plan.json" "$out"
+          : > /tmp/world-build.log
+          set +e
+          blender -b --python-exit-code 1 --python scripts/world_build_factory.py -- "$out/build-plan.json" "$out" >> /tmp/world-build.log 2>&1
+          status=$?
+          if [ "$status" -eq 0 ]; then
+            blender -b --python-exit-code 1 --python scripts/verify_world_build.py -- "$out/build-plan.json" "$out" >> /tmp/world-build.log 2>&1
+            status=$?
+          fi
+          set -e
+          cat /tmp/world-build.log
+          if [ "$status" -ne 0 ]; then
+            tail -n 80 /tmp/world-build.log > /tmp/world-build-tail.log
+            {
+              echo '<!-- world-build-failure-log -->'
+              echo 'World Build failed at the exact PR head. Last log lines:'
+              echo '```text'
+              cat /tmp/world-build-tail.log
+              echo '```'
+            } > /tmp/world-build-comment.md
+            gh pr comment "${{ steps.pr.outputs.number }}" --repo "$GITHUB_REPOSITORY" --body-file /tmp/world-build-comment.md
+            exit "$status"
+          fi
 
       - name: Prove spatial DRC rejects a broken seat placement
         env:
