@@ -269,6 +269,7 @@ def main():
     scene.world.use_nodes = True
     scene.world.node_tree.nodes['Background'].inputs[0].default_value = (.12, .12, .12, 1)
     scene.render.engine = 'BLENDER_EEVEE_NEXT'
+    scene.eevee.taa_render_samples = 32
     scene.cycles.seed = 191
     scene.render.resolution_x, scene.render.resolution_y = 600, 500
     scene.render.resolution_percentage = 100
