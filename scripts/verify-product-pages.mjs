@@ -50,6 +50,37 @@ for(let i=0;i<products.length;i+=6) {
   }));
 }
 
+// Materialized variants are published product evidence too. The tracked manifest
+// remains the authority; production must return the same manifest, GLB, and all
+// six direct renders with matching hashes. Metadata-only planned variants are
+// intentionally excluded because they do not have generated artifacts yet.
+let variantCount = 0;
+for (const spec of products) {
+  const variants = (spec.variants || []).filter(variant => variant.part_overrides || variant.material_overrides);
+  for (const variant of variants) {
+    const authorityRoot = join('pages', 'io', 'items', spec.id, 'variants', variant.id);
+    const authorityManifestPath = join(authorityRoot, 'manifest.json');
+    assert(existsSync(authorityManifestPath), `${spec.id}/${variant.id}: tracked variant manifest missing`);
+    const manifest = JSON.parse(readFileSync(authorityManifestPath, 'utf8'));
+    const base = `io/items/${spec.id}/variants/${variant.id}/`;
+    const publishedManifest = JSON.parse(await read(base + 'manifest.json'));
+    assert.deepEqual(publishedManifest, manifest, `${spec.id}/${variant.id}: production manifest differs`);
+    assert.equal(manifest.base_id, spec.id, `${spec.id}/${variant.id}: manifest base_id differs`);
+    assert.equal(manifest.variant_id, variant.id, `${spec.id}/${variant.id}: manifest variant_id differs`);
+
+    const glbName = `${manifest.id}.glb`;
+    const glb = await read(base + glbName, true);
+    assert.equal(sha256(glb), manifest.sha256[glbName], `${spec.id}/${variant.id}: production GLB hash differs`);
+
+    for (const renderName of ['view-hero.png','view-front.png','view-rear.png','view-left.png','view-right.png','view-top.png']) {
+      const image = await read(base + renderName, true);
+      assert.equal(image.subarray(0,8).toString('hex'), '89504e470d0a1a0a', `${spec.id}/${variant.id}/${renderName}: invalid PNG`);
+      assert.equal(sha256(image), manifest.sha256[renderName], `${spec.id}/${variant.id}/${renderName}: production render hash differs`);
+    }
+    variantCount += 1;
+  }
+}
+
 // For remote production verification, repository-tracked manifests are the
 // authority. For local/fixture verification, only worlds present in that target
 // are checked so product-only fixtures remain intentionally scoped.
@@ -78,4 +109,4 @@ for (const worldId of worldIds) {
     assert.equal(sha256(image), render.sha256, `${worldId}/${render.path}: production render hash differs`);
   }
 }
-console.log(`PASS ${target}: Home → Gallery → Product navigation; ${products.length} canonical/catalog/sitemap IDs; all product pages, specs and hero PNGs; ${worldIds.length} World Build manifest/plan/GLB/render sets`);
+console.log(`PASS ${target}: Home → Gallery → Product navigation; ${products.length} canonical/catalog/sitemap IDs; all product pages/specs/hero PNGs; ${variantCount} materialized variant manifest/GLB/render sets; ${worldIds.length} World Build manifest/plan/GLB/render sets`);
