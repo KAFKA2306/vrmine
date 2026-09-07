@@ -166,6 +166,7 @@ def main():
     scene = bpy.context.scene
     scene.unit_settings.system = "METRIC"
     scene.unit_settings.scale_length = 1.0
+    # Headless factory settings may leave the scene without a World datablock.
     if scene.world is None:
         scene.world = bpy.data.worlds.new("WorldBuildWorld")
     scene.world.color = (0.018, 0.022, 0.028)
