@@ -1,4 +1,4 @@
-"""Verify one generated world-item SKU with Blender 4.2."""
+"""Verify generated world-item base and variant artifacts with Blender 4.2."""
 from __future__ import annotations
 
 import copy
@@ -16,6 +16,8 @@ CENTER_ERROR_LIMIT = 0.02
 FILL_RATIO_MIN = 0.80
 FILL_RATIO_MAX = 0.88
 FRAME_LIMIT = 0.500001
+PART_OVERRIDE_FIELDS = {"radius", "height", "size", "position", "rotation_deg", "vertices", "material"}
+MATERIAL_OVERRIDE_FIELDS = {"base_color", "roughness", "metallic"}
 
 
 def args() -> tuple[Path, str | None]:
@@ -32,9 +34,7 @@ def digest(path: Path) -> str:
 
 
 def data_digest(data: object) -> str:
-    return hashlib.sha256(
-        json.dumps(data, sort_keys=True, separators=(",", ":")).encode()
-    ).hexdigest()
+    return hashlib.sha256(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
 def expected_variant_spec(base: dict, variant_id: str) -> tuple[dict, dict]:
@@ -42,15 +42,18 @@ def expected_variant_spec(base: dict, variant_id: str) -> tuple[dict, dict]:
     if len(matches) != 1:
         raise AssertionError(f"variant must resolve exactly once: {variant_id}")
     variant = matches[0]
+    unknown = set(variant) - {"id", "part_overrides", "material_overrides"}
+    if unknown:
+        raise AssertionError(f"variant {variant_id}: unsupported keys {sorted(unknown)}")
     expected = copy.deepcopy(base)
     parts = {part["name"]: part for part in expected["parts"]}
     for name, override in variant.get("part_overrides", {}).items():
-        if name not in parts:
-            raise AssertionError(f"variant references missing part: {name}")
+        if name not in parts or set(override) - PART_OVERRIDE_FIELDS:
+            raise AssertionError(f"variant {variant_id}: invalid part override {name}")
         parts[name].update(override)
     for name, override in variant.get("material_overrides", {}).items():
-        if name not in expected["materials"]:
-            raise AssertionError(f"variant references missing material: {name}")
+        if name not in expected["materials"] or set(override) - MATERIAL_OVERRIDE_FIELDS:
+            raise AssertionError(f"variant {variant_id}: invalid material override {name}")
         expected["materials"][name].update(override)
     expected["id"] = f'{base["id"]}--{variant_id}'
     expected["base_id"] = base["id"]
@@ -73,11 +76,7 @@ def assert_mesh_import(path: Path, kind: str) -> None:
         raise AssertionError(f"no mesh geometry after {kind} import")
 
 
-def main() -> None:
-    if bpy.app.version[:2] != (4, 2):
-        raise RuntimeError("Blender 4.2 is required")
-    spec_path, variant_id = args()
-    base = json.loads(spec_path.read_text())
+def verify_one(spec_path: Path, base: dict, variant_id: str | None) -> None:
     expected_spec = base
     expected_variant = None
     sku = base["id"]
@@ -88,7 +87,7 @@ def main() -> None:
     out = ROOT / ".artifacts" / "world-items" / sku
     manifest_path = out / "manifest.json"
     if not manifest_path.is_file():
-        raise AssertionError("manifest missing")
+        raise AssertionError(f"manifest missing: {sku}")
     manifest = json.loads(manifest_path.read_text())
     if manifest["id"] != sku or manifest["source_spec"] != spec_path.relative_to(ROOT).as_posix():
         raise AssertionError("manifest identity mismatch")
@@ -130,9 +129,9 @@ def main() -> None:
     for name in expected_pngs:
         path = out / name
         if not path.is_file() or path.stat().st_size < 1024:
-            raise AssertionError(f"render missing or too small: {name}")
+            raise AssertionError(f"render missing or too small: {sku}/{name}")
         if path.read_bytes()[:8] != PNG_MAGIC:
-            raise AssertionError(f"not PNG: {name}")
+            raise AssertionError(f"not PNG: {sku}/{name}")
 
     framing = manifest.get("render_framing")
     if not isinstance(framing, dict) or set(framing) != set(EXPECTED_VIEWS):
@@ -146,9 +145,7 @@ def main() -> None:
         if len(bounds) != 4:
             raise AssertionError(f"{view}: normalized bounds must have four values")
         if abs(center_x) > CENTER_ERROR_LIMIT or abs(center_y) > CENTER_ERROR_LIMIT:
-            raise AssertionError(
-                f"{view}: render center error exceeded: x={center_x}, y={center_y}"
-            )
+            raise AssertionError(f"{view}: render center error exceeded: x={center_x}, y={center_y}")
         if not FILL_RATIO_MIN <= fill_ratio <= FILL_RATIO_MAX:
             raise AssertionError(f"{view}: unexpected fill ratio: {fill_ratio}")
         if min(bounds) < -FRAME_LIMIT or max(bounds) > FRAME_LIMIT:
@@ -166,6 +163,22 @@ def main() -> None:
     if manifest["triangles"] <= 0 or manifest["triangles"] > 10000:
         raise AssertionError(f"triangle budget exceeded: {manifest['triangles']}")
     print(json.dumps({"id": sku, "variant": variant_id, "formats": "PASS", "geometry": "PASS", "renders": "PASS", "framing": "PASS", "triangles": manifest["triangles"]}))
+
+
+def main() -> None:
+    if bpy.app.version[:2] != (4, 2):
+        raise RuntimeError("Blender 4.2 is required")
+    spec_path, variant_id = args()
+    base = json.loads(spec_path.read_text())
+    if variant_id:
+        verify_one(spec_path, base, variant_id)
+        return
+    verify_one(spec_path, base, None)
+    variant_ids = [variant.get("id") for variant in base.get("variants", [])]
+    if any(not value for value in variant_ids) or len(variant_ids) != len(set(variant_ids)):
+        raise AssertionError("variant ids must be non-empty and unique")
+    for declared_variant in variant_ids:
+        verify_one(spec_path, base, declared_variant)
 
 
 if __name__ == "__main__":
