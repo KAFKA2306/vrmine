@@ -1,0 +1,2242 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-09-07",
+  "selection_method": "Public VRChat world pages and BOOTH product pages/indexes accessible without authentication. Only published facts are populated; unknown design dimensions remain null.",
+  "records": [
+    {
+      "id": "booth-nook-house",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://booth.pm/ja/items/5838750",
+        "title": "【VRChat向けワールド】ヌックのある家",
+        "creator": "かなめりぜ不動産",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [],
+        "evidence_urls": [
+          "https://booth.pm/ja/items/5838750"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "social",
+          "sleep"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": true,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": null
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": null
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://booth.pm/ja/items/5838750",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://booth.pm/ja/items/5838750",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://booth.pm/ja/items/5838750",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "booth-nami-no-ue",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://booth.pm/ja/items/7139543",
+        "title": "VRChat想定ワールド3Dモデル \"ギャラリーカフェ「なみのうえ」\"",
+        "creator": "SC工務店",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [],
+        "evidence_urls": [
+          "https://booth.pm/ja/items/7139543"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "social",
+          "photo",
+          "exhibition"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": true,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": null
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": 2500
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://booth.pm/ja/items/7139543",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://booth.pm/ja/items/7139543",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "production.price_jpy"
+          ],
+          "url": "https://booth.pm/ja/items/7139543",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://booth.pm/ja/items/7139543",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "booth-autumn-midnight",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://soooma01.booth.pm/items/7477498",
+        "title": "【販売ワールド】Autumn Midnight (部屋別販売あり)",
+        "creator": "Soooma VR Store",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [],
+        "evidence_urls": [
+          "https://soooma01.booth.pm/items/7477498"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "social",
+          "sleep"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": null,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": 87
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": 7500
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://soooma01.booth.pm/items/7477498",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.download_size_mb"
+          ],
+          "url": "https://soooma01.booth.pm/items/7477498",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "production.price_jpy"
+          ],
+          "url": "https://soooma01.booth.pm/items/7477498",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://soooma01.booth.pm/items/7477498",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "booth-luminous-hotel",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://booth.pm/ja/items/5960726",
+        "title": "【販売ワールド】Luminous Hotel【PCVR／Quest】",
+        "creator": "QuickBrown Design Studio",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [],
+        "evidence_urls": [
+          "https://booth.pm/ja/items/5960726"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "hotel",
+          "home",
+          "sleep",
+          "social"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": true,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": null
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": null
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://booth.pm/ja/items/5960726",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://booth.pm/ja/items/5960726",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://booth.pm/ja/items/5960726",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "booth-urban-slumber",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://booth.pm/ja/items/6499036",
+        "title": "Urban Slumber VRChat World [PCVR/Quest]",
+        "creator": "Kaoch",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [
+          {
+            "metric": "booth_likes",
+            "value": 289,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://booth.pm/ja/items/6499036",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
+        "evidence_urls": [
+          "https://booth.pm/ja/items/6499036"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "sleep"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": true,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": 35.01
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": 3500
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://booth.pm/ja/items/6499036",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://booth.pm/ja/items/6499036",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.download_size_mb"
+          ],
+          "url": "https://booth.pm/ja/items/6499036",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "production.price_jpy"
+          ],
+          "url": "https://booth.pm/ja/items/6499036",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://booth.pm/ja/items/6499036",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "booth-yoi-tobari",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://booth.pm/ja/items/7664565",
+        "title": "【VRChat向けワールド】旅館の一室「宵帳」",
+        "creator": "モサンゴ屋",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [],
+        "evidence_urls": [
+          "https://booth.pm/ja/items/7664565"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "sleep"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": true,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": null
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": 480
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://booth.pm/ja/items/7664565",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://booth.pm/ja/items/7664565",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "production.price_jpy"
+          ],
+          "url": "https://booth.pm/ja/items/7664565",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://booth.pm/ja/items/7664565",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "booth-luminous-oasis",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://lura.booth.pm/items/8148275",
+        "title": "【販売ワールド】Luminous Oasis【PCVR】",
+        "creator": "QuickBrown Design Studio",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [],
+        "evidence_urls": [
+          "https://lura.booth.pm/items/8148275"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "social",
+          "photo"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": false,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": null
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": null
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://lura.booth.pm/items/8148275",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://lura.booth.pm/items/8148275",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://lura.booth.pm/items/8148275",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "booth-oceanroom",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://meefee-oxo.booth.pm/items/4891829",
+        "title": "OceanRoom",
+        "creator": "みぃふぃ",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [],
+        "evidence_urls": [
+          "https://www.vrcw.net/product/type/world"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "social"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": null,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": null
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": 1300
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://www.vrcw.net/product/type/world",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "production.price_jpy"
+          ],
+          "url": "https://www.vrcw.net/product/type/world",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://www.vrcw.net/product/type/world",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "booth-resort-japandi",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://lafille.booth.pm/items/8347055",
+        "title": "Collection House 02 - Resort Japandi -",
+        "creator": "tenkomori",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [],
+        "evidence_urls": [
+          "https://www.vrcw.net/product/detail/6533"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "social"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": null,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": null
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": 3000
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://www.vrcw.net/product/detail/6533",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "production.price_jpy"
+          ],
+          "url": "https://www.vrcw.net/product/detail/6533",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://www.vrcw.net/product/detail/6533",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "booth-industrial-container-house",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://mikage-ya.booth.pm/items/5922727",
+        "title": "Industrial container house",
+        "creator": "みかげ",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [],
+        "evidence_urls": [
+          "https://www.vrcw.net/product/type/world"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "social"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": null,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": null
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": 2000
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://www.vrcw.net/product/type/world",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "production.price_jpy"
+          ],
+          "url": "https://www.vrcw.net/product/type/world",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://www.vrcw.net/product/type/world",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "booth-grand-villa",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://waka123.booth.pm/items/8136397",
+        "title": "GRAND VILLA",
+        "creator": "Waka",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [],
+        "evidence_urls": [
+          "https://www.vrcw.net/product/category/house"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "social"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": null,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": null
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": 3800
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://www.vrcw.net/product/category/house",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "production.price_jpy"
+          ],
+          "url": "https://www.vrcw.net/product/category/house",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://www.vrcw.net/product/category/house",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "booth-swan",
+      "source": {
+        "source_type": "BOOTH",
+        "canonical_url": "https://birdhouse-design.booth.pm/items/8130311",
+        "title": "Swan【ホームワールド・スワン】",
+        "creator": "Birdhouse Design",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [],
+        "evidence_urls": [
+          "https://www.vrcw.net/product/category/house"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "social"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": null,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": null
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": 3500
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://www.vrcw.net/product/category/house",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "production.price_jpy"
+          ],
+          "url": "https://www.vrcw.net/product/category/house",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://www.vrcw.net/product/category/house",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "vrc-nagisa",
+      "source": {
+        "source_type": "VRChat",
+        "canonical_url": "https://vrchat.com/home/world/wrld_1b94e327-036b-4d09-81be-e898d71f02cb/info",
+        "title": "日本人向け 1対1お話しワールド NAGiSA [JP]",
+        "creator": "エンジンかずみ",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 3443133,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://planetvrchat.net/archives/16389",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 75357,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://planetvrchat.net/archives/16389",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
+        "evidence_urls": [
+          "https://planetvrchat.net/archives/16389"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "social"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": true,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": 38.03
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": null
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://planetvrchat.net/archives/16389",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://planetvrchat.net/archives/16389",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.download_size_mb"
+          ],
+          "url": "https://planetvrchat.net/archives/16389",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://planetvrchat.net/archives/16389",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "vrc-poppy-street",
+      "source": {
+        "source_type": "VRChat",
+        "canonical_url": "https://vrchat.com/home/world/wrld_30716c54-3565-42f7-b7c5-d398ef4faac5/info",
+        "title": "ポピー横丁-Poppy Street-",
+        "creator": "Coquelicotz",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 7304921,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_30716c54-3565-42f7-b7c5-d398ef4faac5",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 126007,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_30716c54-3565-42f7-b7c5-d398ef4faac5",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
+        "evidence_urls": [
+          "https://www.vrcw.net/world/detail/wrld_30716c54-3565-42f7-b7c5-d398ef4faac5"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "social"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": false,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": 92.91
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": null
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_30716c54-3565-42f7-b7c5-d398ef4faac5",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_30716c54-3565-42f7-b7c5-d398ef4faac5",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.download_size_mb"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_30716c54-3565-42f7-b7c5-d398ef4faac5",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_30716c54-3565-42f7-b7c5-d398ef4faac5",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "vrc-luminous-hotel",
+      "source": {
+        "source_type": "VRChat",
+        "canonical_url": "https://vrchat.com/home/world/wrld_49a52af0-ecb1-469a-9e2e-b7217a625c4e/info",
+        "title": "Luminous Hotel",
+        "creator": "QuickBrown Design Studio",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 1039778,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://en.vrcw.net/world/detail/wrld_49a52af0-ecb1-469a-9e2e-b7217a625c4e",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 39301,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://en.vrcw.net/world/detail/wrld_49a52af0-ecb1-469a-9e2e-b7217a625c4e",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
+        "evidence_urls": [
+          "https://en.vrcw.net/world/detail/wrld_49a52af0-ecb1-469a-9e2e-b7217a625c4e"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "hotel",
+          "home",
+          "sleep",
+          "social"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": null,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": null
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": null
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://en.vrcw.net/world/detail/wrld_49a52af0-ecb1-469a-9e2e-b7217a625c4e",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://en.vrcw.net/world/detail/wrld_49a52af0-ecb1-469a-9e2e-b7217a625c4e",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "vrc-cozy-home",
+      "source": {
+        "source_type": "VRChat",
+        "canonical_url": "https://vrchat.com/home/world/wrld_27bfa307-14dc-4d4b-a785-dcfdc0a1511a/info",
+        "title": "Cozy Home",
+        "creator": "Benni1",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 161783,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_27bfa307-14dc-4d4b-a785-dcfdc0a1511a",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 2301,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_27bfa307-14dc-4d4b-a785-dcfdc0a1511a",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
+        "evidence_urls": [
+          "https://www.vrcw.net/world/detail/wrld_27bfa307-14dc-4d4b-a785-dcfdc0a1511a"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "social",
+          "video"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": true,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": 96.51
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": null
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_27bfa307-14dc-4d4b-a785-dcfdc0a1511a",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_27bfa307-14dc-4d4b-a785-dcfdc0a1511a",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.download_size_mb"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_27bfa307-14dc-4d4b-a785-dcfdc0a1511a",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_27bfa307-14dc-4d4b-a785-dcfdc0a1511a",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "vrc-at-home-chill",
+      "source": {
+        "source_type": "VRChat",
+        "canonical_url": "https://vrchat.com/home/world/wrld_946dadc7-122f-4f95-a34c-248f9732ec73/info",
+        "title": "at Home Chill by Ourai Inc.",
+        "creator": "OURAI_VR",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 107377,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_946dadc7-122f-4f95-a34c-248f9732ec73",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 4689,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_946dadc7-122f-4f95-a34c-248f9732ec73",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
+        "evidence_urls": [
+          "https://www.vrcw.net/world/detail/wrld_946dadc7-122f-4f95-a34c-248f9732ec73"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "social",
+          "photo"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": true,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": 43.25
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": null
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_946dadc7-122f-4f95-a34c-248f9732ec73",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_946dadc7-122f-4f95-a34c-248f9732ec73",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.download_size_mb"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_946dadc7-122f-4f95-a34c-248f9732ec73",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_946dadc7-122f-4f95-a34c-248f9732ec73",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "vrc-cozy-calm",
+      "source": {
+        "source_type": "VRChat",
+        "canonical_url": "https://vrchat.com/home/world/wrld_1e0e3667-af03-4ce2-9399-30014a109c48/info",
+        "title": "Cozy Calm",
+        "creator": "~Sam",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 12395910,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_1e0e3667-af03-4ce2-9399-30014a109c48",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 141078,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_1e0e3667-af03-4ce2-9399-30014a109c48",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
+        "evidence_urls": [
+          "https://www.vrcw.net/world/detail/wrld_1e0e3667-af03-4ce2-9399-30014a109c48"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "social",
+          "sleep",
+          "video"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": true,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": 74.03
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": null
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_1e0e3667-af03-4ce2-9399-30014a109c48",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_1e0e3667-af03-4ce2-9399-30014a109c48",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.download_size_mb"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_1e0e3667-af03-4ce2-9399-30014a109c48",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_1e0e3667-af03-4ce2-9399-30014a109c48",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "vrc-yoi-tobari",
+      "source": {
+        "source_type": "VRChat",
+        "canonical_url": "https://vrchat.com/home/world/wrld_33cd61b3-1e66-4c97-8597-79651a0e9e4f/info",
+        "title": "宵帳 -Japanese chill room-",
+        "creator": "もなぎ゜",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 57067,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_33cd61b3-1e66-4c97-8597-79651a0e9e4f",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 1562,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_33cd61b3-1e66-4c97-8597-79651a0e9e4f",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
+        "evidence_urls": [
+          "https://www.vrcw.net/world/detail/wrld_33cd61b3-1e66-4c97-8597-79651a0e9e4f"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "sleep"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": true,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": 28.44
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": null
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_33cd61b3-1e66-4c97-8597-79651a0e9e4f",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.quest_support"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_33cd61b3-1e66-4c97-8597-79651a0e9e4f",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.download_size_mb"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_33cd61b3-1e66-4c97-8597-79651a0e9e4f",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_33cd61b3-1e66-4c97-8597-79651a0e9e4f",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "id": "vrc-just-chill",
+      "source": {
+        "source_type": "VRChat",
+        "canonical_url": "https://vrchat.com/home/world/wrld_a9934b54-e0c8-4a64-b8e2-dc1d217a7cfa/info",
+        "title": "JUST Chill",
+        "creator": "Nvia et al.",
+        "captured_at": "2026-09-07",
+        "public_popularity_signals": [
+          {
+            "metric": "visits",
+            "value": 68419,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_a9934b54-e0c8-4a64-b8e2-dc1d217a7cfa",
+            "confidence": "HIGH",
+            "proxy_only": true
+          },
+          {
+            "metric": "favorites",
+            "value": 2551,
+            "captured_at": "2026-09-07",
+            "evidence_url": "https://www.vrcw.net/world/detail/wrld_a9934b54-e0c8-4a64-b8e2-dc1d217a7cfa",
+            "confidence": "HIGH",
+            "proxy_only": true
+          }
+        ],
+        "evidence_urls": [
+          "https://www.vrcw.net/world/detail/wrld_a9934b54-e0c8-4a64-b8e2-dc1d217a7cfa"
+        ]
+      },
+      "use": {
+        "primary_use": [
+          "home",
+          "social",
+          "sleep"
+        ],
+        "target_people_min": null,
+        "target_people_max": null,
+        "typical_session_mode": null
+      },
+      "spatial": {
+        "room_width_m": null,
+        "room_depth_m": null,
+        "ceiling_height_m": null,
+        "social_core_diameter_m": null,
+        "max_face_distance_m": null,
+        "spawn_to_social_core_m": null,
+        "circulation_path": null,
+        "seat_count": null,
+        "retreat_seat_count": null
+      },
+      "experience": {
+        "hero_element": null,
+        "first_view": null,
+        "retreat_space": null,
+        "activity_anchor": null,
+        "primary_view": null,
+        "secondary_view": null,
+        "photo_direction": null
+      },
+      "light_sound": {
+        "key_light_source": null,
+        "fill_light_source": null,
+        "accent_light_source": null,
+        "color_temperature_k": null,
+        "ambient_sound": null,
+        "local_sound": null,
+        "bgm": null
+      },
+      "material_runtime": {
+        "dominant_materials": [],
+        "mirror": null,
+        "video": null,
+        "collider": null,
+        "join_log": null,
+        "audio_zone": null,
+        "quest_support": null,
+        "baked_light": null,
+        "realtime_light_count": null,
+        "download_size_mb": 117.53
+      },
+      "production": {
+        "triangle_count": null,
+        "texture_resolution": null,
+        "material_count": null,
+        "known_toolchain": null,
+        "known_setup_work": null,
+        "price_jpy": null
+      },
+      "evidence": [
+        {
+          "fields": [
+            "source.title",
+            "source.creator",
+            "source.canonical_url"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_a9934b54-e0c8-4a64-b8e2-dc1d217a7cfa",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "material_runtime.download_size_mb"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_a9934b54-e0c8-4a64-b8e2-dc1d217a7cfa",
+          "confidence": "HIGH",
+          "observation_type": "PUBLISHED_PAGE"
+        },
+        {
+          "fields": [
+            "use.primary_use"
+          ],
+          "url": "https://www.vrcw.net/world/detail/wrld_a9934b54-e0c8-4a64-b8e2-dc1d217a7cfa",
+          "confidence": "MEDIUM",
+          "observation_type": "DESCRIPTION_OR_TAG_NORMALIZATION"
+        }
+      ]
+    }
+  ]
+}

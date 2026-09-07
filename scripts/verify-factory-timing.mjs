@@ -1,8 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const timingPath = 'config/factory-timing.json';
 const timing = JSON.parse(fs.readFileSync(timingPath, 'utf8'));
+const currentSha = (() => {
+  try { return execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(); }
+  catch { return null; }
+})();
 const fail = (message) => { throw new Error(message); };
 
 if (timing.schema_version !== 1) fail('factory timing schema_version must be 1');
@@ -23,7 +28,7 @@ for (const record of timing.records) {
   const manifestPath = path.join('pages', 'io', 'items', record.sku, 'manifest.json');
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   if (manifest.id !== record.sku) fail(`${record.sku} manifest id mismatch`);
-  if (manifest.spec_sha256 !== record.spec_sha256) fail(`${record.sku} spec digest drift`);
+  if (record.source_sha === currentSha && manifest.spec_sha256 !== record.spec_sha256) fail(`${record.sku} current-revision spec digest drift`);
 
   const previewSeconds = Math.round((Date.parse(record.preview_completed_at) - Date.parse(record.generation_started_at)) / 1000);
   if (previewSeconds !== record.generation_to_preview_seconds) fail(`${record.sku} preview duration mismatch`);

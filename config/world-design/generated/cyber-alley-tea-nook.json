@@ -1,0 +1,156 @@
+{
+  "meta": {
+    "spec_version": "1.1.0",
+    "theme_name": "ネオ東京路地裏の隠れ家茶室",
+    "primary_intents": [
+      "social",
+      "home",
+      "sleep"
+    ],
+    "capacity_target": 6,
+    "platform_target": "CROSS_PLATFORM_QUEST"
+  },
+  "spatial_geometry": {
+    "overall_width_m": 7,
+    "overall_depth_m": 8,
+    "corridor_clearance_m": 1,
+    "door_height_m": 1.5,
+    "door_width_m": 0.7,
+    "furniture_scale_factor": 0.9,
+    "zones": [
+      {
+        "zone_id": "entrance_doma",
+        "width_m": 1.8,
+        "depth_m": 2.2,
+        "height_m": 2.2,
+        "step_up_m": 0.2
+      },
+      {
+        "zone_id": "tatami_lounge",
+        "width_m": 4.4,
+        "depth_m": 4.4,
+        "height_m": 2.15,
+        "low_window_sill_m": 0.35,
+        "low_window_width_m": 3.2,
+        "low_window_height_m": 1.2
+      },
+      {
+        "zone_id": "cyber_tea_nook",
+        "width_m": 1.8,
+        "depth_m": 1.4,
+        "height_m": 2,
+        "offset_angle_deg": 105
+      },
+      {
+        "zone_id": "cyber_alley_exterior",
+        "scale_compression": 0.25,
+        "max_camera_distance_m": 120
+      }
+    ]
+  },
+  "social_clusters": {
+    "primary_core": {
+      "core_type": "floor_tatami_circle",
+      "core_diameter_m": 1.8,
+      "max_face_distance_m": 1.5,
+      "table_width_m": 0.9,
+      "table_depth_m": 0.9,
+      "table_height_m": 0.35,
+      "seat_spacing_m": 0.85
+    }
+  },
+  "retreat_protocol": {
+    "visual_shield_angle_deg": 105,
+    "acoustic_attenuation_db": -18,
+    "affordance_components": [
+      "individual_tea_set",
+      "local_dimming",
+      "auto_on_low_mirror"
+    ],
+    "functional_self_sufficiency": true
+  },
+  "optical_lighting": {
+    "aperture_ratio_percent": 45,
+    "sunlight_patch_ratio_percent": 25,
+    "seating_direct_sunlight_ratio_percent": 0,
+    "seating_zone_lighting": "WARM_INDIRECT",
+    "key_light_color_temperature_k": 3800,
+    "fill_light_color_temperature_k": 2600,
+    "tpu_allocation": {
+      "avatar_contact_surfaces": 50,
+      "interior_walls": 25,
+      "exterior_background": 8
+    }
+  },
+  "media_governance": {
+    "video_player_mode": "RETRACTABLE_ONLY",
+    "placement": "tokonoma_scroll"
+  },
+  "runtime_budget": {
+    "max_size_pc_mb": 35,
+    "max_size_quest_mb": 28,
+    "realtime_light_count": 0,
+    "camera_near_clip_m": 0.01,
+    "background_max_distance_m": 120
+  },
+  "provenance": {
+    "market_record_ids": [
+      "booth-nook-house",
+      "booth-autumn-midnight",
+      "booth-luminous-hotel",
+      "booth-urban-slumber",
+      "vrc-nagisa",
+      "vrc-cozy-calm",
+      "vrc-yoi-tobari"
+    ],
+    "decisions": {
+      "meta.primary_intents": [
+        "booth-nook-house",
+        "booth-autumn-midnight",
+        "vrc-cozy-calm"
+      ],
+      "meta.platform_target": [
+        "booth-nook-house",
+        "booth-urban-slumber",
+        "vrc-yoi-tobari"
+      ],
+      "spatial_geometry.furniture_scale_factor": [
+        "SCALE-FURNITURE"
+      ],
+      "spatial_geometry.zones.tatami_lounge.height_m": [
+        "TATAMI-CEILING"
+      ],
+      "social_clusters.primary_core.core_diameter_m": [
+        "TATAMI-CORE-DIAMETER"
+      ],
+      "spatial_geometry.corridor_clearance_m": [
+        "CORRIDOR-MIN"
+      ],
+      "spatial_geometry.door_height_m": [
+        "DOOR-MIN"
+      ],
+      "spatial_geometry.door_width_m": [
+        "DOOR-MIN"
+      ],
+      "retreat_protocol.visual_shield_angle_deg": [
+        "RETREAT-VISUAL"
+      ],
+      "retreat_protocol.acoustic_attenuation_db": [
+        "RETREAT-AUDIO"
+      ],
+      "optical_lighting.tpu_allocation": [
+        "TPU-CONTACT",
+        "TPU-WALL",
+        "TPU-BACKGROUND"
+      ],
+      "runtime_budget.camera_near_clip_m": [
+        "NEARCLIP",
+        "BACKGROUND-MAX-WITH-NEARCLIP"
+      ],
+      "media_governance.video_player_mode": [
+        "MEDIA-GOVERNANCE"
+      ]
+    },
+    "note": "Market records support use/platform/feature prevalence only where published. Dimensions not published by sources are not promoted to observed market facts; engineering dimensions come from explicit project rules."
+  }
+}

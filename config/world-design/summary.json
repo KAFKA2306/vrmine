@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "record_count": 20,
+  "source_type_counts": {
+    "BOOTH": 12,
+    "VRChat": 8
+  },
+  "unknown_policy": "null",
+  "quest_support": {
+    "known_true": 10,
+    "known_false": 2,
+    "unknown": 8,
+    "known_support_rate": 0.8333333333333334
+  },
+  "download_size_mb": {
+    "observed_count": 9,
+    "median": 74.03,
+    "distribution": [
+      28.44,
+      35.01,
+      38.03,
+      43.25,
+      74.03,
+      87,
+      92.91,
+      96.51,
+      117.53
+    ]
+  },
+  "price_jpy": {
+    "observed_count": 9,
+    "median": 3000,
+    "distribution": [
+      480,
+      1300,
+      2000,
+      2500,
+      3000,
+      3500,
+      3500,
+      3800,
+      7500
+    ]
+  },
+  "primary_use_counts": {
+    "home": 16,
+    "social": 17,
+    "sleep": 9,
+    "photo": 3,
+    "exhibition": 1,
+    "hotel": 2,
+    "video": 2
+  },
+  "dimension_distribution_status": "UNVERIFIED_IN_PUBLIC_SOURCES",
+  "interpretation": "Frequencies and medians use only populated published fields. No causal success factor is inferred from popularity proxies.",
+  "popularity_proxy": {
+    "visits": {
+      "observed_count": 8,
+      "median": 600780.5,
+      "distribution": [
+        57067,
+        68419,
+        107377,
+        161783,
+        1039778,
+        3443133,
+        7304921,
+        12395910
+      ]
+    },
+    "favorites": {
+      "observed_count": 8,
+      "median": 21995,
+      "distribution": [
+        1562,
+        2301,
+        2551,
+        4689,
+        39301,
+        75357,
+        126007,
+        141078
+      ]
+    },
+    "booth_likes": {
+      "observed_count": 1,
+      "median": 289,
+      "distribution": [
+        289
+      ]
+    },
+    "design_feature_relationship_status": "INSUFFICIENT_PUBLISHED_FEATURE_COVERAGE",
+    "causal_claims_allowed": false
+  }
+}
