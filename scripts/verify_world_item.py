@@ -61,6 +61,28 @@ def expected_variant_spec(base: dict, variant_id: str) -> tuple[dict, dict]:
     return expected, variant
 
 
+def assert_invalid_variant_overrides_rejected(base: dict) -> None:
+    if not base.get("parts") or not base.get("materials"):
+        raise AssertionError("negative variant contract requires at least one part and material")
+    part_name = base["parts"][0]["name"]
+    material_name = next(iter(base["materials"]))
+    cases = [
+        {"id": "invalid-top-level", "unsupported": True},
+        {"id": "invalid-part-name", "part_overrides": {"__missing_part__": {"radius": 1.0}}},
+        {"id": "invalid-part-field", "part_overrides": {part_name: {"__unsupported_field__": 1.0}}},
+        {"id": "invalid-material-name", "material_overrides": {"__missing_material__": {"roughness": 0.5}}},
+        {"id": "invalid-material-field", "material_overrides": {material_name: {"__unsupported_field__": 0.5}}},
+    ]
+    for invalid_variant in cases:
+        probe = copy.deepcopy(base)
+        probe["variants"] = [invalid_variant]
+        try:
+            expected_variant_spec(probe, invalid_variant["id"])
+        except AssertionError:
+            continue
+        raise AssertionError(f"invalid variant override was accepted: {invalid_variant['id']}")
+
+
 def assert_mesh_import(path: Path, kind: str) -> None:
     bpy.ops.wm.read_factory_settings(use_empty=True)
     if kind == "glb":
@@ -206,6 +228,7 @@ def main() -> None:
         raise RuntimeError("Blender 4.2 is required")
     spec_path, variant_id = args()
     base = json.loads(spec_path.read_text())
+    assert_invalid_variant_overrides_rejected(base)
     if variant_id:
         verify_one(spec_path, base, variant_id)
         return
