@@ -120,6 +120,79 @@ jobs:
             echo "Exact-head evidence is current; Blender regeneration is not required."
           fi
 
+      - name: Restore compatible partial factory evidence
+        id: resume
+        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SKU: ${{ steps.select.outputs.sku }}
+          INPUT_DIGEST: ${{ steps.evidence.outputs.input_digest }}
+        run: |
+          set -euo pipefail
+          echo "generation_reused=false" >> "$GITHUB_OUTPUT"
+          tmp="$(mktemp -d)"
+          candidates="$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" --paginate --slurp | jq -s 'map(.artifacts // []) | add | sort_by(.created_at) | reverse')"
+          mapfile -t rows < <(jq -r --arg prefix "world-item-${SKU}-" '.[] | select((.expired|not) and (.name|startswith($prefix))) | [.id,.name,.workflow_run.id] | @tsv' <<<"$candidates")
+          for row in "${rows[@]:-}"; do
+            IFS=$'\t' read -r artifact_id artifact_name prior_run_id <<<"$row"
+            test -n "$artifact_id" || continue
+            test "$prior_run_id" != "$GITHUB_RUN_ID" || continue
+            rm -rf "$tmp/candidate"
+            mkdir -p "$tmp/candidate"
+            if ! gh run download "$prior_run_id" --repo "$GITHUB_REPOSITORY" -n "$artifact_name" -D "$tmp/candidate" >/dev/null 2>&1; then
+              continue
+            fi
+            state="$tmp/candidate/factory-run-state.json"
+            test -s "$state" || continue
+            if ! jq -e --arg digest "$INPUT_DIGEST" '.input_digest==$digest and .generation_exit_code==0' "$state" >/dev/null; then
+              continue
+            fi
+            valid=true
+            while IFS=$'\t' read -r path expected; do
+              test -n "$path" || continue
+              file="$tmp/candidate/$path"
+              if [ ! -s "$file" ] || [ "$(sha256sum "$file" | awk '{print $1}')" != "$expected" ]; then
+                valid=false
+                break
+              fi
+            done < <(jq -r '.outputs[]? | [.path,.sha256] | @tsv' "$state")
+            if [ "$valid" != true ]; then
+              continue
+            fi
+            for file in thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png "$SKU.blend" "$SKU.glb" "$SKU.fbx" manifest.json; do
+              if [ ! -s "$tmp/candidate/$file" ]; then
+                valid=false
+                break
+              fi
+              if ! jq -e --arg path "$file" 'any(.outputs[]?; .path==$path)' "$state" >/dev/null; then
+                valid=false
+                break
+              fi
+            done
+            if [ "$valid" != true ]; then
+              continue
+            fi
+            out=".artifacts/world-items/${SKU}"
+            rm -rf "$out"
+            mkdir -p "$out"
+            cp -a "$tmp/candidate/." "$out/"
+            now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            jq \
+              --arg prior_run_id "$prior_run_id" \
+              --arg prior_artifact_id "$artifact_id" \
+              --arg current_run_id "$GITHUB_RUN_ID" \
+              --argjson current_run_attempt "$GITHUB_RUN_ATTEMPT" \
+              --arg resumed_at "$now" \
+              '.resumed_from_run_id=$prior_run_id | .resumed_from_artifact_id=$prior_artifact_id | .run_id=$current_run_id | .run_attempt=$current_run_attempt | .resumed_at=$resumed_at | .reused_stages=["generation"] | .stage="generation" | .status="generated" | .verification_exit_code=null' \
+              "$out/factory-run-state.json" > "$out/factory-run-state.json.tmp"
+            mv "$out/factory-run-state.json.tmp" "$out/factory-run-state.json"
+            echo "generation_reused=true" >> "$GITHUB_OUTPUT"
+            echo "prior_run_id=$prior_run_id" >> "$GITHUB_OUTPUT"
+            echo "prior_artifact_id=$artifact_id" >> "$GITHUB_OUTPUT"
+            echo "Reused hash-verified generation outputs from run ${prior_run_id}; verification will resume without Blender regeneration."
+            break
+          done
+
       - name: Install official Blender 4.2.0
         if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
         run: |
@@ -134,7 +207,7 @@ jobs:
 
       - name: Generate canonical SKU
         id: generation
-        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
+        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true' && steps.resume.outputs.generation_reused != 'true'
         continue-on-error: true
         env:
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
@@ -169,7 +242,7 @@ jobs:
 
       - name: Verify canonical SKU
         id: verification
-        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true' && steps.generation.outcome == 'success'
+        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true' && (steps.generation.outcome == 'success' || steps.resume.outputs.generation_reused == 'true')
         continue-on-error: true
         env:
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
@@ -237,7 +310,7 @@ jobs:
           retention-days: 7
 
       - name: Fail after preserving incomplete factory evidence
-        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true' && (steps.generation.outcome != 'success' || steps.verification.outcome != 'success')
+        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true' && ((steps.generation.outcome != 'success' && steps.resume.outputs.generation_reused != 'true') || steps.verification.outcome != 'success')
         env:
           SKU: ${{ steps.select.outputs.sku }}
         run: |
