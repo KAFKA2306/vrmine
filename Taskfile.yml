@@ -25,6 +25,7 @@ tasks:
       - node --test pages/games/answer-impostor/engine.test.mjs
       - node scripts/verify-quality-gates.mjs
       - node scripts/verify-factory-timing.mjs
+      - task: world-design:check
       - node scripts/verify-perspective-cage.mjs
       - node --check scripts/run-perspective-cage-unity.mjs
       - node --check scripts/run-glb-consumer-unity.mjs
@@ -35,6 +36,11 @@ tasks:
       - node scripts/verify-gaussian-exhibition.mjs
       - node scripts/verify-gaussian-video-playlist.mjs
       - node scripts/verify-vpm.mjs
+
+  world-design:check:
+    desc: Validate World Design source records, schema, DRC, aggregate summary and generated spec provenance
+    cmds:
+      - node scripts/verify-world-design.mjs
 
   merge:check:
     desc: PR Merge Gate — run repository checks that may decide integration into main
