@@ -25,9 +25,12 @@
   ],
   "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
   "license": {
-    "name": "Proprietary / BOOTH terms pending",
+    "name": "VRMine Asset License 1.0",
+    "status": "VERIFIED",
     "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, copyrighted artwork, or branded product geometry.",
-    "status": "DRAFT"
+    "permissions": ["use_in_personal_virtual_worlds", "use_in_commercial_virtual_worlds", "modify", "render_and_record"],
+    "conditions": ["do_not_redistribute_or_resell_source_or_model_files_as_standalone_assets", "retain_this_license_and_provenance_in_redistributed_project_packages"],
+    "warranty": "AS_IS"
   },
   "formats": ["blend", "glb", "fbx"],
   "unity_status": "UNVERIFIED",
