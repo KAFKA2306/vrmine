@@ -45,15 +45,21 @@ def make_material(name, rgba, roughness=0.6, emission=None):
     material.diffuse_color = rgba
     material.use_nodes = True
     bsdf = material.node_tree.nodes.get("Principled BSDF")
+    if bsdf is None:
+        fail("Principled BSDF node is unavailable")
     bsdf.inputs["Base Color"].default_value = rgba
     bsdf.inputs["Roughness"].default_value = roughness
     if emission is not None:
-        bsdf.inputs["Emission Color"].default_value = emission
-        bsdf.inputs["Emission Strength"].default_value = 1.5
+        if "Emission Color" in bsdf.inputs:
+            bsdf.inputs["Emission Color"].default_value = emission
+        elif "Emission" in bsdf.inputs:
+            bsdf.inputs["Emission"].default_value = emission
+        if "Emission Strength" in bsdf.inputs:
+            bsdf.inputs["Emission Strength"].default_value = 1.5
     return material
 
 
-def cube(name, location, scale, material, collection):
+def cube(name, location, scale, material):
     bpy.ops.mesh.primitive_cube_add(location=location)
     obj = bpy.context.object
     obj.name = name
@@ -61,8 +67,6 @@ def cube(name, location, scale, material, collection):
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     if material:
         obj.data.materials.append(material)
-    collection.objects.link(obj)
-    bpy.context.collection.objects.unlink(obj)
     return obj
 
 
@@ -70,9 +74,9 @@ def import_glb_instance(asset_id, instance_id, position, facing_target, collecti
     source = Path("pages/io/items") / asset_id / f"{asset_id}.glb"
     if not source.is_file():
         fail(f"missing canonical asset {source}")
-    before = set(bpy.data.objects)
+    before_names = set(bpy.data.objects.keys())
     bpy.ops.import_scene.gltf(filepath=str(source))
-    imported = [obj for obj in bpy.data.objects if obj not in before]
+    imported = [obj for obj in bpy.data.objects if obj.name not in before_names]
     if not imported:
         fail(f"asset {asset_id} imported no objects")
     root = bpy.data.objects.new(instance_id, None)
@@ -90,20 +94,20 @@ def import_glb_instance(asset_id, instance_id, position, facing_target, collecti
     return root, source
 
 
-def create_shell(plan, collection, shell_material, accent_material):
+def create_shell(plan, shell_material, accent_material):
     w = float(plan["footprint"]["width"])
     d = float(plan["footprint"]["depth"])
     h = float(plan["footprint"]["height"])
     t = 0.08
-    floor = cube("WorldShell_Floor", (0, 0, -t / 2), (w, d, t), shell_material, collection)
-    ceiling = cube("WorldShell_Ceiling", (0, 0, h + t / 2), (w, d, t), shell_material, collection)
-    left = cube("WorldShell_Left", (-w / 2 - t / 2, 0, h / 2), (t, d, h), shell_material, collection)
-    right = cube("WorldShell_Right", (w / 2 + t / 2, 0, h / 2), (t, d, h), shell_material, collection)
-    front = cube("WorldShell_Front", (0, -d / 2 - t / 2, h / 2), (w, t, h), shell_material, collection)
+    floor = cube("WorldShell_Floor", (0, 0, -t / 2), (w, d, t), shell_material)
+    ceiling = cube("WorldShell_Ceiling", (0, 0, h + t / 2), (w, d, t), shell_material)
+    left = cube("WorldShell_Left", (-w / 2 - t / 2, 0, h / 2), (t, d, h), shell_material)
+    right = cube("WorldShell_Right", (w / 2 + t / 2, 0, h / 2), (t, d, h), shell_material)
+    front = cube("WorldShell_Front", (0, -d / 2 - t / 2, h / 2), (w, t, h), shell_material)
 
     opening = plan.get("view_opening")
     if not opening:
-        back = cube("WorldShell_Back", (0, d / 2 + t / 2, h / 2), (w, t, h), shell_material, collection)
+        back = cube("WorldShell_Back", (0, d / 2 + t / 2, h / 2), (w, t, h), shell_material)
         return [floor, ceiling, left, right, front, back]
 
     ow = float(opening["width"])
@@ -114,15 +118,15 @@ def create_shell(plan, collection, shell_material, accent_material):
     side_w = (w - ow) / 2
     back_y = d / 2 + t / 2
     parts = [floor, ceiling, left, right, front]
-    parts.append(cube("WorldShell_Back_Left", (-(ow / 2 + side_w / 2), back_y, h / 2), (side_w, t, h), shell_material, collection))
-    parts.append(cube("WorldShell_Back_Right", ((ow / 2 + side_w / 2), back_y, h / 2), (side_w, t, h), shell_material, collection))
+    parts.append(cube("WorldShell_Back_Left", (-(ow / 2 + side_w / 2), back_y, h / 2), (side_w, t, h), shell_material))
+    parts.append(cube("WorldShell_Back_Right", ((ow / 2 + side_w / 2), back_y, h / 2), (side_w, t, h), shell_material))
     if sill > 0:
-        parts.append(cube("WorldShell_Back_Sill", (0, back_y, sill / 2), (ow, t, sill), shell_material, collection))
+        parts.append(cube("WorldShell_Back_Sill", (0, back_y, sill / 2), (ow, t, sill), shell_material))
     top_h = h - sill - oh
-    parts.append(cube("WorldShell_Back_Header", (0, back_y, sill + oh + top_h / 2), (ow, t, top_h), shell_material, collection))
+    parts.append(cube("WorldShell_Back_Header", (0, back_y, sill + oh + top_h / 2), (ow, t, top_h), shell_material))
     frame_t = 0.05
-    parts.append(cube("ActivityAnchor_Frame_Left", (-ow / 2, d / 2 - frame_t, sill + oh / 2), (frame_t, frame_t, oh), accent_material, collection))
-    parts.append(cube("ActivityAnchor_Frame_Right", (ow / 2, d / 2 - frame_t, sill + oh / 2), (frame_t, frame_t, oh), accent_material, collection))
+    parts.append(cube("ActivityAnchor_Frame_Left", (-ow / 2, d / 2 - frame_t, sill + oh / 2), (frame_t, frame_t, oh), accent_material))
+    parts.append(cube("ActivityAnchor_Frame_Right", (ow / 2, d / 2 - frame_t, sill + oh / 2), (frame_t, frame_t, oh), accent_material))
     return parts
 
 
@@ -164,11 +168,11 @@ def main():
     scene.unit_settings.scale_length = 1.0
     scene.world.color = (0.018, 0.022, 0.028)
 
-    build_collection = bpy.data.collections.new("WorldBuild")
+    build_collection = bpy.data.collections.new("WorldBuildInstances")
     scene.collection.children.link(build_collection)
     shell_material = make_material("WorldShell", (0.18, 0.16, 0.14, 1), 0.82)
     accent_material = make_material("ActivityAnchor", (0.08, 0.2, 0.28, 1), 0.35, (0.08, 0.28, 0.42, 1))
-    create_shell(plan, build_collection, shell_material, accent_material)
+    create_shell(plan, shell_material, accent_material)
 
     asset_sources = {}
     table = plan["social_core"]["table"]
@@ -185,7 +189,7 @@ def main():
         asset_sources[retreat["seat_asset_id"]] = {"path": str(source), "sha256": root["source_sha256"]}
 
     anchor = plan["activity_anchor"]["position_m"]
-    cube("ActivityAnchor_Platform", (anchor[0], anchor[1], 0.025), (0.7, 0.45, 0.05), accent_material, build_collection)
+    cube("ActivityAnchor_Platform", (anchor[0], anchor[1], 0.025), (0.7, 0.45, 0.05), accent_material)
 
     bpy.ops.object.light_add(type="AREA", location=(0, -0.8, 2.05))
     key = bpy.context.object
