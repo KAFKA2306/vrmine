@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "record_count": 20,
+  "source_type_counts": {
+    "BOOTH": 12,
+    "VRChat": 8
+  },
+  "unknown_policy": "null",
+  "quest_support": {
+    "known_true": 9,
+    "known_false": 2,
+    "unknown": 9
+  },
+  "download_size_mb": {
+    "observed_count": 8
+  },
+  "price_jpy": {
+    "observed_count": 8
+  },
+  "dimension_distribution_status": "UNVERIFIED_IN_PUBLIC_SOURCES",
+  "interpretation": "Frequencies use only populated published fields. No causal success factor is inferred from popularity proxies."
+}
