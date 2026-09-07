@@ -1,6 +1,7 @@
 """Verify one generated world-item SKU with Blender 4.2."""
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import sys
@@ -17,17 +18,44 @@ FILL_RATIO_MAX = 0.88
 FRAME_LIMIT = 0.500001
 
 
-def arg_path() -> Path:
+def args() -> tuple[Path, str | None]:
     if "--" not in sys.argv:
         raise SystemExit("spec path is required after --")
     rest = sys.argv[sys.argv.index("--") + 1 :]
-    if len(rest) != 1:
-        raise SystemExit("expected exactly one spec path")
-    return (ROOT / rest[0]).resolve()
+    if len(rest) not in (1, 2):
+        raise SystemExit("expected spec path and optional variant id")
+    return (ROOT / rest[0]).resolve(), rest[1] if len(rest) == 2 else None
 
 
 def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def data_digest(data: object) -> str:
+    return hashlib.sha256(
+        json.dumps(data, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+def expected_variant_spec(base: dict, variant_id: str) -> tuple[dict, dict]:
+    matches = [variant for variant in base["variants"] if variant.get("id") == variant_id]
+    if len(matches) != 1:
+        raise AssertionError(f"variant must resolve exactly once: {variant_id}")
+    variant = matches[0]
+    expected = copy.deepcopy(base)
+    parts = {part["name"]: part for part in expected["parts"]}
+    for name, override in variant.get("part_overrides", {}).items():
+        if name not in parts:
+            raise AssertionError(f"variant references missing part: {name}")
+        parts[name].update(override)
+    for name, override in variant.get("material_overrides", {}).items():
+        if name not in expected["materials"]:
+            raise AssertionError(f"variant references missing material: {name}")
+        expected["materials"][name].update(override)
+    expected["id"] = f'{base["id"]}--{variant_id}'
+    expected["base_id"] = base["id"]
+    expected["variant_id"] = variant_id
+    return expected, variant
 
 
 def assert_mesh_import(path: Path, kind: str) -> None:
@@ -48,9 +76,15 @@ def assert_mesh_import(path: Path, kind: str) -> None:
 def main() -> None:
     if bpy.app.version[:2] != (4, 2):
         raise RuntimeError("Blender 4.2 is required")
-    spec_path = arg_path()
-    spec = json.loads(spec_path.read_text())
-    sku = spec["id"]
+    spec_path, variant_id = args()
+    base = json.loads(spec_path.read_text())
+    expected_spec = base
+    expected_variant = None
+    sku = base["id"]
+    if variant_id:
+        expected_spec, expected_variant = expected_variant_spec(base, variant_id)
+        sku = expected_spec["id"]
+
     out = ROOT / ".artifacts" / "world-items" / sku
     manifest_path = out / "manifest.json"
     if not manifest_path.is_file():
@@ -62,6 +96,24 @@ def main() -> None:
         raise AssertionError("spec hash mismatch")
     if manifest["unity_status"] != "UNVERIFIED" or manifest["vrchat_status"] != "UNVERIFIED":
         raise AssertionError("runtime status was promoted without runtime evidence")
+
+    if variant_id:
+        if manifest.get("schema_version") != 3:
+            raise AssertionError(f"unexpected variant manifest schema: {manifest.get('schema_version')}")
+        if manifest.get("base_id") != base["id"] or manifest.get("variant_id") != variant_id:
+            raise AssertionError("variant lineage mismatch")
+        resolved_path = out / "resolved-spec.json"
+        if not resolved_path.is_file():
+            raise AssertionError("resolved variant spec missing")
+        resolved = json.loads(resolved_path.read_text())
+        if resolved != expected_spec:
+            raise AssertionError("resolved variant spec differs from declared overrides")
+        if manifest.get("resolved_spec_sha256") != data_digest(expected_spec):
+            raise AssertionError("resolved spec digest mismatch")
+        if manifest.get("variant_sha256") != data_digest(expected_variant):
+            raise AssertionError("variant digest mismatch")
+    elif manifest.get("schema_version") != 2:
+        raise AssertionError(f"unexpected base manifest schema: {manifest.get('schema_version')}")
 
     blend = out / f"{sku}.blend"
     glb = out / f"{sku}.glb"
@@ -82,8 +134,6 @@ def main() -> None:
         if path.read_bytes()[:8] != PNG_MAGIC:
             raise AssertionError(f"not PNG: {name}")
 
-    if manifest.get("schema_version") != 2:
-        raise AssertionError(f"unexpected manifest schema: {manifest.get('schema_version')}")
     framing = manifest.get("render_framing")
     if not isinstance(framing, dict) or set(framing) != set(EXPECTED_VIEWS):
         raise AssertionError("render framing metadata missing or incomplete")
@@ -109,13 +159,13 @@ def main() -> None:
         if digest(path) != expected:
             raise AssertionError(f"hash mismatch: {name}")
     dims = manifest["dimensions_m_actual"]
-    target = spec["dimensions_m"]
+    target = expected_spec["dimensions_m"]
     for actual, wanted in zip(dims, target):
         if actual <= 0 or actual > wanted * 1.15:
             raise AssertionError(f"unexpected dimensions: actual={dims}, spec={target}")
     if manifest["triangles"] <= 0 or manifest["triangles"] > 10000:
         raise AssertionError(f"triangle budget exceeded: {manifest['triangles']}")
-    print(json.dumps({"id": sku, "formats": "PASS", "geometry": "PASS", "renders": "PASS", "framing": "PASS", "triangles": manifest["triangles"]}))
+    print(json.dumps({"id": sku, "variant": variant_id, "formats": "PASS", "geometry": "PASS", "renders": "PASS", "framing": "PASS", "triangles": manifest["triangles"]}))
 
 
 if __name__ == "__main__":
