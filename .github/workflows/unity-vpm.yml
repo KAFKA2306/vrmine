@@ -12,6 +12,7 @@ on:
       - "config/quality-gates.json"
       - "config/perspective-cage.json"
       - "config/factory-timing.json"
+      - "config/world-item-packages.json"
       - "config/world-design/**"
       - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
       - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
@@ -23,6 +24,7 @@ on:
       - "scripts/verify-vpm.mjs"
       - "scripts/verify-quality-gates.mjs"
       - "scripts/verify-factory-timing.mjs"
+      - "scripts/verify-world-item-packages.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
       - "scripts/verify-perspective-cage.mjs"
@@ -44,6 +46,7 @@ on:
       - "config/quality-gates.json"
       - "config/perspective-cage.json"
       - "config/factory-timing.json"
+      - "config/world-item-packages.json"
       - "config/world-design/**"
       - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
       - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
@@ -55,6 +58,7 @@ on:
       - "scripts/verify-vpm.mjs"
       - "scripts/verify-quality-gates.mjs"
       - "scripts/verify-factory-timing.mjs"
+      - "scripts/verify-world-item-packages.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
       - "scripts/verify-perspective-cage.mjs"
@@ -92,6 +96,9 @@ jobs:
 
       - name: Verify World Item Factory timing evidence
         run: node scripts/verify-factory-timing.mjs
+
+      - name: Verify World Item package hierarchy
+        run: node scripts/verify-world-item-packages.mjs
 
       - name: Verify World Design dataset, DRC and provenance
         run: |
