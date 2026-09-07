@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "rules": [
+    {
+      "id": "SCALE-FLOORPLAN",
+      "kind": "engineering_rule",
+      "value": 1.1,
+      "unit": "scale",
+      "description": "VR floorplan baseline enlargement"
+    },
+    {
+      "id": "SCALE-FURNITURE",
+      "kind": "engineering_rule",
+      "value": 0.9,
+      "unit": "scale",
+      "description": "Furniture baseline scale"
+    },
+    {
+      "id": "TATAMI-CEILING",
+      "kind": "engineering_rule",
+      "min": 2.05,
+      "max": 2.2,
+      "unit": "m"
+    },
+    {
+      "id": "TATAMI-CORE-DIAMETER",
+      "kind": "engineering_rule",
+      "min": 1.6,
+      "max": 2,
+      "unit": "m"
+    },
+    {
+      "id": "CORRIDOR-MIN",
+      "kind": "drc",
+      "min": 1,
+      "unit": "m"
+    },
+    {
+      "id": "DOOR-MIN",
+      "kind": "drc",
+      "height_min": 1.5,
+      "width_min": 0.7,
+      "unit": "m"
+    },
+    {
+      "id": "RETREAT-VISUAL",
+      "kind": "drc",
+      "min": 90,
+      "unit": "deg"
+    },
+    {
+      "id": "RETREAT-AUDIO",
+      "kind": "drc",
+      "max": -12,
+      "unit": "dB"
+    },
+    {
+      "id": "TPU-CONTACT",
+      "kind": "drc",
+      "min": 40,
+      "max": 60,
+      "unit": "texels_per_unit"
+    },
+    {
+      "id": "TPU-WALL",
+      "kind": "drc",
+      "min": 20,
+      "max": 30,
+      "unit": "texels_per_unit"
+    },
+    {
+      "id": "TPU-BACKGROUND",
+      "kind": "drc",
+      "min": 5,
+      "max": 10,
+      "unit": "texels_per_unit"
+    },
+    {
+      "id": "NEARCLIP",
+      "kind": "drc",
+      "value": 0.01,
+      "unit": "m"
+    },
+    {
+      "id": "BACKGROUND-MAX-WITH-NEARCLIP",
+      "kind": "drc",
+      "max": 150,
+      "unit": "m"
+    },
+    {
+      "id": "MEDIA-GOVERNANCE",
+      "kind": "drc",
+      "forbidden": "ALWAYS_FULLSCREEN"
+    }
+  ]
+}
