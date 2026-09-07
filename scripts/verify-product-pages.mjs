@@ -50,17 +50,18 @@ for(let i=0;i<products.length;i+=6) {
   }));
 }
 
-// World Build evidence is repository-owned production content. Use the tracked
-// manifests as the only list/hash authority and read the deployed bytes back.
-const worldRoot = 'pages/worlds';
-const worldIds = existsSync(worldRoot)
-  ? readdirSync(worldRoot, {withFileTypes:true})
-      .filter(entry => entry.isDirectory() && existsSync(join(worldRoot, entry.name, 'manifest.json')))
+// For remote production verification, repository-tracked manifests are the
+// authority. For local/fixture verification, only worlds present in that target
+// are checked so product-only fixtures remain intentionally scoped.
+const worldAuthorityRoot = remote ? 'pages/worlds' : join(target, 'worlds');
+const worldIds = existsSync(worldAuthorityRoot)
+  ? readdirSync(worldAuthorityRoot, {withFileTypes:true})
+      .filter(entry => entry.isDirectory() && existsSync(join(worldAuthorityRoot, entry.name, 'manifest.json')))
       .map(entry => entry.name)
       .sort()
   : [];
 for (const worldId of worldIds) {
-  const localRoot = join(worldRoot, worldId);
+  const localRoot = join(worldAuthorityRoot, worldId);
   const manifest = JSON.parse(readFileSync(join(localRoot, 'manifest.json'), 'utf8'));
   const base = `worlds/${worldId}/`;
   const [publishedManifestText, publishedPlanText] = await Promise.all([
