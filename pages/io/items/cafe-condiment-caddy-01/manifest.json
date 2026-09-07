@@ -2,7 +2,7 @@
   "schema_version": 2,
   "id": "cafe-condiment-caddy-01",
   "source_spec": "config/world-items/cafe-condiment-caddy-01.json",
-  "spec_sha256": "7bfcfe1dd44d95644324a0c0c48f0a894ed19927fbe59bc2b1fbf7498f02a8e9",
+  "spec_sha256": "1668286fac5fb4e5ede587a2a9c61ae4853ac810b1988f2f7bae059af7429441",
   "blender": "4.2.0",
   "units": "metres",
   "dimensions_m_actual": [
@@ -30,82 +30,48 @@
       "center_error_x": 6.37e-08,
       "center_error_y": 2.166e-07,
       "fill_ratio": 0.8400000357,
-      "normalized_bounds": [
-        -0.4199999541,
-        0.4200000815,
-        -0.386491051,
-        0.3864914841
-      ],
+      "normalized_bounds": [-0.4199999541, 0.4200000815, -0.386491051, 0.3864914841],
       "ortho_scale": 0.2924445271
     },
     "front": {
       "center_error_x": 0.0,
       "center_error_y": 4.552e-07,
       "fill_ratio": 0.8400000455,
-      "normalized_bounds": [
-        -0.4200000228,
-        0.4200000228,
-        -0.3474818689,
-        0.3474827792
-      ],
+      "normalized_bounds": [-0.4200000228, 0.4200000228, -0.3474818689, 0.3474827792],
       "ortho_scale": 0.2619047463
     },
     "rear": {
       "center_error_x": -1.42e-08,
       "center_error_y": 4.552e-07,
       "fill_ratio": 0.8400000353,
-      "normalized_bounds": [
-        -0.4200000319,
-        0.4200000034,
-        -0.3474818578,
-        0.3474827681
-      ],
+      "normalized_bounds": [-0.4200000319, 0.4200000034, -0.3474818578, 0.3474827681],
       "ortho_scale": 0.2619047761
     },
     "left": {
       "center_error_x": 0.0,
       "center_error_y": 1.585e-07,
       "fill_ratio": 0.8400000254,
-      "normalized_bounds": [
-        -0.2552159113,
-        0.2552159113,
-        -0.4199998542,
-        0.4200001711
-      ],
+      "normalized_bounds": [-0.2552159113, 0.2552159113, -0.4199998542, 0.4200001711],
       "ortho_scale": 0.2350950986
     },
     "right": {
       "center_error_x": 0.0,
       "center_error_y": 1.585e-07,
       "fill_ratio": 0.8400000254,
-      "normalized_bounds": [
-        -0.2552159113,
-        0.2552159113,
-        -0.4199998542,
-        0.4200001711
-      ],
+      "normalized_bounds": [-0.2552159113, 0.2552159113, -0.4199998542, 0.4200001711],
       "ortho_scale": 0.2350950986
     },
     "top": {
       "center_error_x": 0.0,
       "center_error_y": 0.0,
       "fill_ratio": 0.8400000455,
-      "normalized_bounds": [
-        -0.4200000228,
-        0.4200000228,
-        -0.229597784,
-        0.229597784
-      ],
+      "normalized_bounds": [-0.4200000228, 0.4200000228, -0.229597784, 0.229597784],
       "ortho_scale": 0.2619047463
     }
   },
   "triangles": 2332,
   "parts_count": 9,
-  "formats": [
-    "blend",
-    "glb",
-    "fbx"
-  ],
+  "formats": ["blend", "glb", "fbx"],
   "unity_status": "UNVERIFIED",
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
