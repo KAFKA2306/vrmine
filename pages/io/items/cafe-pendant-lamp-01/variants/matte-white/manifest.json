@@ -1,6 +1,6 @@
 {
-  "schema_version": 2,
-  "id": "cafe-pendant-lamp-01",
+  "schema_version": 3,
+  "id": "cafe-pendant-lamp-01--matte-white",
   "source_spec": "config/world-items/cafe-pendant-lamp-01.json",
   "spec_sha256": "9187b36d238a8678428f58a753a40b7409e7c3a77e9af8a5f063388d8cd801c9",
   "blender": "4.2.0",
@@ -110,15 +110,19 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "cafe-pendant-lamp-01.blend": "f7b9dc7832d7cb6484b19522062d2b91bc49d26cb40dd64e31d1c3c6fc673db1",
-    "cafe-pendant-lamp-01.glb": "f8925bf84368340257251544daaa907cad0249a4b3584e55753d0c2d2bdb18f8",
-    "cafe-pendant-lamp-01.fbx": "d52d606e2b1460cc7a21dfa2a7be8243deaa5a042ad443d6914fabd7bc11f69b",
-    "thumbnail.png": "271f8b1e7483a84a8fc5ad699b1d85cce08d4775084ff69fc85e5f7902d51c52",
-    "view-hero.png": "271f8b1e7483a84a8fc5ad699b1d85cce08d4775084ff69fc85e5f7902d51c52",
-    "view-front.png": "4393998362c31b91b97688baed453aa014436445f1b49387b4a7d8009ef80644",
-    "view-rear.png": "478c29351df43e99ad77b15083a42304bb3c5b2d2a24d234c392b89a3bfa60e0",
-    "view-left.png": "084d7ea022a168af39392f9317e49779e6f94d3d23c5a750048646f76c82f061",
-    "view-right.png": "17dc291a4f6097707cbe5c351dce33568f7548c07875a986550a3fe77618a9d9",
-    "view-top.png": "385dc8697861834488a482f8daa10149781439278d6d18a7ecffbd66c46285d4"
-  }
+    "cafe-pendant-lamp-01--matte-white.blend": "a3b1c136ac9d021fab2509869baefe796895157b15f57224b558942d1df5ee46",
+    "cafe-pendant-lamp-01--matte-white.glb": "a1c0068d848f47b390d0eed6917d55227048550fd6ce378699101f94b041b170",
+    "cafe-pendant-lamp-01--matte-white.fbx": "a0c30854bb259428602d97556a761fb30c8d14009616d2988a606e9787f6f75a",
+    "thumbnail.png": "19e8a0adc1a982047f612f7c9ebdb496d7af583e3b7a93f29344743bddd6fc97",
+    "view-hero.png": "19e8a0adc1a982047f612f7c9ebdb496d7af583e3b7a93f29344743bddd6fc97",
+    "view-front.png": "b83f2da91b09fe605e1ac930d6c22e104cfffd17c13100d72b011c74010d4764",
+    "view-rear.png": "67404829b4b64f68e47beba2395073fa275e091966d9ec83f3fea1ed7c77619b",
+    "view-left.png": "4aa8c90d52d04fd5074a43df32ac189de872c3c4224d41739fec489f43e9c7bb",
+    "view-right.png": "1eeaffb8c2cdb93ed03733f39f2cee552f1cf7f7b9ae446801b36e9cf63684d1",
+    "view-top.png": "a608869ae30fcdaf904d212312aa4f636431b8a140f05b437cc0d76164a471a5"
+  },
+  "base_id": "cafe-pendant-lamp-01",
+  "variant_id": "matte-white",
+  "resolved_spec_sha256": "b25fe8aaf09e48af24b166b71fecd4f3a9dab9f0739509f369b1da0be539ce89",
+  "variant_sha256": "89e04916c69d1f6eda10840c9003a02a8a486cd60ab3d146a0b7296764201561"
 }
