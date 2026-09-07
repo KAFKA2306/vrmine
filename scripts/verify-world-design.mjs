@@ -99,13 +99,27 @@ const quest = {
   known_false: questValues.filter(v=>v===false).length,
   unknown: questValues.filter(v=>v===null).length
 };
-const downloadObserved = dataset.records.filter(r=>Number.isFinite(r.material_runtime.download_size_mb)).length;
-const priceObserved = dataset.records.filter(r=>Number.isFinite(r.production.price_jpy)).length;
+const median = (values) => {
+  const sorted = [...values].sort((a,b)=>a-b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+};
+const downloadValues = dataset.records.map(r=>r.material_runtime.download_size_mb).filter(Number.isFinite).sort((a,b)=>a-b);
+const priceValues = dataset.records.map(r=>r.production.price_jpy).filter(Number.isFinite).sort((a,b)=>a-b);
+const downloadObserved = downloadValues.length;
+const priceObserved = priceValues.length;
+const useCounts = {};
+for (const record of dataset.records) for (const use of record.use.primary_use) useCounts[use] = (useCounts[use] ?? 0) + 1;
 if (summary.record_count !== dataset.records.length) fail('summary record_count drift');
 if (JSON.stringify(summary.source_type_counts) !== JSON.stringify(sourceCounts)) fail('summary source_type_counts drift');
-if (JSON.stringify(summary.quest_support) !== JSON.stringify(quest)) fail('summary quest_support drift');
+if (summary.quest_support.known_true !== quest.known_true || summary.quest_support.known_false !== quest.known_false || summary.quest_support.unknown !== quest.unknown) fail('summary quest_support drift');
+const knownQuest = quest.known_true + quest.known_false;
+if (summary.quest_support.known_support_rate !== quest.known_true / knownQuest) fail('summary quest support rate drift');
 if (summary.download_size_mb.observed_count !== downloadObserved) fail('summary download observed_count drift');
+if (summary.download_size_mb.median !== median(downloadValues) || JSON.stringify(summary.download_size_mb.distribution) !== JSON.stringify(downloadValues)) fail('summary download distribution drift');
 if (summary.price_jpy.observed_count !== priceObserved) fail('summary price observed_count drift');
+if (summary.price_jpy.median !== median(priceValues) || JSON.stringify(summary.price_jpy.distribution) !== JSON.stringify(priceValues)) fail('summary price distribution drift');
+if (JSON.stringify(summary.primary_use_counts) !== JSON.stringify(useCounts)) fail('summary primary_use_counts drift');
 if (summary.dimension_distribution_status !== 'UNVERIFIED_IN_PUBLIC_SOURCES') fail('unobserved market dimensions must stay unverified');
 
 console.log(JSON.stringify({
