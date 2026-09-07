@@ -7,15 +7,15 @@
   },
   "unknown_policy": "null",
   "quest_support": {
-    "known_true": 9,
+    "known_true": 10,
     "known_false": 2,
-    "unknown": 9
+    "unknown": 8
   },
   "download_size_mb": {
-    "observed_count": 8
+    "observed_count": 9
   },
   "price_jpy": {
-    "observed_count": 8
+    "observed_count": 9
   },
   "dimension_distribution_status": "UNVERIFIED_IN_PUBLIC_SOURCES",
   "interpretation": "Frequencies use only populated published fields. No causal success factor is inferred from popularity proxies."
