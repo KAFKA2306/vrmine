@@ -3,9 +3,10 @@
 Usage:
   blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/<id>.json [variant]
 
-Without a variant id, the canonical base SKU and every declared variant are
-materialized through the same generator. Supplying a variant id materializes
-only that resolved variant.
+Without a variant id, the canonical base SKU and every materializable declared
+variant are materialized through the same generator. Metadata-only planned
+variants remain inert. Supplying a variant id materializes only that resolved
+variant.
 """
 from __future__ import annotations
 
@@ -323,7 +324,8 @@ def main():
         return
     generate_one(spec_path, base, None)
     for variant in base["variants"]:
-        generate_one(spec_path, base, variant["id"])
+        if "part_overrides" in variant or "material_overrides" in variant:
+            generate_one(spec_path, base, variant["id"])
 
 
 if __name__ == "__main__":
