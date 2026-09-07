@@ -26,6 +26,7 @@ tasks:
       - node scripts/verify-quality-gates.mjs
       - node scripts/verify-factory-timing.mjs
       - task: world-design:check
+      - python3 -m py_compile scripts/world_build_factory.py scripts/verify_world_build.py
       - node scripts/verify-perspective-cage.mjs
       - node --check scripts/run-perspective-cage-unity.mjs
       - node --check scripts/run-glb-consumer-unity.mjs
@@ -42,6 +43,14 @@ tasks:
     cmds:
       - node scripts/verify-world-design.mjs
       - node scripts/world-design-to-blender-plan.mjs config/world-design/generated/cyber-alley-tea-nook.json
+
+  world-build:pilot:
+    desc: Generate and verify the canonical pilot room with Blender 4.2
+    cmds:
+      - mkdir -p .artifacts/world-builds/cyber-alley-tea-nook
+      - node scripts/world-design-to-blender-plan.mjs config/world-design/generated/cyber-alley-tea-nook.json > .artifacts/world-builds/cyber-alley-tea-nook/build-plan.json
+      - blender -b --python-exit-code 1 --python scripts/world_build_factory.py -- .artifacts/world-builds/cyber-alley-tea-nook/build-plan.json .artifacts/world-builds/cyber-alley-tea-nook
+      - blender -b --python-exit-code 1 --python scripts/verify_world_build.py -- .artifacts/world-builds/cyber-alley-tea-nook/build-plan.json .artifacts/world-builds/cyber-alley-tea-nook
 
   merge:check:
     desc: PR Merge Gate — run repository checks that may decide integration into main
