@@ -10,6 +10,7 @@ on:
       - 'scripts/verify_world_build.py'
       - 'Taskfile.yml'
       - '.github/workflows/world-build.yml'
+      - 'pages/worlds/**'
 
 permissions:
   contents: write
@@ -58,16 +59,32 @@ jobs:
           echo "spec_path=$spec" >> "$GITHUB_OUTPUT"
           echo "world_id=$world_id" >> "$GITHUB_OUTPUT"
 
-      - name: Materialize deterministic build plan
+      - name: Materialize deterministic build plan and resolve source revision
+        id: plan
         env:
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
           WORLD_ID: ${{ steps.select.outputs.world_id }}
         run: |
           set -euo pipefail
           out=".artifacts/world-builds/${WORLD_ID}"
+          dest="pages/worlds/${WORLD_ID}"
           mkdir -p "$out"
           node scripts/world-design-to-blender-plan.mjs "$SPEC_PATH" > "$out/build-plan.json"
           test "$(jq -r .schema_version "$out/build-plan.json")" = 3
+          source_sha="$(git log -1 --format=%H -- "$SPEC_PATH" scripts/world-design-to-blender-plan.mjs scripts/world_build_factory.py scripts/verify_world_build.py Taskfile.yml .github/workflows/world-build.yml)"
+          current=false
+          if [ -f "$dest/manifest.json" ] && [ -f "$dest/build-plan.json" ]; then
+            recorded="$(jq -r '.source_commit // empty' "$dest/manifest.json")"
+            if [ "$recorded" = "$source_sha" ] && cmp -s "$out/build-plan.json" "$dest/build-plan.json"; then
+              required=(world.blend world.glb manifest.json build-plan.json view-hero.png view-top.png view-social-core.png view-retreat.png view-circulation.png)
+              current=true
+              for file in "${required[@]}"; do
+                if [ ! -s "$dest/$file" ]; then current=false; break; fi
+              done
+            fi
+          fi
+          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
+          echo "current=$current" >> "$GITHUB_OUTPUT"
 
       - name: Install official Blender 4.2.0
         run: |
@@ -80,18 +97,28 @@ jobs:
           sudo apt-get install -y libegl1 libgl1-mesa-dri
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
-      - name: Generate actual room and run spatial DRC
+      - name: Generate or reuse actual room and run spatial DRC
         env:
           GH_TOKEN: ${{ github.token }}
           WORLD_ID: ${{ steps.select.outputs.world_id }}
-          SOURCE_COMMIT: ${{ steps.pr.outputs.head_sha }}
+          SOURCE_COMMIT: ${{ steps.plan.outputs.source_sha }}
+          CURRENT: ${{ steps.plan.outputs.current }}
         run: |
           set -uo pipefail
           out=".artifacts/world-builds/${WORLD_ID}"
+          dest="pages/worlds/${WORLD_ID}"
+          if [ "$CURRENT" = true ]; then
+            cp -a "$dest/." "$out/"
+            node scripts/world-design-to-blender-plan.mjs "${{ steps.select.outputs.spec_path }}" > "$out/build-plan.json"
+          fi
           : > /tmp/world-build.log
           set +e
-          blender -b --python-exit-code 1 --python scripts/world_build_factory.py -- "$out/build-plan.json" "$out" >> /tmp/world-build.log 2>&1
-          status=$?
+          if [ "$CURRENT" != true ]; then
+            blender -b --python-exit-code 1 --python scripts/world_build_factory.py -- "$out/build-plan.json" "$out" >> /tmp/world-build.log 2>&1
+            status=$?
+          else
+            status=0
+          fi
           if [ "$status" -eq 0 ]; then
             blender -b --python-exit-code 1 --python scripts/verify_world_build.py -- "$out/build-plan.json" "$out" >> /tmp/world-build.log 2>&1
             status=$?
