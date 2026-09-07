@@ -76,6 +76,34 @@ def assert_mesh_import(path: Path, kind: str) -> None:
         raise AssertionError(f"no mesh geometry after {kind} import")
 
 
+def assert_variant_pages_stage(base_id: str, variant_id: str, out: Path) -> None:
+    staged = ROOT / "pages" / "io" / "items" / base_id / "variants" / variant_id
+    required = [
+        f"{base_id}--{variant_id}.blend", f"{base_id}--{variant_id}.glb",
+        f"{base_id}--{variant_id}.fbx", "manifest.json", "resolved-spec.json",
+        "factory-metrics.json", "thumbnail.png", "render.sha256",
+    ] + [f"view-{name}.png" for name in EXPECTED_VIEWS]
+    for name in required:
+        if not (staged / name).is_file() or (staged / name).stat().st_size == 0:
+            raise AssertionError(f"variant Pages staging missing: {variant_id}/{name}")
+    for name in required:
+        if name == "render.sha256":
+            continue
+        source = out / name
+        if source.is_file() and digest(source) != digest(staged / name):
+            raise AssertionError(f"variant Pages staging differs from verified artifact: {variant_id}/{name}")
+    expected_render_lines = {
+        name: digest(staged / name)
+        for name in ["thumbnail.png"] + [f"view-{view}.png" for view in EXPECTED_VIEWS]
+    }
+    actual_render_lines = {}
+    for line in (staged / "render.sha256").read_text().splitlines():
+        value, name = line.split(maxsplit=1)
+        actual_render_lines[name] = value
+    if actual_render_lines != expected_render_lines:
+        raise AssertionError(f"variant Pages render hash mismatch: {variant_id}")
+
+
 def verify_one(spec_path: Path, base: dict, variant_id: str | None) -> None:
     expected_spec = base
     expected_variant = None
@@ -162,6 +190,14 @@ def verify_one(spec_path: Path, base: dict, variant_id: str | None) -> None:
             raise AssertionError(f"unexpected dimensions: actual={dims}, spec={target}")
     if manifest["triangles"] <= 0 or manifest["triangles"] > 10000:
         raise AssertionError(f"triangle budget exceeded: {manifest['triangles']}")
+    if variant_id:
+        metrics = out / "factory-metrics.json"
+        if not metrics.is_file():
+            raise AssertionError(f"variant factory metrics missing: {variant_id}")
+        metric_data = json.loads(metrics.read_text())
+        if metric_data.get("manual_blender_touch_count") != 0 or metric_data.get("reusable_component_ratio") != 1.0:
+            raise AssertionError(f"variant reuse metrics invalid: {variant_id}")
+        assert_variant_pages_stage(base["id"], variant_id, out)
     print(json.dumps({"id": sku, "variant": variant_id, "formats": "PASS", "geometry": "PASS", "renders": "PASS", "framing": "PASS", "triangles": manifest["triangles"]}))
 
 
