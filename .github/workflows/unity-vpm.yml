@@ -24,6 +24,7 @@ on:
       - "scripts/verify-quality-gates.mjs"
       - "scripts/verify-factory-timing.mjs"
       - "scripts/verify-world-design.mjs"
+      - "scripts/world-design-to-blender-plan.mjs"
       - "scripts/verify-perspective-cage.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
@@ -55,6 +56,7 @@ on:
       - "scripts/verify-quality-gates.mjs"
       - "scripts/verify-factory-timing.mjs"
       - "scripts/verify-world-design.mjs"
+      - "scripts/world-design-to-blender-plan.mjs"
       - "scripts/verify-perspective-cage.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
@@ -92,7 +94,9 @@ jobs:
         run: node scripts/verify-factory-timing.mjs
 
       - name: Verify World Design dataset, DRC and provenance
-        run: node scripts/verify-world-design.mjs
+        run: |
+          node scripts/verify-world-design.mjs
+          node scripts/world-design-to-blender-plan.mjs config/world-design/generated/cyber-alley-tea-nook.json
 
       - name: Verify Perspective Cage contract and implementation shape
         run: node scripts/verify-perspective-cage.mjs
