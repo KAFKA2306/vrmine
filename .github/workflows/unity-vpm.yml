@@ -30,6 +30,7 @@ on:
       - "scripts/verify-world-item-packages.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
+      - "scripts/verify-world-design-plan-negative.mjs"
       - "scripts/verify-perspective-cage.mjs"
       - "scripts/verify-stich-meister-rules.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
@@ -68,6 +69,7 @@ on:
       - "scripts/verify-world-item-packages.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
+      - "scripts/verify-world-design-plan-negative.mjs"
       - "scripts/verify-perspective-cage.mjs"
       - "scripts/verify-stich-meister-rules.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
@@ -112,6 +114,7 @@ jobs:
         run: |
           node scripts/verify-world-design.mjs
           node scripts/world-design-to-blender-plan.mjs config/world-design/generated/cyber-alley-tea-nook.json
+          node scripts/verify-world-design-plan-negative.mjs
 
       - name: Verify Perspective Cage contract and implementation shape
         run: node scripts/verify-perspective-cage.mjs
