@@ -4,11 +4,11 @@
   "display_name": "Generic Concrete Parking Block",
   "dimensions_m": [0.68, 0.16, 0.12],
   "parts": [
-    {"component": "box", "name": "body", "size": [0.50, 0.16, 0.10], "position": [0.0, 0.0, 0.05], "rotation_deg": [0, 0, 0], "material": "concrete"},
-    {"component": "box", "name": "left_slope", "size": [0.16, 0.16, 0.085], "position": [-0.29, 0.0, 0.047], "rotation_deg": [0, 14, 0], "material": "concrete"},
-    {"component": "box", "name": "right_slope", "size": [0.16, 0.16, 0.085], "position": [0.29, 0.0, 0.047], "rotation_deg": [0, -14, 0], "material": "concrete"},
-    {"component": "box", "name": "reflector_left", "size": [0.07, 0.164, 0.012], "position": [-0.17, 0.0, 0.106], "rotation_deg": [0, 0, 0], "material": "reflector_yellow"},
-    {"component": "box", "name": "reflector_right", "size": [0.07, 0.164, 0.012], "position": [0.17, 0.0, 0.106], "rotation_deg": [0, 0, 0], "material": "reflector_yellow"}
+    {"component": "box", "name": "body", "size": [0.0, 0.0, 0.0], "position": [0.0, 0.0, 0.0], "rotation_deg": [0, 0, 0], "material": "concrete"},
+    {"component": "box", "name": "left_slope", "size": [0.0, 0.0, 0.0], "position": [0.0, 0.0, 0.0], "rotation_deg": [0, 14, 0], "material": "concrete"},
+    {"component": "box", "name": "right_slope", "size": [0.0, 0.0, 0.0], "position": [0.0, 0.0, 0.0], "rotation_deg": [0, -14, 0], "material": "concrete"},
+    {"component": "box", "name": "reflector_left", "size": [0.0, 0.0, 0.0], "position": [0.0, 0.0, 0.0], "rotation_deg": [0, 0, 0], "material": "reflector_yellow"},
+    {"component": "box", "name": "reflector_right", "size": [0.0, 0.0, 0.0], "position": [0.0, 0.0, 0.0], "rotation_deg": [0, 0, 0], "material": "reflector_yellow"}
   ],
   "materials": {
     "concrete": {"base_color": [0.43, 0.44, 0.42], "roughness": 0.92, "metallic": 0.0},
