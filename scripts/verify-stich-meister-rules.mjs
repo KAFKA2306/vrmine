@@ -58,6 +58,6 @@ assert.ok(!runtime.includes('rule == 26'), 'Rule 26 gained runtime behavior; upd
 
 assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page must expose rule authority status');
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
-assert.ok(page.includes('../../../../config/stich-meister-rules.json') || page.includes('../../../config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
+assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
 console.log('Stich-Meister rule authority: PASS (60 rules; intended semantics unresolved; runtime observations separated)');
