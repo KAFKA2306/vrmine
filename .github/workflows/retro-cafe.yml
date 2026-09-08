@@ -131,7 +131,7 @@ jobs:
           set -euo pipefail
           echo "generation_reused=false" >> "$GITHUB_OUTPUT"
           tmp="$(mktemp -d)"
-          candidates="$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" --paginate --slurp | jq -s 'map(.artifacts // []) | add | sort_by(.created_at) | reverse')"
+          candidates="$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" --paginate --slurp | jq 'map(.artifacts // []) | add | sort_by(.created_at) | reverse')"
           mapfile -t rows < <(jq -r --arg prefix "world-item-${SKU}-" '.[] | select((.expired|not) and (.name|startswith($prefix))) | [.id,.name,.workflow_run.id] | @tsv' <<<"$candidates")
           for row in "${rows[@]:-}"; do
             IFS=$'\t' read -r artifact_id artifact_name prior_run_id <<<"$row"
