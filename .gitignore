@@ -6,7 +6,9 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
-/.agents/
+/.agents/*
+!/.agents/skills/
+!/.agents/skills/**
 /.gemini/
 /[Mm]emoryCaptures/
 /[Aa]ssets/AssetStoreTools*
@@ -62,6 +64,8 @@ crashlytics-build.properties
 
 # Repo-local pinned tools and generated verification evidence
 /.tools/
+/.uloop/*
+!/.uloop/project-runner-pin.json
 /.artifacts/
 
 # Reproducibly materialized third-party Gaussian renderer source.

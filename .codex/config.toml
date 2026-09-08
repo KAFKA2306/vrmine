@@ -1,0 +1,5 @@
+# Project-local MCP configuration. Codex loads this only for a trusted checkout.
+[mcp_servers.unity-mcp]
+command = "npx"
+args = ["-y", "tunasync-unity-mcp@2.6.8"]
+tool_timeout_sec = 1300

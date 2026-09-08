@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "unity": "2022.3.22f1",
+  "unityCliLoop": {
+    "version": "3.5.0",
+    "upstreamCommit": "02d8358a6dc4b94243598dd4db1d1838851faed3",
+    "package": "https://github.com/hatayama/unity-cli-loop.git?path=/Packages/src#v3.5.0",
+    "skillPrefix": "uloop-",
+    "skillCount": 20
+  },
+  "tunaSync": {
+    "version": "2.6.8",
+    "serverPackage": "tunasync-unity-mcp@2.6.8",
+    "unityPackage": "https://github.com/TunaSync-Studio/UnityMCP-VCC.git?path=/package/com.tunasync.unity-mcp#v2.6.8",
+    "mcpServerName": "unity-mcp",
+    "toolTimeoutSeconds": 1300
+  },
+  "vrcAgentSkills": {
+    "version": "4.1.0",
+    "upstreamCommit": "3a32dfe04fc841611679276b0c91aa1107b78059",
+    "installed": [
+      "unity-vrc-udon-sharp",
+      "unity-vrc-world-sdk-3"
+    ]
+  },
+  "responsibility": {
+    "unityRuntimeLoop": "unity-cli-loop",
+    "vrchatWorldKnowledge": "agent-skills-vrc-udon",
+    "vccVpmNdmfAuditPreflight": "TunaSync Unity MCP"
+  }
+}

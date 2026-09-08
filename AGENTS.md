@@ -32,3 +32,12 @@ Use the existing generation path and preserve the direct render evidence it prod
 ## Verification
 
 Use the smallest `Taskfile.yml` command for the changed surface and the verifier selected by `config/quality-gates.json`. Tie CI, main read-back, production, Unity, and VRChat claims to the exact revision that produced the evidence; never infer an unobserved runtime result.
+
+## AI Unity bridge
+
+- Version/provenance authority: `config/ai-unity.json`.
+- Codex MCP config: `.codex/config.toml`; TunaSync owns VCC/VPM/NDMF/VRC audit and build/upload preflight surfaces.
+- Codex Unity execution skills: `.agents/skills/uloop-*`, pinned from unity-cli-loop 3.5.0.
+- VRChat World/Udon skills: `.agents/skills/unity-vrc-*`, pinned from agent-skills-vrc-udon 4.1.0.
+- Do not issue simultaneous writes through TunaSync `execute_editor_command` and uloop dynamic code against the same Editor. Serialize writes.
+- Run `node scripts/verify-ai-unity-setup.mjs` for the repository-level setup gate. Runtime connection evidence is separate and must only be claimed when Unity is actually observed.
