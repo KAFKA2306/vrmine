@@ -59,8 +59,8 @@ public class GameController : UdonSharpBehaviour
     public void SelectRule(int handIndex)
     {
         if (board.phase != BoardState.PhaseRuleSelect) return;
-        int seat = localPlayerSeat;
-        if (seat >= board.playerCount || handIndex < 0 || handIndex >= 3) return;
+        int seat = ResolveLocalSeat();
+        if (seat < 0 || seat >= board.playerCount || handIndex < 0 || handIndex >= 3) return;
         if (board.playerCount == 5 && seat == (board.dealerSeat + 1) % board.playerCount) return;
         byte rule = board.ruleHands[seat * 3 + handIndex];
         if (rule == 0 || board.selectedRuleBySeat[seat] != 0) return;
@@ -73,28 +73,42 @@ public class GameController : UdonSharpBehaviour
 
     public void OnCardClicked(int handIndex)
     {
+        int seat = ResolveLocalSeat();
+        if (seat < 0) return;
         if (board.phase == BoardState.PhasePrepare)
         {
-            ToggleMarkedCard(handIndex);
+            ToggleMarkedCard(seat, handIndex);
             return;
         }
-        if (board.phase != BoardState.PhasePlayCard || board.currentPlayerSeat != localPlayerSeat) return;
+        if (board.phase != BoardState.PhasePlayCard || board.currentPlayerSeat != seat) return;
         OwnState();
-        TryPlayCard(localPlayerSeat, handIndex);
+        TryPlayCard(seat, handIndex);
     }
 
     public void ConfirmMarkedCards()
     {
         if (board.phase != BoardState.PhasePrepare) return;
+        int seat = ResolveLocalSeat();
+        if (seat < 0) return;
         int required = board.prepareStep == 3 ? 1 : 3;
         int count = 0;
-        int offset = localPlayerSeat * NetConst.MaxHandSize;
+        int offset = seat * NetConst.MaxHandSize;
         for (int i = 0; i < NetConst.MaxHandSize; i++) count += board.markedCards[offset + i];
         if (count != required) return;
         OwnState();
-        board.confirmedMask |= (byte)(1 << localPlayerSeat);
+        board.confirmedMask |= (byte)(1 << seat);
         if (board.confirmedMask == (1 << board.playerCount) - 1) ApplyPreparation();
         Sync();
+    }
+
+    int ResolveLocalSeat()
+    {
+        VRCPlayerApi localPlayer = Networking.LocalPlayer;
+        if (localPlayer == null || localPlayer.playerId <= 0) return -1;
+        int playerId = localPlayer.playerId;
+        for (int seat = 0; seat < board.playerCount; seat++)
+            if (board.occupiedPlayerIds[seat] == playerId) return seat;
+        return -1;
     }
 
     public void TryPlayCard(int playerSeat, int handIndex)
@@ -292,10 +306,10 @@ public class GameController : UdonSharpBehaviour
         board.currentPlayerSeat = (byte)((board.dealerSeat + 1) % board.playerCount);
     }
 
-    void ToggleMarkedCard(int handIndex)
+    void ToggleMarkedCard(int seat, int handIndex)
     {
-        if (handIndex < 0 || handIndex >= NetConst.MaxHandSize) return;
-        int index = localPlayerSeat * NetConst.MaxHandSize + handIndex;
+        if (seat < 0 || seat >= board.playerCount || handIndex < 0 || handIndex >= NetConst.MaxHandSize) return;
+        int index = seat * NetConst.MaxHandSize + handIndex;
         if (board.playerHands[index] == 0) return;
         OwnState();
         board.markedCards[index] = board.markedCards[index] == 0 ? (byte)1 : (byte)0;
