@@ -134,12 +134,22 @@ public class GameController : UdonSharpBehaviour
     public void JoinGame(int seat)
     {
         if (seat < 0 || seat >= board.playerCount) return;
-        OwnState();
         int playerId = Networking.LocalPlayer.playerId;
         if (board.occupiedPlayerIds[seat] != 0 && board.occupiedPlayerIds[seat] != playerId) return;
+        OwnState();
+        AssignSeat(playerId, seat);
+        Sync();
+    }
+
+    bool AssignSeat(int playerId, int seat)
+    {
+        if (playerId <= 0 || seat < 0 || seat >= board.playerCount) return false;
+        if (board.occupiedPlayerIds[seat] != 0 && board.occupiedPlayerIds[seat] != playerId) return false;
+        for (int i = 0; i < board.playerCount; i++)
+            if (i != seat && board.occupiedPlayerIds[i] == playerId) board.occupiedPlayerIds[i] = 0;
         localPlayerSeat = seat;
         board.occupiedPlayerIds[seat] = playerId;
-        Sync();
+        return true;
     }
 
     public void Render()
@@ -188,6 +198,21 @@ public class GameController : UdonSharpBehaviour
         board.selectedRuleBySeat[3] = 41;
         ActivateRules();
         if (board.trumpRule != 5 || board.scoringRule != 41) failures++;
+
+        for (int playerCount = 3; playerCount <= NetConst.MaxPlayers; playerCount++)
+        {
+            board.playerCount = (byte)playerCount;
+            for (int i = 0; i < board.occupiedPlayerIds.Length; i++) board.occupiedPlayerIds[i] = 0;
+            int playerId = 100 + playerCount;
+            if (!AssignSeat(playerId, 0)) failures++;
+            if (!AssignSeat(playerId, playerCount - 1)) failures++;
+            int occurrences = 0;
+            for (int i = 0; i < playerCount; i++) if (board.occupiedPlayerIds[i] == playerId) occurrences++;
+            if (occurrences != 1 || board.occupiedPlayerIds[playerCount - 1] != playerId || board.occupiedPlayerIds[0] != 0) failures++;
+            int otherPlayerId = 200 + playerCount;
+            board.occupiedPlayerIds[0] = otherPlayerId;
+            if (AssignSeat(playerId, 0) || board.occupiedPlayerIds[0] != otherPlayerId || board.occupiedPlayerIds[playerCount - 1] != playerId) failures++;
+        }
         return failures;
     }
 
