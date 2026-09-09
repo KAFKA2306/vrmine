@@ -147,6 +147,7 @@ public class GameController : UdonSharpBehaviour
 
     public void JoinGame(int seat)
     {
+        if (!CanChangeSession()) return;
         if (seat < 0 || seat >= board.playerCount) return;
         VRCPlayerApi localPlayer = Networking.LocalPlayer;
         if (localPlayer == null || localPlayer.playerId <= 0) return;
@@ -160,6 +161,7 @@ public class GameController : UdonSharpBehaviour
 
     public void LeaveGame()
     {
+        if (!CanChangeSession()) return;
         VRCPlayerApi localPlayer = Networking.LocalPlayer;
         if (localPlayer == null || localPlayer.playerId <= 0) return;
         int seat = ResolveLocalSeat();
@@ -167,6 +169,11 @@ public class GameController : UdonSharpBehaviour
         OwnState();
         if (!ReleaseSeat(localPlayer.playerId)) return;
         Sync();
+    }
+
+    bool CanChangeSession()
+    {
+        return board.phase == BoardState.PhaseSetup || board.phase == BoardState.PhaseComplete;
     }
 
     void TryStartFirstMatch()
@@ -254,6 +261,20 @@ public class GameController : UdonSharpBehaviour
         board.selectedRuleBySeat[3] = 41;
         ActivateRules();
         if (board.trumpRule != 5 || board.scoringRule != 41) failures++;
+
+        board.phase = BoardState.PhaseSetup;
+        if (!CanChangeSession()) failures++;
+        board.phase = BoardState.PhaseComplete;
+        if (!CanChangeSession()) failures++;
+        board.phase = BoardState.PhaseRuleSelect;
+        if (CanChangeSession()) failures++;
+        board.phase = BoardState.PhasePrepare;
+        if (CanChangeSession()) failures++;
+        board.phase = BoardState.PhasePlayCard;
+        if (CanChangeSession()) failures++;
+        board.phase = BoardState.PhaseScore;
+        if (CanChangeSession()) failures++;
+        board.phase = BoardState.PhaseSetup;
 
         for (int playerCount = 3; playerCount <= NetConst.MaxPlayers; playerCount++)
         {
