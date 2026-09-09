@@ -16,6 +16,7 @@ assert.deepEqual(spec.session_observed.supported_player_counts, [3, 4, 5]);
 assert.deepEqual(spec.session_observed.cards_per_player, {3: 16, 4: 15, 5: 12});
 assert.deepEqual(spec.session_observed.category_ranges, {Trump: [1, 21], Basic: [22, 40], Scoring: [41, 60]});
 assert.equal(spec.session_observed.rounds_per_game, 'player_count');
+assert.equal(spec.rule_defaults.conflict_priority, 'global-lower-id');
 
 const ruleIds = Object.keys(spec.rules).map(Number).sort((a, b) => a - b);
 assert.equal(ruleIds.length, 60, 'Rule authority must contain exactly 60 entries');
@@ -39,8 +40,9 @@ const runtimeContracts = [
   'if (board.playerCount == 3) board.selectedRules[count++] = DrawRule();',
   'if (board.playerCount == 5 && seat == (board.dealerSeat + 1) % board.playerCount) continue;',
   'if (board.selectedRules[j] < board.selectedRules[i])',
-  'if (rule <= 21 && rule != 0) board.trumpRule = rule;',
-  'else if (rule <= 40 && rule != 0) board.basicRule = rule;',
+  'if (rule <= 21 && rule != 0 && board.trumpRule == 0) board.trumpRule = rule;',
+  'else if (rule <= 40 && rule != 0 && board.basicRule == 0) board.basicRule = rule;',
+  'else if (rule != 0 && board.scoringRule == 0) board.scoringRule = rule;',
   'if (rule >= 1 && rule <= 14) return Rank(card) == rule + 1;',
   'if (rule == 21 && board.trickIndex >= 1 && board.trickCardCount > 0)',
   'if (HasRule(22)) board.prepareStep = 1;',
@@ -49,7 +51,12 @@ const runtimeContracts = [
   'return HasRule(40) ? remaining == board.playerCount * 3 : remaining == 0;',
   'if (rule < 46 || rule > 60) return;',
   'else if (rule == 60)',
-  'if (board.roundIndex >= board.playerCount)'
+  'if (board.roundIndex >= board.playerCount)',
+  'board.selectedRuleBySeat[0] = 14;',
+  'board.selectedRuleBySeat[1] = 5;',
+  'board.selectedRuleBySeat[2] = 60;',
+  'board.selectedRuleBySeat[3] = 41;',
+  'if (board.trumpRule != 5 || board.scoringRule != 41) failures++;'
 ];
 for (const contract of runtimeContracts) assert.ok(runtime.includes(contract), `Runtime contract drift: ${contract}`);
 
@@ -60,4 +67,4 @@ assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; intended semantics unresolved; runtime observations separated)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; intended semantics unresolved)');
