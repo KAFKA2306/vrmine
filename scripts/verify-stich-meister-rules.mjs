@@ -75,8 +75,16 @@ assert.ok(actionSurface.includes('Networking.LocalPlayer'), 'Player actions must
 assert.ok(actionSurface.includes('board.occupiedPlayerIds'), 'Player actions must derive acting seat from canonical occupiedPlayerIds');
 assert.ok(!actionSurface.includes('localPlayerSeat'), 'Player actions must not trust mutable/default localPlayerSeat as authority');
 
+const sessionSurface = runtime.slice(runtime.indexOf('public void JoinGame'), runtime.indexOf('public void Render'));
+assert.ok(sessionSurface.includes('public void LeaveGame()'), 'Session path must expose an explicit leave action');
+assert.ok(sessionSurface.includes('ResolveLocalSeat()'), 'Leave must resolve the actual occupied seat instead of trusting localPlayerSeat');
+assert.ok(sessionSurface.includes('board.occupiedPlayerIds[seat] = 0;'), 'Leave must release the canonical occupied seat');
+assert.ok(sessionSurface.includes('AssignSeat(playerId, seat)'), 'Rejoin must reuse the canonical seat assignment path');
+assert.ok(runtime.includes('if (!ReleaseSeat(playerId)) failures++;'), '3P/4P/5P fixture must exercise seat release');
+assert.ok(runtime.includes('if (!AssignSeat(playerId, 0)) failures++;'), '3P/4P/5P fixture must exercise rejoin through canonical assignment');
+
 assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page must expose rule authority status');
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand and action seat authority guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, action seat, and leave/rejoin session authority guarded; intended semantics unresolved)');
