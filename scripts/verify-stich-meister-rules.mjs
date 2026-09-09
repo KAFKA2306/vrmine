@@ -94,6 +94,13 @@ assert.ok(sessionSurface.includes('AssignSeat(playerId, seat)'), 'Rejoin must re
 assert.ok(runtime.includes('if (!ReleaseSeat(playerId)) failures++;'), '3P/4P/5P fixture must exercise seat release');
 assert.ok(runtime.includes('if (!AssignSeat(playerId, 0)) failures++;'), '3P/4P/5P fixture must exercise rejoin through canonical assignment');
 
+const startSurface = runtime.slice(runtime.indexOf('void Start()'), runtime.indexOf('public void SelectRule'));
+assert.ok(!startSurface.includes('board.phase == BoardState.PhaseSetup) SetupGame();'), 'PhaseSetup alone must not auto-start an unoccupied session');
+assert.ok(runtime.includes('bool HasCompleteSession()'), 'First-match start must have one canonical occupancy guard');
+assert.ok(runtime.includes('board.occupiedPlayerIds[seat] <= 0'), 'Start occupancy must be derived from canonical occupiedPlayerIds');
+assert.ok(runtime.includes('if (!HasCompleteSession()) failures++;'), '3P/4P/5P fixture must prove complete occupancy can satisfy the start guard');
+assert.ok(runtime.includes('if (HasCompleteSession()) failures++;'), '3P/4P/5P fixture must prove incomplete occupancy is rejected');
+
 assert.ok(action.includes('else if (trickGame.board.phase == BoardState.PhaseComplete) trickGame.SetupGame();'), 'Reset action must only start a second match from PhaseComplete');
 assert.ok(!action.includes('else trickGame.SetupGame();'), 'Reset action must not restart an active match unconditionally');
 
@@ -101,4 +108,4 @@ assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, unseated showcase, action seat, leave/rejoin, and second-match reset boundary guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, unseated showcase, action seat, leave/rejoin, first-match occupancy, and second-match reset boundary guarded; intended semantics unresolved)');

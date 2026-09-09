@@ -25,7 +25,7 @@ public class GameController : UdonSharpBehaviour
 
     void Start()
     {
-        if (Networking.IsOwner(gameObject) && board.phase == BoardState.PhaseSetup) SetupGame();
+        TryStartFirstMatch();
         Render();
     }
 
@@ -154,7 +154,8 @@ public class GameController : UdonSharpBehaviour
         if (board.occupiedPlayerIds[seat] != 0 && board.occupiedPlayerIds[seat] != playerId) return;
         OwnState();
         if (!AssignSeat(playerId, seat)) return;
-        Sync();
+        if (board.phase == BoardState.PhaseSetup && HasCompleteSession()) SetupGame();
+        else Sync();
     }
 
     public void LeaveGame()
@@ -166,6 +167,20 @@ public class GameController : UdonSharpBehaviour
         OwnState();
         if (!ReleaseSeat(localPlayer.playerId)) return;
         Sync();
+    }
+
+    void TryStartFirstMatch()
+    {
+        if (!Networking.IsOwner(gameObject) || board.phase != BoardState.PhaseSetup || !HasCompleteSession()) return;
+        SetupGame();
+    }
+
+    bool HasCompleteSession()
+    {
+        if (board.playerCount < 3 || board.playerCount > NetConst.MaxPlayers) return false;
+        for (int seat = 0; seat < board.playerCount; seat++)
+            if (board.occupiedPlayerIds[seat] <= 0) return false;
+        return true;
     }
 
     bool ReleaseSeat(int playerId)
@@ -244,6 +259,7 @@ public class GameController : UdonSharpBehaviour
         {
             board.playerCount = (byte)playerCount;
             for (int i = 0; i < board.occupiedPlayerIds.Length; i++) board.occupiedPlayerIds[i] = 0;
+            if (HasCompleteSession()) failures++;
             int playerId = 100 + playerCount;
             if (!AssignSeat(playerId, 0)) failures++;
             if (!AssignSeat(playerId, playerCount - 1)) failures++;
@@ -256,6 +272,10 @@ public class GameController : UdonSharpBehaviour
             if (!ReleaseSeat(playerId)) failures++;
             for (int i = 0; i < playerCount; i++) if (board.occupiedPlayerIds[i] == playerId) failures++;
             if (!AssignSeat(playerId, playerCount - 1) || board.occupiedPlayerIds[playerCount - 1] != playerId) failures++;
+            for (int seat = 0; seat < playerCount; seat++) board.occupiedPlayerIds[seat] = 300 + playerCount * 10 + seat;
+            if (!HasCompleteSession()) failures++;
+            board.occupiedPlayerIds[playerCount - 1] = 0;
+            if (HasCompleteSession()) failures++;
         }
         return failures;
     }
