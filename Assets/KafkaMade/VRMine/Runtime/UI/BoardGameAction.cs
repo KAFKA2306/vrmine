@@ -18,7 +18,7 @@ public class BoardGameAction : UdonSharpBehaviour
             else if (action == 1) trickGame.SelectRule(value);
             else if (action == 2) trickGame.ConfirmMarkedCards();
             else if (action == 3) trickGame.JoinGame(value);
-            else trickGame.SetupGame();
+            else if (trickGame.board.phase == BoardState.PhaseComplete) trickGame.SetupGame();
             return;
         }
         if (game == 1)
