@@ -93,6 +93,9 @@ assert.ok(sessionSurface.includes('board.occupiedPlayerIds[seat] = 0;'), 'Leave 
 assert.ok(sessionSurface.includes('AssignSeat(playerId, seat)'), 'Rejoin must reuse the canonical seat assignment path');
 assert.ok(runtime.includes('if (!ReleaseSeat(playerId)) failures++;'), '3P/4P/5P fixture must exercise seat release');
 assert.ok(runtime.includes('if (!AssignSeat(playerId, 0)) failures++;'), '3P/4P/5P fixture must exercise rejoin through canonical assignment');
+assert.ok(runtime.includes('bool CanChangeSession()'), 'Session membership changes must share one canonical phase guard');
+assert.equal((sessionSurface.match(/if \(!CanChangeSession\(\)\) return;/g) || []).length, 2, 'Join and leave must both reject membership mutation during an active match');
+assert.ok(runtime.includes('board.phase == BoardState.PhaseSetup || board.phase == BoardState.PhaseComplete'), 'Session membership changes must be limited to setup or completed matches');
 
 const startSurface = runtime.slice(runtime.indexOf('void Start()'), runtime.indexOf('public void SelectRule'));
 assert.ok(!startSurface.includes('board.phase == BoardState.PhaseSetup) SetupGame();'), 'PhaseSetup alone must not auto-start an unoccupied session');
@@ -108,4 +111,4 @@ assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, unseated showcase, action seat, leave/rejoin, first-match occupancy, and second-match reset boundary guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, unseated showcase, action seat, leave/rejoin, active-match session lock, first-match occupancy, and second-match reset boundary guarded; intended semantics unresolved)');
