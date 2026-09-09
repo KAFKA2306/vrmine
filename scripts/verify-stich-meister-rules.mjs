@@ -70,8 +70,13 @@ assert.ok(boardView.includes('state.occupiedPlayerIds[seat] == localPlayerId'), 
 assert.ok(!boardView.includes('seat == controller.localPlayerSeat'), 'Private hand visibility must not trust the mutable/default localPlayerSeat hint');
 assert.ok(boardView.includes('cv.isFaceDown = !isLocal;'), 'Opponent and unseated hand presentation must remain face-down');
 
+const actionSurface = runtime.slice(runtime.indexOf('public void SelectRule'), runtime.indexOf('public void TryPlayCard'));
+assert.ok(actionSurface.includes('Networking.LocalPlayer'), 'Player actions must resolve the actual local player identity');
+assert.ok(actionSurface.includes('board.occupiedPlayerIds'), 'Player actions must derive acting seat from canonical occupiedPlayerIds');
+assert.ok(!actionSurface.includes('localPlayerSeat'), 'Player actions must not trust mutable/default localPlayerSeat as authority');
+
 assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page must expose rule authority status');
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand seat authority guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand and action seat authority guarded; intended semantics unresolved)');
