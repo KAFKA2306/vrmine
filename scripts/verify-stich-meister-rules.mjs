@@ -3,10 +3,12 @@ import fs from 'node:fs';
 
 const specPath = 'config/stich-meister-rules.json';
 const runtimePath = 'Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs';
+const boardViewPath = 'Assets/KafkaMade/VRMine/Runtime/UI/BoardView.cs';
 const pagePath = 'pages/games/stich-meister/index.html';
 
 const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
 const runtime = fs.readFileSync(runtimePath, 'utf8');
+const boardView = fs.readFileSync(boardViewPath, 'utf8');
 const page = fs.readFileSync(pagePath, 'utf8');
 
 assert.equal(spec.canonical_identity, 'Stich-Meister');
@@ -63,8 +65,13 @@ for (const contract of runtimeContracts) assert.ok(runtime.includes(contract), `
 assert.ok(!runtime.includes('HasRule(26)'), 'Rule 26 gained runtime behavior; update canonical authority before merge');
 assert.ok(!runtime.includes('rule == 26'), 'Rule 26 gained runtime behavior; update canonical authority before merge');
 
+assert.ok(boardView.includes('int localPlayerId = Networking.LocalPlayer == null ? 0 : Networking.LocalPlayer.playerId;'), 'Private hand view must resolve the actual local player identity');
+assert.ok(boardView.includes('state.occupiedPlayerIds[seat] == localPlayerId'), 'Private hand view must derive local-seat visibility from canonical occupiedPlayerIds');
+assert.ok(!boardView.includes('seat == controller.localPlayerSeat'), 'Private hand visibility must not trust the mutable/default localPlayerSeat hint');
+assert.ok(boardView.includes('cv.isFaceDown = !isLocal;'), 'Opponent and unseated hand presentation must remain face-down');
+
 assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page must expose rule authority status');
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand seat authority guarded; intended semantics unresolved)');
