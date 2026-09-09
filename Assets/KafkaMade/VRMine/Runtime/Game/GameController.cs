@@ -177,6 +177,17 @@ public class GameController : UdonSharpBehaviour
         if (!Beats(4, 8, 2)) failures++;
         board.selectedRules[0] = 5;
         if (!Beats(38, 15, 15)) failures++;
+
+        board.playerCount = 4;
+        board.dealerSeat = 0;
+        for (int i = 0; i < board.selectedRuleBySeat.Length; i++) board.selectedRuleBySeat[i] = 0;
+        for (int i = 0; i < board.selectedRules.Length; i++) board.selectedRules[i] = 0;
+        board.selectedRuleBySeat[0] = 14;
+        board.selectedRuleBySeat[1] = 5;
+        board.selectedRuleBySeat[2] = 60;
+        board.selectedRuleBySeat[3] = 41;
+        ActivateRules();
+        if (board.trumpRule != 5 || board.scoringRule != 41) failures++;
         return failures;
     }
 
@@ -214,9 +225,9 @@ public class GameController : UdonSharpBehaviour
         for (int i = 0; i < 4; i++)
         {
             byte rule = board.selectedRules[i];
-            if (rule <= 21 && rule != 0) board.trumpRule = rule;
-            else if (rule <= 40 && rule != 0) board.basicRule = rule;
-            else if (rule != 0) board.scoringRule = rule;
+            if (rule <= 21 && rule != 0 && board.trumpRule == 0) board.trumpRule = rule;
+            else if (rule <= 40 && rule != 0 && board.basicRule == 0) board.basicRule = rule;
+            else if (rule != 0 && board.scoringRule == 0) board.scoringRule = rule;
         }
         StartPreparation();
     }
