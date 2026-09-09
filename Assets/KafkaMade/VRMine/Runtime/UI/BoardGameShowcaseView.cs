@@ -1,6 +1,7 @@
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
+using VRC.SDKBase;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class BoardGameShowcaseView : UdonSharpBehaviour
@@ -25,12 +26,22 @@ public class BoardGameShowcaseView : UdonSharpBehaviour
     void RenderTrick()
     {
         BoardState state = trickGame.board;
-        trickStatus.text = "ROUND " + (state.roundIndex + 1) + "/" + state.playerCount + "  " + state.PhaseLabel() + "\nTURN " + (state.currentPlayerSeat + 1) + "  RULES " + state.RuleLabel() + "\nSCORES " + Scores(state.scores, state.playerCount);
-        int offset = trickGame.localPlayerSeat * NetConst.MaxHandSize;
+        int seat = trickGame.localPlayerSeat;
+        int localPlayerId = Networking.LocalPlayer == null ? 0 : Networking.LocalPlayer.playerId;
+        bool hasLocalSeat = localPlayerId > 0 && seat >= 0 && seat < state.playerCount && state.occupiedPlayerIds[seat] == localPlayerId;
+        string session = hasLocalSeat ? "SEAT " + (seat + 1) : "UNSEATED";
+        trickStatus.text = session + "  ROUND " + (state.roundIndex + 1) + "/" + state.playerCount + "  " + state.PhaseLabel() + "\nTURN " + (state.currentPlayerSeat + 1) + "  RULES " + state.RuleLabel() + "\nSCORES " + Scores(state.scores, state.playerCount);
+        if (!hasLocalSeat)
+        {
+            for (int i = 0; i < trickCards.Length; i++) trickCards[i].text = "";
+            for (int i = 0; i < ruleCards.Length; i++) ruleCards[i].text = "";
+            return;
+        }
+        int offset = seat * NetConst.MaxHandSize;
         for (int i = 0; i < trickCards.Length; i++) trickCards[i].text = CardLabel(state.playerHands[offset + i]);
         for (int i = 0; i < ruleCards.Length; i++)
         {
-            byte rule = state.ruleHands[trickGame.localPlayerSeat * 3 + i];
+            byte rule = state.ruleHands[seat * 3 + i];
             ruleCards[i].text = rule == 0 ? "" : "RULE\n" + rule;
         }
     }

@@ -4,12 +4,14 @@ import fs from 'node:fs';
 const specPath = 'config/stich-meister-rules.json';
 const runtimePath = 'Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs';
 const boardViewPath = 'Assets/KafkaMade/VRMine/Runtime/UI/BoardView.cs';
+const showcaseViewPath = 'Assets/KafkaMade/VRMine/Runtime/UI/BoardGameShowcaseView.cs';
 const actionPath = 'Assets/KafkaMade/VRMine/Runtime/UI/BoardGameAction.cs';
 const pagePath = 'pages/games/stich-meister/index.html';
 
 const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
 const runtime = fs.readFileSync(runtimePath, 'utf8');
 const boardView = fs.readFileSync(boardViewPath, 'utf8');
+const showcaseView = fs.readFileSync(showcaseViewPath, 'utf8');
 const action = fs.readFileSync(actionPath, 'utf8');
 const page = fs.readFileSync(pagePath, 'utf8');
 
@@ -72,6 +74,13 @@ assert.ok(boardView.includes('state.occupiedPlayerIds[seat] == localPlayerId'), 
 assert.ok(!boardView.includes('seat == controller.localPlayerSeat'), 'Private hand visibility must not trust the mutable/default localPlayerSeat hint');
 assert.ok(boardView.includes('cv.isFaceDown = !isLocal;'), 'Opponent and unseated hand presentation must remain face-down');
 
+assert.ok(showcaseView.includes('int localPlayerId = Networking.LocalPlayer == null ? 0 : Networking.LocalPlayer.playerId;'), 'Showcase view must resolve the actual local player identity');
+assert.ok(showcaseView.includes('seat >= 0 && seat < state.playerCount && state.occupiedPlayerIds[seat] == localPlayerId'), 'Showcase view must validate the seat hint against canonical occupiedPlayerIds before indexing private state');
+assert.ok(showcaseView.includes('if (!hasLocalSeat)'), 'Unseated showcase presentation must take an explicit safe path');
+assert.ok(showcaseView.includes('trickCards[i].text = "";'), 'Unseated showcase presentation must clear private hand labels');
+assert.ok(showcaseView.includes('ruleCards[i].text = "";'), 'Unseated showcase presentation must clear private rule labels');
+assert.ok(!showcaseView.includes('int offset = trickGame.localPlayerSeat * NetConst.MaxHandSize;'), 'Showcase view must not index private state directly from mutable/default localPlayerSeat');
+
 const actionSurface = runtime.slice(runtime.indexOf('public void SelectRule'), runtime.indexOf('public void TryPlayCard'));
 assert.ok(actionSurface.includes('Networking.LocalPlayer'), 'Player actions must resolve the actual local player identity');
 assert.ok(actionSurface.includes('board.occupiedPlayerIds'), 'Player actions must derive acting seat from canonical occupiedPlayerIds');
@@ -92,4 +101,4 @@ assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, action seat, leave/rejoin, and second-match reset boundary guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, unseated showcase, action seat, leave/rejoin, and second-match reset boundary guarded; intended semantics unresolved)');
