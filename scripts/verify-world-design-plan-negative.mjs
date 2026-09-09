@@ -43,6 +43,10 @@ expectFail('spawn outside room', (spec) => {
   spec.world_build.spawn.position_m[0] = spec.spatial_geometry.overall_width_m;
 }, /spawn lies outside room bounds/);
 
+expectFail('spawn buffer penetration', (spec) => {
+  spec.world_build.spawn.position_m[1] = -spec.spatial_geometry.overall_depth_m / 2 + spec.world_build.spawn.buffer_radius_m - 0.01;
+}, /spawn buffer penetrates room wall/);
+
 expectFail('circulation clearance', (spec) => {
   spec.world_build.circulation.waypoints_m[0][0] = spec.spatial_geometry.overall_width_m / 2 - 0.01;
 }, /violates half-clearance from room wall/);
@@ -57,6 +61,10 @@ expectFail('retreat unreachable', (spec) => {
   spec.world_build.circulation.minimum_clearance_m = 0.1;
 }, /circulation does not reach the retreat zone/);
 
+expectFail('face distance exceeded', (spec) => {
+  spec.world_build.social_core.seat_radius_m = spec.social_clusters.primary_core.max_face_distance_m;
+}, /exceed max face distance/);
+
 expectFail('invalid hero camera', (spec) => {
   spec.world_build.hero_view.position_m[1] = spec.spatial_geometry.overall_depth_m;
 }, /hero_view\.position lies outside room bounds/);
@@ -64,12 +72,14 @@ expectFail('invalid hero camera', (spec) => {
 console.log(JSON.stringify({
   status: 'PASS',
   baseline: sourcePath,
-  destructive_fixtures: 5,
+  destructive_fixtures: 7,
   verified_failures: [
     'spawn-outside-room',
+    'spawn-buffer-penetration',
     'circulation-clearance',
     'activity-unreachable',
     'retreat-unreachable',
+    'face-distance-exceeded',
     'invalid-hero-camera'
   ]
 }, null, 2));

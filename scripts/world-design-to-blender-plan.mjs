@@ -44,6 +44,9 @@ const anchor = vec3(build.activity_anchor?.position_m, 'world_build.activity_anc
 const heroPosition = vec3(build.hero_view?.position_m, 'world_build.hero_view.position_m');
 const heroTarget = vec3(build.hero_view?.target_m, 'world_build.hero_view.target_m');
 for (const [p, path] of [[spawn, 'spawn'], [socialCenter, 'social_core'], [retreatCenter, 'retreat'], [anchor, 'activity_anchor'], [heroPosition, 'hero_view.position'], [heroTarget, 'hero_view.target']]) assertInside(p, path);
+const spawnBuffer = finite(build.spawn?.buffer_radius_m, 'world_build.spawn.buffer_radius_m');
+if (spawnBuffer <= 0) fail('world_build.spawn.buffer_radius_m must be > 0');
+if (halfW - Math.abs(spawn[0]) < spawnBuffer || halfD - Math.abs(spawn[1]) < spawnBuffer) fail('spawn buffer penetrates room wall');
 
 const seatCount = positiveInt(build.social_core?.seat_count, 'world_build.social_core.seat_count');
 const seatRadius = finite(build.social_core?.seat_radius_m, 'world_build.social_core.seat_radius_m');
@@ -54,6 +57,15 @@ const seats = Array.from({length: seatCount}, (_, i) => {
   assertInside(position, `social_seats[${i}]`);
   return {id: `social-seat-${i + 1}`, asset_id: requiredString(build.social_core.seat_asset_id, 'world_build.social_core.seat_asset_id'), position_m: position, facing_target_m: socialCenter};
 });
+const maxFaceDistance = finite(spec.social_clusters?.primary_core?.max_face_distance_m, 'social_clusters.primary_core.max_face_distance_m');
+if (maxFaceDistance <= 0) fail('social_clusters.primary_core.max_face_distance_m must be > 0');
+for (let i = 0; i < seats.length; i++) {
+  for (let j = i + 1; j < seats.length; j++) {
+    const a = seats[i].position_m;
+    const b = seats[j].position_m;
+    if (Math.hypot(a[0] - b[0], a[1] - b[1]) > maxFaceDistance) fail(`social_seats[${i}] and social_seats[${j}] exceed max face distance`);
+  }
+}
 
 const waypoints = build.circulation?.waypoints_m;
 if (!Array.isArray(waypoints) || waypoints.length < 2) fail('world_build.circulation.waypoints_m must have at least two points');
@@ -103,11 +115,11 @@ const roomPlan = {
     if (!('width' in plan) && !('scale' in plan)) fail(`zone ${zone.zone_id} needs dimensions or scale_compression`);
     return plan;
   }),
-  spawn: {position_m: spawn, facing_deg: finite(build.spawn?.facing_deg, 'world_build.spawn.facing_deg'), buffer_radius_m: finite(build.spawn?.buffer_radius_m, 'world_build.spawn.buffer_radius_m')},
+  spawn: {position_m: spawn, facing_deg: finite(build.spawn?.facing_deg, 'world_build.spawn.facing_deg'), buffer_radius_m: spawnBuffer},
   social_core: {
     center_m: socialCenter,
     diameter: finite(spec.social_clusters?.primary_core?.core_diameter_m, 'social_clusters.primary_core.core_diameter_m'),
-    max_face_distance: finite(spec.social_clusters?.primary_core?.max_face_distance_m, 'social_clusters.primary_core.max_face_distance_m'),
+    max_face_distance: maxFaceDistance,
     table: {asset_id: requiredString(build.social_core.table_asset_id, 'world_build.social_core.table_asset_id'), position_m: [socialCenter[0], socialCenter[1], 0]},
     seats
   },
