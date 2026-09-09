@@ -148,11 +148,38 @@ public class GameController : UdonSharpBehaviour
     public void JoinGame(int seat)
     {
         if (seat < 0 || seat >= board.playerCount) return;
-        int playerId = Networking.LocalPlayer.playerId;
+        VRCPlayerApi localPlayer = Networking.LocalPlayer;
+        if (localPlayer == null || localPlayer.playerId <= 0) return;
+        int playerId = localPlayer.playerId;
         if (board.occupiedPlayerIds[seat] != 0 && board.occupiedPlayerIds[seat] != playerId) return;
         OwnState();
-        AssignSeat(playerId, seat);
+        if (!AssignSeat(playerId, seat)) return;
         Sync();
+    }
+
+    public void LeaveGame()
+    {
+        VRCPlayerApi localPlayer = Networking.LocalPlayer;
+        if (localPlayer == null || localPlayer.playerId <= 0) return;
+        int seat = ResolveLocalSeat();
+        if (seat < 0) return;
+        OwnState();
+        if (!ReleaseSeat(localPlayer.playerId)) return;
+        Sync();
+    }
+
+    bool ReleaseSeat(int playerId)
+    {
+        if (playerId <= 0) return false;
+        bool released = false;
+        for (int seat = 0; seat < board.playerCount; seat++)
+        {
+            if (board.occupiedPlayerIds[seat] != playerId) continue;
+            board.occupiedPlayerIds[seat] = 0;
+            released = true;
+        }
+        if (released) localPlayerSeat = -1;
+        return released;
     }
 
     bool AssignSeat(int playerId, int seat)
@@ -226,6 +253,9 @@ public class GameController : UdonSharpBehaviour
             int otherPlayerId = 200 + playerCount;
             board.occupiedPlayerIds[0] = otherPlayerId;
             if (AssignSeat(playerId, 0) || board.occupiedPlayerIds[0] != otherPlayerId || board.occupiedPlayerIds[playerCount - 1] != playerId) failures++;
+            if (!ReleaseSeat(playerId)) failures++;
+            for (int i = 0; i < playerCount; i++) if (board.occupiedPlayerIds[i] == playerId) failures++;
+            if (!AssignSeat(playerId, playerCount - 1) || board.occupiedPlayerIds[playerCount - 1] != playerId) failures++;
         }
         return failures;
     }
