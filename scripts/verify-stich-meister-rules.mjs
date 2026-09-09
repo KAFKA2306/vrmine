@@ -4,11 +4,13 @@ import fs from 'node:fs';
 const specPath = 'config/stich-meister-rules.json';
 const runtimePath = 'Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs';
 const boardViewPath = 'Assets/KafkaMade/VRMine/Runtime/UI/BoardView.cs';
+const actionPath = 'Assets/KafkaMade/VRMine/Runtime/UI/BoardGameAction.cs';
 const pagePath = 'pages/games/stich-meister/index.html';
 
 const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
 const runtime = fs.readFileSync(runtimePath, 'utf8');
 const boardView = fs.readFileSync(boardViewPath, 'utf8');
+const action = fs.readFileSync(actionPath, 'utf8');
 const page = fs.readFileSync(pagePath, 'utf8');
 
 assert.equal(spec.canonical_identity, 'Stich-Meister');
@@ -83,8 +85,11 @@ assert.ok(sessionSurface.includes('AssignSeat(playerId, seat)'), 'Rejoin must re
 assert.ok(runtime.includes('if (!ReleaseSeat(playerId)) failures++;'), '3P/4P/5P fixture must exercise seat release');
 assert.ok(runtime.includes('if (!AssignSeat(playerId, 0)) failures++;'), '3P/4P/5P fixture must exercise rejoin through canonical assignment');
 
+assert.ok(action.includes('else if (trickGame.board.phase == BoardState.PhaseComplete) trickGame.SetupGame();'), 'Reset action must only start a second match from PhaseComplete');
+assert.ok(!action.includes('else trickGame.SetupGame();'), 'Reset action must not restart an active match unconditionally');
+
 assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page must expose rule authority status');
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, action seat, and leave/rejoin session authority guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, action seat, leave/rejoin, and second-match reset boundary guarded; intended semantics unresolved)');
