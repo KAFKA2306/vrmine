@@ -246,6 +246,21 @@ public class GameController : UdonSharpBehaviour
         board.playerHands[NetConst.MaxHandSize] = 17;
         board.playerHands[NetConst.MaxHandSize + 1] = 1;
         if (LegalCard(1, 17) || !LegalCard(1, 1)) failures++;
+
+        board.phase = BoardState.PhasePlayCard;
+        board.currentPlayerSeat = 1;
+        board.trickSeats[0] = 0;
+        turnIndex = 7;
+        uint rejectedState = PlayCardStateHash();
+        TryPlayCard(0, 0);
+        if (PlayCardStateHash() != rejectedState) failures++;
+        TryPlayCard(1, -1);
+        if (PlayCardStateHash() != rejectedState) failures++;
+        TryPlayCard(1, 2);
+        if (PlayCardStateHash() != rejectedState) failures++;
+        TryPlayCard(1, 0);
+        if (PlayCardStateHash() != rejectedState) failures++;
+
         board.selectedRules[0] = 31;
         if (!Beats(4, 8, 2)) failures++;
         board.selectedRules[0] = 5;
@@ -299,6 +314,28 @@ public class GameController : UdonSharpBehaviour
             if (HasCompleteSession()) failures++;
         }
         return failures;
+    }
+
+    uint PlayCardStateHash()
+    {
+        uint hash = 2166136261u;
+        for (int i = 0; i < board.playerHands.Length; i++) hash = (hash ^ board.playerHands[i]) * 16777619u;
+        for (int i = 0; i < board.trickCards.Length; i++) hash = (hash ^ board.trickCards[i]) * 16777619u;
+        for (int i = 0; i < board.trickSeats.Length; i++) hash = (hash ^ board.trickSeats[i]) * 16777619u;
+        for (int i = 0; i < board.selectedRules.Length; i++) hash = (hash ^ board.selectedRules[i]) * 16777619u;
+        for (int i = 0; i < board.cardOwners.Length; i++) hash = (hash ^ board.cardOwners[i]) * 16777619u;
+        for (int i = 0; i < board.cardTricks.Length; i++) hash = (hash ^ board.cardTricks[i]) * 16777619u;
+        for (int i = 0; i < board.takenTricks.Length; i++) hash = (hash ^ board.takenTricks[i]) * 16777619u;
+        for (int i = 0; i < board.scores.Length; i++) hash = (hash ^ (uint)board.scores[i]) * 16777619u;
+        hash = (hash ^ board.phase) * 16777619u;
+        hash = (hash ^ board.currentPlayerSeat) * 16777619u;
+        hash = (hash ^ board.trickCardCount) * 16777619u;
+        hash = (hash ^ board.trickIndex) * 16777619u;
+        hash = (hash ^ board.roundIndex) * 16777619u;
+        hash = (hash ^ board.prepareStep) * 16777619u;
+        hash = (hash ^ board.syncState) * 16777619u;
+        hash = (hash ^ (uint)turnIndex) * 16777619u;
+        return hash;
     }
 
     bool AllRulesSelected()
