@@ -18,12 +18,15 @@ public sealed class CardView : UdonSharpBehaviour
     public bool isPlayed;
     public bool isFaceDown;
 
+    int lastInteractFrame = -1;
+
     public override void Interact()
     {
-        if (controller != null && !isPlayed)
-        {
-            controller.OnCardClicked(cardIndex);
-        }
+        if (controller == null || isPlayed) return;
+        int frame = Time.frameCount;
+        if (lastInteractFrame == frame) return;
+        lastInteractFrame = frame;
+        controller.OnCardClicked(cardIndex);
     }
 
     public void Refresh(byte packed)
