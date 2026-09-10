@@ -150,6 +150,24 @@ public static class BoardGameVerification
         trick.ConfigurePlayers(playerCount);
         trick.boardSeed = seed;
         trick.SetupGame();
+
+        System.Reflection.MethodInfo beginPlay = typeof(GameController).GetMethod("BeginPlay", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        if (beginPlay == null) throw new InvalidOperationException("GameController.BeginPlay is unavailable");
+        beginPlay.Invoke(trick, null);
+
+        int playerSeat = trick.board.currentPlayerSeat;
+        int offset = playerSeat * NetConst.MaxHandSize;
+        int handIndex = -1;
+        for (int i = 0; i < NetConst.MaxHandSize; i++)
+        {
+            if (trick.board.playerHands[offset + i] == 0) continue;
+            handIndex = i;
+            break;
+        }
+        if (handIndex < 0) throw new InvalidOperationException("Replay has no playable opening card");
+        trick.TryPlayCard(playerSeat, handIndex);
+        if (trick.turnIndex != 1) throw new InvalidOperationException("Replay opening action did not advance turnIndex");
+
         string state = EditorJsonUtility.ToJson(trick.board, false)
             + "|" + trick.boardSeed
             + "|" + trick.boardHash
