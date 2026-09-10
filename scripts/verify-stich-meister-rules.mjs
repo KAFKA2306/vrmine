@@ -5,6 +5,7 @@ const specPath = 'config/stich-meister-rules.json';
 const runtimePath = 'Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs';
 const boardViewPath = 'Assets/KafkaMade/VRMine/Runtime/UI/BoardView.cs';
 const showcaseViewPath = 'Assets/KafkaMade/VRMine/Runtime/UI/BoardGameShowcaseView.cs';
+const cardViewPath = 'Assets/KafkaMade/VRMine/Runtime/UI/CardView.cs';
 const actionPath = 'Assets/KafkaMade/VRMine/Runtime/UI/BoardGameAction.cs';
 const pagePath = 'pages/games/stich-meister/index.html';
 
@@ -12,6 +13,7 @@ const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
 const runtime = fs.readFileSync(runtimePath, 'utf8');
 const boardView = fs.readFileSync(boardViewPath, 'utf8');
 const showcaseView = fs.readFileSync(showcaseViewPath, 'utf8');
+const cardView = fs.readFileSync(cardViewPath, 'utf8');
 const action = fs.readFileSync(actionPath, 'utf8');
 const page = fs.readFileSync(pagePath, 'utf8');
 
@@ -86,6 +88,12 @@ assert.ok(actionSurface.includes('Networking.LocalPlayer'), 'Player actions must
 assert.ok(actionSurface.includes('board.occupiedPlayerIds'), 'Player actions must derive acting seat from canonical occupiedPlayerIds');
 assert.ok(!actionSurface.includes('localPlayerSeat'), 'Player actions must not trust mutable/default localPlayerSeat as authority');
 
+assert.ok(cardView.includes('int lastInteractFrame = -1;'), 'Card interaction must retain one local duplicate-event frame marker');
+assert.ok(cardView.includes('int frame = Time.frameCount;'), 'Card interaction duplicate detection must use the exact Unity frame instead of an arbitrary time threshold');
+assert.ok(cardView.includes('if (lastInteractFrame == frame) return;'), 'Same-frame duplicate card interactions must be rejected');
+assert.ok(cardView.includes('lastInteractFrame = frame;'), 'Accepted card interaction must record its frame before entering canonical action handling');
+assert.equal((cardView.match(/controller\.OnCardClicked\(cardIndex\);/g) || []).length, 1, 'Card interaction must have one canonical OnCardClicked path');
+
 const sessionSurface = runtime.slice(runtime.indexOf('public void JoinGame'), runtime.indexOf('public void Render'));
 assert.ok(sessionSurface.includes('public void LeaveGame()'), 'Session path must expose an explicit leave action');
 assert.ok(sessionSurface.includes('ResolveLocalSeat()'), 'Leave must resolve the actual occupied seat instead of trusting localPlayerSeat');
@@ -118,4 +126,4 @@ assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, unseated showcase, action seat, leave/rejoin, active-match session lock, first-match occupancy, and confirmed second-match reset boundary guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, unseated showcase, action seat, card duplicate input, leave/rejoin, active-match session lock, first-match occupancy, and confirmed second-match reset boundary guarded; intended semantics unresolved)');
