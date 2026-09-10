@@ -25,7 +25,7 @@ public class GameController : UdonSharpBehaviour
 
     void Start()
     {
-        if (Networking.IsOwner(gameObject) && board.phase == BoardState.PhaseSetup) SetupGame();
+        TryStartFirstMatch();
         Render();
     }
 
@@ -59,8 +59,8 @@ public class GameController : UdonSharpBehaviour
     public void SelectRule(int handIndex)
     {
         if (board.phase != BoardState.PhaseRuleSelect) return;
-        int seat = localPlayerSeat;
-        if (seat >= board.playerCount || handIndex < 0 || handIndex >= 3) return;
+        int seat = ResolveLocalSeat();
+        if (seat < 0 || seat >= board.playerCount || handIndex < 0 || handIndex >= 3) return;
         if (board.playerCount == 5 && seat == (board.dealerSeat + 1) % board.playerCount) return;
         byte rule = board.ruleHands[seat * 3 + handIndex];
         if (rule == 0 || board.selectedRuleBySeat[seat] != 0) return;
@@ -73,28 +73,42 @@ public class GameController : UdonSharpBehaviour
 
     public void OnCardClicked(int handIndex)
     {
+        int seat = ResolveLocalSeat();
+        if (seat < 0) return;
         if (board.phase == BoardState.PhasePrepare)
         {
-            ToggleMarkedCard(handIndex);
+            ToggleMarkedCard(seat, handIndex);
             return;
         }
-        if (board.phase != BoardState.PhasePlayCard || board.currentPlayerSeat != localPlayerSeat) return;
+        if (board.phase != BoardState.PhasePlayCard || board.currentPlayerSeat != seat) return;
         OwnState();
-        TryPlayCard(localPlayerSeat, handIndex);
+        TryPlayCard(seat, handIndex);
     }
 
     public void ConfirmMarkedCards()
     {
         if (board.phase != BoardState.PhasePrepare) return;
+        int seat = ResolveLocalSeat();
+        if (seat < 0) return;
         int required = board.prepareStep == 3 ? 1 : 3;
         int count = 0;
-        int offset = localPlayerSeat * NetConst.MaxHandSize;
+        int offset = seat * NetConst.MaxHandSize;
         for (int i = 0; i < NetConst.MaxHandSize; i++) count += board.markedCards[offset + i];
         if (count != required) return;
         OwnState();
-        board.confirmedMask |= (byte)(1 << localPlayerSeat);
+        board.confirmedMask |= (byte)(1 << seat);
         if (board.confirmedMask == (1 << board.playerCount) - 1) ApplyPreparation();
         Sync();
+    }
+
+    int ResolveLocalSeat()
+    {
+        VRCPlayerApi localPlayer = Networking.LocalPlayer;
+        if (localPlayer == null || localPlayer.playerId <= 0) return -1;
+        int playerId = localPlayer.playerId;
+        for (int seat = 0; seat < board.playerCount; seat++)
+            if (board.occupiedPlayerIds[seat] == playerId) return seat;
+        return -1;
     }
 
     public void TryPlayCard(int playerSeat, int handIndex)
@@ -133,13 +147,72 @@ public class GameController : UdonSharpBehaviour
 
     public void JoinGame(int seat)
     {
+        if (!CanChangeSession()) return;
         if (seat < 0 || seat >= board.playerCount) return;
-        OwnState();
-        int playerId = Networking.LocalPlayer.playerId;
+        VRCPlayerApi localPlayer = Networking.LocalPlayer;
+        if (localPlayer == null || localPlayer.playerId <= 0) return;
+        int playerId = localPlayer.playerId;
         if (board.occupiedPlayerIds[seat] != 0 && board.occupiedPlayerIds[seat] != playerId) return;
+        OwnState();
+        if (!AssignSeat(playerId, seat)) return;
+        if (board.phase == BoardState.PhaseSetup && HasCompleteSession()) SetupGame();
+        else Sync();
+    }
+
+    public void LeaveGame()
+    {
+        if (!CanChangeSession()) return;
+        VRCPlayerApi localPlayer = Networking.LocalPlayer;
+        if (localPlayer == null || localPlayer.playerId <= 0) return;
+        int seat = ResolveLocalSeat();
+        if (seat < 0) return;
+        OwnState();
+        if (!ReleaseSeat(localPlayer.playerId)) return;
+        Sync();
+    }
+
+    bool CanChangeSession()
+    {
+        return board.phase == BoardState.PhaseSetup || board.phase == BoardState.PhaseComplete;
+    }
+
+    void TryStartFirstMatch()
+    {
+        if (!Networking.IsOwner(gameObject) || board.phase != BoardState.PhaseSetup || !HasCompleteSession()) return;
+        SetupGame();
+    }
+
+    bool HasCompleteSession()
+    {
+        if (board.playerCount < 3 || board.playerCount > NetConst.MaxPlayers) return false;
+        for (int seat = 0; seat < board.playerCount; seat++)
+            if (board.occupiedPlayerIds[seat] <= 0) return false;
+        return true;
+    }
+
+    bool ReleaseSeat(int playerId)
+    {
+        if (playerId <= 0) return false;
+        bool released = false;
+        for (int seat = 0; seat < board.playerCount; seat++)
+        {
+            if (board.occupiedPlayerIds[seat] != playerId) continue;
+            board.occupiedPlayerIds[seat] = 0;
+            released = true;
+        }
+        if (released) localPlayerSeat = -1;
+        return released;
+    }
+
+    bool AssignSeat(int playerId, int seat)
+    {
+        if (playerId <= 0 || seat < 0 || seat >= board.playerCount) return false;
+        if (board.occupiedPlayerIds[seat] != 0 && board.occupiedPlayerIds[seat] != playerId) return false;
+        for (int i = 0; i < board.playerCount; i++)
+            if (i != seat && board.occupiedPlayerIds[i] == playerId) board.occupiedPlayerIds[i] = 0;
         localPlayerSeat = seat;
         board.occupiedPlayerIds[seat] = playerId;
-        Sync();
+        return true;
     }
 
     public void Render()
@@ -173,11 +246,96 @@ public class GameController : UdonSharpBehaviour
         board.playerHands[NetConst.MaxHandSize] = 17;
         board.playerHands[NetConst.MaxHandSize + 1] = 1;
         if (LegalCard(1, 17) || !LegalCard(1, 1)) failures++;
+
+        board.phase = BoardState.PhasePlayCard;
+        board.currentPlayerSeat = 1;
+        board.trickSeats[0] = 0;
+        turnIndex = 7;
+        uint rejectedState = PlayCardStateHash();
+        TryPlayCard(0, 0);
+        if (PlayCardStateHash() != rejectedState) failures++;
+        TryPlayCard(1, -1);
+        if (PlayCardStateHash() != rejectedState) failures++;
+        TryPlayCard(1, 2);
+        if (PlayCardStateHash() != rejectedState) failures++;
+        TryPlayCard(1, 0);
+        if (PlayCardStateHash() != rejectedState) failures++;
+
         board.selectedRules[0] = 31;
         if (!Beats(4, 8, 2)) failures++;
         board.selectedRules[0] = 5;
         if (!Beats(38, 15, 15)) failures++;
+
+        board.playerCount = 4;
+        board.dealerSeat = 0;
+        for (int i = 0; i < board.selectedRuleBySeat.Length; i++) board.selectedRuleBySeat[i] = 0;
+        for (int i = 0; i < board.selectedRules.Length; i++) board.selectedRules[i] = 0;
+        board.selectedRuleBySeat[0] = 14;
+        board.selectedRuleBySeat[1] = 5;
+        board.selectedRuleBySeat[2] = 60;
+        board.selectedRuleBySeat[3] = 41;
+        ActivateRules();
+        if (board.trumpRule != 5 || board.scoringRule != 41) failures++;
+
+        board.phase = BoardState.PhaseSetup;
+        if (!CanChangeSession()) failures++;
+        board.phase = BoardState.PhaseComplete;
+        if (!CanChangeSession()) failures++;
+        board.phase = BoardState.PhaseRuleSelect;
+        if (CanChangeSession()) failures++;
+        board.phase = BoardState.PhasePrepare;
+        if (CanChangeSession()) failures++;
+        board.phase = BoardState.PhasePlayCard;
+        if (CanChangeSession()) failures++;
+        board.phase = BoardState.PhaseScore;
+        if (CanChangeSession()) failures++;
+        board.phase = BoardState.PhaseSetup;
+
+        for (int playerCount = 3; playerCount <= NetConst.MaxPlayers; playerCount++)
+        {
+            board.playerCount = (byte)playerCount;
+            for (int i = 0; i < board.occupiedPlayerIds.Length; i++) board.occupiedPlayerIds[i] = 0;
+            if (HasCompleteSession()) failures++;
+            int playerId = 100 + playerCount;
+            if (!AssignSeat(playerId, 0)) failures++;
+            if (!AssignSeat(playerId, playerCount - 1)) failures++;
+            int occurrences = 0;
+            for (int i = 0; i < playerCount; i++) if (board.occupiedPlayerIds[i] == playerId) occurrences++;
+            if (occurrences != 1 || board.occupiedPlayerIds[playerCount - 1] != playerId || board.occupiedPlayerIds[0] != 0) failures++;
+            int otherPlayerId = 200 + playerCount;
+            board.occupiedPlayerIds[0] = otherPlayerId;
+            if (AssignSeat(playerId, 0) || board.occupiedPlayerIds[0] != otherPlayerId || board.occupiedPlayerIds[playerCount - 1] != playerId) failures++;
+            if (!ReleaseSeat(playerId)) failures++;
+            for (int i = 0; i < playerCount; i++) if (board.occupiedPlayerIds[i] == playerId) failures++;
+            if (!AssignSeat(playerId, playerCount - 1) || board.occupiedPlayerIds[playerCount - 1] != playerId) failures++;
+            for (int seat = 0; seat < playerCount; seat++) board.occupiedPlayerIds[seat] = 300 + playerCount * 10 + seat;
+            if (!HasCompleteSession()) failures++;
+            board.occupiedPlayerIds[playerCount - 1] = 0;
+            if (HasCompleteSession()) failures++;
+        }
         return failures;
+    }
+
+    uint PlayCardStateHash()
+    {
+        uint hash = 2166136261u;
+        for (int i = 0; i < board.playerHands.Length; i++) hash = (hash ^ board.playerHands[i]) * 16777619u;
+        for (int i = 0; i < board.trickCards.Length; i++) hash = (hash ^ board.trickCards[i]) * 16777619u;
+        for (int i = 0; i < board.trickSeats.Length; i++) hash = (hash ^ board.trickSeats[i]) * 16777619u;
+        for (int i = 0; i < board.selectedRules.Length; i++) hash = (hash ^ board.selectedRules[i]) * 16777619u;
+        for (int i = 0; i < board.cardOwners.Length; i++) hash = (hash ^ board.cardOwners[i]) * 16777619u;
+        for (int i = 0; i < board.cardTricks.Length; i++) hash = (hash ^ board.cardTricks[i]) * 16777619u;
+        for (int i = 0; i < board.takenTricks.Length; i++) hash = (hash ^ board.takenTricks[i]) * 16777619u;
+        for (int i = 0; i < board.scores.Length; i++) hash = (hash ^ (uint)board.scores[i]) * 16777619u;
+        hash = (hash ^ board.phase) * 16777619u;
+        hash = (hash ^ board.currentPlayerSeat) * 16777619u;
+        hash = (hash ^ board.trickCardCount) * 16777619u;
+        hash = (hash ^ board.trickIndex) * 16777619u;
+        hash = (hash ^ board.roundIndex) * 16777619u;
+        hash = (hash ^ board.prepareStep) * 16777619u;
+        hash = (hash ^ board.syncState) * 16777619u;
+        hash = (hash ^ (uint)turnIndex) * 16777619u;
+        return hash;
     }
 
     bool AllRulesSelected()
@@ -214,9 +372,9 @@ public class GameController : UdonSharpBehaviour
         for (int i = 0; i < 4; i++)
         {
             byte rule = board.selectedRules[i];
-            if (rule <= 21 && rule != 0) board.trumpRule = rule;
-            else if (rule <= 40 && rule != 0) board.basicRule = rule;
-            else if (rule != 0) board.scoringRule = rule;
+            if (rule <= 21 && rule != 0 && board.trumpRule == 0) board.trumpRule = rule;
+            else if (rule <= 40 && rule != 0 && board.basicRule == 0) board.basicRule = rule;
+            else if (rule != 0 && board.scoringRule == 0) board.scoringRule = rule;
         }
         StartPreparation();
     }
@@ -256,10 +414,10 @@ public class GameController : UdonSharpBehaviour
         board.currentPlayerSeat = (byte)((board.dealerSeat + 1) % board.playerCount);
     }
 
-    void ToggleMarkedCard(int handIndex)
+    void ToggleMarkedCard(int seat, int handIndex)
     {
-        if (handIndex < 0 || handIndex >= NetConst.MaxHandSize) return;
-        int index = localPlayerSeat * NetConst.MaxHandSize + handIndex;
+        if (seat < 0 || seat >= board.playerCount || handIndex < 0 || handIndex >= NetConst.MaxHandSize) return;
+        int index = seat * NetConst.MaxHandSize + handIndex;
         if (board.playerHands[index] == 0) return;
         OwnState();
         board.markedCards[index] = board.markedCards[index] == 0 ? (byte)1 : (byte)0;

@@ -1,6 +1,7 @@
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
+using VRC.SDKBase;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public sealed class BoardView : UdonSharpBehaviour
@@ -36,7 +37,10 @@ public sealed class BoardView : UdonSharpBehaviour
         if (handCards == null) return;
         int offset = seat * NetConst.MaxHandSize;
         int limit = Mathf.Min(handCards.Length, NetConst.MaxHandSize);
-        bool isLocal = (seat == controller.localPlayerSeat);
+        int localPlayerId = Networking.LocalPlayer == null ? 0 : Networking.LocalPlayer.playerId;
+        bool isLocal = localPlayerId > 0
+            && seat < state.playerCount
+            && state.occupiedPlayerIds[seat] == localPlayerId;
 
         for (int i = 0; i < limit; i++)
         {

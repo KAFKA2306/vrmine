@@ -11,13 +11,20 @@ on:
       - "config/vrchat-toolchain.json"
       - "config/quality-gates.json"
       - "config/perspective-cage.json"
+      - "config/stich-meister-rules.json"
       - "config/factory-timing.json"
       - "config/world-item-packages.json"
       - "config/world-design/**"
+      - "Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs"
+      - "Assets/KafkaMade/VRMine/Runtime/UI/BoardView.cs"
+      - "Assets/KafkaMade/VRMine/Runtime/UI/BoardGameShowcaseView.cs"
+      - "Assets/KafkaMade/VRMine/Runtime/UI/CardView.cs"
+      - "Assets/KafkaMade/VRMine/Runtime/UI/BoardGameAction.cs"
       - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
       - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs.meta"
+      - "pages/games/stich-meister/index.html"
       - "docs/QUALITY_GATES.md"
       - ".github/PULL_REQUEST_TEMPLATE.md"
       - "scripts/install-vrc-get.mjs"
@@ -27,7 +34,9 @@ on:
       - "scripts/verify-world-item-packages.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
+      - "scripts/verify-world-design-plan-negative.mjs"
       - "scripts/verify-perspective-cage.mjs"
+      - "scripts/verify-stich-meister-rules.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
       - "scripts/run-retro-cafe-unity.mjs"
@@ -45,13 +54,20 @@ on:
       - "config/vrchat-toolchain.json"
       - "config/quality-gates.json"
       - "config/perspective-cage.json"
+      - "config/stich-meister-rules.json"
       - "config/factory-timing.json"
       - "config/world-item-packages.json"
       - "config/world-design/**"
+      - "Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs"
+      - "Assets/KafkaMade/VRMine/Runtime/UI/BoardView.cs"
+      - "Assets/KafkaMade/VRMine/Runtime/UI/BoardGameShowcaseView.cs"
+      - "Assets/KafkaMade/VRMine/Runtime/UI/CardView.cs"
+      - "Assets/KafkaMade/VRMine/Runtime/UI/BoardGameAction.cs"
       - "Assets/KafkaMade/VRMine/Puzzles/PerspectiveCage/**"
       - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs.meta"
+      - "pages/games/stich-meister/index.html"
       - "docs/QUALITY_GATES.md"
       - ".github/PULL_REQUEST_TEMPLATE.md"
       - "scripts/install-vrc-get.mjs"
@@ -61,7 +77,9 @@ on:
       - "scripts/verify-world-item-packages.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
+      - "scripts/verify-world-design-plan-negative.mjs"
       - "scripts/verify-perspective-cage.mjs"
+      - "scripts/verify-stich-meister-rules.mjs"
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
       - "scripts/run-retro-cafe-unity.mjs"
@@ -104,9 +122,13 @@ jobs:
         run: |
           node scripts/verify-world-design.mjs
           node scripts/world-design-to-blender-plan.mjs config/world-design/generated/cyber-alley-tea-nook.json
+          node scripts/verify-world-design-plan-negative.mjs
 
       - name: Verify Perspective Cage contract and implementation shape
         run: node scripts/verify-perspective-cage.mjs
+
+      - name: Verify Stich-Meister rule authority
+        run: node scripts/verify-stich-meister-rules.mjs
 
       - name: Syntax-check Unity runners
         run: |

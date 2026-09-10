@@ -27,7 +27,7 @@ current GitHub `main` is the integration base. Machine-readable owners define po
 
 ## Generated assets
 
-Use the existing generation path and preserve the direct render evidence it produces. On generation or verification failure, preserve only real outputs with their failure state and hashes; do not publish incomplete assets as completed products. Resume the same owning PR only from stages whose input identity and required output hashes still match; unknown, missing, or mismatched evidence must rerun instead of silently falling back. Merge/release behavior for generated assets is owned by `config/quality-gates.json`; do not restate that policy here.
+Use the existing generation path and preserve the direct render evidence it produces. Merge/release behavior for generated assets is owned by `config/quality-gates.json`; do not restate that policy here.
 
 ## Verification
 
