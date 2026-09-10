@@ -114,20 +114,115 @@ public static class BoardGameVerification
         ChessGame chess = Object.FindObjectOfType<ChessGame>(true);
         StringBuilder report = new StringBuilder();
         int trickFailures = trick.VerifyRules();
+        int flowFailures = VerifyIntegratedStichFlow(trick, report);
         int replayFailures = VerifyDeterministicReplay(trick, report);
         int orapaFailures = orapa.VerifySimulation();
         int chessFailures = chess.VerifyRules();
         report.Insert(0, "Board Games Runtime Verification\n");
         report.AppendLine((trickFailures == 0 ? "PASS " : "FAIL ") + "TrickMeisterRules failures=" + trickFailures);
+        report.AppendLine((flowFailures == 0 ? "PASS " : "FAIL ") + "StichMeisterFlow failures=" + flowFailures);
         report.AppendLine((replayFailures == 0 ? "PASS " : "FAIL ") + "StichMeisterReplay failures=" + replayFailures);
         report.AppendLine((orapaFailures == 0 ? "PASS " : "FAIL ") + "OrapaReflection failures=" + orapaFailures);
         report.AppendLine((chessFailures == 0 ? "PASS " : "FAIL ") + "ChessRules failures=" + chessFailures);
-        bool passed = trickFailures == 0 && replayFailures == 0 && orapaFailures == 0 && chessFailures == 0;
+        bool passed = trickFailures == 0 && flowFailures == 0 && replayFailures == 0 && orapaFailures == 0 && chessFailures == 0;
         report.AppendLine("Result: " + (passed ? "PASS" : "FAIL"));
         File.WriteAllText(RuntimeReportPath, report.ToString(), Encoding.UTF8);
         Debug.Log(report.ToString());
         SessionState.SetString("VRMine.BoardGamesRuntime", "");
         EditorApplication.isPlaying = false;
+    }
+
+    static int VerifyIntegratedStichFlow(GameController trick, StringBuilder report)
+    {
+        int failures = 0;
+        System.Reflection.MethodInfo activateRules = typeof(GameController).GetMethod("ActivateRules", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        System.Reflection.FieldInfo resetArmedAt = typeof(BoardGameAction).GetField("resetArmedAt", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        BoardGameAction resetAction = null;
+        BoardGameAction[] actions = Object.FindObjectsOfType<BoardGameAction>(true);
+        for (int i = 0; i < actions.Length; i++)
+        {
+            if (actions[i].game == 0 && actions[i].action >= 4 && actions[i].trickGame == trick)
+            {
+                resetAction = actions[i];
+                break;
+            }
+        }
+        if (activateRules == null || resetArmedAt == null || resetAction == null)
+        {
+            failures += Check(report, "StichFlowFixture", false, "missing canonical ActivateRules/reset action path");
+            return failures;
+        }
+
+        for (int playerCount = 3; playerCount <= NetConst.MaxPlayers; playerCount++)
+        {
+            bool passed = RunIntegratedStichFlow(trick, resetAction, resetArmedAt, activateRules, playerCount);
+            failures += Check(report, "StichFlow" + playerCount + "P", passed, passed ? "start->complete->confirmed-reset->second-match" : "flow did not reach canonical second match");
+        }
+        return failures;
+    }
+
+    static bool RunIntegratedStichFlow(GameController trick, BoardGameAction resetAction, System.Reflection.FieldInfo resetArmedAt, System.Reflection.MethodInfo activateRules, int playerCount)
+    {
+        trick.ConfigurePlayers(playerCount);
+        trick.boardSeed = (uint)(6200 + playerCount);
+        for (int i = 0; i < trick.board.occupiedPlayerIds.Length; i++) trick.board.occupiedPlayerIds[i] = 0;
+        for (int seat = 0; seat < playerCount; seat++) trick.board.occupiedPlayerIds[seat] = 62000 + playerCount * 10 + seat;
+        trick.SetupGame();
+        if (trick.board.phase != BoardState.PhaseRuleSelect || trick.board.roundIndex != 0) return false;
+
+        int guard = 0;
+        while (trick.board.phase != BoardState.PhaseComplete && guard++ < 1000)
+        {
+            if (trick.board.phase == BoardState.PhaseRuleSelect)
+            {
+                SetSafeFlowRules(trick, playerCount);
+                activateRules.Invoke(trick, null);
+                if (trick.board.phase != BoardState.PhasePlayCard) return false;
+                continue;
+            }
+            if (trick.board.phase != BoardState.PhasePlayCard) return false;
+
+            int playerSeat = trick.board.currentPlayerSeat;
+            int offset = playerSeat * NetConst.MaxHandSize;
+            int beforeTurn = trick.turnIndex;
+            for (int handIndex = 0; handIndex < NetConst.MaxHandSize && trick.turnIndex == beforeTurn; handIndex++)
+            {
+                if (trick.board.playerHands[offset + handIndex] == 0) continue;
+                trick.TryPlayCard(playerSeat, handIndex);
+            }
+            if (trick.turnIndex == beforeTurn) return false;
+        }
+
+        if (trick.board.phase != BoardState.PhaseComplete || trick.board.roundIndex != playerCount) return false;
+        int[] occupied = new int[playerCount];
+        for (int seat = 0; seat < playerCount; seat++) occupied[seat] = trick.board.occupiedPlayerIds[seat];
+
+        resetAction.Interact();
+        if (trick.board.phase != BoardState.PhaseComplete) return false;
+        resetArmedAt.SetValue(resetAction, Time.time - 1f);
+        resetAction.Interact();
+
+        if (trick.board.phase != BoardState.PhaseRuleSelect || trick.board.roundIndex != 0 || trick.turnIndex != 0 || trick.winnerPlayerId != 0) return false;
+        for (int seat = 0; seat < playerCount; seat++)
+        {
+            if (trick.board.occupiedPlayerIds[seat] != occupied[seat] || trick.board.scores[seat] != 0) return false;
+            for (int other = seat + 1; other < playerCount; other++) if (trick.board.occupiedPlayerIds[seat] == trick.board.occupiedPlayerIds[other]) return false;
+        }
+        return trick.board.trickIndex == 0 && trick.board.trickCardCount == 0 && trick.board.prepareStep == 0;
+    }
+
+    static void SetSafeFlowRules(GameController trick, int playerCount)
+    {
+        byte[] safeRules = { 1, 14, 26, 41 };
+        for (int i = 0; i < trick.board.selectedRuleBySeat.Length; i++) trick.board.selectedRuleBySeat[i] = 0;
+        int ruleIndex = 0;
+        int skippedSeat = playerCount == 5 ? (trick.board.dealerSeat + 1) % playerCount : -1;
+        for (int seat = 0; seat < playerCount; seat++)
+        {
+            if (seat == skippedSeat) continue;
+            trick.board.selectedRuleBySeat[seat] = safeRules[ruleIndex++];
+        }
+        if (playerCount == 3 && trick.board.ruleDeckCursor < trick.board.ruleDeck.Length) trick.board.ruleDeck[trick.board.ruleDeckCursor] = safeRules[3];
     }
 
     static int VerifyDeterministicReplay(GameController trick, StringBuilder report)
