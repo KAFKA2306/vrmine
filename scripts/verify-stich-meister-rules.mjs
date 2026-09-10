@@ -88,6 +88,26 @@ assert.ok(actionSurface.includes('Networking.LocalPlayer'), 'Player actions must
 assert.ok(actionSurface.includes('board.occupiedPlayerIds'), 'Player actions must derive acting seat from canonical occupiedPlayerIds');
 assert.ok(!actionSurface.includes('localPlayerSeat'), 'Player actions must not trust mutable/default localPlayerSeat as authority');
 
+const tryPlaySurface = runtime.slice(runtime.indexOf('public void TryPlayCard'), runtime.indexOf('public void OnDeclare'));
+const wrongTurnGuard = tryPlaySurface.indexOf('if (playerSeat != board.currentPlayerSeat || handIndex < 0 || handIndex >= NetConst.MaxHandSize) return;');
+const cardGuard = tryPlaySurface.indexOf('if (card == 0 || !LegalCard(playerSeat, card)) return;');
+const acceptedMutation = tryPlaySurface.indexOf('int slot = board.trickCardCount;');
+assert.ok(wrongTurnGuard >= 0 && cardGuard > wrongTurnGuard && acceptedMutation > cardGuard, 'TryPlayCard must reject wrong-turn/index and empty/illegal cards before the accepted mutation boundary');
+const rejectedActionSurface = tryPlaySurface.slice(0, acceptedMutation);
+for (const mutation of [
+  'board.trickCards[',
+  'board.trickSeats[',
+  'board.trickCardCount++',
+  'board.playerHands[offset + handIndex] = 0;',
+  'board.currentPlayerSeat =',
+  'turnIndex++',
+  'ResolveTrick();',
+  'Sync();'
+]) assert.ok(!rejectedActionSurface.includes(mutation), `Rejected TryPlayCard input must be a canonical state no-op before acceptance: ${mutation}`);
+const legalCardSurface = runtime.slice(runtime.indexOf('bool LegalCard'), runtime.indexOf('void ResolveTrick'));
+assert.ok(!/board\.[A-Za-z0-9_]+(?:\[[^\]]+\])?\s*(?:=(?!=)|\+=|-=|\+\+|--)/.test(legalCardSurface), 'LegalCard must remain a pure predicate over canonical state');
+assert.ok(!legalCardSurface.includes('Sync();') && !legalCardSurface.includes('OwnState();'), 'LegalCard must not acquire ownership or synchronize state');
+
 assert.ok(cardView.includes('int lastInteractFrame = -1;'), 'Card interaction must retain one local duplicate-event frame marker');
 assert.ok(cardView.includes('int frame = Time.frameCount;'), 'Card interaction duplicate detection must use the exact Unity frame instead of an arbitrary time threshold');
 assert.ok(cardView.includes('if (lastInteractFrame == frame) return;'), 'Same-frame duplicate card interactions must be rejected');
@@ -126,4 +146,4 @@ assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, unseated showcase, action seat, card duplicate input, leave/rejoin, active-match session lock, first-match occupancy, and confirmed second-match reset boundary guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; illegal play-card rejection remains state-no-op before acceptance; private hand, unseated showcase, action seat, card duplicate input, leave/rejoin, active-match session lock, first-match occupancy, and confirmed second-match reset boundary guarded; intended semantics unresolved)');
