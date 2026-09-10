@@ -1,5 +1,6 @@
 using System.IO;
 using System;
+using System.Security.Cryptography;
 using System.Text;
 using UdonSharp;
 using UdonSharpEditor;
@@ -111,20 +112,57 @@ public static class BoardGameVerification
         GameController trick = Object.FindObjectOfType<GameController>(true);
         OrapaMineGame orapa = Object.FindObjectOfType<OrapaMineGame>(true);
         ChessGame chess = Object.FindObjectOfType<ChessGame>(true);
+        StringBuilder report = new StringBuilder();
         int trickFailures = trick.VerifyRules();
+        int replayFailures = VerifyDeterministicReplay(trick, report);
         int orapaFailures = orapa.VerifySimulation();
         int chessFailures = chess.VerifyRules();
-        StringBuilder report = new StringBuilder();
-        report.AppendLine("Board Games Runtime Verification");
+        report.Insert(0, "Board Games Runtime Verification\n");
         report.AppendLine((trickFailures == 0 ? "PASS " : "FAIL ") + "TrickMeisterRules failures=" + trickFailures);
+        report.AppendLine((replayFailures == 0 ? "PASS " : "FAIL ") + "StichMeisterReplay failures=" + replayFailures);
         report.AppendLine((orapaFailures == 0 ? "PASS " : "FAIL ") + "OrapaReflection failures=" + orapaFailures);
         report.AppendLine((chessFailures == 0 ? "PASS " : "FAIL ") + "ChessRules failures=" + chessFailures);
-        bool passed = trickFailures == 0 && orapaFailures == 0 && chessFailures == 0;
+        bool passed = trickFailures == 0 && replayFailures == 0 && orapaFailures == 0 && chessFailures == 0;
         report.AppendLine("Result: " + (passed ? "PASS" : "FAIL"));
         File.WriteAllText(RuntimeReportPath, report.ToString(), Encoding.UTF8);
         Debug.Log(report.ToString());
         SessionState.SetString("VRMine.BoardGamesRuntime", "");
         EditorApplication.isPlaying = false;
+    }
+
+    static int VerifyDeterministicReplay(GameController trick, StringBuilder report)
+    {
+        int failures = 0;
+        const uint seed = 2306u;
+        for (int playerCount = 3; playerCount <= NetConst.MaxPlayers; playerCount++)
+        {
+            string first = ReplayHash(trick, playerCount, seed);
+            string second = ReplayHash(trick, playerCount, seed);
+            string changedSeed = ReplayHash(trick, playerCount, seed + 1u);
+            failures += Check(report, "StichReplay" + playerCount + "P", first == second, first + " / " + second);
+            failures += Check(report, "StichReplay" + playerCount + "PSeedSensitivity", first != changedSeed, first + " / " + changedSeed);
+        }
+        return failures;
+    }
+
+    static string ReplayHash(GameController trick, int playerCount, uint seed)
+    {
+        trick.ConfigurePlayers(playerCount);
+        trick.boardSeed = seed;
+        trick.SetupGame();
+        string state = EditorJsonUtility.ToJson(trick.board, false)
+            + "|" + trick.boardSeed
+            + "|" + trick.boardHash
+            + "|" + trick.turnIndex
+            + "|" + trick.winnerPlayerId
+            + "|" + trick.declarationResult;
+        using (SHA256 sha = SHA256.Create())
+        {
+            byte[] digest = sha.ComputeHash(Encoding.UTF8.GetBytes(state));
+            StringBuilder hex = new StringBuilder(digest.Length * 2);
+            for (int i = 0; i < digest.Length; i++) hex.Append(digest[i].ToString("x2"));
+            return hex.ToString();
+        }
     }
 
     static int Check(StringBuilder report, string name, bool passed, string detail)
