@@ -62,7 +62,7 @@ const runtimeContracts = [
   'board.selectedRuleBySeat[1] = 5;',
   'board.selectedRuleBySeat[2] = 60;',
   'board.selectedRuleBySeat[3] = 41;',
-  'if (board.trumpRule != 5 || board.scoringRule != 41) failures++;'
+  'if (board.trumpRule != 5 || board.scoringRule != 41) failures++'
 ];
 for (const contract of runtimeContracts) assert.ok(runtime.includes(contract), `Runtime contract drift: ${contract}`);
 
@@ -104,11 +104,18 @@ assert.ok(runtime.includes('board.occupiedPlayerIds[seat] <= 0'), 'Start occupan
 assert.ok(runtime.includes('if (!HasCompleteSession()) failures++;'), '3P/4P/5P fixture must prove complete occupancy can satisfy the start guard');
 assert.ok(runtime.includes('if (HasCompleteSession()) failures++;'), '3P/4P/5P fixture must prove incomplete occupancy is rejected');
 
-assert.ok(action.includes('else if (trickGame.board.phase == BoardState.PhaseComplete) trickGame.SetupGame();'), 'Reset action must only start a second match from PhaseComplete');
+const resetSurface = action.slice(action.indexOf('void HandleTrickReset()'), action.indexOf('void DisarmReset()'));
+assert.ok(action.includes('else HandleTrickReset();'), 'Player-facing reset must use one explicit confirmation path');
+assert.ok(resetSurface.includes('trickGame.board.phase != BoardState.PhaseComplete'), 'Reset confirmation must remain limited to completed matches');
+assert.ok(resetSurface.includes('SetActionLabel("CONFIRM RESET")'), 'First reset interaction must visibly arm confirmation instead of restarting immediately');
+assert.ok(resetSurface.includes('if (now - resetArmedAt < ResetConfirmMinDelay) return;'), 'Rapid duplicate input must not satisfy reset confirmation');
+assert.ok(action.includes('const float ResetConfirmTimeout = 5f;'), 'Reset confirmation must expire instead of remaining armed indefinitely');
+assert.equal((resetSurface.match(/trickGame\.SetupGame\(\);/g) || []).length, 1, 'Canonical second-match initialization must occur only after confirmation');
+assert.ok(!action.includes('else if (trickGame.board.phase == BoardState.PhaseComplete) trickGame.SetupGame();'), 'Single-interaction reset must not return');
 assert.ok(!action.includes('else trickGame.SetupGame();'), 'Reset action must not restart an active match unconditionally');
 
 assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page must expose rule authority status');
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, unseated showcase, action seat, leave/rejoin, active-match session lock, first-match occupancy, and second-match reset boundary guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; private hand, unseated showcase, action seat, leave/rejoin, active-match session lock, first-match occupancy, and confirmed second-match reset boundary guarded; intended semantics unresolved)');
