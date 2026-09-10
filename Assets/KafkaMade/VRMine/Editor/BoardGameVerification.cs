@@ -136,6 +136,7 @@ public static class BoardGameVerification
     {
         int failures = 0;
         System.Reflection.MethodInfo activateRules = typeof(GameController).GetMethod("ActivateRules", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        System.Reflection.MethodInfo applyPreparation = typeof(GameController).GetMethod("ApplyPreparation", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
         System.Reflection.FieldInfo resetArmedAt = typeof(BoardGameAction).GetField("resetArmedAt", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
         BoardGameAction resetAction = null;
         BoardGameAction[] actions = Object.FindObjectsOfType<BoardGameAction>(true);
@@ -147,21 +148,21 @@ public static class BoardGameVerification
                 break;
             }
         }
-        if (activateRules == null || resetArmedAt == null || resetAction == null)
+        if (activateRules == null || applyPreparation == null || resetArmedAt == null || resetAction == null)
         {
-            failures += Check(report, "StichFlowFixture", false, "missing canonical ActivateRules/reset action path");
+            failures += Check(report, "StichFlowFixture", false, "missing canonical ActivateRules/ApplyPreparation/reset action path");
             return failures;
         }
 
         for (int playerCount = 3; playerCount <= NetConst.MaxPlayers; playerCount++)
         {
-            bool passed = RunIntegratedStichFlow(trick, resetAction, resetArmedAt, activateRules, playerCount);
-            failures += Check(report, "StichFlow" + playerCount + "P", passed, passed ? "start->complete->confirmed-reset->second-match" : "flow did not reach canonical second match");
+            bool passed = RunIntegratedStichFlow(trick, resetAction, resetArmedAt, activateRules, applyPreparation, playerCount);
+            failures += Check(report, "StichFlow" + playerCount + "P", passed, passed ? "start->prepare->complete->confirmed-reset->second-match" : "flow did not reach canonical second match through preparation");
         }
         return failures;
     }
 
-    static bool RunIntegratedStichFlow(GameController trick, BoardGameAction resetAction, System.Reflection.FieldInfo resetArmedAt, System.Reflection.MethodInfo activateRules, int playerCount)
+    static bool RunIntegratedStichFlow(GameController trick, BoardGameAction resetAction, System.Reflection.FieldInfo resetArmedAt, System.Reflection.MethodInfo activateRules, System.Reflection.MethodInfo applyPreparation, int playerCount)
     {
         trick.ConfigurePlayers(playerCount);
         trick.boardSeed = (uint)(6200 + playerCount);
@@ -177,7 +178,8 @@ public static class BoardGameVerification
             {
                 SetSafeFlowRules(trick, playerCount);
                 activateRules.Invoke(trick, null);
-                if (trick.board.phase != BoardState.PhasePlayCard) return false;
+                if (trick.board.phase != BoardState.PhasePrepare || trick.board.prepareStep != 3) return false;
+                if (!CompletePreparation(trick, applyPreparation, playerCount)) return false;
                 continue;
             }
             if (trick.board.phase != BoardState.PhasePlayCard) return false;
@@ -211,9 +213,30 @@ public static class BoardGameVerification
         return trick.board.trickIndex == 0 && trick.board.trickCardCount == 0 && trick.board.prepareStep == 0;
     }
 
+    static bool CompletePreparation(GameController trick, System.Reflection.MethodInfo applyPreparation, int playerCount)
+    {
+        for (int i = 0; i < trick.board.markedCards.Length; i++) trick.board.markedCards[i] = 0;
+        for (int seat = 0; seat < playerCount; seat++)
+        {
+            int offset = seat * NetConst.MaxHandSize;
+            int marked = -1;
+            for (int handIndex = 0; handIndex < NetConst.MaxHandSize; handIndex++)
+            {
+                if (trick.board.playerHands[offset + handIndex] == 0) continue;
+                marked = offset + handIndex;
+                break;
+            }
+            if (marked < 0) return false;
+            trick.board.markedCards[marked] = 1;
+        }
+        trick.board.confirmedMask = (byte)((1 << playerCount) - 1);
+        applyPreparation.Invoke(trick, null);
+        return trick.board.phase == BoardState.PhasePlayCard && trick.board.prepareStep == 0;
+    }
+
     static void SetSafeFlowRules(GameController trick, int playerCount)
     {
-        byte[] safeRules = { 1, 14, 26, 41 };
+        byte[] safeRules = { 1, 24, 26, 41 };
         for (int i = 0; i < trick.board.selectedRuleBySeat.Length; i++) trick.board.selectedRuleBySeat[i] = 0;
         int ruleIndex = 0;
         int skippedSeat = playerCount == 5 ? (trick.board.dealerSeat + 1) % playerCount : -1;
