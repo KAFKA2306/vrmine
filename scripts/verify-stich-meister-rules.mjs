@@ -141,6 +141,25 @@ assert.ok(runtime.includes('board.occupiedPlayerIds[seat] <= 0'), 'Start occupan
 assert.ok(runtime.includes('if (!HasCompleteSession()) failures++;'), '3P/4P/5P fixture must prove complete occupancy can satisfy the start guard');
 assert.ok(runtime.includes('if (HasCompleteSession()) failures++;'), '3P/4P/5P fixture must prove incomplete occupancy is rejected');
 
+const setupSurface = runtime.slice(runtime.indexOf('public void SetupGame()'), runtime.indexOf('public void SelectRule'));
+const startRoundSurface = runtime.slice(runtime.indexOf('void StartRound()'), runtime.indexOf('void DealCards()'));
+const resolveTrickSurface = runtime.slice(runtime.indexOf('void ResolveTrick()'), runtime.indexOf('int SecondHighestSlot()'));
+const scoreRoundSurface = runtime.slice(runtime.indexOf('void ScoreRound()'), runtime.indexOf('void ScoreTrick('));
+const integratedFlowStages = [
+  [setupSurface, 'StartRound();', 'SetupGame must enter the canonical first-round path'],
+  [startRoundSurface, 'board.phase = BoardState.PhaseRuleSelect;', 'StartRound must expose rule-selection as the first playable phase'],
+  [runtime, 'if (AllRulesSelected()) ActivateRules();', 'Canonical rule selection must advance through ActivateRules'],
+  [runtime, 'board.phase = BoardState.PhasePlayCard;', 'Canonical rule/preparation path must reach card play'],
+  [tryPlaySurface, 'ResolveTrick();', 'Canonical card action must advance completed tricks through ResolveTrick'],
+  [resolveTrickSurface, 'ScoreRound();', 'Round completion must advance through the canonical ScoreRound path'],
+  [scoreRoundSurface, 'board.phase = BoardState.PhaseComplete;', 'Final round must reach PhaseComplete'],
+  [action, 'trickGame.SetupGame();', 'Confirmed reset must reuse SetupGame for the second match']
+];
+for (const [surface, contract, message] of integratedFlowStages) assert.ok(surface.includes(contract), message);
+assert.deepEqual(spec.session_observed.supported_player_counts, [3, 4, 5], 'Integrated flow coverage must stay bound to canonical 3P/4P/5P support');
+assert.ok(runtime.includes('for (int playerCount = 3; playerCount <= NetConst.MaxPlayers; playerCount++)'), '3P/4P/5P session fixture must remain one shared player-count loop instead of per-count implementations');
+assert.ok(!runtime.includes('SetupSecondGame') && !runtime.includes('SecondGameState'), 'Second match must reuse canonical SetupGame/BoardState instead of introducing a parallel game implementation');
+
 const resetSurface = action.slice(action.indexOf('void HandleTrickReset()'), action.indexOf('void DisarmReset()'));
 assert.ok(action.includes('else HandleTrickReset();'), 'Player-facing reset must use one explicit confirmation path');
 assert.ok(resetSurface.includes('trickGame.board.phase != BoardState.PhaseComplete'), 'Reset confirmation must remain limited to completed matches');
@@ -155,4 +174,4 @@ assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; illegal play-card rejection has source boundary and state-snapshot regression; private hand, unseated showcase, action seat, card duplicate input, leave/rejoin, active-match session lock, first-match occupancy, and confirmed second-match reset boundary guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; integrated 3P/4P/5P start-to-reset canonical flow contract guarded; illegal play-card rejection has source boundary and state-snapshot regression; private hand, unseated showcase, action seat, card duplicate input, leave/rejoin, active-match session lock, first-match occupancy, and confirmed second-match reset boundary guarded; intended semantics unresolved)');
