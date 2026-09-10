@@ -28,6 +28,7 @@ tasks:
       - task: world-design:check
       - python3 -m py_compile scripts/world_build_factory.py scripts/verify_world_build.py
       - node scripts/verify-perspective-cage.mjs
+      - node scripts/verify-stich-meister-rules.mjs
       - node --check scripts/run-perspective-cage-unity.mjs
       - node --check scripts/run-glb-consumer-unity.mjs
       - node --check scripts/run-retro-cafe-unity.mjs
