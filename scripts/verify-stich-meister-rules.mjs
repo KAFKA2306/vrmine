@@ -108,6 +108,15 @@ const legalCardSurface = runtime.slice(runtime.indexOf('bool LegalCard'), runtim
 assert.ok(!/board\.[A-Za-z0-9_]+(?:\[[^\]]+\])?\s*(?:=(?!=)|\+=|-=|\+\+|--)/.test(legalCardSurface), 'LegalCard must remain a pure predicate over canonical state');
 assert.ok(!legalCardSurface.includes('Sync();') && !legalCardSurface.includes('OwnState();'), 'LegalCard must not acquire ownership or synchronize state');
 
+const verifyRulesSurface = runtime.slice(runtime.indexOf('public int VerifyRules()'), runtime.indexOf('uint PlayCardStateHash()'));
+assert.ok(verifyRulesSurface.includes('uint rejectedState = PlayCardStateHash();'), 'Illegal play-card fixture must capture canonical state before rejected actions');
+for (const actionCall of ['TryPlayCard(0, 0);', 'TryPlayCard(1, -1);', 'TryPlayCard(1, 2);', 'TryPlayCard(1, 0);'])
+  assert.ok(verifyRulesSurface.includes(actionCall), `Illegal play-card fixture missing rejected action: ${actionCall}`);
+assert.equal((verifyRulesSurface.match(/if \(PlayCardStateHash\(\) != rejectedState\) failures\+\+;/g) || []).length, 4, 'Each illegal play-card class must prove the canonical state snapshot is unchanged');
+const snapshotSurface = runtime.slice(runtime.indexOf('uint PlayCardStateHash()'), runtime.indexOf('bool AllRulesSelected()'));
+for (const stateSurface of ['board.playerHands', 'board.trickCards', 'board.trickSeats', 'board.selectedRules', 'board.cardOwners', 'board.cardTricks', 'board.takenTricks', 'board.scores', 'board.currentPlayerSeat', 'board.trickCardCount', 'board.trickIndex', 'board.roundIndex', 'board.prepareStep', 'board.syncState', 'turnIndex'])
+  assert.ok(snapshotSurface.includes(stateSurface), `Illegal-action snapshot must cover play-card canonical state: ${stateSurface}`);
+
 assert.ok(cardView.includes('int lastInteractFrame = -1;'), 'Card interaction must retain one local duplicate-event frame marker');
 assert.ok(cardView.includes('int frame = Time.frameCount;'), 'Card interaction duplicate detection must use the exact Unity frame instead of an arbitrary time threshold');
 assert.ok(cardView.includes('if (lastInteractFrame == frame) return;'), 'Same-frame duplicate card interactions must be rejected');
@@ -146,4 +155,4 @@ assert.ok(page.includes('data-stich-rule-authority'), 'Public Stich-Meister page
 assert.ok(page.includes('60枚の意図仕様は未解決'), 'Public page must not imply resolved Rule 1–60 semantics');
 assert.ok(page.includes('https://github.com/KAFKA2306/vrmine/blob/main/config/stich-meister-rules.json'), 'Public page must link to the canonical rule authority');
 
-console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; illegal play-card rejection remains state-no-op before acceptance; private hand, unseated showcase, action seat, card duplicate input, leave/rejoin, active-match session lock, first-match occupancy, and confirmed second-match reset boundary guarded; intended semantics unresolved)');
+console.log('Stich-Meister rule authority: PASS (60 rules; lower-id conflict priority guarded; illegal play-card rejection has source boundary and state-snapshot regression; private hand, unseated showcase, action seat, card duplicate input, leave/rejoin, active-match session lock, first-match occupancy, and confirmed second-match reset boundary guarded; intended semantics unresolved)');
