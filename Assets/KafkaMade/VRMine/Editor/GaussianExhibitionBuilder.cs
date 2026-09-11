@@ -118,6 +118,9 @@ public static class GaussianExhibitionBuilder
 
         EnsureAssetFolder(Path.GetDirectoryName(config.scene_path)?.Replace('\\', '/'));
         EditorSceneManager.SaveScene(scene, config.scene_path);
+        if (!Lightmapping.Bake())
+            throw new InvalidOperationException("Gaussian exhibition lighting bake failed.");
+        EditorSceneManager.SaveScene(scene);
         EnsureBuildScene(config.scene_path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
