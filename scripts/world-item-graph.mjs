@@ -3,6 +3,7 @@ import path from 'node:path';
 
 const root = process.cwd();
 const specDir = path.join(root, 'config', 'world-items');
+const packagePath = path.join(root, 'config', 'world-item-packages.json');
 const args = process.argv.slice(2);
 const checkOnly = args.includes('--check');
 const outputIndex = args.indexOf('--output');
@@ -12,6 +13,7 @@ const fail = (message) => { throw new Error(message); };
 const stable = (values) => [...values].sort((a, b) => a.id.localeCompare(b.id));
 
 if (!fs.existsSync(specDir)) fail(`missing world-item spec directory: ${path.relative(root, specDir)}`);
+if (!fs.existsSync(packagePath)) fail(`missing world-item package authority: ${path.relative(root, packagePath)}`);
 if (outputIndex >= 0 && !outputPath) fail('--output requires a path');
 
 const specFiles = fs.readdirSync(specDir)
@@ -99,6 +101,29 @@ for (const filename of specFiles) {
   }
 }
 
+const packageAuthority = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+if (packageAuthority.schema_version !== 1) fail('config/world-item-packages.json: schema_version must be 1');
+if (!Array.isArray(packageAuthority.packages)) fail('config/world-item-packages.json: packages must be an array');
+const packageIds = new Set();
+const packageTypes = { single: 'Single', mini_set: 'MiniSet', theme_pack: 'ThemePack' };
+for (const pkg of packageAuthority.packages) {
+  if (!pkg.id || typeof pkg.id !== 'string') fail('config/world-item-packages.json: every package requires an id');
+  if (packageIds.has(pkg.id)) fail(`config/world-item-packages.json: duplicate package id ${pkg.id}`);
+  packageIds.add(pkg.id);
+  const type = packageTypes[pkg.kind];
+  if (!type) fail(`config/world-item-packages.json: package ${pkg.id} has unsupported kind ${pkg.kind}`);
+  if (!Array.isArray(pkg.items) || pkg.items.length === 0) fail(`config/world-item-packages.json: package ${pkg.id} requires items`);
+  if (pkg.kind === 'single' && pkg.items.length !== 1) fail(`config/world-item-packages.json: single package ${pkg.id} must contain exactly one SKU`);
+  if (new Set(pkg.items).size !== pkg.items.length) fail(`config/world-item-packages.json: package ${pkg.id} contains duplicate SKU references`);
+
+  const packageNode = `package:${pkg.id}`;
+  addNode({ id: packageNode, type, key: pkg.id, kind: pkg.kind, source: 'config/world-item-packages.json' });
+  for (const sku of pkg.items) {
+    if (!skuIds.has(sku)) fail(`config/world-item-packages.json: package ${pkg.id} references missing SKU ${sku}`);
+    addEdge(packageNode, 'CONTAINS', `sku:${sku}`);
+  }
+}
+
 for (const edge of edges.values()) {
   if (!nodes.has(edge.from)) fail(`edge has missing source node: ${edge.id}`);
   if (!nodes.has(edge.to)) fail(`edge has missing target node: ${edge.id}`);
@@ -134,10 +159,11 @@ for (const id of orphanNodes) warnings.push(`orphan node ${id}`);
 
 const graph = {
   schema_version: 1,
-  authority: 'config/world-items/*.json',
+  authority: ['config/world-items/*.json', 'config/world-item-packages.json'],
   generated: true,
   summary: {
     specs: specFiles.length,
+    packages: packageAuthority.packages.length,
     nodes: nodes.size,
     edges: edges.size,
     warnings: warnings.length,
