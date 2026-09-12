@@ -158,7 +158,7 @@ const blockoutInstances = blockoutAnchors.map((entry, index) => {
 });
 
 const blockoutById = new Map(blockoutInstances.map((entry) => [entry.id, entry]));
-const compositionAxisIds = spec.blockout?.composition_axis ?? [];
+const compositionAxisIds = spec.blockout?.composition_axis ?? ['entrance', 'plaza'];
 if (!Array.isArray(compositionAxisIds) || compositionAxisIds.length < 2) fail('blockout.composition_axis must contain at least two nodes');
 const compositionAxis = compositionAxisIds.map((id, index) => {
   if (typeof id !== 'string' || !id) fail(`blockout.composition_axis[${index}] must be a non-empty string`);
