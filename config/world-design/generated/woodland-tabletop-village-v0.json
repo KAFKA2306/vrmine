@@ -2,7 +2,11 @@
   "meta": {
     "spec_version": "1.1.0",
     "theme_name": "大樹のふもとの小さな村",
-    "primary_intents": ["social", "home", "game"],
+    "primary_intents": [
+      "social",
+      "home",
+      "game"
+    ],
     "capacity_target": 4,
     "platform_target": "CROSS_PLATFORM_QUEST"
   },
@@ -23,7 +27,7 @@
       {
         "zone_id": "woodland_tabletop",
         "shape": "circle",
-        "diameter_m": 2.8,
+        "diameter_m": 2.4,
         "tabletop_height_m": 0.78,
         "tabletop_thickness_m": 0.08
       },
@@ -38,7 +42,7 @@
   "social_clusters": {
     "primary_core": {
       "core_type": "round_tabletop_observation",
-      "core_diameter_m": 2.8,
+      "core_diameter_m": 2.4,
       "max_face_distance_m": 2.8,
       "table_height_m": 0.78,
       "seat_spacing_m": 1.15,
@@ -82,45 +86,125 @@
   "world_build": {
     "ceiling_height_m": 2.6,
     "spawn": {
-      "position_m": [0, -2.75, 0],
+      "position_m": [
+        0,
+        -2.1,
+        0
+      ],
       "facing_deg": 0,
       "buffer_radius_m": 1.0
     },
     "social_core": {
-      "center_m": [0, 0, 0.78],
+      "center_m": [
+        0,
+        0,
+        0.78
+      ],
       "seat_count": 4,
-      "seat_radius_m": 1.75,
+      "seat_radius_m": 1.35,
       "table_asset_id": "woodland-diorama-table-v0",
       "seat_asset_id": "wooden-stool-v0"
     },
     "retreat": {
       "zone_id": "reading_nook",
-      "center_m": [-2.2, 1.85, 0],
+      "center_m": [
+        -2.2,
+        1.85,
+        0
+      ],
       "seat_count": 1,
       "seat_asset_id": "wooden-bench-v0"
     },
     "activity_anchor": {
       "kind": "great_tree_diorama",
-      "position_m": [0, 0.28, 0.78],
+      "position_m": [
+        0,
+        0.28,
+        0.78
+      ],
       "approach_clearance_m": 1.0
     },
     "hero_view": {
-      "position_m": [0, -2.55, 1.55],
-      "target_m": [0, 0.2, 1.02]
+      "position_m": [
+        0,
+        -2.55,
+        1.55
+      ],
+      "target_m": [
+        0,
+        0.2,
+        1.02
+      ]
     },
     "circulation": {
       "waypoints_m": [
-        [0, -2.75, 0],
-        [-1.75, -1.6, 0],
-        [-1.95, 0.5, 0],
-        [-1.55, 1.75, 0],
-        [0, 2.05, 0],
-        [1.55, 1.75, 0],
-        [1.95, 0.5, 0],
-        [1.75, -1.6, 0],
-        [0, -2.75, 0]
+        [
+          0,
+          -2.1,
+          0
+        ],
+        [
+          -1.75,
+          -1.6,
+          0
+        ],
+        [
+          -1.95,
+          0.5,
+          0
+        ],
+        [
+          -1.55,
+          1.75,
+          0
+        ],
+        [
+          0,
+          2.05,
+          0
+        ],
+        [
+          1.55,
+          1.75,
+          0
+        ],
+        [
+          1.95,
+          0.5,
+          0
+        ],
+        [
+          1.75,
+          -1.6,
+          0
+        ],
+        [
+          0,
+          -2.1,
+          0
+        ]
       ],
       "minimum_clearance_m": 1.0
+    },
+    "procedural_assets": {
+      "woodland-diorama-table-v0": {
+        "kind": "round_table",
+        "diameter_m": 2.4,
+        "height_m": 0.78,
+        "top_thickness_m": 0.08
+      },
+      "wooden-stool-v0": {
+        "kind": "stool",
+        "width_m": 0.42,
+        "depth_m": 0.42,
+        "height_m": 0.48
+      },
+      "wooden-bench-v0": {
+        "kind": "bench",
+        "width_m": 1.1,
+        "depth_m": 0.42,
+        "height_m": 0.8
+      }
     }
   },
   "atmosphere": {
@@ -158,62 +242,126 @@
     "anchors": [
       {
         "id": "great_tree",
-        "position_m": [0, 0.28, 0.78],
-        "footprint_m": [0.72, 0.72],
+        "asset_id": "woodland-great-tree-01",
+        "position_m": [
+          0,
+          0.28,
+          0.78
+        ],
+        "footprint_m": [
+          0.72,
+          0.72
+        ],
         "height_m": 0.95,
         "role": "world_symbol"
       },
       {
         "id": "bridge",
-        "position_m": [0, -0.92, 0.80],
-        "footprint_m": [0.42, 0.32],
-        "height_m": 0.10,
+        "asset_id": "woodland-bridge-01",
+        "position_m": [
+          0,
+          -0.92,
+          0.8
+        ],
+        "footprint_m": [
+          0.42,
+          0.32
+        ],
+        "height_m": 0.1,
         "role": "entry_threshold"
       },
       {
         "id": "lodge",
-        "position_m": [-0.66, 0.06, 0.78],
-        "footprint_m": [0.56, 0.44],
+        "asset_id": "woodland-lodge-01",
+        "position_m": [
+          -0.66,
+          0.06,
+          0.78
+        ],
+        "footprint_m": [
+          0.56,
+          0.44
+        ],
         "height_m": 0.46,
         "yaw_deg": 12,
         "role": "warm_social_anchor"
       },
       {
         "id": "cottage_a",
-        "position_m": [0.58, 0.36, 0.78],
-        "footprint_m": [0.38, 0.34],
+        "asset_id": "woodland-cottage-01",
+        "position_m": [
+          0.58,
+          0.36,
+          0.78
+        ],
+        "footprint_m": [
+          0.38,
+          0.34
+        ],
         "height_m": 0.34,
         "yaw_deg": -18,
         "role": "residential"
       },
       {
         "id": "cottage_b",
-        "position_m": [0.82, 0.02, 0.78],
-        "footprint_m": [0.34, 0.30],
+        "asset_id": "woodland-cottage-01",
+        "position_m": [
+          0.82,
+          0.02,
+          0.78
+        ],
+        "footprint_m": [
+          0.34,
+          0.3
+        ],
         "height_m": 0.31,
         "yaw_deg": 20,
         "role": "residential"
       },
       {
         "id": "market_stall",
-        "position_m": [0.72, -0.48, 0.78],
-        "footprint_m": [0.38, 0.26],
-        "height_m": 0.30,
+        "asset_id": "woodland-market-stall-01",
+        "position_m": [
+          0.72,
+          -0.48,
+          0.78
+        ],
+        "footprint_m": [
+          0.38,
+          0.26
+        ],
+        "height_m": 0.3,
         "yaw_deg": -12,
         "role": "life_trace"
       },
       {
         "id": "reading_bench",
-        "position_m": [-0.72, -0.48, 0.78],
-        "footprint_m": [0.30, 0.16],
+        "asset_id": "woodland-reading-bench-01",
+        "position_m": [
+          -0.72,
+          -0.48,
+          0.78
+        ],
+        "footprint_m": [
+          0.3,
+          0.16
+        ],
         "height_m": 0.14,
         "yaw_deg": 18,
         "role": "emotional_spot"
       },
       {
         "id": "stream",
-        "position_m": [0, 0.72, 0.79],
-        "footprint_m": [1.55, 0.18],
+        "asset_id": "woodland-stream-segment-01",
+        "position_m": [
+          0,
+          0.72,
+          0.79
+        ],
+        "footprint_m": [
+          1.55,
+          0.18
+        ],
         "height_m": 0.02,
         "role": "slow_motion_anchor"
       }
