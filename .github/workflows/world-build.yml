@@ -41,20 +41,26 @@ jobs:
           ref: ${{ steps.pr.outputs.head_sha }}
           fetch-depth: 0
 
-      - name: Select one canonical World Design Spec
+      - name: Select canonical World Design Spec
         id: select
         env:
           BASE_REF: ${{ steps.pr.outputs.base_ref }}
+          WORLD_BLOCKOUT_SPEC: config/world-design/generated/woodland-tabletop-village-v0.json
         run: |
           set -euo pipefail
           git fetch origin "$BASE_REF"
           mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/${BASE_REF}...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
-          if [ "${#specs[@]}" -ne 1 ]; then
-            printf 'Expected exactly one changed generated World Design Spec, got %s\n' "${#specs[@]}" >&2
-            printf '%s\n' "${specs[@]:-}" >&2
+          if [ "${#specs[@]}" -gt 1 ]; then
+            printf 'Expected at most one changed generated World Design Spec, got %s\n' "${#specs[@]}" >&2
+            printf '%s\n' "${specs[@]}" >&2
             exit 1
           fi
-          spec="${specs[0]}"
+          if [ "${#specs[@]}" -eq 1 ]; then
+            spec="${specs[0]}"
+          else
+            spec="$WORLD_BLOCKOUT_SPEC"
+            test -s "$spec"
+          fi
           world_id="$(basename "$spec" .json)"
           echo "spec_path=$spec" >> "$GITHUB_OUTPUT"
           echo "world_id=$world_id" >> "$GITHUB_OUTPUT"
