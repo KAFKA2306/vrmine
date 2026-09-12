@@ -1,32 +1,24 @@
-https://kafka2306.github.io/vrmine/
-https://kafka2306.github.io/vrmine/io/
-
 # VRMine
 
-VRChat向けコンテンツ、3Dワールド素材、ブラウザゲームを同じrepositoryで管理します。
+VRChat向けワールド素材、ワールド設計、関連インタラクティブコンテンツを、仕様・生成・検証・配布まで一つのrepositoryで扱います。
 
-## Repository
+- Public site: https://kafka2306.github.io/vrmine/
+- 3D item catalog: https://kafka2306.github.io/vrmine/io/
 
-- `pages/`: GitHub Pages
-- `pages/io/`: 3D素材カタログ
-- `config/world-items/`: 3D素材仕様
-- `Assets/KafkaMade/VRMine/`: Unity / VRChat実装
-- `Packages/`: Unity package設定
-- `ProjectSettings/ProjectVersion.txt`: Unity version
-- `config/`: machine-readable設定
-- `scripts/`: 生成・検証
-- `Taskfile.yml`: 実行入口
+## Start here
 
-## Commands
-
-```bash
-task setup
-task check
-task pages:test
-```
-
-個別の実行入口は `Taskfile.yml` を参照してください。
+- 開発・agentルールとcanonical path: [`AGENTS.md`](AGENTS.md)
+- 実行可能なcommand: [`Taskfile.yml`](Taskfile.yml)
+- merge / release gate: [`config/quality-gates.json`](config/quality-gates.json)
+- 3D item仕様: [`config/world-items/`](config/world-items/)
+- World Design仕様・生成spec: [`config/world-design/`](config/world-design/)
 
 ## Verification
 
-変更はPull Requestで検証してからmergeします。Pages変更は公開後のURLを直接確認します。Unity / VRChatの状態は、実際に確認した実行環境の結果だけを扱います。release条件は `config/quality-gates.json` を正本とします。
+repository全体の高速な再現可能チェックは次で実行します。
+
+```bash
+task check
+```
+
+変更面ごとの最小commandと検証条件は `Taskfile.yml` と `config/quality-gates.json` を正本とし、このREADMEには重複して列挙しません。
