@@ -33,11 +33,12 @@ fs.mkdirSync(evidenceDir, { recursive: true });
 const timestamp = new Date().toISOString().replaceAll(':', '').replaceAll('-', '').replace(/\.\d{3}Z$/, 'Z');
 const logPath = path.join(evidenceDir, `woodland-tabletop-village-${timestamp}.log`);
 const scenePath = path.join(projectRoot, 'Assets', 'KafkaMade', 'VRMine', 'Scenes', 'WoodlandTabletopVillage.unity');
+const prefabPath = path.join(projectRoot, 'Assets', 'KafkaMade', 'VRMine', 'Prefabs', 'WoodlandTabletopVillage.prefab');
 
 const run = spawnSync(unityPath, [
   '-batchmode',
   '-projectPath', projectRoot,
-  '-executeMethod', 'WoodlandTabletopVillageSceneBuilder.BuildBatch',
+  '-executeMethod', 'WoodlandTabletopVillagePrefabBuild.BuildAndVerifyBatch',
   '-logFile', logPath,
   '-quit',
 ], {
@@ -50,6 +51,10 @@ if (run.status !== 0) throw new Error(`Woodland Tabletop Village Unity build fai
 if (!fs.existsSync(scenePath) || fs.statSync(scenePath).size === 0) {
   throw new Error(`Unity completed without materializing the scene: ${scenePath}`);
 }
+if (!fs.existsSync(prefabPath) || fs.statSync(prefabPath).size === 0) {
+  throw new Error(`Unity completed without materializing the prefab: ${prefabPath}`);
+}
 
-console.log(`PASS: Woodland Tabletop Village scene built and verified from canonical spec. Scene: ${scenePath}`);
+console.log(`PASS: Woodland Tabletop Village scene and prefab built and verified from canonical spec. Scene: ${scenePath}`);
+console.log(`Prefab: ${prefabPath}`);
 console.log(`Unity log: ${logPath}`);
