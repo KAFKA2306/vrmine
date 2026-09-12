@@ -64,7 +64,7 @@ for (const [index, anchor] of blockout.anchors.entries()) {
 
 const compositionAxis = nonEmptyStrings(blockout.composition_axis, 'blockout.composition_axis');
 for (const id of compositionAxis) {
-  if (id !== 'entrance' && !anchorIds.has(id)) fail(`composition_axis references missing anchor ${id}`);
+  if (!anchorIds.has(id)) fail(`composition_axis references missing anchor ${id}`);
 }
 
 const worldSymbols = blockout.anchors.filter((anchor) => anchor.role === 'world_symbol');
