@@ -6,8 +6,10 @@ on:
     paths:
       - 'config/world-design/generated/**'
       - 'scripts/world-design-to-blender-plan.mjs'
+      - 'scripts/materialize_world_build_input.py'
       - 'scripts/world_build_factory.py'
       - 'scripts/verify_world_build.py'
+      - 'scripts/world_item_factory.py'
       - 'Taskfile.yml'
       - '.github/workflows/world-build.yml'
       - 'pages/worlds/**'
@@ -19,7 +21,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - name: Resolve PR
         id: pr
@@ -47,10 +49,13 @@ jobs:
           BASE_REF: ${{ steps.pr.outputs.base_ref }}
         run: |
           set -euo pipefail
-          git fetch origin "$BASE_REF"
+          git fetch origin "$BASE_REF" main
           mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/${BASE_REF}...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
+          if [ "${#specs[@]}" -eq 0 ] && [ "$BASE_REF" != main ]; then
+            mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/main...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
+          fi
           if [ "${#specs[@]}" -ne 1 ]; then
-            printf 'Expected exactly one changed generated World Design Spec, got %s\n' "${#specs[@]}" >&2
+            printf 'Expected exactly one effective generated World Design Spec, got %s\n' "${#specs[@]}" >&2
             printf '%s\n' "${specs[@]:-}" >&2
             exit 1
           fi
@@ -70,8 +75,8 @@ jobs:
           dest="pages/worlds/${WORLD_ID}"
           mkdir -p "$out"
           node scripts/world-design-to-blender-plan.mjs "$SPEC_PATH" > "$out/build-plan.json"
-          test "$(jq -r .schema_version "$out/build-plan.json")" = 3
-          source_sha="$(git log -1 --format=%H -- "$SPEC_PATH" scripts/world-design-to-blender-plan.mjs scripts/world_build_factory.py scripts/verify_world_build.py Taskfile.yml .github/workflows/world-build.yml)"
+          test "$(jq -r .schema_version "$out/build-plan.json")" = 4
+          source_sha="$(git log -1 --format=%H -- "$SPEC_PATH" config/world-items scripts/world-design-to-blender-plan.mjs scripts/materialize_world_build_input.py scripts/world_item_factory.py scripts/world_build_factory.py scripts/verify_world_build.py Taskfile.yml .github/workflows/world-build.yml)"
           current=false
           if [ -f "$dest/manifest.json" ] && [ -f "$dest/build-plan.json" ]; then
             recorded="$(jq -r '.source_commit // empty' "$dest/manifest.json")"
@@ -97,6 +102,33 @@ jobs:
           sudo apt-get install -y libegl1 libgl1-mesa-dri
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
+      - name: Materialize verified world-item inputs
+        env:
+          WORLD_ID: ${{ steps.select.outputs.world_id }}
+        run: |
+          set -euo pipefail
+          out=".artifacts/world-builds/${WORLD_ID}"
+          source_root=".artifacts/world-build-source-items"
+          rm -rf "$source_root"
+          mkdir -p "$source_root"
+          mapfile -t asset_ids < <(jq -r '.asset_ids[]?' "$out/build-plan.json")
+          for asset_id in "${asset_ids[@]}"; do
+            spec="config/world-items/${asset_id}.json"
+            published="pages/io/items/${asset_id}/${asset_id}.glb"
+            if [ -f "$spec" ]; then
+              blender -b --python-exit-code 1 --python scripts/materialize_world_build_input.py -- "$spec" "$source_root"
+              test -s "$source_root/$asset_id/${asset_id}.glb"
+              test -s "$source_root/$asset_id/world-build-input.json"
+            elif [ -s "$published" ]; then
+              mkdir -p "$source_root/$asset_id"
+              cp "$published" "$source_root/$asset_id/${asset_id}.glb"
+            else
+              echo "Missing materializable source for world asset: $asset_id" >&2
+              exit 1
+            fi
+          done
+          printf '%s\n' "${asset_ids[@]}" > "$out/asset-ids.txt"
+
       - name: Generate or reuse actual room and run spatial DRC
         env:
           GH_TOKEN: ${{ github.token }}
@@ -107,6 +139,7 @@ jobs:
           set -uo pipefail
           out=".artifacts/world-builds/${WORLD_ID}"
           dest="pages/worlds/${WORLD_ID}"
+          source_root=".artifacts/world-build-source-items"
           if [ "$CURRENT" = true ]; then
             cp -a "$dest/." "$out/"
             node scripts/world-design-to-blender-plan.mjs "${{ steps.select.outputs.spec_path }}" > "$out/build-plan.json"
@@ -114,7 +147,7 @@ jobs:
           : > /tmp/world-build.log
           set +e
           if [ "$CURRENT" != true ]; then
-            blender -b --python-exit-code 1 --python scripts/world_build_factory.py -- "$out/build-plan.json" "$out" >> /tmp/world-build.log 2>&1
+            blender -b --python-exit-code 1 --python scripts/world_build_factory.py -- "$out/build-plan.json" "$out" "$source_root" >> /tmp/world-build.log 2>&1
             status=$?
           else
             status=0

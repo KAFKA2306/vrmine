@@ -1,0 +1,492 @@
+{
+  "schema_version": 3,
+  "source_commit": "1cebf7edb2093d06546ba507281c1e7fe1216127",
+  "build_plan": ".artifacts/world-builds/woodland-tabletop-village-v0/build-plan.json",
+  "build_plan_sha256": "ba910f4fab0d25ad8f7aa1ffc9cda7ac432b9572677d5df9db6549381090d52e",
+  "source_spec": "config/world-design/generated/woodland-tabletop-village-v0.json",
+  "source_spec_sha256": "db183ce804e35d617bca29cbf735fff206190f091f6cf0ce6c12b2eef86b1474",
+  "blender_version": "4.2.0",
+  "footprint": {
+    "width": 6.5,
+    "depth": 6.5,
+    "height": 2.6
+  },
+  "social_core": {
+    "center_m": [
+      0,
+      0,
+      0.78
+    ],
+    "diameter": 2.4,
+    "max_face_distance": 2.8,
+    "table_height_m": 0.78,
+    "table": {
+      "asset_id": "woodland-diorama-table-v0",
+      "source_kind": "procedural_blockout",
+      "geometry": {
+        "kind": "round_table",
+        "diameter_m": 2.4,
+        "height_m": 0.78,
+        "top_thickness_m": 0.08
+      },
+      "position_m": [
+        0,
+        0,
+        0
+      ]
+    },
+    "seats": [
+      {
+        "id": "social-seat-1",
+        "asset_id": "wooden-stool-v0",
+        "source_kind": "procedural_blockout",
+        "geometry": {
+          "kind": "stool",
+          "width_m": 0.42,
+          "depth_m": 0.42,
+          "height_m": 0.48
+        },
+        "position_m": [
+          1.35,
+          0,
+          0
+        ],
+        "face_target_m": [
+          0,
+          0,
+          0.78
+        ]
+      },
+      {
+        "id": "social-seat-2",
+        "asset_id": "wooden-stool-v0",
+        "source_kind": "procedural_blockout",
+        "geometry": {
+          "kind": "stool",
+          "width_m": 0.42,
+          "depth_m": 0.42,
+          "height_m": 0.48
+        },
+        "position_m": [
+          8.266365894244634e-17,
+          1.35,
+          0
+        ],
+        "face_target_m": [
+          0,
+          0,
+          0.78
+        ]
+      },
+      {
+        "id": "social-seat-3",
+        "asset_id": "wooden-stool-v0",
+        "source_kind": "procedural_blockout",
+        "geometry": {
+          "kind": "stool",
+          "width_m": 0.42,
+          "depth_m": 0.42,
+          "height_m": 0.48
+        },
+        "position_m": [
+          -1.35,
+          1.6532731788489269e-16,
+          0
+        ],
+        "face_target_m": [
+          0,
+          0,
+          0.78
+        ]
+      },
+      {
+        "id": "social-seat-4",
+        "asset_id": "wooden-stool-v0",
+        "source_kind": "procedural_blockout",
+        "geometry": {
+          "kind": "stool",
+          "width_m": 0.42,
+          "depth_m": 0.42,
+          "height_m": 0.48
+        },
+        "position_m": [
+          -2.4799097682733903e-16,
+          -1.35,
+          0
+        ],
+        "face_target_m": [
+          0,
+          0,
+          0.78
+        ]
+      }
+    ]
+  },
+  "retreat": {
+    "zone_id": "reading_nook",
+    "center_m": [
+      -2.2,
+      1.85,
+      0
+    ],
+    "seat_count": 1,
+    "asset_id": "wooden-bench-v0",
+    "seat_asset_id": "wooden-bench-v0",
+    "source_kind": "procedural_blockout",
+    "geometry": {
+      "kind": "bench",
+      "width_m": 1.1,
+      "depth_m": 0.42,
+      "height_m": 0.8
+    }
+  },
+  "activity_anchor": {
+    "kind": "great_tree_diorama",
+    "position_m": [
+      0,
+      0.28,
+      0.78
+    ],
+    "approach_clearance_m": 1
+  },
+  "hero_view": {
+    "position_m": [
+      0,
+      -2.55,
+      1.55
+    ],
+    "target_m": [
+      0,
+      0.2,
+      1.02
+    ]
+  },
+  "circulation_contract": {
+    "waypoints_m": [
+      [
+        0,
+        -2.1,
+        0
+      ],
+      [
+        -1.75,
+        -1.6,
+        0
+      ],
+      [
+        -1.95,
+        0.5,
+        0
+      ],
+      [
+        -1.55,
+        1.75,
+        0
+      ],
+      [
+        0,
+        2.05,
+        0
+      ],
+      [
+        1.55,
+        1.75,
+        0
+      ],
+      [
+        1.95,
+        0.5,
+        0
+      ],
+      [
+        1.75,
+        -1.6,
+        0
+      ],
+      [
+        0,
+        -2.1,
+        0
+      ]
+    ],
+    "minimum_clearance": 1
+  },
+  "blockout_instances": [
+    {
+      "id": "great_tree",
+      "instance_id": "Blockout_great_tree",
+      "asset_id": "woodland-great-tree-01",
+      "source_kind": "glb",
+      "position_m": [
+        0,
+        0.28,
+        0.78
+      ],
+      "footprint_m": [
+        0.72,
+        0.72
+      ],
+      "height_m": 0.95,
+      "yaw_deg": 0,
+      "role": "world_symbol"
+    },
+    {
+      "id": "bridge",
+      "instance_id": "Blockout_bridge",
+      "asset_id": "woodland-bridge-01",
+      "source_kind": "glb",
+      "position_m": [
+        0,
+        -0.92,
+        0.8
+      ],
+      "footprint_m": [
+        0.42,
+        0.32
+      ],
+      "height_m": 0.1,
+      "yaw_deg": 0,
+      "role": "entry_threshold"
+    },
+    {
+      "id": "lodge",
+      "instance_id": "Blockout_lodge",
+      "asset_id": "woodland-lodge-01",
+      "source_kind": "glb",
+      "position_m": [
+        -0.66,
+        0.06,
+        0.78
+      ],
+      "footprint_m": [
+        0.56,
+        0.44
+      ],
+      "height_m": 0.46,
+      "yaw_deg": 12,
+      "role": "warm_social_anchor"
+    },
+    {
+      "id": "cottage_a",
+      "instance_id": "Blockout_cottage_a",
+      "asset_id": "woodland-cottage-01",
+      "source_kind": "glb",
+      "position_m": [
+        0.58,
+        0.36,
+        0.78
+      ],
+      "footprint_m": [
+        0.38,
+        0.34
+      ],
+      "height_m": 0.34,
+      "yaw_deg": -18,
+      "role": "residential"
+    },
+    {
+      "id": "cottage_b",
+      "instance_id": "Blockout_cottage_b",
+      "asset_id": "woodland-cottage-01",
+      "source_kind": "glb",
+      "position_m": [
+        0.82,
+        0.02,
+        0.78
+      ],
+      "footprint_m": [
+        0.34,
+        0.3
+      ],
+      "height_m": 0.31,
+      "yaw_deg": 20,
+      "role": "residential"
+    },
+    {
+      "id": "market_stall",
+      "instance_id": "Blockout_market_stall",
+      "asset_id": "woodland-market-stall-01",
+      "source_kind": "glb",
+      "position_m": [
+        0.72,
+        -0.48,
+        0.78
+      ],
+      "footprint_m": [
+        0.38,
+        0.26
+      ],
+      "height_m": 0.3,
+      "yaw_deg": -12,
+      "role": "life_trace"
+    },
+    {
+      "id": "reading_bench",
+      "instance_id": "Blockout_reading_bench",
+      "asset_id": "woodland-reading-bench-01",
+      "source_kind": "glb",
+      "position_m": [
+        -0.72,
+        -0.48,
+        0.78
+      ],
+      "footprint_m": [
+        0.3,
+        0.16
+      ],
+      "height_m": 0.14,
+      "yaw_deg": 18,
+      "role": "emotional_spot"
+    },
+    {
+      "id": "stream",
+      "instance_id": "Blockout_stream",
+      "asset_id": "woodland-stream-segment-01",
+      "source_kind": "glb",
+      "position_m": [
+        0,
+        0.72,
+        0.79
+      ],
+      "footprint_m": [
+        1.55,
+        0.18
+      ],
+      "height_m": 0.02,
+      "yaw_deg": 0,
+      "role": "slow_motion_anchor"
+    }
+  ],
+  "asset_sources": {
+    "woodland-great-tree-01": {
+      "path": ".artifacts/world-build-source-items/woodland-great-tree-01/woodland-great-tree-01.glb",
+      "sha256": "d61cdc766ad391ec8832934230081ddb193525aaf704c8616117234fc0f3b23b"
+    },
+    "woodland-bridge-01": {
+      "path": ".artifacts/world-build-source-items/woodland-bridge-01/woodland-bridge-01.glb",
+      "sha256": "8333924e73d595b9f05ce04c7ff9125ad41149cd994b4ab9108d2ed8478cab95"
+    },
+    "woodland-lodge-01": {
+      "path": ".artifacts/world-build-source-items/woodland-lodge-01/woodland-lodge-01.glb",
+      "sha256": "ec005c45350a07623fb1f4d2810907bae3b97e72b3ba42ac730cae7628a06b26"
+    },
+    "woodland-cottage-01": {
+      "path": ".artifacts/world-build-source-items/woodland-cottage-01/woodland-cottage-01.glb",
+      "sha256": "48e2ab453913b109a28593e92a748be86369e523e85e1c2802af71a3fb6b60b6"
+    },
+    "woodland-market-stall-01": {
+      "path": ".artifacts/world-build-source-items/woodland-market-stall-01/woodland-market-stall-01.glb",
+      "sha256": "43405c6ebdc690e86079dd7115b3397b2303a5ad4d47f9db84005f880a778842"
+    },
+    "woodland-reading-bench-01": {
+      "path": ".artifacts/world-build-source-items/woodland-reading-bench-01/woodland-reading-bench-01.glb",
+      "sha256": "1f766f6b71a6500d3c61529399ce39d6c812c68201ea679875b4904b60574ed7"
+    },
+    "woodland-stream-segment-01": {
+      "path": ".artifacts/world-build-source-items/woodland-stream-segment-01/woodland-stream-segment-01.glb",
+      "sha256": "ccd33ed8ccb99cde65bd896f5ad1ff4d63556fad6ca0cab0ebbd95dae6350bd8"
+    }
+  },
+  "procedural_sources": {
+    "woodland-diorama-table-v0": {
+      "diameter_m": 2.4,
+      "height_m": 0.78,
+      "kind": "round_table",
+      "top_thickness_m": 0.08
+    },
+    "wooden-stool-v0": {
+      "depth_m": 0.42,
+      "height_m": 0.48,
+      "kind": "stool",
+      "width_m": 0.42
+    },
+    "wooden-bench-v0": {
+      "depth_m": 0.42,
+      "height_m": 0.8,
+      "kind": "bench",
+      "width_m": 1.1
+    }
+  },
+  "visual_layers": {
+    "practical_light_counts": {
+      "lodge_window": 1,
+      "two_cottage_windows": 2,
+      "market_lantern": 1,
+      "bridge_lantern": 1
+    },
+    "palette_materials": {
+      "accent_terracotta": {
+        "material": "Palette_accent_terracotta",
+        "classification": "paper"
+      },
+      "forest_green": {
+        "material": "Palette_forest_green",
+        "classification": "moss"
+      },
+      "lamp_gold": {
+        "material": "Palette_lamp_gold",
+        "classification": "aged_brass"
+      },
+      "warm_cream": {
+        "material": "Palette_warm_cream",
+        "classification": "paper"
+      },
+      "wood_brown": {
+        "material": "Palette_wood_brown",
+        "classification": "wood"
+      }
+    },
+    "life_trace_ids": [
+      "open_book",
+      "half_finished_mug",
+      "stacked_firewood"
+    ],
+    "natural_layer_kinds": [
+      "moss",
+      "low_vegetation",
+      "leaf_scatter"
+    ],
+    "atmospheric_depth": {
+      "enabled": true,
+      "mechanism": "world_volume_haze",
+      "density": 0.018,
+      "color_palette_key": "warm_cream"
+    }
+  },
+  "runtime": {
+    "realtime_lights": 0,
+    "exported_render_only_lights": 0
+  },
+  "outputs": {
+    "blend": {
+      "path": "world.blend",
+      "sha256": "fc4de60daa6ed97083be5cd2925ba1c91a9eea9bcbda846b0b585152069e60d3"
+    },
+    "glb": {
+      "path": "world.glb",
+      "sha256": "8c61a49cff2074b8edc3bbbfd4dc8e9da14da5fb4c054e82db28eda93539c08a"
+    },
+    "renders": [
+      {
+        "path": "view-hero.png",
+        "sha256": "9d8c6e1084dd30edfad4e423f691a9fa3c8c7d1de41b72ac6853587cd1c95ef5"
+      },
+      {
+        "path": "view-top.png",
+        "sha256": "d774235da2471838fec029bfe8a4e0451ee3dca72cd441c146474282972507f7"
+      },
+      {
+        "path": "view-social-core.png",
+        "sha256": "14a5c681996bd1136587aa660995e83d3b51082c4dcc173234f053d3ba4ed837"
+      },
+      {
+        "path": "view-retreat.png",
+        "sha256": "2ad74d09969b89f529e6a65fcdf876da739c84b7f1b7a0d7e3ea376290a05dfe"
+      },
+      {
+        "path": "view-circulation.png",
+        "sha256": "4bb9eb318cd7fcdb58cb12443d61a08d464f5a1a7ef73f9704f749d4058679d1"
+      }
+    ]
+  }
+}
