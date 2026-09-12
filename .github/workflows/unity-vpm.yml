@@ -14,6 +14,7 @@ on:
       - "config/stich-meister-rules.json"
       - "config/factory-timing.json"
       - "config/world-item-packages.json"
+      - "config/world-items/**"
       - "config/world-design/**"
       - "Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs"
       - "Assets/KafkaMade/VRMine/Editor/BoardGameVerification.cs"
@@ -33,6 +34,7 @@ on:
       - "scripts/verify-quality-gates.mjs"
       - "scripts/verify-factory-timing.mjs"
       - "scripts/verify-world-item-packages.mjs"
+      - "scripts/world-item-graph.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
       - "scripts/verify-world-design-plan-negative.mjs"
@@ -58,6 +60,7 @@ on:
       - "config/stich-meister-rules.json"
       - "config/factory-timing.json"
       - "config/world-item-packages.json"
+      - "config/world-items/**"
       - "config/world-design/**"
       - "Assets/KafkaMade/VRMine/Runtime/Game/GameController.cs"
       - "Assets/KafkaMade/VRMine/Editor/BoardGameVerification.cs"
@@ -77,6 +80,7 @@ on:
       - "scripts/verify-quality-gates.mjs"
       - "scripts/verify-factory-timing.mjs"
       - "scripts/verify-world-item-packages.mjs"
+      - "scripts/world-item-graph.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
       - "scripts/verify-world-design-plan-negative.mjs"
@@ -119,6 +123,9 @@ jobs:
 
       - name: Verify World Item package hierarchy
         run: node scripts/verify-world-item-packages.mjs
+
+      - name: Verify World Item dependency graph
+        run: node scripts/world-item-graph.mjs --check
 
       - name: Verify World Design dataset, DRC and provenance
         run: |
