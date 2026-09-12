@@ -1,0 +1,12 @@
+{
+  "id":"woodland-grass-clump-01","family":"Plants/Planters","display_name":"Woodland Grass Clump","dimensions_m":[0.18,0.14,0.12],
+  "parts":[
+    {"component":"cylinder","name":"grass_a","radius":0.025,"height":0.11,"position":[-0.04,0,0.055],"vertices":6,"material":"grass"},
+    {"component":"cylinder","name":"grass_b","radius":0.022,"height":0.09,"position":[0.01,0.025,0.045],"vertices":6,"material":"grass_dark"},
+    {"component":"cylinder","name":"grass_c","radius":0.024,"height":0.12,"position":[0.045,-0.02,0.06],"vertices":6,"material":"grass"}
+  ],
+  "materials":{"grass":{"base_color":[0.22,0.34,0.16],"roughness":0.96,"metallic":0},"grass_dark":{"base_color":[0.14,0.25,0.11],"roughness":0.98,"metallic":0}},
+  "variants":[],"price_hypothesis":{"currency":"JPY","single":100,"mini_set_target":400},
+  "license":{"name":"Proprietary / BOOTH terms pending","provenance":"Original generic procedural geometry and materials authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded geometry.","status":"DRAFT"},
+  "formats":["blend","glb","fbx"],"unity_status":"UNVERIFIED","vrchat_status":"UNVERIFIED","booth_status":"UNVERIFIED"
+}
