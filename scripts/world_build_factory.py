@@ -330,7 +330,7 @@ def create_life_traces(plan, material_by_key):
     return created_ids
 
 
-def create_natural_layers(plan, collection, asset_root, record_source):
+def create_natural_layers(plan, collection, asset_root, record_source, material_by_key):
     visual = plan.get("visual_layers") or {}
     templates = {}
     created = []
@@ -339,6 +339,19 @@ def create_natural_layers(plan, collection, asset_root, record_source):
         if asset_id not in templates:
             root, source = import_glb_instance(asset_id, layer["instance_id"], layer["position_m"],
                                                None, collection, asset_root, layer["yaw_deg"])
+            for child in root.children_recursive:
+                if child.type != "MESH":
+                    continue
+                for material in child.data.materials:
+                    if material is None:
+                        continue
+                    key = "forest_green"
+                    if layer["kind"] == "root":
+                        key = "wood_brown"
+                    elif layer["kind"] == "mushroom":
+                        key = "warm_cream" if material.name.startswith("stem") else "accent_terracotta"
+                    material["palette_key"] = key
+                    material["material_classification"] = material_by_key[key]["material_classification"]
             templates[asset_id] = root
         else:
             template = templates[asset_id]
@@ -470,7 +483,7 @@ def main():
     atmospheric_depth = {"enabled": False}
     if visual:
         life_trace_ids = create_life_traces(plan, material_by_key)
-        natural_layer_kinds = create_natural_layers(plan, build_collection, asset_root, record_source)
+        natural_layer_kinds = create_natural_layers(plan, build_collection, asset_root, record_source, material_by_key)
         practical_counts = create_practical_lights(plan, palette, material_by_key)
         atmospheric_depth = configure_atmospheric_depth(scene, visual["atmospheric_depth"], palette)
 

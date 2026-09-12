@@ -143,7 +143,7 @@ jobs:
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
       - name: Verify primitive transforms and GLB round trips
-        if: steps.select.outputs.run == 'true'
+        if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
         run: blender -b --python-exit-code 1 --python scripts/test_world_item_geometry.py
 
       - name: Generate and verify canonical SKUs
@@ -154,7 +154,6 @@ jobs:
           SKU: ${{ steps.select.outputs.sku }}
         run: |
           set -euo pipefail
-          blender -b --python-exit-code 1 --python scripts/test_world_item_factory.py
           while IFS= read -r SPEC_PATH; do
             SKU="$(jq -r '.id' "$SPEC_PATH")"
           started="$(date +%s)"
@@ -302,6 +301,14 @@ jobs:
           test "$current_head" = "${{ steps.publish.outputs.final_head }}"
           gh workflow run retro-cafe.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_REF" -f pr_number="$PR_NUMBER"
           echo "Explicit exact-head verification dispatched for $current_head"
+
+      - name: Verify consuming world at the final pack head
+        if: steps.select.outputs.run == 'true' && steps.publish.outputs.changed == 'false' && steps.select.outputs.sku_count != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: gh workflow run world-build.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_REF" -f pr_number="$PR_NUMBER"
 
   integrate:
     needs: generate

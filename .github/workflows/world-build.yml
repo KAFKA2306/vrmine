@@ -213,6 +213,7 @@ jobs:
           echo 'Expected negative spatial DRC failure observed.'
 
       - uses: actions/upload-artifact@v4
+        if: always() && steps.select.outputs.world_id != ''
         with:
           name: world-build-${{ steps.select.outputs.world_id }}-${{ steps.pr.outputs.head_sha }}
           path: .artifacts/world-builds/${{ steps.select.outputs.world_id }}/
@@ -244,6 +245,5 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "chore(world): publish ${WORLD_ID} generated room evidence"
             git push origin "HEAD:${HEAD_REF}"
-            gh workflow run world-build.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_REF" -f pr_number="${{ steps.pr.outputs.number }}"
           fi
 
