@@ -11,7 +11,7 @@ public static class WoodlandTabletopVillageVerification
     const string SpecPath = "config/world-design/generated/woodland-tabletop-village-v0.json";
     const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/WoodlandTabletopVillage.unity";
 
-    [Serializable] class Spec { public Spatial spatial_geometry; public RuntimeBudget runtime_budget; public WorldBuild world_build; public Blockout blockout; }
+    [Serializable] class Spec { public Spatial spatial_geometry; public RuntimeBudget runtime_budget; public WorldBuild world_build; public Blockout blockout; public Acceptance acceptance; }
     [Serializable] class Spatial { public Zone[] zones; }
     [Serializable] class Zone { public string zone_id; public float diameter_m; }
     [Serializable] class RuntimeBudget { public int realtime_light_count; public float camera_near_clip_m; }
@@ -19,6 +19,7 @@ public static class WoodlandTabletopVillageVerification
     [Serializable] class Spawn { public float[] position_m; }
     [Serializable] class Blockout { public Anchor[] anchors; }
     [Serializable] class Anchor { public string id; }
+    [Serializable] class Acceptance { public bool gameplay_required; public string[] must_not_include_yet; }
 
     [MenuItem("VRMine/Worlds/Verify Woodland Tabletop Village")]
     public static void VerifyMenu()
@@ -78,6 +79,41 @@ public static class WoodlandTabletopVillageVerification
 
         GameObject village = GameObject.Find("VillageBlockout");
         Require(village != null && village.transform.childCount == anchors.Length, "village blockout child count differs from canonical anchors");
+
+        VerifyInteractionContract(spec);
+    }
+
+    static void VerifyInteractionContract(Spec spec)
+    {
+        Require(spec.acceptance != null, "canonical acceptance contract is missing");
+        Require(!spec.acceptance.gameplay_required, "blockout interaction contract expects gameplay_required=false");
+        Require(spec.acceptance.must_not_include_yet != null && spec.acceptance.must_not_include_yet.Length > 0, "canonical must_not_include_yet contract is missing");
+
+        GameObject[] sceneObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene()
+            .GetRootGameObjects()
+            .SelectMany(root => root.GetComponentsInChildren<Transform>(true))
+            .Select(t => t.gameObject)
+            .Distinct()
+            .ToArray();
+
+        foreach (string token in spec.acceptance.must_not_include_yet)
+        {
+            string normalizedToken = Normalize(token);
+            Require(!string.IsNullOrEmpty(normalizedToken), "must_not_include_yet contains an empty token");
+
+            foreach (GameObject obj in sceneObjects)
+            {
+                Require(!Normalize(obj.name).Contains(normalizedToken), "forbidden interaction/gameplay object is present: " + token + " -> " + obj.name);
+                foreach (Component component in obj.GetComponents<Component>().Where(c => c != null))
+                    Require(!Normalize(component.GetType().Name).Contains(normalizedToken), "forbidden interaction/gameplay component is present: " + token + " -> " + component.GetType().Name);
+            }
+        }
+    }
+
+    static string Normalize(string value)
+    {
+        if (string.IsNullOrEmpty(value)) return string.Empty;
+        return new string(value.Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant).ToArray());
     }
 
     static Spec LoadSpec()
