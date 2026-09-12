@@ -406,9 +406,14 @@
   "asset_ids": [
     "woodland-bridge-01",
     "woodland-cottage-01",
+    "woodland-exposed-root-01",
+    "woodland-fern-01",
+    "woodland-grass-clump-01",
     "woodland-great-tree-01",
     "woodland-lodge-01",
     "woodland-market-stall-01",
+    "woodland-moss-patch-01",
+    "woodland-mushroom-cluster-01",
     "woodland-reading-bench-01",
     "woodland-stream-segment-01"
   ],
@@ -545,56 +550,586 @@
     ],
     "natural_layer_kinds": [
       "moss",
-      "low_vegetation",
-      "leaf_scatter"
+      "moss",
+      "moss",
+      "root",
+      "root",
+      "root",
+      "fern",
+      "fern",
+      "fern",
+      "mushroom",
+      "mushroom",
+      "mushroom",
+      "moss",
+      "moss",
+      "moss",
+      "fern",
+      "fern",
+      "fern",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "moss",
+      "moss",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass"
     ],
     "natural_layers": [
       {
+        "instance_id": "Vegetation_great_tree_moss_1",
         "kind": "moss",
+        "asset_id": "woodland-moss-patch-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
         "position_m": [
-          0,
-          0.28,
-          0.795
+          -0.16989043042048987,
+          0.435632264172763,
+          0.781
         ],
-        "scale_m": [
-          0.68,
-          0.58,
-          0.02
-        ],
-        "palette_key": "forest_green",
-        "classification": "moss"
+        "scale": 0.55,
+        "yaw_deg": 137.508
       },
       {
-        "kind": "low_vegetation",
+        "instance_id": "Vegetation_great_tree_moss_2",
+        "kind": "moss",
+        "asset_id": "woodland-moss-patch-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
         "position_m": [
-          -0.97,
-          0.22,
-          0.8150000000000001
+          0.140182054627239,
+          0.46284734496427826,
+          0.781
         ],
-        "scale_m": [
-          0.18,
-          0.13,
-          0.1
-        ],
-        "palette_key": "forest_green",
-        "classification": "moss"
+        "scale": 0.55,
+        "yaw_deg": 52.524
       },
       {
-        "kind": "leaf_scatter",
+        "instance_id": "Vegetation_great_tree_moss_3",
+        "kind": "moss",
+        "asset_id": "woodland-moss-patch-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
         "position_m": [
-          0.24,
-          -1.04,
-          0.8250000000000001
+          -0.22687732592282614,
+          0.23986474140973163,
+          0.781
         ],
-        "scale_m": [
-          0.24,
-          0.13,
-          0.012
+        "scale": 0.55,
+        "yaw_deg": 190.03200000000004
+      },
+      {
+        "instance_id": "Vegetation_great_tree_root_1",
+        "kind": "root",
+        "asset_id": "woodland-exposed-root-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
+        "position_m": [
+          0.20151238052491677,
+          0.3917001365047561,
+          0.781
         ],
-        "palette_key": "accent_terracotta",
-        "classification": "paper"
+        "scale": 0.5,
+        "yaw_deg": 0
+      },
+      {
+        "instance_id": "Vegetation_great_tree_root_2",
+        "kind": "root",
+        "asset_id": "woodland-exposed-root-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
+        "position_m": [
+          -0.22404153739182958,
+          0.33375453025657864,
+          0.781
+        ],
+        "scale": 0.5,
+        "yaw_deg": 137.508
+      },
+      {
+        "instance_id": "Vegetation_great_tree_root_3",
+        "kind": "root",
+        "asset_id": "woodland-exposed-root-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
+        "position_m": [
+          -0.04628108274665831,
+          0.5057038355451607,
+          0.781
+        ],
+        "scale": 0.5,
+        "yaw_deg": 72.58800000000019
+      },
+      {
+        "instance_id": "Vegetation_great_tree_fern_1",
+        "kind": "fern",
+        "asset_id": "woodland-fern-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
+        "position_m": [
+          -0.20761349021061087,
+          -0.2346888533089848,
+          0.781
+        ],
+        "scale": 0.6,
+        "yaw_deg": 190.03200000000004
+      },
+      {
+        "instance_id": "Vegetation_great_tree_fern_2",
+        "kind": "fern",
+        "asset_id": "woodland-fern-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
+        "position_m": [
+          0.3038528883287248,
+          -0.2346888533089848,
+          0.781
+        ],
+        "scale": 0.6,
+        "yaw_deg": 242.55600000000004
+      },
+      {
+        "instance_id": "Vegetation_great_tree_fern_3",
+        "kind": "fern",
+        "asset_id": "woodland-fern-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
+        "position_m": [
+          0.5146888533089848,
+          -0.14246939716369683,
+          0.781
+        ],
+        "scale": 0.6,
+        "yaw_deg": 262.62000000000035
+      },
+      {
+        "instance_id": "Vegetation_great_tree_mushroom_1",
+        "kind": "mushroom",
+        "asset_id": "woodland-mushroom-cluster-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
+        "position_m": [
+          0.4882120738895504,
+          -0.006936521951076913,
+          0.781
+        ],
+        "scale": 0.7,
+        "yaw_deg": 242.55600000000004
+      },
+      {
+        "instance_id": "Vegetation_great_tree_mushroom_2",
+        "kind": "mushroom",
+        "asset_id": "woodland-mushroom-cluster-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
+        "position_m": [
+          -0.23211258339969223,
+          -0.20821207388955038,
+          0.781
+        ],
+        "scale": 0.7,
+        "yaw_deg": 157.57200000000012
+      },
+      {
+        "instance_id": "Vegetation_great_tree_mushroom_3",
+        "kind": "mushroom",
+        "asset_id": "woodland-mushroom-cluster-01",
+        "source_kind": "glb",
+        "anchor_id": "great_tree",
+        "position_m": [
+          -0.4882120738895504,
+          0.46168084474540594,
+          0.781
+        ],
+        "scale": 0.7,
+        "yaw_deg": 72.58800000000019
+      },
+      {
+        "instance_id": "Vegetation_stream_moss_1",
+        "kind": "moss",
+        "asset_id": "woodland-moss-patch-01",
+        "source_kind": "glb",
+        "anchor_id": "stream",
+        "position_m": [
+          0.1059425355086601,
+          0.9706528040370861,
+          0.781
+        ],
+        "scale": 0.55,
+        "yaw_deg": 327.5400000000001
+      },
+      {
+        "instance_id": "Vegetation_stream_moss_2",
+        "kind": "moss",
+        "asset_id": "woodland-moss-patch-01",
+        "source_kind": "glb",
+        "anchor_id": "stream",
+        "position_m": [
+          -0.22642738107015925,
+          0.9706528040370861,
+          0.781
+        ],
+        "scale": 0.55,
+        "yaw_deg": 347.60400000000004
+      },
+      {
+        "instance_id": "Vegetation_stream_moss_3",
+        "kind": "moss",
+        "asset_id": "woodland-moss-patch-01",
+        "source_kind": "glb",
+        "anchor_id": "stream",
+        "position_m": [
+          -0.516252447095663,
+          0.4693471959629139,
+          0.781
+        ],
+        "scale": 0.55,
+        "yaw_deg": 125.11200000000008
+      },
+      {
+        "instance_id": "Vegetation_stream_fern_1",
+        "kind": "fern",
+        "asset_id": "woodland-fern-01",
+        "source_kind": "glb",
+        "anchor_id": "stream",
+        "position_m": [
+          -0.382056659685761,
+          0.9555481155332362,
+          0.781
+        ],
+        "scale": 0.55,
+        "yaw_deg": 327.5400000000001
+      },
+      {
+        "instance_id": "Vegetation_stream_fern_2",
+        "kind": "fern",
+        "asset_id": "woodland-fern-01",
+        "source_kind": "glb",
+        "anchor_id": "stream",
+        "position_m": [
+          0.16099250512542587,
+          0.9555481155332362,
+          0.781
+        ],
+        "scale": 0.55,
+        "yaw_deg": 295.08000000000015
+      },
+      {
+        "instance_id": "Vegetation_stream_fern_3",
+        "kind": "fern",
+        "asset_id": "woodland-fern-01",
+        "source_kind": "glb",
+        "anchor_id": "stream",
+        "position_m": [
+          -0.9205481155332362,
+          0.5386821090865141,
+          0.781
+        ],
+        "scale": 0.55,
+        "yaw_deg": 72.58800000000019
+      },
+      {
+        "instance_id": "Vegetation_stream_grass_1",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "stream",
+        "position_m": [
+          0.0149769422343924,
+          0.9069829390175878,
+          0.781
+        ],
+        "scale": 0.75,
+        "yaw_deg": 275.016
+      },
+      {
+        "instance_id": "Vegetation_stream_grass_2",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "stream",
+        "position_m": [
+          -0.8267870075574822,
+          0.5330170609824122,
+          0.781
+        ],
+        "scale": 0.75,
+        "yaw_deg": 52.524
+      },
+      {
+        "instance_id": "Vegetation_stream_grass_3",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "stream",
+        "position_m": [
+          0.5759280766108131,
+          0.9069829390175878,
+          0.781
+        ],
+        "scale": 0.75,
+        "yaw_deg": 242.55600000000004
+      },
+      {
+        "instance_id": "Vegetation_stream_grass_4",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "stream",
+        "position_m": [
+          -0.8719829390175878,
+          0.6731580096186708,
+          0.781
+        ],
+        "scale": 0.75,
+        "yaw_deg": 20.064000000000078
+      },
+      {
+        "instance_id": "Vegetation_bridge_moss_1",
+        "kind": "moss",
+        "asset_id": "woodland-moss-patch-01",
+        "source_kind": "glb",
+        "anchor_id": "bridge",
+        "position_m": [
+          -0.19161827811131793,
+          -0.6098610872390127,
+          0.781
+        ],
+        "scale": 0.5,
+        "yaw_deg": 275.016
+      },
+      {
+        "instance_id": "Vegetation_bridge_moss_2",
+        "kind": "moss",
+        "asset_id": "woodland-moss-patch-01",
+        "source_kind": "glb",
+        "anchor_id": "bridge",
+        "position_m": [
+          0.36013891276098725,
+          -0.7183470818021527,
+          0.781
+        ],
+        "scale": 0.5,
+        "yaw_deg": 190.03200000000004
+      },
+      {
+        "instance_id": "Vegetation_bridge_grass_1",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "bridge",
+        "position_m": [
+          0.30351740974974856,
+          -0.8775393453848767,
+          0.781
+        ],
+        "scale": 0.7,
+        "yaw_deg": 137.508
+      },
+      {
+        "instance_id": "Vegetation_bridge_grass_2",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "bridge",
+        "position_m": [
+          -0.30351740974974856,
+          -0.7554645028363257,
+          0.781
+        ],
+        "scale": 0.7,
+        "yaw_deg": 275.016
+      },
+      {
+        "instance_id": "Vegetation_bridge_grass_3",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "bridge",
+        "position_m": [
+          0.16116569313632012,
+          -0.6664825902502515,
+          0.781
+        ],
+        "scale": 0.7,
+        "yaw_deg": 190.03200000000004
+      },
+      {
+        "instance_id": "Vegetation_lodge_grass_1",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "lodge",
+        "position_m": [
+          -0.6524990048757189,
+          -0.2624701407045852,
+          0.781
+        ],
+        "scale": 0.75,
+        "yaw_deg": 12
+      },
+      {
+        "instance_id": "Vegetation_lodge_grass_2",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "lodge",
+        "position_m": [
+          -1.0333349523879563,
+          0.0032150687496092234,
+          0.781
+        ],
+        "scale": 0.75,
+        "yaw_deg": 287.016
+      },
+      {
+        "instance_id": "Vegetation_lodge_grass_3",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "lodge",
+        "position_m": [
+          -0.24387597024393656,
+          -0.17561463344408318,
+          0.781
+        ],
+        "scale": 0.75,
+        "yaw_deg": 64.524
+      },
+      {
+        "instance_id": "Vegetation_lodge_grass_4",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "lodge",
+        "position_m": [
+          -0.7325469367960916,
+          0.3686441989922364,
+          0.781
+        ],
+        "scale": 0.75,
+        "yaw_deg": 202.03200000000004
+      },
+      {
+        "instance_id": "Vegetation_cottage_a_grass_1",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "cottage_a",
+        "position_m": [
+          0.7706406635778454,
+          0.5714918221694992,
+          0.781
+        ],
+        "scale": 0.65,
+        "yaw_deg": 119.50800000000001
+      },
+      {
+        "instance_id": "Vegetation_cottage_a_grass_2",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "cottage_a",
+        "position_m": [
+          0.44078730054581494,
+          0.1317982193495642,
+          0.781
+        ],
+        "scale": 0.65,
+        "yaw_deg": 309.5400000000001
+      },
+      {
+        "instance_id": "Vegetation_cottage_a_grass_3",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "cottage_a",
+        "position_m": [
+          0.9027145482088736,
+          0.44694632976329474,
+          0.781
+        ],
+        "scale": 0.65,
+        "yaw_deg": 87.048
+      },
+      {
+        "instance_id": "Vegetation_cottage_b_grass_1",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "cottage_b",
+        "position_m": [
+          0.7246624700856462,
+          -0.27015789854718064,
+          0.781
+        ],
+        "scale": 0.65,
+        "yaw_deg": 295.016
+      },
+      {
+        "instance_id": "Vegetation_cottage_b_grass_2",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "cottage_b",
+        "position_m": [
+          1.0476290570667683,
+          0.15493513812099824,
+          0.781
+        ],
+        "scale": 0.65,
+        "yaw_deg": 72.524
+      },
+      {
+        "instance_id": "Vegetation_cottage_b_grass_3",
+        "kind": "grass",
+        "asset_id": "woodland-grass-clump-01",
+        "source_kind": "glb",
+        "anchor_id": "cottage_b",
+        "position_m": [
+          0.5263613496005428,
+          0.06642472902794656,
+          0.781
+        ],
+        "scale": 0.65,
+        "yaw_deg": 210.03200000000004
       }
     ],
+    "vegetation_constraints": {
+      "tabletop_min_m": [
+        -1.2,
+        -1.2,
+        0.78
+      ],
+      "tabletop_max_m": [
+        1.2,
+        1.2,
+        0.96
+      ],
+      "plaza_center_m": [
+        0,
+        0,
+        0.78
+      ],
+      "plaza_radius_m": 0.16
+    },
+    "vegetation_budget": {
+      "max_instances": 64,
+      "max_triangles": 12000,
+      "max_materials": 12
+    },
     "atmospheric_depth": {
       "enabled": true,
       "mechanism": "world_volume_haze",
