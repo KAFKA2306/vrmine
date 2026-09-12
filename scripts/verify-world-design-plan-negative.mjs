@@ -63,7 +63,7 @@ expectFail('retreat unreachable', (spec) => {
 
 expectFail('face distance exceeded', (spec) => {
   spec.world_build.social_core.seat_radius_m = spec.social_clusters.primary_core.max_face_distance_m;
-}, /exceed max face distance/);
+}, /exceeds? max face distance/);
 
 expectFail('invalid hero camera', (spec) => {
   spec.world_build.hero_view.position_m[1] = spec.spatial_geometry.overall_depth_m;
