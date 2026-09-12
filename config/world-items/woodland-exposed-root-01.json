@@ -1,0 +1,11 @@
+{
+  "id":"woodland-exposed-root-01","family":"Plants/Planters","display_name":"Woodland Exposed Root","dimensions_m":[0.34,0.18,0.09],
+  "parts":[
+    {"component":"cylinder","name":"root_main","radius":0.032,"height":0.30,"position":[0,0,0.04],"rotation_deg":[0,78,0],"vertices":10,"material":"root"},
+    {"component":"cylinder","name":"root_branch","radius":0.022,"height":0.18,"position":[0.06,0.035,0.035],"rotation_deg":[58,70,18],"vertices":8,"material":"root_dark"}
+  ],
+  "materials":{"root":{"base_color":[0.28,0.16,0.08],"roughness":0.98,"metallic":0},"root_dark":{"base_color":[0.19,0.10,0.05],"roughness":1.0,"metallic":0}},
+  "variants":[],"price_hypothesis":{"currency":"JPY","single":100,"mini_set_target":400},
+  "license":{"name":"Proprietary / BOOTH terms pending","provenance":"Original generic procedural geometry and materials authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded geometry.","status":"DRAFT"},
+  "formats":["blend","glb","fbx"],"unity_status":"UNVERIFIED","vrchat_status":"UNVERIFIED","booth_status":"UNVERIFIED"
+}
