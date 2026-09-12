@@ -1,0 +1,34 @@
+{
+  "id": "woodland-bridge-01",
+  "family": "Decorative",
+  "display_name": "Woodland Footbridge",
+  "dimensions_m": [0.42, 0.32, 0.10],
+  "parts": [
+    {"component":"box","name":"support_left","size":[0.045,0.30,0.040],"position":[-0.145,0,0.026],"rotation_deg":[0,0,0],"material":"wood_dark"},
+    {"component":"box","name":"support_right","size":[0.045,0.30,0.040],"position":[0.145,0,0.026],"rotation_deg":[0,0,0],"material":"wood_dark"},
+    {"component":"box","name":"abutment_front","size":[0.40,0.032,0.046],"position":[0,-0.142,0.023],"rotation_deg":[0,0,0],"material":"mossy_stone"},
+    {"component":"box","name":"abutment_rear","size":[0.40,0.032,0.046],"position":[0,0.142,0.023],"rotation_deg":[0,0,0],"material":"mossy_stone"},
+    {"component":"box","name":"plank_01","size":[0.42,0.038,0.026],"position":[0,-0.135,0.067],"rotation_deg":[0,0,0],"material":"wood"},
+    {"component":"box","name":"plank_02","size":[0.42,0.038,0.026],"position":[0,-0.090,0.072],"rotation_deg":[0,0,0],"material":"wood"},
+    {"component":"box","name":"plank_03","size":[0.42,0.038,0.026],"position":[0,-0.045,0.077],"rotation_deg":[0,0,0],"material":"wood"},
+    {"component":"box","name":"plank_04","size":[0.42,0.038,0.026],"position":[0,0,0.080],"rotation_deg":[0,0,0],"material":"wood"},
+    {"component":"box","name":"plank_05","size":[0.42,0.038,0.026],"position":[0,0.045,0.077],"rotation_deg":[0,0,0],"material":"wood"},
+    {"component":"box","name":"plank_06","size":[0.42,0.038,0.026],"position":[0,0.090,0.072],"rotation_deg":[0,0,0],"material":"wood"},
+    {"component":"box","name":"plank_07","size":[0.42,0.038,0.026],"position":[0,0.135,0.067],"rotation_deg":[0,0,0],"material":"wood"}
+  ],
+  "materials": {
+    "wood":{"base_color":[0.42,0.28,0.17],"roughness":0.88,"metallic":0},
+    "wood_dark":{"base_color":[0.24,0.15,0.09],"roughness":0.92,"metallic":0},
+    "mossy_stone":{"base_color":[0.28,0.31,0.23],"roughness":0.94,"metallic":0}
+  },
+  "variants": [
+    {"id":"weathered","material_overrides":{"wood":{"base_color":[0.30,0.25,0.18],"roughness":0.96},"wood_dark":{"base_color":[0.18,0.16,0.12],"roughness":0.97},"mossy_stone":{"base_color":[0.24,0.29,0.20],"roughness":0.97}}}
+  ],
+  "price_hypothesis":{"currency":"JPY","single":250,"mini_set_target":800},
+  "license":{"name":"Proprietary / BOOTH terms pending","provenance":"Original generic procedural geometry and material values authored in KAFKA2306/vrmine from the repository-owned woodland tabletop blockout; no third-party meshes, textures, logos, trademarks, or branded geometry.","status":"DRAFT"},
+  "formats":["blend","glb","fbx"],
+  "unity_status":"UNVERIFIED",
+  "vrchat_status":"UNVERIFIED",
+  "booth_status":"UNVERIFIED",
+  "selection_evidence":{"design_contract":["config/world-design/generated/woodland-tabletop-village-v0.json blockout anchor bridge","bridge footprint 0.42 m x 0.32 m and height 0.10 m","bridge role entry_threshold","composition axis entrance -> bridge -> plaza -> great_tree","material palette favors wood, stone, moss and avoids clean plastic, mirror chrome, wet high gloss"],"expected_production_minutes":6,"manual_touch_target":0,"reusable_component_ratio_target":1.0}
+}
