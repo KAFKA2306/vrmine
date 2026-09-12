@@ -14,9 +14,8 @@ const fail = (message) => {
   process.exit(1);
 };
 
-if (!rootNodeId) fail('usage: node scripts/world-item-impact.mjs --node <graph-node-id> [--graph <graph.json>]');
-if (nodeIndex >= 0 && !rootNodeId) fail('--node requires a graph node id');
-if (graphIndex >= 0 && !graphPath) fail('--graph requires a path');
+if (!rootNodeId || rootNodeId.startsWith('--')) fail('usage: node scripts/world-item-impact.mjs --node <graph-node-id> [--graph <graph.json>]');
+if (graphIndex >= 0 && (!graphPath || graphPath.startsWith('--'))) fail('--graph requires a path');
 
 const loadGraph = () => {
   if (graphPath) {
@@ -42,7 +41,8 @@ if (!nodes.has(rootNodeId)) fail(`unknown graph node: ${rootNodeId}`);
 
 const reverse = new Map();
 for (const edge of graph.edges) {
-  if (!nodes.has(edge.from) || !nodes.has(edge.to)) fail(`invalid edge: ${edge.id ?? `${edge.from}|${edge.type}|${edge.to}`}`}`);
+  const edgeId = edge.id ?? `${edge.from}|${edge.type}|${edge.to}`;
+  if (!nodes.has(edge.from) || !nodes.has(edge.to)) fail(`invalid edge: ${edgeId}`);
   if (!reverse.has(edge.to)) reverse.set(edge.to, []);
   reverse.get(edge.to).push({ from: edge.from, type: edge.type });
 }
