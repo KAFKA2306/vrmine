@@ -1,0 +1,382 @@
+{
+  "meta": {
+    "spec_version": "1.1.0",
+    "theme_name": "大樹のふもとの小さな村",
+    "primary_intents": ["social", "home", "game"],
+    "capacity_target": 4,
+    "platform_target": "CROSS_PLATFORM_QUEST"
+  },
+  "spatial_geometry": {
+    "overall_width_m": 6.5,
+    "overall_depth_m": 6.5,
+    "corridor_clearance_m": 1.1,
+    "door_height_m": 2.0,
+    "door_width_m": 0.9,
+    "furniture_scale_factor": 0.95,
+    "zones": [
+      {
+        "zone_id": "quiet_observation_room",
+        "width_m": 6.5,
+        "depth_m": 6.5,
+        "height_m": 2.6
+      },
+      {
+        "zone_id": "woodland_tabletop",
+        "shape": "circle",
+        "diameter_m": 2.8,
+        "tabletop_height_m": 0.78,
+        "tabletop_thickness_m": 0.08
+      },
+      {
+        "zone_id": "reading_nook",
+        "width_m": 1.25,
+        "depth_m": 1.1,
+        "height_m": 2.2
+      }
+    ]
+  },
+  "social_clusters": {
+    "primary_core": {
+      "core_type": "round_tabletop_observation",
+      "core_diameter_m": 2.8,
+      "max_face_distance_m": 2.8,
+      "table_height_m": 0.78,
+      "seat_spacing_m": 1.15,
+      "seat_count": 4
+    }
+  },
+  "retreat_protocol": {
+    "visual_shield_angle_deg": 110,
+    "acoustic_attenuation_db": -18,
+    "affordance_components": [
+      "reading_bench",
+      "local_dimming",
+      "auto_on_low_mirror"
+    ],
+    "functional_self_sufficiency": true
+  },
+  "optical_lighting": {
+    "aperture_ratio_percent": 20,
+    "sunlight_patch_ratio_percent": 10,
+    "seating_direct_sunlight_ratio_percent": 0,
+    "seating_zone_lighting": "WARM_INDIRECT",
+    "key_light_color_temperature_k": 3200,
+    "fill_light_color_temperature_k": 2400,
+    "tpu_allocation": {
+      "avatar_contact_surfaces": 50,
+      "interior_walls": 25,
+      "exterior_background": 8
+    }
+  },
+  "media_governance": {
+    "video_player_mode": "RETRACTABLE_ONLY",
+    "placement": "hidden_until_requested"
+  },
+  "runtime_budget": {
+    "max_size_pc_mb": 35,
+    "max_size_quest_mb": 28,
+    "realtime_light_count": 0,
+    "camera_near_clip_m": 0.01,
+    "background_max_distance_m": 80
+  },
+  "world_build": {
+    "ceiling_height_m": 2.6,
+    "spawn": {
+      "position_m": [0, -2.75, 0],
+      "facing_deg": 0,
+      "buffer_radius_m": 1.0
+    },
+    "social_core": {
+      "center_m": [0, 0, 0.78],
+      "seat_count": 4,
+      "seat_radius_m": 1.75,
+      "table_asset_id": "woodland-diorama-table-v0",
+      "seat_asset_id": "wooden-stool-v0"
+    },
+    "retreat": {
+      "zone_id": "reading_nook",
+      "center_m": [-2.2, 1.85, 0],
+      "seat_count": 1,
+      "seat_asset_id": "wooden-bench-v0"
+    },
+    "activity_anchor": {
+      "kind": "great_tree_diorama",
+      "position_m": [0, 0.28, 0.78],
+      "approach_clearance_m": 1.0
+    },
+    "hero_view": {
+      "position_m": [0, -2.55, 1.55],
+      "target_m": [0, 0.2, 1.02]
+    },
+    "circulation": {
+      "waypoints_m": [
+        [0, -2.75, 0],
+        [-1.75, -1.6, 0],
+        [-1.95, 0.5, 0],
+        [-1.55, 1.75, 0],
+        [0, 2.05, 0],
+        [1.55, 1.75, 0],
+        [1.95, 0.5, 0],
+        [1.75, -1.6, 0],
+        [0, -2.75, 0]
+      ],
+      "minimum_clearance_m": 1.0
+    }
+  },
+  "atmosphere": {
+    "concept": "机の上に広がる、小さくて暖かい森の村。静かで手作り感があり、住民の暮らしを近くで見守れる世界。",
+    "emotional_core": [
+      "安心する",
+      "少しわくわくする",
+      "ずっと眺めていたくなる"
+    ],
+    "world_impression": [
+      "small",
+      "warm",
+      "wooden",
+      "slightly_magical",
+      "quiet_but_alive"
+    ],
+    "time_of_day": "late_afternoon_to_early_evening",
+    "palette": {
+      "wood_brown": "#6B4A32",
+      "forest_green": "#3F5A3C",
+      "warm_cream": "#E9D7B3",
+      "accent_terracotta": "#A95F45",
+      "lamp_gold": "#D6A85F"
+    }
+  },
+  "blockout": {
+    "coordinate_system": "meters_xyz_z_up",
+    "tabletop_top_z_m": 0.78,
+    "composition_axis": [
+      "entrance",
+      "bridge",
+      "plaza",
+      "great_tree"
+    ],
+    "anchors": [
+      {
+        "id": "great_tree",
+        "position_m": [0, 0.28, 0.78],
+        "footprint_m": [0.72, 0.72],
+        "height_m": 0.95,
+        "role": "world_symbol"
+      },
+      {
+        "id": "bridge",
+        "position_m": [0, -0.92, 0.80],
+        "footprint_m": [0.42, 0.32],
+        "height_m": 0.10,
+        "role": "entry_threshold"
+      },
+      {
+        "id": "lodge",
+        "position_m": [-0.66, 0.06, 0.78],
+        "footprint_m": [0.56, 0.44],
+        "height_m": 0.46,
+        "yaw_deg": 12,
+        "role": "warm_social_anchor"
+      },
+      {
+        "id": "cottage_a",
+        "position_m": [0.58, 0.36, 0.78],
+        "footprint_m": [0.38, 0.34],
+        "height_m": 0.34,
+        "yaw_deg": -18,
+        "role": "residential"
+      },
+      {
+        "id": "cottage_b",
+        "position_m": [0.82, 0.02, 0.78],
+        "footprint_m": [0.34, 0.30],
+        "height_m": 0.31,
+        "yaw_deg": 20,
+        "role": "residential"
+      },
+      {
+        "id": "market_stall",
+        "position_m": [0.72, -0.48, 0.78],
+        "footprint_m": [0.38, 0.26],
+        "height_m": 0.30,
+        "yaw_deg": -12,
+        "role": "life_trace"
+      },
+      {
+        "id": "reading_bench",
+        "position_m": [-0.72, -0.48, 0.78],
+        "footprint_m": [0.30, 0.16],
+        "height_m": 0.14,
+        "yaw_deg": 18,
+        "role": "emotional_spot"
+      },
+      {
+        "id": "stream",
+        "position_m": [0, 0.72, 0.79],
+        "footprint_m": [1.55, 0.18],
+        "height_m": 0.02,
+        "role": "slow_motion_anchor"
+      }
+    ],
+    "layout_rules": [
+      "avoid_grid_alignment",
+      "curve_primary_path",
+      "rotate_buildings_slightly",
+      "preserve_negative_space_around_great_tree",
+      "keep_hero_view_readable_from_spawn"
+    ]
+  },
+  "lighting_design": {
+    "priority": "atmosphere_before_visibility_maximization",
+    "room_light": "dim_warm_indirect",
+    "village_key": "soft_late_afternoon",
+    "practical_lights": [
+      "lodge_window",
+      "two_cottage_windows",
+      "market_lantern",
+      "bridge_lantern"
+    ],
+    "forbidden": [
+      "flat_white_overhead",
+      "high_gloss_bloom",
+      "uniform_fill_everywhere"
+    ]
+  },
+  "soundscape": {
+    "music_required": false,
+    "layers": [
+      "soft_wind",
+      "leaf_rustle",
+      "distant_birds",
+      "quiet_water",
+      "occasional_wood_creak"
+    ],
+    "rule": "silence_between_events_is_part_of_the_sound_design"
+  },
+  "material_palette": {
+    "primary": [
+      "wood",
+      "cloth",
+      "paper",
+      "stone",
+      "moss"
+    ],
+    "secondary": [
+      "matte_ceramic",
+      "aged_brass"
+    ],
+    "avoid": [
+      "clean_plastic",
+      "mirror_chrome",
+      "wet_high_gloss"
+    ]
+  },
+  "motion_budget": {
+    "initial_animated_systems": 3,
+    "systems": [
+      {
+        "id": "leaf_sway",
+        "intensity": "subtle"
+      },
+      {
+        "id": "chimney_smoke",
+        "intensity": "subtle"
+      },
+      {
+        "id": "stream_flow",
+        "intensity": "slow"
+      }
+    ],
+    "rule": "not_everything_moves"
+  },
+  "life_traces": [
+    "open_book",
+    "half_finished_mug",
+    "stacked_firewood",
+    "small_toolbox",
+    "drying_cloth",
+    "worn_path",
+    "empty_chair",
+    "door_lantern",
+    "delivery_crate",
+    "tiny_planter"
+  ],
+  "acceptance": {
+    "gameplay_required": false,
+    "target_dwell_minutes_without_gameplay": 5,
+    "must_pass": [
+      "spawn_view_reads_as_one_composed_scene",
+      "great_tree_is_identifiable_as_primary_landmark",
+      "warm_windows_and_lanterns_are_visible_without_bloom_dominance",
+      "at_least_three_life_traces_are_visible_from_normal_observation_distance",
+      "environment_audio_is_present_but_does_not_mask_voice_chat",
+      "the_world_feels_alive_with_only_three_animated_systems",
+      "seated_and_standing_views_both_keep_the_village_center_visible"
+    ],
+    "must_not_include_yet": [
+      "score_system",
+      "resource_economy",
+      "win_condition",
+      "large_npc_population",
+      "procedural_building_system"
+    ]
+  },
+  "provenance": {
+    "market_record_ids": [
+      "booth-nook-house",
+      "booth-autumn-midnight",
+      "vrc-cozy-calm"
+    ],
+    "decisions": {
+      "meta.primary_intents": [
+        "booth-nook-house",
+        "booth-autumn-midnight",
+        "vrc-cozy-calm"
+      ],
+      "meta.platform_target": [
+        "booth-nook-house",
+        "vrc-cozy-calm"
+      ],
+      "spatial_geometry.furniture_scale_factor": [
+        "SCALE-FURNITURE"
+      ],
+      "spatial_geometry.corridor_clearance_m": [
+        "CORRIDOR-MIN"
+      ],
+      "spatial_geometry.door_height_m": [
+        "DOOR-MIN"
+      ],
+      "spatial_geometry.door_width_m": [
+        "DOOR-MIN"
+      ],
+      "retreat_protocol.visual_shield_angle_deg": [
+        "RETREAT-VISUAL"
+      ],
+      "retreat_protocol.acoustic_attenuation_db": [
+        "RETREAT-AUDIO"
+      ],
+      "optical_lighting.tpu_allocation": [
+        "TPU-CONTACT",
+        "TPU-WALL",
+        "TPU-BACKGROUND"
+      ],
+      "runtime_budget.camera_near_clip_m": [
+        "NEARCLIP",
+        "BACKGROUND-MAX-WITH-NEARCLIP"
+      ],
+      "media_governance.video_player_mode": [
+        "MEDIA-GOVERNANCE"
+      ],
+      "world_build": [
+        "repository-owned blockout decision"
+      ],
+      "atmosphere": [
+        "repository-owned creative direction"
+      ],
+      "blockout": [
+        "repository-owned blockout decision"
+      ]
+    },
+    "note": "Public source records are used only as supporting references for broad use and platform patterns. The woodland village atmosphere, composition, measurements, placements, and acceptance criteria are original repository-owned design decisions, not market observations or a reproduction of any specific commercial world or game."
+  }
+}
