@@ -22,8 +22,10 @@ concurrency:
 jobs:
   verify:
     name: Exact-head Unity scene/prefab verification
-    runs-on: [self-hosted, Windows]
+    runs-on: [self-hosted, Windows, X64, unity]
     timeout-minutes: 30
+    env:
+      UNITY_EXE: C:\Program Files\Unity\Hub\Editor\2022.3.22f1\Editor\Unity.exe
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -45,6 +47,16 @@ jobs:
               throw "Checkout is not exact PR head: expected $expected, got $actual"
             }
           }
+
+      - name: Require canonical Unity runtime
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (!(Test-Path -LiteralPath $env:UNITY_EXE)) {
+            throw "Unity editor not found: $env:UNITY_EXE"
+          }
+          & $env:UNITY_EXE -version -batchmode -quit
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build and verify Woodland WORLD_BLOCKOUT in Unity
         shell: pwsh
