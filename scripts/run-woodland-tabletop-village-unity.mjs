@@ -17,6 +17,7 @@ const spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
 if (spec?.meta?.platform_target !== 'CROSS_PLATFORM_QUEST') throw new Error('Woodland spec must remain CROSS_PLATFORM_QUEST.');
 if (spec?.runtime_budget?.realtime_light_count !== 0) throw new Error('Woodland spec must require zero realtime lights.');
 if (!Array.isArray(spec?.blockout?.anchors) || spec.blockout.anchors.length !== 8) throw new Error('Woodland spec must contain exactly eight canonical blockout anchors.');
+if (!Array.isArray(spec?.life_traces) || spec.life_traces.length < 3) throw new Error('Woodland spec must contain at least three canonical life traces.');
 
 let unityPath = process.env.UNITY_EXE;
 if (!unityPath && process.platform === 'win32') {
@@ -37,7 +38,7 @@ const scenePath = path.join(projectRoot, 'Assets', 'KafkaMade', 'VRMine', 'Scene
 const run = spawnSync(unityPath, [
   '-batchmode',
   '-projectPath', projectRoot,
-  '-executeMethod', 'WoodlandTabletopVillageSceneBuilder.BuildBatch',
+  '-executeMethod', 'WoodlandTabletopVillageLifeTraceBuild.BuildAndVerifyBatch',
   '-logFile', logPath,
   '-quit',
 ], {
@@ -51,5 +52,5 @@ if (!fs.existsSync(scenePath) || fs.statSync(scenePath).size === 0) {
   throw new Error(`Unity completed without materializing the scene: ${scenePath}`);
 }
 
-console.log(`PASS: Woodland Tabletop Village scene built and verified from canonical spec. Scene: ${scenePath}`);
+console.log(`PASS: Woodland Tabletop Village scene built with canonical life traces and verified from canonical spec. Scene: ${scenePath}`);
 console.log(`Unity log: ${logPath}`);
