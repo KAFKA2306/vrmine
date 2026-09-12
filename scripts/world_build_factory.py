@@ -296,7 +296,7 @@ def main():
 
     for seat in plan["social_core"]["seats"]:
         root, source = instantiate(
-            seat, seat["id"], seat["position_m"], seat["facing_target_m"],
+            seat, seat["id"], seat["position_m"], seat["face_target_m"],
             build_collection, asset_root, wood, wood_dark
         )
         record_source(root, source)
