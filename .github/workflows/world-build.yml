@@ -26,7 +26,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: vrmine-generated-pr-${{ github.event.pull_request.number || inputs.pr_number }}
+  group: vrmine-generated-world-pr-${{ github.event.pull_request.number || inputs.pr_number }}
   cancel-in-progress: false
 
 jobs:
@@ -244,6 +244,9 @@ jobs:
           git add "$dest"
           if ! git diff --cached --quiet; then
             git commit -m "chore(world): publish ${WORLD_ID} generated room evidence"
+            git fetch origin "$HEAD_REF"
+            git diff --exit-code HEAD "origin/$HEAD_REF" -- config/world-items scripts/world_item_factory.py scripts/verify_world_item.py scripts/world_build_factory.py scripts/verify_world_build.py scripts/world-design-to-blender-plan.mjs config/world-design/generated .github/workflows/world-build.yml
+            git rebase "origin/$HEAD_REF"
             git push origin "HEAD:${HEAD_REF}"
           fi
 

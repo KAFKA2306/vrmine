@@ -24,7 +24,7 @@ permissions:
   issues: write
 
 concurrency:
-  group: vrmine-generated-pr-${{ github.event.pull_request.number || inputs.pr_number }}
+  group: vrmine-generated-items-pr-${{ github.event.pull_request.number || inputs.pr_number }}
   cancel-in-progress: false
 
 jobs:
@@ -227,6 +227,9 @@ jobs:
           changed=false
           if ! git diff --cached --quiet; then
             git commit -m "chore: publish generated world-item product evidence"
+            git fetch origin "$HEAD_REF"
+            git diff --exit-code HEAD "origin/$HEAD_REF" -- config/world-items scripts/world_item_factory.py scripts/verify_world_item.py scripts/test_world_item_geometry.py
+            git rebase "origin/$HEAD_REF"
             git push origin "HEAD:${HEAD_REF}"
             changed=true
           fi

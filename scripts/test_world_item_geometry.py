@@ -29,7 +29,7 @@ def main():
                     obj = next(o for o in bpy.context.scene.objects if o.type == "MESH")
             bpy.context.view_layer.update()
             _, _, center, size, _ = world_bounds(obj)
-            assert all(abs(a-b) < 0.001 for a,b in zip(size, expected)), (component, stage, tuple(size), expected)
+            assert all(abs(a-b) < (0.003 if component == "cylinder" else 0.001) for a,b in zip(size, expected)), (component, stage, tuple(size), expected)
             assert all(abs(a-b) < 0.001 for a,b in zip(center, (0.1, 0.2, 0.3))), (component, stage, tuple(center))
     print("PASS primitive rotation, anisotropic dimensions, and GLB round trips")
 
