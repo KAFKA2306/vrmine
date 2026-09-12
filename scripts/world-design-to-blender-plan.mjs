@@ -157,6 +157,18 @@ const blockoutInstances = blockoutAnchors.map((entry, index) => {
   };
 });
 
+const blockoutById = new Map(blockoutInstances.map((entry) => [entry.id, entry]));
+const compositionAxisIds = spec.blockout?.composition_axis ?? [];
+if (!Array.isArray(compositionAxisIds) || compositionAxisIds.length < 2) fail('blockout.composition_axis must contain at least two nodes');
+const compositionAxis = compositionAxisIds.map((id, index) => {
+  if (typeof id !== 'string' || !id) fail(`blockout.composition_axis[${index}] must be a non-empty string`);
+  if (id === 'entrance') return {id, source: 'world_build.spawn', position_m: spawn};
+  if (id === 'plaza') return {id, source: 'world_build.social_core', position_m: socialCenter};
+  const instance = blockoutById.get(id);
+  if (!instance) fail(`blockout.composition_axis references unresolved node ${id}`);
+  return {id, source: `blockout.anchors.${id}`, position_m: instance.position_m};
+});
+
 const glbAssetIds = new Set();
 const collectGlb = (record) => {
   if (record?.source_kind === 'glb') glbAssetIds.add(record.asset_id);
@@ -208,6 +220,7 @@ const plan = {
   },
   hero_view: {position_m: heroPosition, target_m: heroTarget},
   circulation_contract: {waypoints_m: waypoints, minimum_clearance: clearance},
+  composition_axis: compositionAxis,
   blockout_instances: blockoutInstances,
   asset_ids: [...glbAssetIds].sort(),
   runtime: {
