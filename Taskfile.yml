@@ -48,7 +48,7 @@ tasks:
       - node scripts/world-design-to-blender-plan.mjs config/world-design/generated/cyber-alley-tea-nook.json
 
   woodland:modules:
-    desc: Manufacture and verify the five core Woodland Tabletop Village modules with Blender 4.2
+    desc: Manufacture and verify the seven anchor modules for Woodland Tabletop Village with Blender 4.2
     cmds:
       - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-great-tree-01.json
       - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-great-tree-01.json
@@ -60,6 +60,10 @@ tasks:
       - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-bridge-01.json
       - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-market-stall-01.json
       - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-market-stall-01.json
+      - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-reading-bench-01.json
+      - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-reading-bench-01.json
+      - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-stream-segment-01.json
+      - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-stream-segment-01.json
       - node scripts/verify-world-item-packages.mjs
 
   world-build:pilot:
