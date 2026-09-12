@@ -1,0 +1,85 @@
+name: Woodland WORLD_BLOCKOUT Unity verification
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'config/world-design/generated/woodland-tabletop-village-v0.json'
+      - 'Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillage*.cs'
+      - 'scripts/run-woodland-tabletop-village-unity.mjs'
+      - 'Packages/**'
+      - 'ProjectSettings/ProjectVersion.txt'
+      - '.github/workflows/woodland-unity-verification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: woodland-world-blockout-unity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Exact-head Unity scene/prefab verification
+    runs-on: [self-hosted, Windows, X64, unity]
+    timeout-minutes: 30
+    env:
+      UNITY_EXE: C:\Program Files\Unity\Hub\Editor\2022.3.22f1\Editor\Unity.exe
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          clean: true
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+
+      - name: Verify exact PR head
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ('${{ github.event_name }}' -eq 'pull_request') {
+            $expected = '${{ github.event.pull_request.head.sha }}'
+            $actual = (git rev-parse HEAD).Trim()
+            if ($actual -ne $expected) {
+              throw "Checkout is not exact PR head: expected $expected, got $actual"
+            }
+          }
+
+      - name: Require canonical Unity runtime
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (!(Test-Path -LiteralPath $env:UNITY_EXE)) {
+            throw "Unity editor not found: $env:UNITY_EXE"
+          }
+          & $env:UNITY_EXE -version -batchmode -quit
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build and verify Woodland WORLD_BLOCKOUT in Unity
+        shell: pwsh
+        run: node scripts/run-woodland-tabletop-village-unity.mjs
+
+      - name: Require generated Unity evidence
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $scene = 'Assets/KafkaMade/VRMine/Scenes/WoodlandTabletopVillage.unity'
+          $prefab = 'Assets/KafkaMade/VRMine/Prefabs/WoodlandTabletopVillage.prefab'
+          if (!(Test-Path $scene) -or (Get-Item $scene).Length -eq 0) { throw "Missing generated scene: $scene" }
+          if (!(Test-Path $prefab) -or (Get-Item $prefab).Length -eq 0) { throw "Missing generated prefab: $prefab" }
+          $logs = Get-ChildItem 'Library/VRMine/woodland-tabletop-village-*.log' -ErrorAction Stop
+          if ($logs.Count -lt 1) { throw 'Missing Woodland Unity verification log' }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: woodland-world-blockout-unity-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            Library/VRMine/woodland-tabletop-village-*.log
+            Assets/KafkaMade/VRMine/Scenes/WoodlandTabletopVillage.unity
+            Assets/KafkaMade/VRMine/Prefabs/WoodlandTabletopVillage.prefab
+          if-no-files-found: warn
+          retention-days: 7
