@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "authority_order": [
+    {
+      "id": "project_facts",
+      "sources": [
+        "AGENTS.md",
+        "config/world-design/",
+        "config/world-items/",
+        "config/quality-gates.json",
+        "Packages/manifest.json",
+        "ProjectSettings/ProjectVersion.txt",
+        "Taskfile.yml",
+        "Assets/KafkaMade/VRMine/"
+      ]
+    },
+    {
+      "id": "version_matched_official_docs"
+    },
+    {
+      "id": "specialized_skills",
+      "requires_compatibility_check": true,
+      "authority": false
+    },
+    {
+      "id": "general_knowledge",
+      "authority": false
+    },
+    {
+      "id": "runtime_evidence",
+      "verification_only": true
+    }
+  ],
+  "version_sources": {
+    "unity": {
+      "path": "ProjectSettings/ProjectVersion.txt",
+      "parser": "unity_project_version"
+    },
+    "vrchat_sdk": {
+      "path": "Packages/manifest.json",
+      "parser": "package_pair",
+      "packages": [
+        "com.vrchat.base",
+        "com.vrchat.worlds"
+      ]
+    },
+    "blender": {
+      "path": "Taskfile.yml",
+      "parser": "unique_blender_major_minor"
+    }
+  },
+  "compatibility": {
+    "supported_claims": [
+      "minimum_version",
+      "exact_version"
+    ],
+    "rule": "version-sensitive external knowledge must be compatible with the current pinned project version before use"
+  }
+}
