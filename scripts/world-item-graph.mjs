@@ -50,6 +50,25 @@ for (const filename of specFiles) {
   const skuNode = `sku:${spec.id}`;
   addNode({ id: skuNode, type: 'SKU', key: spec.id, family: spec.family ?? null, source });
 
+  const verificationStatuses = [
+    ['unity', 'unity_status'],
+    ['vrchat', 'vrchat_status']
+  ];
+  for (const [key, field] of verificationStatuses) {
+    if (spec[field] === undefined) continue;
+    if (typeof spec[field] !== 'string' || spec[field].length === 0) fail(`${source}: ${field} must be a non-empty string`);
+    const verificationNode = `verification:${spec.id}:${key}`;
+    addNode({ id: verificationNode, type: 'Verification', key, sku: spec.id, status: spec[field], source });
+    addEdge(verificationNode, 'VERIFIES', skuNode);
+  }
+
+  if (spec.booth_status !== undefined) {
+    if (typeof spec.booth_status !== 'string' || spec.booth_status.length === 0) fail(`${source}: booth_status must be a non-empty string`);
+    const releaseNode = `release:${spec.id}:booth`;
+    addNode({ id: releaseNode, type: 'Release', key: 'booth', sku: spec.id, status: spec.booth_status, source });
+    addEdge(releaseNode, 'RELEASES', skuNode);
+  }
+
   if (!Array.isArray(spec.parts)) fail(`${source}: parts must be an array`);
   if (!spec.materials || typeof spec.materials !== 'object' || Array.isArray(spec.materials)) fail(`${source}: materials must be an object`);
 
