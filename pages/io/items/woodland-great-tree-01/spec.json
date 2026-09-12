@@ -1,0 +1,49 @@
+{
+  "id": "woodland-great-tree-01",
+  "family": "Plants / Planters",
+  "display_name": "Woodland Great Tree",
+  "dimensions_m": [0.72, 0.72, 0.95],
+  "parts": [
+    {"component": "cylinder", "name": "trunk_main", "radius": 0.115, "height": 0.50, "position": [0.0, 0.0, 0.25], "vertices": 32, "material": "warm_bark"},
+    {"component": "cylinder", "name": "trunk_upper", "radius": 0.080, "height": 0.22, "position": [0.0, 0.0, 0.56], "vertices": 28, "material": "warm_bark"},
+    {"component": "box", "name": "root_front", "size": [0.12, 0.28, 0.055], "position": [0.0, -0.09, 0.0275], "rotation_deg": [0, 0, 0], "material": "dark_bark"},
+    {"component": "box", "name": "root_left", "size": [0.24, 0.10, 0.050], "position": [-0.10, 0.035, 0.025], "rotation_deg": [0, 0, 25], "material": "dark_bark"},
+    {"component": "box", "name": "root_right", "size": [0.23, 0.095, 0.050], "position": [0.10, 0.045, 0.025], "rotation_deg": [0, 0, -28], "material": "dark_bark"},
+    {"component": "box", "name": "branch_left", "size": [0.30, 0.070, 0.070], "position": [-0.11, 0.0, 0.58], "rotation_deg": [0, -24, -15], "material": "warm_bark"},
+    {"component": "box", "name": "branch_right", "size": [0.28, 0.070, 0.070], "position": [0.11, 0.02, 0.62], "rotation_deg": [0, 26, 18], "material": "warm_bark"},
+    {"component": "cylinder", "name": "canopy_lower", "radius": 0.33, "height": 0.16, "position": [0.0, 0.0, 0.72], "vertices": 24, "material": "deep_forest_leaf"},
+    {"component": "cylinder", "name": "canopy_left", "radius": 0.17, "height": 0.14, "position": [-0.17, -0.03, 0.76], "vertices": 20, "material": "forest_leaf"},
+    {"component": "cylinder", "name": "canopy_right", "radius": 0.17, "height": 0.14, "position": [0.17, 0.035, 0.77], "vertices": 20, "material": "forest_leaf"},
+    {"component": "cylinder", "name": "canopy_middle", "radius": 0.28, "height": 0.18, "position": [0.02, -0.01, 0.80], "vertices": 24, "material": "forest_leaf"},
+    {"component": "cylinder", "name": "canopy_crown", "radius": 0.20, "height": 0.14, "position": [-0.02, 0.02, 0.88], "vertices": 20, "material": "moss_leaf"}
+  ],
+  "materials": {
+    "warm_bark": {"base_color": [0.42, 0.29, 0.20], "roughness": 0.84, "metallic": 0.0},
+    "dark_bark": {"base_color": [0.25, 0.16, 0.10], "roughness": 0.90, "metallic": 0.0},
+    "deep_forest_leaf": {"base_color": [0.16, 0.27, 0.15], "roughness": 0.92, "metallic": 0.0},
+    "forest_leaf": {"base_color": [0.25, 0.35, 0.24], "roughness": 0.90, "metallic": 0.0},
+    "moss_leaf": {"base_color": [0.30, 0.39, 0.20], "roughness": 0.92, "metallic": 0.0}
+  },
+  "variants": [],
+  "price_hypothesis": {"currency": "JPY", "single": 300, "mini_set_target": 800},
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and material values authored in KAFKA2306/vrmine from the repository-owned woodland tabletop blockout; no third-party meshes, textures, logos, trademarks, or branded product geometry.",
+    "status": "DRAFT"
+  },
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "design_contract": [
+      "config/world-design/generated/woodland-tabletop-village-v0.json blockout anchor great_tree",
+      "great_tree footprint 0.72 m x 0.72 m and height 0.95 m",
+      "great_tree role world_symbol",
+      "world acceptance requires the great tree to be identifiable as the primary landmark"
+    ],
+    "expected_production_minutes": 8,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  }
+}
