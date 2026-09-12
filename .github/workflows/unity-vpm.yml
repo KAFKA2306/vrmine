@@ -36,6 +36,7 @@ on:
       - "scripts/verify-world-item-packages.mjs"
       - "scripts/world-item-graph.mjs"
       - "scripts/world-item-impact.mjs"
+      - "scripts/world-item-build-order.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
       - "scripts/verify-world-design-plan-negative.mjs"
@@ -83,6 +84,7 @@ on:
       - "scripts/verify-world-item-packages.mjs"
       - "scripts/world-item-graph.mjs"
       - "scripts/world-item-impact.mjs"
+      - "scripts/world-item-build-order.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
       - "scripts/verify-world-design-plan-negative.mjs"
@@ -136,6 +138,14 @@ jobs:
           ROOT_NODE=$(node scripts/world-item-graph.mjs | node -e 'let s=""; process.stdin.on("data", d => s += d).on("end", () => { const g = JSON.parse(s); const n = g.nodes.find(x => x.type === "Material"); if (!n) process.exit(1); process.stdout.write(n.id); });')
           node scripts/world-item-impact.mjs --node "$ROOT_NODE" > /tmp/world-item-impact.json
           node -e 'const r=require("/tmp/world-item-impact.json"); if (!r.root || !r.summary || !Array.isArray(r.affected)) process.exit(1);'
+
+      - name: Verify World Item build order
+        shell: bash
+        run: |
+          node --check scripts/world-item-build-order.mjs
+          ROOT_NODE=$(node scripts/world-item-graph.mjs | node -e 'let s=""; process.stdin.on("data", d => s += d).on("end", () => { const g = JSON.parse(s); const n = g.nodes.find(x => x.type === "Material"); if (!n) process.exit(1); process.stdout.write(n.id); });')
+          node scripts/world-item-build-order.mjs --node "$ROOT_NODE" > /tmp/world-item-build-order.json
+          node -e 'const r=require("/tmp/world-item-build-order.json"); if (!r.root || !r.summary || !Array.isArray(r.order) || r.order.length < 1 || r.order[0].id !== r.root.id) process.exit(1);'
 
       - name: Verify World Design dataset, DRC and provenance
         run: |
