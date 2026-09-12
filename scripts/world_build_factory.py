@@ -70,6 +70,7 @@ def make_material(name, rgba, roughness=0.6, emission=None, palette_key=None, cl
             bsdf.inputs["Emission Strength"].default_value = 2.0
     if palette_key:
         material["palette_key"] = palette_key
+        material.use_fake_user = True
     if classification:
         material["material_classification"] = classification
     return material
@@ -574,4 +575,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
