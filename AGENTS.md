@@ -13,6 +13,7 @@ current GitHub `main` is the integration base. Machine-readable owners define po
 - Automation / verification: `scripts/`
 - Commands: `Taskfile.yml`
 - Verification / release policy: `config/quality-gates.json`
+- Agent knowledge authority: `config/agent-knowledge.json`
 
 ## Rules
 
@@ -24,6 +25,12 @@ current GitHub `main` is the integration base. Machine-readable owners define po
 - Public Pagesはproduct surfaceとし、engineering status dashboardにしない。内部進捗、CI/release gate、Issue/PR識別子、repository構造、machine-readable stateは、ユーザー操作や安全に直接必要な場合を除き公開説明文へ重複させない。
 - silent fallbackや根拠のないdefaultで失敗を隠さない。
 - Unityのserialized referenceとtracked `.meta` を意図せず変更しない。
+
+## Knowledge selection
+
+`config/agent-knowledge.json` owns knowledge precedence and version-source selection. Resolve the current project versions from their canonical files before using version-sensitive Unity, VRChat SDK, Blender, official documentation, or specialized Skills. Project facts outrank external guidance; specialized Skills and general knowledge are advisory only. Reject or explicitly mark guidance incompatible when its declared minimum or exact version does not match the pinned project state. Do not copy pinned version values into this prose.
+
+Use `node scripts/resolve-agent-knowledge.mjs` to read the current project state. For version-sensitive guidance, pass `--tool`, plus `--minimum-version` or `--exact-version`, before applying it. Generated behavior still requires the existing smallest-surface verifier and exact-revision evidence.
 
 ## Generated assets
 
