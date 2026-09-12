@@ -262,7 +262,7 @@ const plan = {
     table: tableRecord,
     seats: socialSeats,
   },
-  retreat: {zone_id: build.retreat?.zone_id, center_m: retreatCenter, seat_count: retreatSeatCount, seat_asset_id: retreatAssetId, ...sourceFor(retreatAssetId)},
+  retreat: {zone_id: build.retreat?.zone_id, center_m: retreatCenter, seat_count: retreatSeatCount, asset_id: retreatAssetId, seat_asset_id: retreatAssetId, ...sourceFor(retreatAssetId)},
   activity_anchor: {kind: build.activity_anchor?.kind, position_m: anchor, approach_clearance_m: finite(build.activity_anchor?.approach_clearance_m, 'world_build.activity_anchor.approach_clearance_m')},
   hero_view: {position_m: heroPosition, target_m: heroTarget},
   circulation_contract: {waypoints_m: waypoints, minimum_clearance: clearance},
