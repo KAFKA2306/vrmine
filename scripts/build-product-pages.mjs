@@ -18,6 +18,17 @@ export function canonicalProducts(root = '.') {
   if (!products.length) throw new Error('No canonical products');
   return products;
 }
+export function publishedProducts(products, site) {
+  const canonicalById = new Map(products.map(spec => [spec.id, spec]));
+  const publishedIds = readdirSync(join(site, 'io/items'), {withFileTypes:true})
+    .filter(entry => entry.isDirectory())
+    .map(entry => entry.name)
+    .sort();
+  for (const id of publishedIds) {
+    if (!canonicalById.has(id)) throw new Error(`Published product has no canonical spec: ${id}`);
+  }
+  return publishedIds.map(id => canonicalById.get(id));
+}
 export function validateEvidence(products, site) {
   for (const spec of products) {
     const dir = join(site, 'io/items', spec.id);
@@ -76,7 +87,8 @@ export function distributionLedger(products, site) {
   });
 }
 export function buildProductPages(site = '_site', root = '.') {
-  const products = canonicalProducts(root);
+  const canonical = canonicalProducts(root);
+  const products = publishedProducts(canonical, site);
   validateEvidence(products, site);
   const fields = ['id', 'display_name', 'family', 'description', 'dimensions_m', 'formats', 'license', 'unity_status', 'vrchat_status', 'booth_status', 'price_hypothesis'];
   writeFileSync(join(site, 'io/catalog.json'), JSON.stringify(products.map(s => Object.fromEntries(fields.filter(k => k in s).map(k => [k, s[k]]))), null, 2) + '\n');
@@ -90,7 +102,7 @@ export function buildProductPages(site = '_site', root = '.') {
   const home = readFileSync(homePath, 'utf8');
   if (!home.includes('<!-- product-previews:start -->')) throw new Error('Home product preview marker missing');
   writeFileSync(homePath, home.replace(/<!-- product-previews:start -->[\s\S]*?<!-- product-previews:end -->/, `<!-- product-previews:start -->\n${cards}\n<!-- product-previews:end -->`));
-  console.log(`Product Pages: ${products.length} canonical products, catalog, distribution ledger and sitemap generated; ${selected.length} Home previews`);
+  console.log(`Product Pages: ${products.length} published of ${canonical.length} canonical products; catalog, distribution ledger and sitemap generated; ${selected.length} Home previews`);
   return products;
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) buildProductPages(process.argv[2]);
