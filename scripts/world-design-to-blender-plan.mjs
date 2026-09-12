@@ -217,11 +217,72 @@ if (spec.blockout) {
     {id: lifeTraceIds[1], kind: 'mug', position_m: bind('reading_bench', [0.10, 0.01, 0.18]), palette_key: 'warm_cream', classification: 'matte_ceramic'},
     {id: lifeTraceIds[2], kind: 'firewood', position_m: bind('lodge', [-0.25, 0.13, 0.04]), palette_key: 'wood_brown', classification: 'wood'},
   ];
-  const naturalLayers = [
-    {kind: 'moss', position_m: bind('great_tree', [0, 0, 0.015]), scale_m: [0.68, 0.58, 0.02], palette_key: 'forest_green', classification: 'moss'},
-    {kind: 'low_vegetation', position_m: bind('lodge', [-0.31, 0.16, 0.035]), scale_m: [0.18, 0.13, 0.10], palette_key: 'forest_green', classification: 'moss'},
-    {kind: 'leaf_scatter', position_m: bind('bridge', [0.24, -0.12, 0.025]), scale_m: [0.24, 0.13, 0.012], palette_key: 'accent_terracotta', classification: 'paper'},
+  const vegetationSources = {
+    grass: 'woodland-grass-clump-01', fern: 'woodland-fern-01', moss: 'woodland-moss-patch-01',
+    mushroom: 'woodland-mushroom-cluster-01', root: 'woodland-exposed-root-01',
+  };
+  const tableRadius = finite(tableRecord.geometry?.diameter_m, 'table diameter') / 2;
+  const tabletopZ = finite(spec.blockout.tabletop_top_z_m, 'blockout.tabletop_top_z_m');
+  const plazaRadius = Math.min(...requireAnchor('bridge').footprint_m) / 2;
+  const vegetationConstraints = {
+    tabletop_min_m: [socialCenter[0] - tableRadius, socialCenter[1] - tableRadius, tabletopZ],
+    tabletop_max_m: [socialCenter[0] + tableRadius, socialCenter[1] + tableRadius, tabletopZ + 0.18],
+    plaza_center_m: socialCenter, plaza_radius_m: plazaRadius,
+  };
+  const vegetationBudget = {max_instances: 64, max_triangles: 12000, max_materials: 12};
+  const sourceSizes = new Map(Object.values(vegetationSources).map((id) => {
+    const file = path.join('config/world-items', `${id}.json`);
+    const source = JSON.parse(fs.readFileSync(file, 'utf8'));
+    if (source.id !== id) fail(`vegetation source identity mismatch: ${id}`);
+    return [id, vec3(source.dimensions_m, `${id}.dimensions_m`)];
+  }));
+  const naturalLayers = [];
+  const clearFootprint = (position, radius, obstacle) => {
+    const yaw = -obstacle.yaw_deg * Math.PI / 180;
+    const dx = position[0] - obstacle.position_m[0], dy = position[1] - obstacle.position_m[1];
+    const x = dx * Math.cos(yaw) - dy * Math.sin(yaw), y = dx * Math.sin(yaw) + dy * Math.cos(yaw);
+    return Math.hypot(Math.max(0, Math.abs(x) - obstacle.footprint_m[0] / 2),
+      Math.max(0, Math.abs(y) - obstacle.footprint_m[1] / 2)) >= radius + 0.012;
+  };
+  // Dense tree undergrowth, medium banks/buildings, empty central gathering space.
+  // All offsets follow canonical footprints; no second placement spec or random scatter.
+  const groups = [
+    ['great_tree', 'moss', 3, 0.55], ['great_tree', 'root', 3, 0.5],
+    ['great_tree', 'fern', 3, 0.6], ['great_tree', 'mushroom', 3, 0.7],
+    ['stream', 'moss', 3, 0.55], ['stream', 'fern', 3, 0.55], ['stream', 'grass', 4, 0.75],
+    ['bridge', 'moss', 2, 0.5], ['bridge', 'grass', 3, 0.7],
+    ['lodge', 'grass', 4, 0.75], ['cottage_a', 'grass', 3, 0.65], ['cottage_b', 'grass', 3, 0.65],
   ];
+  for (const [groupIndex, [anchorId, kind, count, scale]] of groups.entries()) {
+    const base = requireAnchor(anchorId), assetId = vegetationSources[kind];
+    const size = sourceSizes.get(assetId);
+    // Origin can be asymmetric; use a conservative full-width radius.
+    const radius = Math.hypot(size[0], size[1]) * scale * 0.65;
+    const treeGround = anchorId === 'great_tree' && ['moss', 'root'].includes(kind);
+    let placed = 0;
+    for (let candidate = 0; candidate < 48 && placed < count; candidate += 1) {
+      const angle = (candidate * 137.508 + groupIndex * 29) * Math.PI / 180;
+      const rx = treeGround ? base.footprint_m[0] * 0.32 : base.footprint_m[0] / 2 + radius + 0.045;
+      const ry = treeGround ? base.footprint_m[1] * 0.32 : base.footprint_m[1] / 2 + radius + 0.045;
+      const yaw = base.yaw_deg * Math.PI / 180;
+      const perimeter = treeGround ? 1 : Math.max(Math.abs(Math.cos(angle)), Math.abs(Math.sin(angle)));
+      const dx = Math.cos(angle) * rx / perimeter, dy = Math.sin(angle) * ry / perimeter;
+      const position = [base.position_m[0] + dx * Math.cos(yaw) - dy * Math.sin(yaw),
+        base.position_m[1] + dx * Math.sin(yaw) + dy * Math.cos(yaw), tabletopZ + 0.001];
+      if (Math.hypot(position[0] - socialCenter[0], position[1] - socialCenter[1]) + radius > tableRadius - 0.025) continue;
+      if (Math.hypot(position[0] - socialCenter[0], position[1] - socialCenter[1]) < plazaRadius + radius + 0.015) continue;
+      if (blockoutInstances.some(obstacle => !(treeGround && obstacle.id === anchorId) && !clearFootprint(position, radius, obstacle))) continue;
+      if (naturalLayers.some(other => other.kind === kind && Math.hypot(other.position_m[0] - position[0], other.position_m[1] - position[1]) < radius * 1.3)) continue;
+      const record = {instance_id: `Vegetation_${anchorId}_${kind}_${placed + 1}`, kind,
+        asset_id: assetId, source_kind: 'glb', anchor_id: anchorId, position_m: position,
+        scale, yaw_deg: (candidate * 137.508 + base.yaw_deg) % 360};
+      naturalLayers.push(record);
+      collectGlb(record);
+      placed += 1;
+    }
+    if (placed < count) fail(`insufficient clear vegetation placements: ${anchorId}/${kind} ${placed}/${count}`);
+  }
+
 
   visualLayers = {
     practical_lights: practicalLights,
@@ -232,6 +293,8 @@ if (spec.blockout) {
     life_trace_bindings: lifeTraceBindings,
     natural_layer_kinds: naturalLayers.map((entry) => entry.kind),
     natural_layers: naturalLayers,
+    vegetation_constraints: vegetationConstraints,
+    vegetation_budget: vegetationBudget,
     atmospheric_depth: {
       enabled: true,
       mechanism: 'world_volume_haze',
@@ -277,3 +340,4 @@ const plan = {
   },
 };
 process.stdout.write(`${JSON.stringify(plan, null, 2)}\n`);
+

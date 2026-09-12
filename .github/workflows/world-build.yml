@@ -1,10 +1,16 @@
 name: World Build generation and verification
 
 on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        required: true
+        type: string
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'config/world-design/generated/**'
+      - 'config/world-items/**'
       - 'scripts/world-design-to-blender-plan.mjs'
       - 'scripts/materialize_world_build_input.py'
       - 'scripts/world_build_factory.py'
@@ -15,8 +21,13 @@ on:
       - 'pages/worlds/**'
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
+
+concurrency:
+  group: vrmine-generated-pr-${{ github.event.pull_request.number || inputs.pr_number }}
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -28,9 +39,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           EVENT_PR: ${{ github.event.pull_request.number }}
+          INPUT_PR: ${{ inputs.pr_number }}
         run: |
           set -euo pipefail
-          pr_number="$EVENT_PR"
+          pr_number="${EVENT_PR:-${INPUT_PR:-}}"
           test -n "$pr_number"
           gh pr view "$pr_number" --repo "$GITHUB_REPOSITORY" --json headRefName,headRefOid,baseRefName > /tmp/pr.json
           echo "number=$pr_number" >> "$GITHUB_OUTPUT"
@@ -53,6 +65,16 @@ jobs:
           mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/${BASE_REF}...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
           if [ "${#specs[@]}" -eq 0 ] && [ "$BASE_REF" != main ]; then
             mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/main...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
+          fi
+          if [ "${#specs[@]}" -eq 0 ]; then
+            # A canonical SKU edit must rebuild the world that consumes it.
+            git diff --diff-filter=AM --name-only "origin/${BASE_REF}...HEAD" > /tmp/world-changed-files.txt
+            while IFS= read -r candidate; do
+              node scripts/world-design-to-blender-plan.mjs "$candidate" > /tmp/candidate-world-plan.json
+              if jq -er --rawfile changed /tmp/world-changed-files.txt '.asset_ids[] | select(("config/world-items/" + . + ".json\n") as $path | $changed | contains($path))' /tmp/candidate-world-plan.json >/dev/null; then
+                specs+=("$candidate")
+              fi
+            done < <(git ls-files 'config/world-design/generated/*.json')
           fi
           if [ "${#specs[@]}" -ne 1 ]; then
             printf 'Expected exactly one effective generated World Design Spec, got %s\n' "${#specs[@]}" >&2
@@ -199,6 +221,7 @@ jobs:
 
       - name: Publish generated room evidence into PR branch
         env:
+          GH_TOKEN: ${{ github.token }}
           HEAD_REF: ${{ steps.pr.outputs.head_ref }}
           WORLD_ID: ${{ steps.select.outputs.world_id }}
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
@@ -221,4 +244,6 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "chore(world): publish ${WORLD_ID} generated room evidence"
             git push origin "HEAD:${HEAD_REF}"
+            gh workflow run world-build.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_REF" -f pr_number="${{ steps.pr.outputs.number }}"
           fi
+

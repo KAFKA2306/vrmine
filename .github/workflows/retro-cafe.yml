@@ -7,6 +7,7 @@ on:
       - 'config/world-items/**'
       - 'scripts/world_item_factory.py'
       - 'scripts/verify_world_item.py'
+      - 'scripts/test_world_item_geometry.py'
       - 'pages/io/items/**'
       - '.github/workflows/retro-cafe.yml'
   workflow_dispatch:
@@ -22,13 +23,18 @@ permissions:
   pull-requests: write
   issues: write
 
+concurrency:
+  group: vrmine-generated-pr-${{ github.event.pull_request.number || inputs.pr_number }}
+  cancel-in-progress: false
+
 jobs:
   generate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 60
     outputs:
       changed: ${{ steps.publish.outputs.changed }}
       final_head: ${{ steps.publish.outputs.final_head }}
+      sku_count: ${{ steps.select.outputs.sku_count }}
       sku: ${{ steps.select.outputs.sku }}
       spec_path: ${{ steps.select.outputs.spec_path }}
       issue_number: ${{ steps.select.outputs.issue_number }}
@@ -55,7 +61,7 @@ jobs:
           ref: ${{ steps.pr.outputs.head_sha }}
           fetch-depth: 0
 
-      - name: Select exactly one canonical SKU spec
+      - name: Select changed canonical SKU specs
         id: select
         env:
           GH_TOKEN: ${{ github.token }}
@@ -70,16 +76,16 @@ jobs:
             echo "No added or modified canonical world-item spec; generation is not applicable to this PR."
             exit 0
           fi
-          if [ "${#specs[@]}" -ne 1 ]; then
-            printf 'Expected exactly one added or modified canonical world-item spec, got %s\n' "${#specs[@]}" >&2
-            printf '%s\n' "${specs[@]:-}" >&2
-            exit 1
-          fi
           echo "run=true" >> "$GITHUB_OUTPUT"
+          for spec_path in "${specs[@]}"; do
+            sku="$(jq -er '.id | select(type == "string" and test("^[a-z0-9][a-z0-9-]*$"))' "$spec_path")"
+            test "$(basename "$spec_path" .json)" = "$sku"
+          done
+          specs_json="$(printf '%s\n' "${specs[@]}" | jq -Rsc 'split("\n") | map(select(length > 0))')"
+          echo "specs_json=$specs_json" >> "$GITHUB_OUTPUT"
+          echo "sku_count=${#specs[@]}" >> "$GITHUB_OUTPUT"
           spec_path="${specs[0]}"
           sku="$(jq -r '.id' "$spec_path")"
-          test -n "$sku" && test "$sku" != null
-          test "$(basename "$spec_path" .json)" = "$sku"
           pr_body="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json body -q '.body // ""')"
           mapfile -t issues < <(printf '%s\n' "$pr_body" | grep -oE 'Generation-Issue:[[:space:]]*#[0-9]+' | sed -E 's/.*#//' || true)
           if [ "${#issues[@]}" -ne 1 ]; then
@@ -95,16 +101,21 @@ jobs:
         id: evidence
         if: steps.select.outputs.run == 'true'
         env:
+          SPECS_JSON: ${{ steps.select.outputs.specs_json }}
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
           SKU: ${{ steps.select.outputs.sku }}
         run: |
           set -euo pipefail
-          dest="pages/io/items/${SKU}"
-          input_digest="$(cat "$SPEC_PATH" scripts/world_item_factory.py scripts/verify_world_item.py | sha256sum | awk '{print $1}')"
-          echo "input_digest=$input_digest" >> "$GITHUB_OUTPUT"
-          echo "current=false" >> "$GITHUB_OUTPUT"
-
-          if [ -s "$dest/build-input.sha256" ] && [ "$(cat "$dest/build-input.sha256")" = "$input_digest" ]; then
+          current=true
+          render_sha=''
+          while IFS= read -r SPEC_PATH; do
+            SKU="$(jq -r '.id' "$SPEC_PATH")"
+            dest="pages/io/items/${SKU}"
+            input_digest="$(cat "$SPEC_PATH" scripts/world_item_factory.py scripts/verify_world_item.py | sha256sum | awk '{print $1}')"
+            if [ ! -s "$dest/build-input.sha256" ] || [ "$(cat "$dest/build-input.sha256")" != "$input_digest" ]; then
+              current=false
+              continue
+            fi
             for file in thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png "$SKU.blend" "$SKU.glb" "$SKU.fbx" manifest.json factory-metrics.json spec.json render.sha256; do
               test -s "$dest/$file"
             done
@@ -115,10 +126,9 @@ jobs:
             test "$(head -c 7 "$dest/$SKU.blend")" = "BLENDER"
             test "$(head -c 4 "$dest/$SKU.glb")" = "glTF"
             render_sha="$(cd "$dest" && sha256sum thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png | sha256sum | awk '{print $1}')"
-            echo "render_sha256=$render_sha" >> "$GITHUB_OUTPUT"
-            echo "current=true" >> "$GITHUB_OUTPUT"
-            echo "Exact-head evidence is current; Blender regeneration is not required."
-          fi
+          done < <(jq -r '.[]' <<<"$SPECS_JSON")
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+          echo "render_sha256=$render_sha" >> "$GITHUB_OUTPUT"
 
       - name: Install official Blender 4.2.0
         if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
@@ -132,13 +142,21 @@ jobs:
           sudo apt-get install -y libegl1 libgl1-mesa-dri
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
-      - name: Generate and verify canonical SKU
+      - name: Verify primitive transforms and GLB round trips
+        if: steps.select.outputs.run == 'true'
+        run: blender -b --python-exit-code 1 --python scripts/test_world_item_geometry.py
+
+      - name: Generate and verify canonical SKUs
         if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
         env:
+          SPECS_JSON: ${{ steps.select.outputs.specs_json }}
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
           SKU: ${{ steps.select.outputs.sku }}
         run: |
           set -euo pipefail
+          blender -b --python-exit-code 1 --python scripts/test_world_item_factory.py
+          while IFS= read -r SPEC_PATH; do
+            SKU="$(jq -r '.id' "$SPEC_PATH")"
           started="$(date +%s)"
           blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- "$SPEC_PATH"
           blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- "$SPEC_PATH"
@@ -152,12 +170,13 @@ jobs:
             --arg common_components "$(jq -r '[.parts[].component] | unique | join(",")' "$SPEC_PATH")" \
             '{production_seconds:$production_seconds,manual_blender_touch_count:$manual_blender_touch_count,reusable_component_ratio:$reusable_component_ratio,parts_count:$parts_count,common_components:($common_components|split(","))}' \
             > "$out/factory-metrics.json"
+          done < <(jq -r '.[]' <<<"$SPECS_JSON")
 
       - uses: actions/upload-artifact@v4
         if: steps.select.outputs.run == 'true' && steps.evidence.outputs.current != 'true'
         with:
-          name: world-item-${{ steps.select.outputs.sku }}-${{ steps.pr.outputs.head_sha }}
-          path: .artifacts/world-items/${{ steps.select.outputs.sku }}/
+          name: world-items-${{ steps.pr.outputs.head_sha }}
+          path: .artifacts/world-items/
           if-no-files-found: error
           retention-days: 7
 
@@ -169,6 +188,7 @@ jobs:
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           HEAD_REF: ${{ steps.pr.outputs.head_ref }}
           SKU: ${{ steps.select.outputs.sku }}
+          SPECS_JSON: ${{ steps.select.outputs.specs_json }}
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
           CURRENT_EVIDENCE: ${{ steps.evidence.outputs.current }}
           CURRENT_RENDER_SHA256: ${{ steps.evidence.outputs.render_sha256 }}
@@ -180,22 +200,18 @@ jobs:
             echo "render_sha256=$CURRENT_RENDER_SHA256" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+          while IFS= read -r SPEC_PATH; do
+            SKU="$(jq -r '.id' "$SPEC_PATH")"
           src=".artifacts/world-items/${SKU}"
           dest="pages/io/items/${SKU}"
           mkdir -p "$dest"
 
           input_digest="$(cat "$SPEC_PATH" scripts/world_item_factory.py scripts/verify_world_item.py | sha256sum | awk '{print $1}')"
-          published_digest="$(cat "$dest/build-input.sha256" 2>/dev/null || true)"
-          if [ "$published_digest" != "$input_digest" ]; then
-            for name in thumbnail view-hero view-front view-rear view-left view-right view-top; do cp "$src/${name}.png" "$dest/${name}.png"; done
-            cp "$src/${SKU}.blend" "$dest/${SKU}.blend"
-            cp "$src/${SKU}.glb" "$dest/${SKU}.glb"
-            cp "$src/${SKU}.fbx" "$dest/${SKU}.fbx"
-            cp "$src/manifest.json" "$dest/manifest.json"
-            cp "$src/factory-metrics.json" "$dest/factory-metrics.json"
-            cp "$SPEC_PATH" "$dest/spec.json"
-            printf '%s\n' "$input_digest" > "$dest/build-input.sha256"
-          fi
+          for name in thumbnail view-hero view-front view-rear view-left view-right view-top; do cp "$src/${name}.png" "$dest/${name}.png"; done
+          for ext in blend glb fbx; do cp "$src/${SKU}.${ext}" "$dest/${SKU}.${ext}"; done
+          cp "$src/manifest.json" "$src/factory-metrics.json" "$dest/"
+          cp "$SPEC_PATH" "$dest/spec.json"
+          printf '%s\n' "$input_digest" > "$dest/build-input.sha256"
 
           for file in thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png "$SKU.blend" "$SKU.glb" "$SKU.fbx" manifest.json factory-metrics.json spec.json build-input.sha256; do
             test -s "$dest/$file"
@@ -205,12 +221,13 @@ jobs:
             sha256sum thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png > render.sha256
           )
           render_sha="$(cd "$dest" && sha256sum thumbnail.png view-hero.png view-front.png view-rear.png view-left.png view-right.png view-top.png | sha256sum | awk '{print $1}')"
+          git add "$dest"
+          done < <(jq -r '.[]' <<<"$SPECS_JSON")
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "$dest"
           changed=false
           if ! git diff --cached --quiet; then
-            git commit -m "chore: publish ${SKU} generated product evidence"
+            git commit -m "chore: publish generated world-item product evidence"
             git push origin "HEAD:${HEAD_REF}"
             changed=true
           fi
@@ -225,10 +242,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           ISSUE_NUMBER: ${{ steps.select.outputs.issue_number }}
+          SPECS_JSON: ${{ steps.select.outputs.specs_json }}
           SKU: ${{ steps.select.outputs.sku }}
           FINAL_HEAD: ${{ steps.publish.outputs.final_head }}
         run: |
           set -euo pipefail
+          while IFS= read -r spec_path; do
+            export SKU="$(jq -r '.id' "$spec_path")"
           base="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${FINAL_HEAD}/pages/io/items/${SKU}"
           start="<!-- world-item-${SKU}:start -->"
           end="<!-- world-item-${SKU}:end -->"
@@ -268,6 +288,7 @@ jobs:
             comment_id="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${target}/comments" --paginate --jq ".[] | select(.body | contains(\"${marker}\")) | .id" | head -n1)"
             if [ -n "$comment_id" ]; then gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" -F body=@/tmp/comment.md >/dev/null; else gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${target}/comments" -F body=@/tmp/comment.md >/dev/null; fi
           done
+          done < <(jq -r '.[]' <<<"$SPECS_JSON")
 
       - name: Dispatch exact-head rerun after publishing generated evidence
         if: steps.select.outputs.run == 'true' && steps.publish.outputs.changed == 'true'
@@ -284,7 +305,7 @@ jobs:
 
   integrate:
     needs: generate
-    if: needs.generate.result == 'success' && needs.generate.outputs.changed == 'false'
+    if: needs.generate.result == 'success' && needs.generate.outputs.changed == 'false' && needs.generate.outputs.sku_count == '1'
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     env:
@@ -421,3 +442,4 @@ jobs:
             comment_id="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${target}/comments" --paginate --jq ".[] | select(.body | contains(\"${marker}\")) | .id" | head -n1)"
             if [ -n "$comment_id" ]; then gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" -F body=@/tmp/completion.md >/dev/null; else gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${target}/comments" -F body=@/tmp/completion.md >/dev/null; fi
           done
+

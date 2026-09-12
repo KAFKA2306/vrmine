@@ -26,6 +26,7 @@ on:
       - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs.meta"
+      - "Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillage*.cs"
       - "pages/games/stich-meister/index.html"
       - "docs/QUALITY_GATES.md"
       - ".github/PULL_REQUEST_TEMPLATE.md"
@@ -44,6 +45,7 @@ on:
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
       - "scripts/run-retro-cafe-unity.mjs"
+      - "scripts/run-woodland-tabletop-village-unity.mjs"
       - "Taskfile.yml"
       - "skills/**"
       - "agr.toml"
@@ -73,6 +75,7 @@ on:
       - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs.meta"
+      - "Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillage*.cs"
       - "pages/games/stich-meister/index.html"
       - "docs/QUALITY_GATES.md"
       - ".github/PULL_REQUEST_TEMPLATE.md"
@@ -91,6 +94,7 @@ on:
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
       - "scripts/run-retro-cafe-unity.mjs"
+      - "scripts/run-woodland-tabletop-village-unity.mjs"
       - "Taskfile.yml"
       - "skills/**"
       - "agr.toml"
@@ -154,6 +158,7 @@ jobs:
           node --check scripts/run-perspective-cage-unity.mjs
           node --check scripts/run-glb-consumer-unity.mjs
           node --check scripts/run-retro-cafe-unity.mjs
+          node --check scripts/run-woodland-tabletop-village-unity.mjs
 
       - name: Install pinned vrc-get
         run: node scripts/install-vrc-get.mjs
