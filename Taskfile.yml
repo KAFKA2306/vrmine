@@ -25,6 +25,7 @@ tasks:
       - node --test pages/games/answer-impostor/engine.test.mjs
       - node scripts/verify-quality-gates.mjs
       - node scripts/verify-factory-timing.mjs
+      - node scripts/verify-world-item-packages.mjs
       - node scripts/world-item-graph.mjs --check
       - task: world-design:check
       - python3 -m py_compile scripts/world_build_factory.py scripts/verify_world_build.py
@@ -47,7 +48,7 @@ tasks:
       - node scripts/world-design-to-blender-plan.mjs config/world-design/generated/cyber-alley-tea-nook.json
 
   woodland:modules:
-    desc: Manufacture and verify the four core Woodland Tabletop Village modules with Blender 4.2
+    desc: Manufacture and verify the five core Woodland Tabletop Village modules with Blender 4.2
     cmds:
       - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-great-tree-01.json
       - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-great-tree-01.json
@@ -57,6 +58,9 @@ tasks:
       - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-cottage-01.json
       - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-bridge-01.json
       - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-bridge-01.json
+      - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-market-stall-01.json
+      - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-market-stall-01.json
+      - node scripts/verify-world-item-packages.mjs
 
   world-build:pilot:
     desc: Generate and verify the canonical pilot room with Blender 4.2
