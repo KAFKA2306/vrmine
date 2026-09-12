@@ -19,6 +19,10 @@ const vec2 = (value, name) => {
   if (!Array.isArray(value) || value.length !== 2) fail(`${name} must be [x,y]`);
   return value.map((entry, index) => finite(entry, `${name}[${index}]`));
 };
+const strings = (value, name) => {
+  if (!Array.isArray(value) || value.some((entry) => typeof entry !== 'string' || !entry)) fail(`${name} must be a string array`);
+  return [...value];
+};
 const sha256 = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
 
 const build = spec.world_build;
@@ -98,11 +102,7 @@ const retreatAssetId = build.retreat?.seat_asset_id;
 const socialSeats = [];
 for (let index = 0; index < seatCount; index += 1) {
   const angle = (Math.PI * 2 * index) / seatCount;
-  const position = [
-    socialCenter[0] + Math.cos(angle) * seatRadius,
-    socialCenter[1] + Math.sin(angle) * seatRadius,
-    0,
-  ];
+  const position = [socialCenter[0] + Math.cos(angle) * seatRadius, socialCenter[1] + Math.sin(angle) * seatRadius, 0];
   assertInside(position, `social seat ${index + 1}`);
   socialSeats.push({
     id: `social-seat-${index + 1}`,
@@ -116,8 +116,7 @@ for (let i = 0; i < socialSeats.length; i += 1) {
   for (let j = i + 1; j < socialSeats.length; j += 1) {
     const a = socialSeats[i].position_m;
     const b = socialSeats[j].position_m;
-    const distance = Math.hypot(a[0] - b[0], a[1] - b[1]);
-    if (distance > maxFaceDistance + 1e-9) fail(`social seat pair ${i + 1}/${j + 1} exceeds max face distance`);
+    if (Math.hypot(a[0] - b[0], a[1] - b[1]) > maxFaceDistance + 1e-9) fail(`social seat pair ${i + 1}/${j + 1} exceeds max face distance`);
   }
 }
 
@@ -129,9 +128,7 @@ if (retreatReach > clearance + 1e-9) fail('retreat center is not reachable from 
 const anchorToSocial = Math.hypot(anchor[0] - socialCenter[0], anchor[1] - socialCenter[1]);
 const socialRadius = socialDiameter / 2;
 const anchorDistance = Math.min(...waypoints.map((point) => Math.hypot(point[0] - anchor[0], point[1] - anchor[1])));
-const approachDistance = anchorToSocial <= socialRadius + 1e-9
-  ? Math.max(0, anchorDistance - socialRadius)
-  : anchorDistance;
+const approachDistance = anchorToSocial <= socialRadius + 1e-9 ? Math.max(0, anchorDistance - socialRadius) : anchorDistance;
 if (approachDistance > finite(build.activity_anchor?.approach_clearance_m, 'world_build.activity_anchor.approach_clearance_m') + 1e-9) {
   fail('activity anchor is not reachable from circulation path');
 }
@@ -156,8 +153,8 @@ const blockoutInstances = blockoutAnchors.map((entry, index) => {
     role: entry.role ?? null,
   };
 });
-
 const blockoutById = new Map(blockoutInstances.map((entry) => [entry.id, entry]));
+
 const compositionAxisIds = spec.blockout?.composition_axis ?? ['entrance', 'plaza'];
 if (!Array.isArray(compositionAxisIds) || compositionAxisIds.length < 2) fail('blockout.composition_axis must contain at least two nodes');
 const compositionAxis = compositionAxisIds.map((id, index) => {
@@ -170,18 +167,81 @@ const compositionAxis = compositionAxisIds.map((id, index) => {
 });
 
 const glbAssetIds = new Set();
-const collectGlb = (record) => {
-  if (record?.source_kind === 'glb') glbAssetIds.add(record.asset_id);
-};
-const tableRecord = {
-  asset_id: tableAssetId,
-  ...sourceFor(tableAssetId),
-  position_m: [socialCenter[0], socialCenter[1], 0],
-};
+const collectGlb = (record) => { if (record?.source_kind === 'glb') glbAssetIds.add(record.asset_id); };
+const tableRecord = {asset_id: tableAssetId, ...sourceFor(tableAssetId), position_m: [socialCenter[0], socialCenter[1], 0]};
 collectGlb(tableRecord);
 socialSeats.forEach(collectGlb);
 collectGlb({asset_id: retreatAssetId, ...sourceFor(retreatAssetId)});
 blockoutInstances.forEach(collectGlb);
+
+let visualLayers = null;
+if (spec.blockout) {
+  const practicalLights = strings(spec.lighting_design?.practical_lights ?? [], 'lighting_design.practical_lights');
+  if (practicalLights.length < 1) fail('lighting_design.practical_lights must not be empty for blockout visual layers');
+  const palette = spec.atmosphere?.palette ?? {};
+  const requiredPaletteKeys = ['wood_brown', 'forest_green', 'warm_cream', 'accent_terracotta', 'lamp_gold'];
+  for (const key of requiredPaletteKeys) {
+    if (typeof palette[key] !== 'string' || !/^#[0-9A-Fa-f]{6}$/.test(palette[key])) fail(`atmosphere.palette.${key} must be #RRGGBB`);
+  }
+  const materialPalette = {
+    primary: strings(spec.material_palette?.primary ?? [], 'material_palette.primary'),
+    secondary: strings(spec.material_palette?.secondary ?? [], 'material_palette.secondary'),
+    avoid: strings(spec.material_palette?.avoid ?? [], 'material_palette.avoid'),
+  };
+  const lifeTraceIds = strings(spec.life_traces ?? [], 'life_traces');
+  if (new Set(lifeTraceIds).size < 3) fail('life_traces must contain at least three distinct IDs');
+
+  const requireAnchor = (id) => {
+    const found = blockoutById.get(id);
+    if (!found) fail(`visual layer requires missing blockout anchor ${id}`);
+    return found;
+  };
+  const bind = (anchorId, offset) => {
+    const base = requireAnchor(anchorId).position_m;
+    return base.map((value, index) => value + offset[index]);
+  };
+
+  const practicalBindings = [
+    {token: 'lodge_window', position_m: bind('lodge', [0, -0.12, 0.25]), energy_w: 22, radius_m: 0.32},
+    {token: 'two_cottage_windows', position_m: bind('cottage_a', [0, -0.08, 0.18]), energy_w: 12, radius_m: 0.22},
+    {token: 'two_cottage_windows', position_m: bind('cottage_b', [0, -0.08, 0.17]), energy_w: 12, radius_m: 0.22},
+    {token: 'market_lantern', position_m: bind('market_stall', [0, -0.10, 0.22]), energy_w: 16, radius_m: 0.26},
+    {token: 'bridge_lantern', position_m: bind('bridge', [0.18, 0, 0.16]), energy_w: 10, radius_m: 0.20},
+  ];
+  const resolvedTokens = new Set(practicalBindings.map((entry) => entry.token));
+  for (const token of practicalLights) if (!resolvedTokens.has(token)) fail(`unresolved practical light token ${token}`);
+  for (const token of resolvedTokens) if (!practicalLights.includes(token)) fail(`practical light binding is not canonical: ${token}`);
+
+  const lifeTraceBindings = [
+    {id: lifeTraceIds[0], kind: 'book', position_m: bind('reading_bench', [-0.05, 0.00, 0.18]), palette_key: 'warm_cream', classification: 'paper'},
+    {id: lifeTraceIds[1], kind: 'mug', position_m: bind('reading_bench', [0.10, 0.01, 0.18]), palette_key: 'warm_cream', classification: 'matte_ceramic'},
+    {id: lifeTraceIds[2], kind: 'firewood', position_m: bind('lodge', [-0.25, 0.13, 0.04]), palette_key: 'wood_brown', classification: 'wood'},
+  ];
+  const naturalLayers = [
+    {kind: 'moss', position_m: bind('great_tree', [0, 0, 0.015]), scale_m: [0.68, 0.58, 0.02], palette_key: 'forest_green', classification: 'moss'},
+    {kind: 'low_vegetation', position_m: bind('lodge', [-0.31, 0.16, 0.035]), scale_m: [0.18, 0.13, 0.10], palette_key: 'forest_green', classification: 'moss'},
+    {kind: 'leaf_scatter', position_m: bind('bridge', [0.24, -0.12, 0.025]), scale_m: [0.24, 0.13, 0.012], palette_key: 'accent_terracotta', classification: 'paper'},
+  ];
+
+  visualLayers = {
+    practical_lights: practicalLights,
+    practical_light_bindings: practicalBindings,
+    palette: Object.fromEntries(requiredPaletteKeys.map((key) => [key, palette[key]])),
+    material_palette: materialPalette,
+    life_trace_ids: lifeTraceIds,
+    life_trace_bindings: lifeTraceBindings,
+    natural_layer_kinds: naturalLayers.map((entry) => entry.kind),
+    natural_layers: naturalLayers,
+    atmospheric_depth: {
+      enabled: true,
+      mechanism: 'world_volume_haze',
+      density: 0.018,
+      color_palette_key: 'warm_cream',
+      camera_clip_start_m: finite(spec.runtime_budget?.camera_near_clip_m, 'runtime_budget.camera_near_clip_m'),
+      camera_clip_end_m: finite(spec.runtime_budget?.background_max_distance_m, 'runtime_budget.background_max_distance_m'),
+    },
+  };
+}
 
 const raw = fs.readFileSync(specPath);
 const plan = {
@@ -193,11 +253,7 @@ const plan = {
   platform_target: spec.meta?.platform_target ?? null,
   footprint: {width, depth, height},
   ...(viewOpening ? {view_opening: viewOpening} : {}),
-  spawn: {
-    position_m: spawn,
-    facing_deg: finite(build.spawn?.facing_deg, 'world_build.spawn.facing_deg'),
-    buffer_radius_m: spawnBuffer,
-  },
+  spawn: {position_m: spawn, facing_deg: finite(build.spawn?.facing_deg, 'world_build.spawn.facing_deg'), buffer_radius_m: spawnBuffer},
   social_core: {
     center_m: socialCenter,
     diameter: socialDiameter,
@@ -206,23 +262,14 @@ const plan = {
     table: tableRecord,
     seats: socialSeats,
   },
-  retreat: {
-    zone_id: build.retreat?.zone_id,
-    center_m: retreatCenter,
-    seat_count: retreatSeatCount,
-    seat_asset_id: retreatAssetId,
-    ...sourceFor(retreatAssetId),
-  },
-  activity_anchor: {
-    kind: build.activity_anchor?.kind,
-    position_m: anchor,
-    approach_clearance_m: finite(build.activity_anchor?.approach_clearance_m, 'world_build.activity_anchor.approach_clearance_m'),
-  },
+  retreat: {zone_id: build.retreat?.zone_id, center_m: retreatCenter, seat_count: retreatSeatCount, seat_asset_id: retreatAssetId, ...sourceFor(retreatAssetId)},
+  activity_anchor: {kind: build.activity_anchor?.kind, position_m: anchor, approach_clearance_m: finite(build.activity_anchor?.approach_clearance_m, 'world_build.activity_anchor.approach_clearance_m')},
   hero_view: {position_m: heroPosition, target_m: heroTarget},
   circulation_contract: {waypoints_m: waypoints, minimum_clearance: clearance},
   composition_axis: compositionAxis,
   blockout_instances: blockoutInstances,
   asset_ids: [...glbAssetIds].sort(),
+  ...(visualLayers ? {visual_layers: visualLayers} : {}),
   runtime: {
     realtime_lights: Number(spec.runtime_budget?.realtime_light_count ?? 0),
     max_size_pc_mb: Number(spec.runtime_budget?.max_size_pc_mb ?? 0),
