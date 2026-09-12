@@ -12,13 +12,14 @@ public static class WoodlandTabletopVillagePrefabBuild
     const string PrefabPath = PrefabFolder + "/WoodlandTabletopVillage.prefab";
     const string RootName = "WoodlandTabletopVillage";
 
-    [Serializable] class Spec { public Blockout blockout; }
+    [Serializable] class Spec { public Blockout blockout; public string[] life_traces; }
     [Serializable] class Blockout { public Anchor[] anchors; }
     [Serializable] class Anchor { public string id; }
 
     public static void BuildAndVerifyBatch()
     {
         WoodlandTabletopVillageSceneBuilder.BuildBatch();
+        WoodlandTabletopVillageLifeTraceBuild.MaterializeAndVerify();
         MaterializePrefab();
         VerifyPrefabOrThrow();
         Debug.Log("Woodland Tabletop Village prefab verification PASS");
@@ -50,6 +51,12 @@ public static class WoodlandTabletopVillagePrefabBuild
         Require(village.childCount == anchors.Length, "prefab anchor count differs from canonical spec");
         foreach (string id in anchors)
             Require(Find(prefab.transform, id) != null, "canonical anchor is missing from prefab: " + id);
+
+        Require(spec.life_traces != null && spec.life_traces.Length >= 3, "canonical spec must contain at least three life traces");
+        Transform traces = Find(prefab.transform, "LifeTraces");
+        Require(traces != null, "LifeTraces group is missing from prefab");
+        foreach (string id in spec.life_traces.Take(3))
+            Require(Find(prefab.transform, "LifeTrace_" + id) != null, "canonical life trace is missing from prefab: " + id);
 
         VRCSceneDescriptor descriptor = prefab.GetComponentInChildren<VRCSceneDescriptor>(true);
         Require(descriptor != null, "VRCSceneDescriptor is missing from prefab");
