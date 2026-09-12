@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "id": "woodland-grass-clump-01",
+  "source_spec": "config/world-items/woodland-grass-clump-01.json",
+  "spec_sha256": "7105fc5fee577d3bcd110a78bf15e96e783cae9311a318d1070f99941f2f07af",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.08200296014547348,
+    0.07044798880815506,
+    0.15712735056877136
+  ],
+  "bounds_min_m": [
+    -0.03654532879590988,
+    -0.036954108625650406,
+    4.624016582965851e-07
+  ],
+  "bounds_max_m": [
+    0.0454576313495636,
+    0.033493880182504654,
+    0.15712781250476837
+  ],
+  "bounds_center_m": [
+    0.0044561512768268585,
+    -0.001730114221572876,
+    0.07856413722038269
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": -5.17e-08,
+      "center_error_y": -6.413e-07,
+      "fill_ratio": 0.8399999719,
+      "normalized_bounds": [
+        -0.2125838936,
+        0.2125837902,
+        -0.4200006273,
+        0.4199993446
+      ],
+      "ortho_scale": 0.180068627
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -1.774e-07,
+      "fill_ratio": 0.8400000016,
+      "normalized_bounds": [
+        -0.2169844393,
+        0.2169844393,
+        -0.4200001782,
+        0.4199998234
+      ],
+      "ortho_scale": 0.1889604628
+    },
+    "rear": {
+      "center_error_x": 0.0,
+      "center_error_y": 2.759e-07,
+      "fill_ratio": 0.8400000252,
+      "normalized_bounds": [
+        -0.2168919932,
+        0.2168919932,
+        -0.4199997367,
+        0.4200002885
+      ],
+      "ortho_scale": 0.1890410036
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": 6.398e-07,
+      "fill_ratio": 0.8399999736,
+      "normalized_bounds": [
+        -0.1833259967,
+        0.1833259967,
+        -0.419999347,
+        0.4200006266
+      ],
+      "ortho_scale": 0.1921385676
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 1.009e-07,
+      "fill_ratio": 0.8399999952,
+      "normalized_bounds": [
+        -0.1907954003,
+        0.1907954003,
+        -0.4199998967,
+        0.4200000985
+      ],
+      "ortho_scale": 0.1846165806
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999847,
+      "normalized_bounds": [
+        -0.4199999924,
+        0.4199999924,
+        -0.3608344247,
+        0.3608344247
+      ],
+      "ortho_scale": 0.0976225734
+    }
+  },
+  "triangles": 90,
+  "parts_count": 9,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "woodland-grass-clump-01.blend": "710b66439b130b5e401186e8aadfb33e9bf93896e6b4e3b33b49be16e6c8b0bc",
+    "woodland-grass-clump-01.glb": "f7205ca0fee600a25748637825c3b813fd54bc69c3b2d2c5f8ac993e74d5584b",
+    "woodland-grass-clump-01.fbx": "405f6af168d566afde0687738a2611f4f9c01c6f3210c95d57e4a6777b15de19",
+    "thumbnail.png": "67d578e8330a9d6789a24ab560da62a205ad4c80c835829992f42fa989863e12",
+    "view-hero.png": "67d578e8330a9d6789a24ab560da62a205ad4c80c835829992f42fa989863e12",
+    "view-front.png": "ad38670a1cf76db220ea5450a7c575aa99f94f3aeec2d4863853352555664041",
+    "view-rear.png": "44bfffbba26d768c8533a645062c0a96be5cf911d212c6888d4d02ea7d8f065d",
+    "view-left.png": "a97cbfc3693e00ca6eeef86149d815d1c937cb131509a23be578b689be57572d",
+    "view-right.png": "562ea66c5775819c6a279d9af69524ab3a012f10369ce58cd2530d700d68a829",
+    "view-top.png": "a37dd7f7feef92b77971b479e4af5fc62aae9bea19d646c1b47e5fb61f4dccb6"
+  }
+}
