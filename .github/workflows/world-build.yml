@@ -27,7 +27,7 @@ permissions:
 
 concurrency:
   group: vrmine-generated-world-pr-${{ github.event.pull_request.number || inputs.pr_number }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -249,4 +249,3 @@ jobs:
             git rebase "origin/$HEAD_REF"
             git push origin "HEAD:${HEAD_REF}"
           fi
-
