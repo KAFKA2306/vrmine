@@ -37,7 +37,7 @@ const scenePath = path.join(projectRoot, 'Assets', 'KafkaMade', 'VRMine', 'Scene
 const run = spawnSync(unityPath, [
   '-batchmode',
   '-projectPath', projectRoot,
-  '-executeMethod', 'WoodlandTabletopVillageBuilder.BuildBatch',
+  '-executeMethod', 'WoodlandTabletopVillageSceneBuilder.BuildBatch',
   '-logFile', logPath,
   '-quit',
 ], {
