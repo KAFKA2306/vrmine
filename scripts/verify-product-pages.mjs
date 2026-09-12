@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { canonicalProducts, origin } from './build-product-pages.mjs';
+import { canonicalProducts, publishedProducts, origin } from './build-product-pages.mjs';
 
 const target = process.argv[2] || '_site';
 const remote = /^https?:\/\//.test(target);
-const products = canonicalProducts();
+const products = publishedProducts(canonicalProducts(), remote ? 'pages' : target);
 async function read(path, binary = false) {
   if (!remote) return readFileSync(join(target, path), binary ? undefined : 'utf8');
   const response = await fetch(new URL(path, target.endsWith('/') ? target : target + '/'), {cache:'no-store', signal:AbortSignal.timeout(30000)});
@@ -19,12 +19,12 @@ function sha256(bytes) {
 const [home, gallery, view, catalogText, sitemap] = await Promise.all(['index.html','io/index.html','io/view.html','io/catalog.json','sitemap.xml'].map(p => read(p)));
 const catalog = JSON.parse(catalogText);
 const expected = products.map(s => s.id).sort();
-assert.deepEqual(catalog.map(s=>s.id).sort(), expected, 'canonical SKU != catalog SKU');
+assert.deepEqual(catalog.map(s=>s.id).sort(), expected, 'published SKU != catalog SKU');
 const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1].replaceAll('&amp;','&'));
 assert.equal(urls.length, new Set(urls).size, 'Duplicate sitemap URL');
 assert(urls.includes(origin+'io/'), 'Gallery missing from sitemap');
 const productUrls = urls.filter(u=>u.startsWith(origin+'io/view.html'));
-assert.deepEqual(productUrls.map(u=>new URL(u).searchParams.get('item')).sort(), expected, 'canonical SKU != sitemap SKU');
+assert.deepEqual(productUrls.map(u=>new URL(u).searchParams.get('item')).sort(), expected, 'published SKU != sitemap SKU');
 assert(!urls.some(u=>u.includes('/io/items/')), 'Non-HTML item directory in sitemap');
 assert.match(home, /href="\.\/io\/"/);
 assert(!/href="\.\/3d\/retro-cafe\/pendant-light\/"/.test(home), 'Legacy product is still a primary Home entry');
@@ -109,4 +109,4 @@ for (const worldId of worldIds) {
     assert.equal(sha256(image), render.sha256, `${worldId}/${render.path}: production render hash differs`);
   }
 }
-console.log(`PASS ${target}: Home → Gallery → Product navigation; ${products.length} canonical/catalog/sitemap IDs; all product pages/specs/hero PNGs; ${variantCount} materialized variant manifest/GLB/render sets; ${worldIds.length} World Build manifest/plan/GLB/render sets`);
+console.log(`PASS ${target}: Home → Gallery → Product navigation; ${products.length} published catalog/sitemap IDs; all product pages/specs/hero PNGs; ${variantCount} materialized variant manifest/GLB/render sets; ${worldIds.length} World Build manifest/plan/GLB/render sets`);
