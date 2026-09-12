@@ -1,0 +1,32 @@
+{
+  "id": "woodland-lodge-01",
+  "family": "Home/Office",
+  "display_name": "Woodland Lodge",
+  "dimensions_m": [0.75, 0.62, 0.56],
+  "parts": [
+    {"component":"box","name":"body","size":[0.56,0.44,0.30],"position":[0,0,0.15],"rotation_deg":[0,0,0],"material":"wood_wall"},
+    {"component":"box","name":"roof_left","size":[0.36,0.50,0.055],"position":[-0.14,0,0.39],"rotation_deg":[0,32,0],"material":"roof"},
+    {"component":"box","name":"roof_right","size":[0.36,0.50,0.055],"position":[0.14,0,0.39],"rotation_deg":[0,-32,0],"material":"roof"},
+    {"component":"box","name":"door","size":[0.12,0.025,0.20],"position":[0,-0.232,0.10],"rotation_deg":[0,0,0],"material":"door_wood"},
+    {"component":"box","name":"window_left","size":[0.10,0.018,0.09],"position":[-0.18,-0.236,0.18],"rotation_deg":[0,0,0],"material":"window_warm"},
+    {"component":"box","name":"window_right","size":[0.10,0.018,0.09],"position":[0.18,-0.236,0.18],"rotation_deg":[0,0,0],"material":"window_warm"},
+    {"component":"cylinder","name":"chimney","radius":0.035,"height":0.22,"position":[0.20,0.08,0.43],"vertices":12,"material":"stone"}
+  ],
+  "materials": {
+    "wood_wall":{"base_color":[0.43,0.25,0.12],"roughness":0.84,"metallic":0},
+    "roof":{"base_color":[0.18,0.12,0.08],"roughness":0.9,"metallic":0},
+    "door_wood":{"base_color":[0.24,0.12,0.055],"roughness":0.88,"metallic":0},
+    "window_warm":{"base_color":[0.86,0.58,0.20],"roughness":0.5,"metallic":0},
+    "stone":{"base_color":[0.32,0.30,0.26],"roughness":0.95,"metallic":0}
+  },
+  "variants": [
+    {"id":"moss-roof","material_overrides":{"roof":{"base_color":[0.20,0.29,0.15],"roughness":0.95}}}
+  ],
+  "price_hypothesis":{"currency":"JPY","single":400,"mini_set_target":1200},
+  "license":{"name":"Proprietary / BOOTH terms pending","provenance":"Original generic procedural geometry and materials authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded geometry.","status":"DRAFT"},
+  "formats":["blend","glb","fbx"],
+  "unity_status":"UNVERIFIED",
+  "vrchat_status":"UNVERIFIED",
+  "booth_status":"UNVERIFIED",
+  "selection_evidence":{"observed_2026_09_12":["Required warm social anchor in woodland-tabletop-village-v0 blockout","Warm window light is a core atmosphere cue"],"expected_production_minutes":10,"manual_touch_target":0,"reusable_component_ratio_target":1.0}
+}
