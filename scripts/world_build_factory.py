@@ -134,6 +134,8 @@ def render_view(name, position, target, out_dir, resolution=(960, 540)):
     bpy.ops.object.camera_add(location=position)
     camera = bpy.context.object
     camera.name = f"RenderCamera_{name}"
+    camera["source_position_m"] = list(position)
+    camera["source_target_m"] = list(target)
     look_at(camera, target)
     camera.data.lens = 34
     camera.data.clip_start = 0.01
@@ -242,6 +244,11 @@ def main():
         "retreat": plan["retreat"],
         "activity_anchor": plan["activity_anchor"],
         "circulation_contract": plan["circulation_contract"],
+        "hero_view": {
+            "camera_object": "RenderCamera_hero",
+            "position_m": plan["hero_view"]["position_m"],
+            "target_m": plan["hero_view"]["target_m"],
+        },
         "asset_sources": asset_sources,
         "runtime": {"realtime_lights": plan["runtime"]["realtime_lights"], "exported_render_only_lights": 0},
         "outputs": {
