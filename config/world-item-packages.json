@@ -31,6 +31,18 @@
         "snake-plant-01",
         "minimal-wall-light-01"
       ]
+    },
+    {
+      "id": "woodland-village-core-pack-01",
+      "kind": "theme_pack",
+      "display_name": "Woodland Tabletop Village Core Pack",
+      "world_design": "woodland-tabletop-village-v0",
+      "items": [
+        "woodland-great-tree-01",
+        "woodland-lodge-01",
+        "woodland-cottage-01",
+        "woodland-bridge-01"
+      ]
     }
   ]
 }
