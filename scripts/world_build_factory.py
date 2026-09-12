@@ -70,6 +70,7 @@ def make_material(name, rgba, roughness=0.6, emission=None, palette_key=None, cl
             bsdf.inputs["Emission Strength"].default_value = 2.0
     if palette_key:
         material["palette_key"] = palette_key
+        material.use_fake_user = True
     if classification:
         material["material_classification"] = classification
     return material
@@ -330,31 +331,51 @@ def create_life_traces(plan, material_by_key):
     return created_ids
 
 
-def create_natural_layers(plan, material_by_key):
+def create_natural_layers(plan, collection, asset_root, record_source, material_by_key):
     visual = plan.get("visual_layers") or {}
-    allowed = set(visual.get("natural_layer_kinds") or [])
-    layers = visual.get("natural_layers") or []
+    templates = {}
     created = []
-    for index, layer in enumerate(layers):
-        kind = layer.get("kind")
-        if kind not in allowed:
-            fail(f"natural layer kind is not allowed: {kind!r}")
-        position = layer["position_m"]
-        scale = layer["scale_m"]
-        material = material_by_key[layer["palette_key"]]
-        if kind == "moss":
-            obj = cylinder(f"NaturalLayer_{index + 1}_moss", position, max(scale[0], scale[1]) / 2, scale[2], material, 32)
-            obj.scale.y = min(scale[0], scale[1]) / max(scale[0], scale[1])
-        elif kind == "low_vegetation":
-            obj = cylinder(f"NaturalLayer_{index + 1}_low_vegetation", position, max(scale[0], scale[1]) / 2, scale[2], material, 12)
-        elif kind == "leaf_scatter":
-            obj = cube(f"NaturalLayer_{index + 1}_leaf_scatter", position, scale, material)
-            obj.rotation_euler[2] = math.radians(18)
+    for layer in visual.get("natural_layers") or []:
+        asset_id = layer["asset_id"]
+        if asset_id not in templates:
+            root, source = import_glb_instance(asset_id, layer["instance_id"], layer["position_m"],
+                                               None, collection, asset_root, layer["yaw_deg"])
+            for child in root.children_recursive:
+                if child.type != "MESH":
+                    continue
+                for material in child.data.materials:
+                    if material is None:
+                        continue
+                    key = "forest_green"
+                    if layer["kind"] == "root":
+                        key = "wood_brown"
+                    elif layer["kind"] == "mushroom":
+                        key = "warm_cream" if material.name.startswith("stem") else "accent_terracotta"
+                    material["palette_key"] = key
+                    material["material_classification"] = material_by_key[key]["material_classification"]
+            templates[asset_id] = root
         else:
-            fail(f"unsupported natural layer kind {kind!r}")
-        obj["natural_layer_kind"] = kind
-        obj["material_classification"] = layer["classification"]
-        created.append(kind)
+            template = templates[asset_id]
+            root = template.copy()
+            root.name = layer["instance_id"]
+            collection.objects.link(root)
+            copies = {template: root}
+            # Children share mesh/material datablocks; each transform remains independent.
+            for original in template.children_recursive:
+                obj = original.copy()
+                collection.objects.link(obj)
+                copies[original] = obj
+            for original, obj in copies.items():
+                if original != template:
+                    obj.parent = copies[original.parent]
+            source = Path(root["source_glb"])
+        root.location = layer["position_m"]
+        root.rotation_euler = (0, 0, math.radians(layer["yaw_deg"]))
+        root.scale = (layer["scale"],) * 3
+        root["natural_layer_kind"] = layer["kind"]
+        root["vegetation_anchor_id"] = layer["anchor_id"]
+        record_source(root, source)
+        created.append(layer["kind"])
     if len(created) < 3:
         fail("at least three natural layer instances are required")
     return created
@@ -463,7 +484,7 @@ def main():
     atmospheric_depth = {"enabled": False}
     if visual:
         life_trace_ids = create_life_traces(plan, material_by_key)
-        natural_layer_kinds = create_natural_layers(plan, material_by_key)
+        natural_layer_kinds = create_natural_layers(plan, build_collection, asset_root, record_source, material_by_key)
         practical_counts = create_practical_lights(plan, palette, material_by_key)
         atmospheric_depth = configure_atmospheric_depth(scene, visual["atmospheric_depth"], palette)
 
@@ -488,7 +509,7 @@ def main():
     for obj in geometry:
         obj.select_set(True)
     glb_path = out_dir / "world.glb"
-    bpy.ops.export_scene.gltf(filepath=str(glb_path), export_format="GLB", use_selection=True, export_yup=True)
+    bpy.ops.export_scene.gltf(filepath=str(glb_path), export_format="GLB", use_selection=True, export_yup=True, export_extras=True)
 
     depth = (visual or {}).get("atmospheric_depth") or {}
     clip_start = depth.get("camera_clip_start_m", 0.01)

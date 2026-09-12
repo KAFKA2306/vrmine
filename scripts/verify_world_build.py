@@ -78,6 +78,186 @@ def assert_practical_token_contract(expected_tokens, actual_tokens):
         fail(f"practical light token mismatch: expected {sorted(set(expected_tokens))}, got {sorted(set(actual_tokens))}")
 
 
+def convex_hull_xy(points):
+    points = sorted(set((float(p.x), float(p.y)) for p in points))
+    if len(points) <= 1:
+        return points
+    def cross(a, b, c):
+        return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+    lower, upper = [], []
+    for output, ordered in ((lower, points), (upper, reversed(points))):
+        for point in ordered:
+            while len(output) >= 2 and cross(output[-2], output[-1], point) <= 0:
+                output.pop()
+            output.append(point)
+    return lower[:-1] + upper[:-1]
+
+
+def polygons_overlap(a, b):
+    # Separating axes detect overlap even when no vertex lies inside the other polygon.
+    for polygon in (a, b):
+        for i, point in enumerate(polygon):
+            other = polygon[(i + 1) % len(polygon)]
+            axis = (-(other[1] - point[1]), other[0] - point[0])
+            if math.hypot(*axis) < 1e-12:
+                continue
+            pa = [p[0] * axis[0] + p[1] * axis[1] for p in a]
+            pb = [p[0] * axis[0] + p[1] * axis[1] for p in b]
+            if max(pa) <= min(pb) + 1e-8 or max(pb) <= min(pa) + 1e-8:
+                return False
+    return True
+
+
+def distance_to_polygon_xy(center, polygon):
+    if not polygon:
+        fail("vegetation mesh has no projected vertices")
+    signs, distances = [], []
+    for i, start in enumerate(polygon):
+        end = polygon[(i + 1) % len(polygon)]
+        dx, dy = end[0] - start[0], end[1] - start[1]
+        cx, cy = center[0] - start[0], center[1] - start[1]
+        signs.append(dx * cy - dy * cx)
+        denominator = dx * dx + dy * dy
+        t = max(0, min(1, (cx * dx + cy * dy) / denominator)) if denominator else 0
+        distances.append(math.hypot(cx - t * dx, cy - t * dy))
+    if len(polygon) >= 3 and (all(x >= 0 for x in signs) or all(x <= 0 for x in signs)):
+        return 0.0
+    return min(distances)
+
+
+def footprint_polygon(record):
+    x, y = record["position_m"][:2]
+    width, depth = record["footprint_m"]
+    theta = math.radians(record.get("yaw_deg", 0))
+    cosine, sine = math.cos(theta), math.sin(theta)
+    return [(x + dx * cosine - dy * sine, y + dx * sine + dy * cosine)
+            for dx, dy in ((-width / 2, -depth / 2), (width / 2, -depth / 2),
+                           (width / 2, depth / 2), (-width / 2, depth / 2))]
+
+
+def verify_vegetation(plan):
+    visual = plan.get("visual_layers") or {}
+    records = visual.get("natural_layers") or []
+    if not records:
+        return {"instances": 0, "triangles": 0, "materials": 0, "meshes": 0}
+    expected = {record["instance_id"]: record for record in records}
+    if len(expected) != len(records):
+        fail("duplicate vegetation instance IDs in plan")
+    canonical_ids = {
+        "woodland-moss-patch-01", "woodland-fern-01", "woodland-grass-clump-01",
+        "woodland-mushroom-cluster-01", "woodland-exposed-root-01",
+    }
+    if {record["asset_id"] for record in records} != canonical_ids:
+        fail("vegetation plan must materialize all five canonical source assets")
+    roots = [obj for obj in bpy.context.scene.objects if obj.get("natural_layer_kind")]
+    if {obj.name for obj in roots} != set(expected) or len(roots) != len(expected):
+        fail("vegetation scene instance set mismatch")
+    constraints = visual["vegetation_constraints"]
+    lower, upper = constraints["tabletop_min_m"], constraints["tabletop_max_m"]
+    plaza_center, plaza_radius = constraints["plaza_center_m"], float(constraints["plaza_radius_m"])
+    table = plan["social_core"]["table"]
+    table_geometry = table.get("geometry") or {}
+    table_radius = float(table_geometry["diameter_m"]) / 2 if table_geometry.get("kind") == "round_table" else None
+    table_center = table["position_m"]
+    obstacles = [(record, footprint_polygon(record)) for record in plan["blockout_instances"]]
+    anchors = {record["id"] for record in plan["blockout_instances"]}
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    triangles, mesh_count, materials, mesh_names = 0, 0, set(), set()
+    triangles_by_instance = {}
+    for root in roots:
+        record = expected[root.name]
+        triangles_by_instance[root.name] = 0
+        expect_identity(root, record, f"vegetation {root.name}")
+        if record["source_kind"] != "glb" or root.type != "EMPTY":
+            fail(f"vegetation {root.name} must be a canonical GLB root")
+        if root.get("natural_layer_kind") != record["kind"]:
+            fail(f"vegetation {root.name} kind mismatch")
+        if root.get("vegetation_anchor_id") != record["anchor_id"] or record["anchor_id"] not in anchors:
+            fail(f"vegetation {root.name} anchor mismatch")
+        position, rotation, scale = root.matrix_world.decompose()
+        euler = rotation.to_euler("XYZ")
+        if not vec_close(position, record["position_m"], 2e-4):
+            fail(f"vegetation {root.name} position mismatch")
+        if not vec_close(scale, [record["scale"]] * 3, 2e-4):
+            fail(f"vegetation {root.name} scale mismatch")
+        if not angle_close_deg(euler.z, record["yaw_deg"]) or not close(euler.x, 0) or not close(euler.y, 0):
+            fail(f"vegetation {root.name} orientation mismatch")
+        children = [obj for obj in root.children_recursive if obj.type == "MESH"]
+        if not children:
+            fail(f"vegetation {root.name} has no mesh descendants")
+        for child in children:
+            if child.name in mesh_names:
+                fail(f"vegetation mesh belongs to multiple instance roots: {child.name}")
+            mesh_names.add(child.name)
+            mesh_count += 1
+            evaluated = child.evaluated_get(depsgraph)
+            mesh = evaluated.to_mesh()
+            try:
+                points = [evaluated.matrix_world @ vertex.co for vertex in mesh.vertices]
+                if not points or any(not math.isfinite(value) for point in points for value in point):
+                    fail(f"vegetation {child.name} has empty or nonfinite geometry")
+                if any(point[axis] < lower[axis] - 2e-4 or point[axis] > upper[axis] + 2e-4
+                       for point in points for axis in range(3)):
+                    fail(f"vegetation {root.name} leaves tabletop bounds")
+                if table_radius is not None and any(
+                        math.hypot(point.x - table_center[0], point.y - table_center[1]) > table_radius + 2e-4
+                        for point in points):
+                    fail(f"vegetation {root.name} leaves round tabletop radius")
+                hull = convex_hull_xy(points)
+                if distance_to_polygon_xy(plaza_center, hull) < plaza_radius - 2e-4:
+                    fail(f"vegetation {root.name} occupies central plaza")
+                for obstacle, footprint in obstacles:
+                    tree_exception = (obstacle["id"] == record["anchor_id"] == "great_tree"
+                                      and record["asset_id"] in {"woodland-moss-patch-01", "woodland-exposed-root-01"})
+                    if not tree_exception and polygons_overlap(hull, footprint):
+                        fail(f"vegetation {root.name} overlaps blockout footprint {obstacle['id']}")
+                mesh.calc_loop_triangles()
+                triangles += len(mesh.loop_triangles)
+                triangles_by_instance[root.name] += len(mesh.loop_triangles)
+                for material in mesh.materials:
+                    if material:
+                        materials.add(material.name)
+            finally:
+                evaluated.to_mesh_clear()
+    budget = visual["vegetation_budget"]
+    for key, value in (("instances", len(roots)), ("triangles", triangles), ("materials", len(materials))):
+        if value > int(budget[f"max_{key}"]):
+            fail(f"vegetation {key} budget exceeded: {value} > {budget[f'max_{key}']}")
+    if triangles <= 0 or not materials:
+        fail("vegetation geometry or materials missing")
+    return {"instances": len(roots), "triangles": triangles, "materials": len(materials),
+            "meshes": mesh_count, "triangles_by_instance": triangles_by_instance}
+
+
+def verify_vegetation_identity_negative_fixture(plan):
+    root = require_object(plan["visual_layers"]["natural_layers"][0]["instance_id"])
+    original = root["asset_id"]
+    root["asset_id"] = "__broken_vegetation_asset__"
+    rejected = False
+    try:
+        verify_vegetation(plan)
+    except RuntimeError as exc:
+        if "asset identity mismatch" not in str(exc):
+            raise
+        rejected = True
+    finally:
+        root["asset_id"] = original
+    if not rejected:
+        fail("broken vegetation identity negative fixture unexpectedly passed")
+
+
+def verify_exported_vegetation(plan, glb_path, blend_summary):
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.ops.import_scene.gltf(filepath=str(glb_path))
+    bpy.context.view_layer.update()
+    summary = verify_vegetation(plan)
+    # glTF primitives may split by material on reimport; object count is diagnostic only.
+    for key in ("instances", "triangles", "materials", "triangles_by_instance"):
+        if summary.get(key) != blend_summary.get(key):
+            fail(f"exported vegetation {key} differs: {summary.get(key)} != {blend_summary.get(key)}")
+    return summary
+
+
 def verify_visual_layers(plan, manifest):
     visual = plan.get("visual_layers")
     if not visual:
@@ -265,13 +445,19 @@ def main():
         fail("render-only lights leaked into runtime export")
 
     expected_renders = {"view-hero.png", "view-top.png", "view-social-core.png", "view-retreat.png", "view-circulation.png"}
-    actual_renders = {entry["path"] for entry in manifest.get("outputs", {}).get("renders", [])}
+    render_records = manifest.get("outputs", {}).get("renders", [])
+    actual_renders = {entry["path"] for entry in render_records}
+    if len(render_records) != len(actual_renders):
+        fail("manifest contains duplicate render paths")
+    render_hashes = {entry["path"]: entry["sha256"] for entry in render_records}
     if actual_renders != expected_renders:
         fail(f"render set mismatch: {sorted(actual_renders)}")
     for name in expected_renders:
         path = out_dir / name
         if not path.is_file() or path.stat().st_size < 1024:
             fail(f"missing or empty render {name}")
+        if sha256(path) != render_hashes[name]:
+            fail(f"render hash mismatch: {name}")
         try:
             image = bpy.data.images.load(str(path), check_existing=False)
             if tuple(int(v) for v in image.size) != (960, 540):
@@ -300,6 +486,7 @@ def main():
         fail("manifest blockout instance contract mismatch")
 
     visual_summary = verify_visual_layers(plan, manifest)
+    vegetation_summary = verify_vegetation(plan)
     negative_fixture = None
     if plan.get("visual_layers"):
         actual_tokens = {obj.get("practical_light_token") for obj in bpy.data.objects if obj.type == "LIGHT" and obj.get("practical_light_token")}
@@ -310,12 +497,15 @@ def main():
         except RuntimeError as exc:
             if "practical light token mismatch" not in str(exc):
                 raise
-        negative_fixture = "practical-light-token"
+        verify_vegetation_identity_negative_fixture(plan)
+        negative_fixture = ["practical-light-token", "vegetation-asset-identity"]
 
     if manifest["outputs"]["blend"]["sha256"] != sha256(blend_path):
         fail("blend hash mismatch")
     if manifest["outputs"]["glb"]["sha256"] != sha256(glb_path):
         fail("glb hash mismatch")
+
+    exported_vegetation = verify_exported_vegetation(plan, glb_path, vegetation_summary)
 
     print(json.dumps({
         "status": "PASS",
@@ -326,9 +516,12 @@ def main():
         "life_traces": visual_summary["life_traces"],
         "natural_layers": visual_summary["natural_layers"],
         "negative_fixture": negative_fixture,
+        "vegetation": vegetation_summary,
+        "exported_vegetation": exported_vegetation,
         "renders": sorted(expected_renders),
     }))
 
 
 if __name__ == "__main__":
     main()
+

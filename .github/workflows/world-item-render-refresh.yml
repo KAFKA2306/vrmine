@@ -18,6 +18,7 @@ jobs:
   plan:
     runs-on: ubuntu-24.04
     outputs:
+      run: ${{ steps.route.outputs.run }}
       matrix: ${{ steps.matrix.outputs.matrix }}
       head_ref: ${{ steps.pr.outputs.head_ref }}
       head_sha: ${{ steps.pr.outputs.head_sha }}
@@ -33,7 +34,8 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$PR_NUMBER"
-          gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefName,headRefOid > /tmp/pr.json
+          gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefName,headRefOid,baseRefOid > /tmp/pr.json
+          echo "base_sha=$(jq -r .baseRefOid /tmp/pr.json)" >> "$GITHUB_OUTPUT"
           echo "head_ref=$(jq -r .headRefName /tmp/pr.json)" >> "$GITHUB_OUTPUT"
           echo "head_sha=$(jq -r .headRefOid /tmp/pr.json)" >> "$GITHUB_OUTPUT"
 
@@ -42,9 +44,24 @@ jobs:
           ref: ${{ steps.pr.outputs.head_sha }}
           sparse-checkout: |
             config/world-items
-          fetch-depth: 1
+          fetch-depth: 0
+
+      - name: Route changed SKU generation to the existing product workflow
+        id: route
+        env:
+          BASE_SHA: ${{ steps.pr.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          changed_specs="$(git diff --diff-filter=AM --name-only "$BASE_SHA...HEAD" -- config/world-items/ | grep -E '^config/world-items/[^/]+\.json$' || true)"
+          if [ -n "$changed_specs" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "Changed canonical SKUs are generated and published by retro-cafe.yml."
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Resolve owning Issue
+        if: steps.route.outputs.run == 'true'
         id: issue
         env:
           GH_TOKEN: ${{ github.token }}
@@ -58,6 +75,7 @@ jobs:
           echo "number=${issues[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Build all-SKU matrix
+        if: steps.route.outputs.run == 'true'
         id: matrix
         run: |
           set -euo pipefail
@@ -77,13 +95,14 @@ jobs:
           echo "sku_count=$(jq '.include | length' /tmp/matrix.json)" >> "$GITHUB_OUTPUT"
 
       - uses: actions/cache@v4
+        if: steps.route.outputs.run == 'true'
         id: blender-cache
         with:
           path: blender-4.2.0-linux-x64
           key: blender-4.2.0-linux-x64-official
 
       - name: Seed verified Blender 4.2.0 cache
-        if: steps.blender-cache.outputs.cache-hit != 'true'
+        if: steps.route.outputs.run == 'true' && steps.blender-cache.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
@@ -93,6 +112,7 @@ jobs:
           test -x blender-4.2.0-linux-x64/blender
 
   generate:
+    if: needs.plan.outputs.run == 'true'
     needs: plan
     runs-on: ubuntu-24.04
     timeout-minutes: 40
@@ -150,6 +170,7 @@ jobs:
           retention-days: 7
 
   publish:
+    if: needs.plan.outputs.run == 'true'
     needs: [plan, generate]
     runs-on: ubuntu-24.04
     timeout-minutes: 45
@@ -404,3 +425,4 @@ jobs:
           } > /tmp/framing-evidence.md
           gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/framing-evidence.md
           gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/framing-evidence.md
+

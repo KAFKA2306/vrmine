@@ -1,8 +1,8 @@
 {
   "schema_version": 3,
-  "source_commit": "1cebf7edb2093d06546ba507281c1e7fe1216127",
+  "source_commit": "a405d57130d4652d6070e3e55a691a30263832ca",
   "build_plan": ".artifacts/world-builds/woodland-tabletop-village-v0/build-plan.json",
-  "build_plan_sha256": "ba910f4fab0d25ad8f7aa1ffc9cda7ac432b9572677d5df9db6549381090d52e",
+  "build_plan_sha256": "7245c1a175b676431bb0308341b7248e821df65f036d96e354e111dccb1df71b",
   "source_spec": "config/world-design/generated/woodland-tabletop-village-v0.json",
   "source_spec_sha256": "db183ce804e35d617bca29cbf735fff206190f091f6cf0ce6c12b2eef86b1474",
   "blender_version": "4.2.0",
@@ -385,6 +385,26 @@
     "woodland-stream-segment-01": {
       "path": ".artifacts/world-build-source-items/woodland-stream-segment-01/woodland-stream-segment-01.glb",
       "sha256": "ccd33ed8ccb99cde65bd896f5ad1ff4d63556fad6ca0cab0ebbd95dae6350bd8"
+    },
+    "woodland-moss-patch-01": {
+      "path": ".artifacts/world-build-source-items/woodland-moss-patch-01/woodland-moss-patch-01.glb",
+      "sha256": "05e0423d5502b0ee956ccb011df171f552f0f9c275b352284e6f4694f36b30b3"
+    },
+    "woodland-exposed-root-01": {
+      "path": ".artifacts/world-build-source-items/woodland-exposed-root-01/woodland-exposed-root-01.glb",
+      "sha256": "d32a218eb4f62e48b12642a79ac55380e0d036379b474a92418457e3bb240c5d"
+    },
+    "woodland-fern-01": {
+      "path": ".artifacts/world-build-source-items/woodland-fern-01/woodland-fern-01.glb",
+      "sha256": "1fc7a13987f111dd415125c7c19e076d0e3329390eb8c95e1ea5d98ebf03038d"
+    },
+    "woodland-mushroom-cluster-01": {
+      "path": ".artifacts/world-build-source-items/woodland-mushroom-cluster-01/woodland-mushroom-cluster-01.glb",
+      "sha256": "0083392bb37860b8304967eba24c1dc57942b3bfd4af751ec35fd7daa01c94f5"
+    },
+    "woodland-grass-clump-01": {
+      "path": ".artifacts/world-build-source-items/woodland-grass-clump-01/woodland-grass-clump-01.glb",
+      "sha256": "f7205ca0fee600a25748637825c3b813fd54bc69c3b2d2c5f8ac993e74d5584b"
     }
   },
   "procedural_sources": {
@@ -428,11 +448,11 @@
         "classification": "aged_brass"
       },
       "warm_cream": {
-        "material": "Palette_warm_cream",
+        "material": "stem",
         "classification": "paper"
       },
       "wood_brown": {
-        "material": "Palette_wood_brown",
+        "material": "root_dark",
         "classification": "wood"
       }
     },
@@ -443,8 +463,42 @@
     ],
     "natural_layer_kinds": [
       "moss",
-      "low_vegetation",
-      "leaf_scatter"
+      "moss",
+      "moss",
+      "root",
+      "root",
+      "root",
+      "fern",
+      "fern",
+      "fern",
+      "mushroom",
+      "mushroom",
+      "mushroom",
+      "moss",
+      "moss",
+      "moss",
+      "fern",
+      "fern",
+      "fern",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "moss",
+      "moss",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass",
+      "grass"
     ],
     "atmospheric_depth": {
       "enabled": true,
@@ -460,32 +514,32 @@
   "outputs": {
     "blend": {
       "path": "world.blend",
-      "sha256": "fc4de60daa6ed97083be5cd2925ba1c91a9eea9bcbda846b0b585152069e60d3"
+      "sha256": "afa2e8d35e489f035d685a3cd2d8f5d4372a4362583ea632855fa6ece2bea647"
     },
     "glb": {
       "path": "world.glb",
-      "sha256": "8c61a49cff2074b8edc3bbbfd4dc8e9da14da5fb4c054e82db28eda93539c08a"
+      "sha256": "d60f4b58d5ec1686387418452f1988f44497ad27b29d9f0ce8b234ee7ff847e6"
     },
     "renders": [
       {
         "path": "view-hero.png",
-        "sha256": "9d8c6e1084dd30edfad4e423f691a9fa3c8c7d1de41b72ac6853587cd1c95ef5"
+        "sha256": "be3ebd084d746fc2bf5926fe5877969bf22e3c4f03e3efb05155c6fbbf536bf0"
       },
       {
         "path": "view-top.png",
-        "sha256": "d774235da2471838fec029bfe8a4e0451ee3dca72cd441c146474282972507f7"
+        "sha256": "4d34bb7d4f49da49d70e6a14e779d481da5b9a54802599bf5fc43677be4437f1"
       },
       {
         "path": "view-social-core.png",
-        "sha256": "14a5c681996bd1136587aa660995e83d3b51082c4dcc173234f053d3ba4ed837"
+        "sha256": "844c089ce9635c0c1c09a611451c5bc2998dec0fffa5349deabfc1feac5f9f9f"
       },
       {
         "path": "view-retreat.png",
-        "sha256": "2ad74d09969b89f529e6a65fcdf876da739c84b7f1b7a0d7e3ea376290a05dfe"
+        "sha256": "c3a79ea403b9dc01535ff2b5e3d9c646fe834ccda9638bb1323a3ffe146e371c"
       },
       {
         "path": "view-circulation.png",
-        "sha256": "4bb9eb318cd7fcdb58cb12443d61a08d464f5a1a7ef73f9704f749d4058679d1"
+        "sha256": "72cbb633f071c2835db806888b84194f2def7243bc7c4f4f17cdd9597139eae5"
       }
     ]
   }
