@@ -157,11 +157,11 @@
     ],
     "anchors": [
       {
-        "id": "great_tree",
-        "position_m": [0, 0.28, 0.78],
-        "footprint_m": [0.72, 0.72],
-        "height_m": 0.95,
-        "role": "world_symbol"
+        "id": "entrance",
+        "position_m": [0, -1.20, 0.78],
+        "footprint_m": [0.28, 0.18],
+        "height_m": 0.02,
+        "role": "entry_point"
       },
       {
         "id": "bridge",
@@ -169,6 +169,20 @@
         "footprint_m": [0.42, 0.32],
         "height_m": 0.10,
         "role": "entry_threshold"
+      },
+      {
+        "id": "plaza",
+        "position_m": [0, -0.36, 0.78],
+        "footprint_m": [0.72, 0.48],
+        "height_m": 0.02,
+        "role": "composition_anchor"
+      },
+      {
+        "id": "great_tree",
+        "position_m": [0, 0.28, 0.78],
+        "footprint_m": [0.72, 0.72],
+        "height_m": 0.95,
+        "role": "world_symbol"
       },
       {
         "id": "lodge",
