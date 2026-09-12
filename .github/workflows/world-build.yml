@@ -6,10 +6,10 @@ on:
     paths:
       - 'config/world-design/generated/**'
       - 'scripts/world-design-to-blender-plan.mjs'
+      - 'scripts/materialize_world_build_input.py'
       - 'scripts/world_build_factory.py'
       - 'scripts/verify_world_build.py'
       - 'scripts/world_item_factory.py'
-      - 'scripts/verify_world_item.py'
       - 'Taskfile.yml'
       - '.github/workflows/world-build.yml'
       - 'pages/worlds/**'
@@ -49,10 +49,13 @@ jobs:
           BASE_REF: ${{ steps.pr.outputs.base_ref }}
         run: |
           set -euo pipefail
-          git fetch origin "$BASE_REF"
+          git fetch origin "$BASE_REF" main
           mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/${BASE_REF}...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
+          if [ "${#specs[@]}" -eq 0 ] && [ "$BASE_REF" != main ]; then
+            mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/main...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
+          fi
           if [ "${#specs[@]}" -ne 1 ]; then
-            printf 'Expected exactly one changed generated World Design Spec, got %s\n' "${#specs[@]}" >&2
+            printf 'Expected exactly one effective generated World Design Spec, got %s\n' "${#specs[@]}" >&2
             printf '%s\n' "${specs[@]:-}" >&2
             exit 1
           fi
@@ -73,7 +76,7 @@ jobs:
           mkdir -p "$out"
           node scripts/world-design-to-blender-plan.mjs "$SPEC_PATH" > "$out/build-plan.json"
           test "$(jq -r .schema_version "$out/build-plan.json")" = 4
-          source_sha="$(git log -1 --format=%H -- "$SPEC_PATH" config/world-items scripts/world-design-to-blender-plan.mjs scripts/world_item_factory.py scripts/verify_world_item.py scripts/world_build_factory.py scripts/verify_world_build.py Taskfile.yml .github/workflows/world-build.yml)"
+          source_sha="$(git log -1 --format=%H -- "$SPEC_PATH" config/world-items scripts/world-design-to-blender-plan.mjs scripts/materialize_world_build_input.py scripts/world_item_factory.py scripts/world_build_factory.py scripts/verify_world_build.py Taskfile.yml .github/workflows/world-build.yml)"
           current=false
           if [ -f "$dest/manifest.json" ] && [ -f "$dest/build-plan.json" ]; then
             recorded="$(jq -r '.source_commit // empty' "$dest/manifest.json")"
@@ -112,14 +115,12 @@ jobs:
           for asset_id in "${asset_ids[@]}"; do
             spec="config/world-items/${asset_id}.json"
             published="pages/io/items/${asset_id}/${asset_id}.glb"
-            mkdir -p "$source_root/$asset_id"
             if [ -f "$spec" ]; then
-              blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- "$spec"
-              blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- "$spec"
-              generated=".artifacts/world-items/${asset_id}/${asset_id}.glb"
-              test -s "$generated"
-              cp "$generated" "$source_root/$asset_id/${asset_id}.glb"
+              blender -b --python-exit-code 1 --python scripts/materialize_world_build_input.py -- "$spec" "$source_root"
+              test -s "$source_root/$asset_id/${asset_id}.glb"
+              test -s "$source_root/$asset_id/world-build-input.json"
             elif [ -s "$published" ]; then
+              mkdir -p "$source_root/$asset_id"
               cp "$published" "$source_root/$asset_id/${asset_id}.glb"
             else
               echo "Missing materializable source for world asset: $asset_id" >&2
