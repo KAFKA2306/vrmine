@@ -56,6 +56,17 @@ def main():
         fail("manifest build plan digest mismatch")
     if manifest.get("source_spec_sha256") != plan.get("source_spec_sha256"):
         fail("manifest source spec digest mismatch")
+
+    hero_manifest = manifest.get("hero_view")
+    if not isinstance(hero_manifest, dict):
+        fail("manifest hero_view contract is missing")
+    if hero_manifest.get("camera_object") != "RenderCamera_hero":
+        fail("manifest hero camera identity mismatch")
+    if not vec_close(hero_manifest.get("position_m", []), plan["hero_view"]["position_m"]):
+        fail("manifest hero camera position mismatch")
+    if not vec_close(hero_manifest.get("target_m", []), plan["hero_view"]["target_m"]):
+        fail("manifest hero camera target mismatch")
+
     if glb_path.read_bytes()[:4] != b"glTF":
         fail("world.glb has invalid header")
     if blend_path.read_bytes()[:7] != b"BLENDER":
@@ -86,6 +97,22 @@ def main():
         require_object("WorldShell_Back_Header")
         require_object("ActivityAnchor_Frame_Left")
         require_object("ActivityAnchor_Frame_Right")
+
+    hero_camera = require_object("RenderCamera_hero")
+    if hero_camera.type != "CAMERA":
+        fail("hero view object is not a camera")
+    if not vec_close(hero_camera.location, plan["hero_view"]["position_m"]):
+        fail("hero camera scene position mismatch")
+    if not vec_close(hero_camera.get("source_position_m", []), plan["hero_view"]["position_m"]):
+        fail("hero camera source position provenance mismatch")
+    if not vec_close(hero_camera.get("source_target_m", []), plan["hero_view"]["target_m"]):
+        fail("hero camera source target provenance mismatch")
+    expected_direction = Vector(plan["hero_view"]["target_m"]) - hero_camera.location
+    if expected_direction.length <= 1e-8:
+        fail("hero camera target collapses onto camera position")
+    camera_forward = hero_camera.rotation_euler.to_matrix() @ Vector((0, 0, -1))
+    if camera_forward.normalized().dot(expected_direction.normalized()) < 0.99999:
+        fail("hero camera orientation does not point at canonical target")
 
     table = require_object("SocialTable")
     if table.get("asset_id") != plan["social_core"]["table"]["asset_id"]:
