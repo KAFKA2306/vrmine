@@ -20,6 +20,7 @@ public static class WoodlandTabletopVillagePrefabBuild
     {
         WoodlandTabletopVillageSceneBuilder.BuildBatch();
         WoodlandTabletopVillageLifeTraceBuild.MaterializeAndVerify();
+        WoodlandTabletopVillageAudioBuild.MaterializeAndVerifyScene();
         MaterializePrefab();
         VerifyPrefabOrThrow();
         Debug.Log("Woodland Tabletop Village prefab verification PASS");
@@ -62,6 +63,8 @@ public static class WoodlandTabletopVillagePrefabBuild
         Require(descriptor != null, "VRCSceneDescriptor is missing from prefab");
         Require(descriptor.spawns != null && descriptor.spawns.Length == 1 && descriptor.spawns[0] != null, "prefab must preserve exactly one spawn reference");
         Require(descriptor.ReferenceCamera != null, "prefab must preserve VRChat reference camera");
+
+        WoodlandTabletopVillageAudioBuild.VerifyPrefab(prefab);
     }
 
     static Spec LoadSpec()

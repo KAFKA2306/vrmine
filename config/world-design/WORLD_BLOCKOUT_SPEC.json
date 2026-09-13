@@ -1,12 +1,14 @@
 {
   "id": "WORLD_BLOCKOUT_SPEC",
-  "version": 2,
+  "version": 3,
   "subject": "woodland-tabletop-village-v0",
   "purpose": "Machine-readable dependency contract for blockout completion. Design values remain owned by existing canonical sources and are referenced here, not copied.",
   "canonical_sources": {
     "world_design": "config/world-design/generated/woodland-tabletop-village-v0.json",
     "unity_prefab_builder": "Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillagePrefabBuild.cs",
-    "unity_prefab_runner": "scripts/run-woodland-tabletop-village-unity.mjs"
+    "unity_prefab_runner": "scripts/run-woodland-tabletop-village-unity.mjs",
+    "unity_audio_builder": "Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillageAudioBuild.cs",
+    "unity_verification_workflow": ".github/workflows/woodland-unity-verification.yml"
   },
   "completion": {
     "operator": "all",
@@ -50,7 +52,11 @@
       {
         "id": "audio",
         "evidence": [
-          {"type": "json_pointer", "source": "world_design", "pointer": "/soundscape"}
+          {"type": "json_pointer", "source": "world_design", "pointer": "/soundscape"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/retreat_protocol/acoustic_attenuation_db"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/spatial_geometry"},
+          {"type": "repository_file_contains", "source": "unity_audio_builder", "tokens": ["AudioSource", "WriteAmbientWav", "VerifyNegativeVolumeFixture", "AudioRolloffMode.Linear", "source.spatialBlend = 1.0f"]},
+          {"type": "repository_file_contains", "source": "unity_prefab_builder", "tokens": ["WoodlandTabletopVillageAudioBuild.MaterializeAndVerifyScene", "WoodlandTabletopVillageAudioBuild.VerifyPrefab"]}
         ]
       },
       {
@@ -78,7 +84,8 @@
         "id": "verification",
         "evidence": [
           {"type": "json_pointer", "source": "world_design", "pointer": "/acceptance/must_pass"},
-          {"type": "json_pointer", "source": "world_design", "pointer": "/runtime_budget"}
+          {"type": "json_pointer", "source": "world_design", "pointer": "/runtime_budget"},
+          {"type": "repository_file_contains", "source": "unity_verification_workflow", "tokens": ["Exact-head Unity scene/prefab verification", "github.event.pull_request.head.sha", "run-woodland-tabletop-village-unity.mjs"]}
         ]
       }
     ]
