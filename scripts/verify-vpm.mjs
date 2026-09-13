@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { chmod, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
@@ -43,6 +43,21 @@ function runVrcGet(args) {
     stderr: result.stderr ?? "",
     error: result.error ? String(result.error) : null,
   };
+}
+
+async function writeEvidenceFile(path, contents) {
+  try {
+    await writeFile(path, contents);
+    return;
+  } catch (error) {
+    const recoverableWindowsWriteError =
+      process.platform === "win32" && ["EPERM", "EACCES"].includes(error?.code);
+    if (!recoverableWindowsWriteError) throw error;
+  }
+
+  await chmod(path, 0o666).catch(() => {});
+  await rm(path, { force: true });
+  await writeFile(path, contents);
 }
 
 const projectVersionText = await readFile(projectVersionPath, "utf8");
@@ -98,7 +113,7 @@ const evidence = {
   resolve: resolveResult,
   outdated: outdatedResult,
 };
-await writeFile(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`);
+await writeEvidenceFile(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`);
 
 if (resolveResult.error || resolveResult.status !== 0) {
   fail(`vrc-get resolve failed with status ${resolveResult.status}: ${resolveResult.stderr}`);
