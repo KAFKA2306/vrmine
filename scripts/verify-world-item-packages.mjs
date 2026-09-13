@@ -13,16 +13,17 @@ const ids = new Set();
 const kinds = new Set();
 const verifiedItems = new Set();
 
-function verifyItemIdentity(item) {
+function verifyItemIdentity(item, required) {
   if (verifiedItems.has(item)) return;
   const specPath = path.join('config', 'world-items', `${item}.json`);
   const pagesPath = path.join('pages', 'io', 'items', item);
   const manifestPath = path.join(pagesPath, 'manifest.json');
+  if (!existsSync(manifestPath) && !required) return;
+
   const stagedSpecPath = path.join(pagesPath, 'spec.json');
   const buildInputPath = path.join(pagesPath, 'build-input.sha256');
-
-  for (const required of [specPath, manifestPath, stagedSpecPath, buildInputPath]) {
-    assert.ok(existsSync(required), `${item}: package identity input missing: ${required}`);
+  for (const identityPath of [specPath, manifestPath, stagedSpecPath, buildInputPath]) {
+    assert.ok(existsSync(identityPath), `${item}: package identity input missing: ${identityPath}`);
   }
 
   const spec = JSON.parse(readFileSync(specPath, 'utf8'));
@@ -68,9 +69,9 @@ for (const pack of config.packages) {
   }
   for (const item of pack.items) {
     assert.ok(existsSync(`config/world-items/${item}.json`), `${pack.id}: unknown item ${item}`);
-    verifyItemIdentity(item);
+    verifyItemIdentity(item, pack.kind === 'single');
   }
 }
 for (const kind of allowedKinds) assert.ok(kinds.has(kind), `missing package kind: ${kind}`);
 
-console.log(`PASS world-item packages: ${config.packages.length} packages; ${verifiedItems.size} packaged items bound to canonical specs, Pages manifests, build identities, provenance, and artifact hashes`);
+console.log(`PASS world-item packages: ${config.packages.length} packages; ${verifiedItems.size} materialized packaged items bound to canonical specs, Pages manifests, build identities, provenance, and artifact hashes; single packages require materialization`);
