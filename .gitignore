@@ -63,6 +63,7 @@ crashlytics-build.properties
 # Repo-local pinned tools and generated verification evidence
 /.tools/
 /.artifacts/
+/.vrmine-verify/
 
 # Reproducibly materialized third-party Gaussian renderer source.
 /Assets/VRChatGaussianSplatting/
