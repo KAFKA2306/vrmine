@@ -1,0 +1,37 @@
+{
+  "id": "woodland-great-tree-01",
+  "family": "Plants/Planters",
+  "display_name": "Woodland Great Tree",
+  "dimensions_m": [0.72, 0.72, 0.95],
+  "parts": [
+    {"component":"cylinder","name":"trunk","radius":0.105,"height":0.58,"position":[0,0,0.29],"vertices":16,"material":"bark"},
+    {"component":"cylinder","name":"root_base","radius":0.17,"height":0.07,"position":[0,0,0.035],"vertices":12,"material":"bark_dark"},
+    {"component":"cylinder","name":"root_front_left","radius":0.028,"height":0.26,"position":[-0.10,-0.07,0.055],"rotation_deg":[68,-28,-12],"vertices":8,"material":"bark_dark"},
+    {"component":"cylinder","name":"root_front_right","radius":0.026,"height":0.24,"position":[0.10,-0.06,0.052],"rotation_deg":[70,30,10],"vertices":8,"material":"bark_dark"},
+    {"component":"cylinder","name":"root_rear","radius":0.024,"height":0.22,"position":[0.02,0.10,0.050],"rotation_deg":[72,-8,170],"vertices":8,"material":"bark_dark"},
+    {"component":"cylinder","name":"branch_left","radius":0.035,"height":0.28,"position":[-0.085,0.01,0.57],"rotation_deg":[8,-58,-18],"vertices":10,"material":"bark"},
+    {"component":"cylinder","name":"branch_right","radius":0.032,"height":0.26,"position":[0.085,0.015,0.61],"rotation_deg":[-6,56,15],"vertices":10,"material":"bark"},
+    {"component":"cylinder","name":"branch_rear","radius":0.026,"height":0.22,"position":[0.0,0.075,0.64],"rotation_deg":[54,0,4],"vertices":8,"material":"bark"},
+    {"component":"sphere","name":"canopy_left","size":[0.54,0.50,0.25],"position":[-0.11,-0.01,0.69],"vertices":10,"material":"leaf"},
+    {"component":"sphere","name":"canopy_right","size":[0.50,0.46,0.24],"position":[0.12,0.03,0.72],"vertices":10,"material":"leaf_mid"},
+    {"component":"sphere","name":"canopy_rear","size":[0.44,0.48,0.23],"position":[0.01,0.11,0.77],"vertices":10,"material":"leaf"},
+    {"component":"sphere","name":"canopy_top","size":[0.34,0.32,0.22],"position":[-0.02,0.00,0.84],"vertices":10,"material":"leaf_light"}
+  ],
+  "materials": {
+    "bark":{"base_color":[0.24,0.12,0.055],"roughness":0.9,"metallic":0},
+    "bark_dark":{"base_color":[0.14,0.07,0.035],"roughness":0.95,"metallic":0},
+    "leaf":{"base_color":[0.16,0.30,0.13],"roughness":0.88,"metallic":0},
+    "leaf_mid":{"base_color":[0.22,0.38,0.17],"roughness":0.86,"metallic":0},
+    "leaf_light":{"base_color":[0.31,0.46,0.21],"roughness":0.84,"metallic":0}
+  },
+  "variants": [
+    {"id":"autumn","material_overrides":{"leaf":{"base_color":[0.48,0.18,0.07]},"leaf_mid":{"base_color":[0.65,0.29,0.08]},"leaf_light":{"base_color":[0.76,0.46,0.12]}}}
+  ],
+  "price_hypothesis":{"currency":"JPY","single":300,"mini_set_target":900},
+  "license":{"name":"Proprietary / BOOTH terms pending","provenance":"Original generic procedural geometry and materials authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded geometry.","status":"DRAFT"},
+  "formats":["blend","glb","fbx"],
+  "unity_status":"UNVERIFIED",
+  "vrchat_status":"UNVERIFIED",
+  "booth_status":"UNVERIFIED",
+  "selection_evidence":{"observed_2026_09_12":["Required landmark in woodland-tabletop-village-v0 blockout","Primary visual identity module for the no-gameplay atmosphere milestone"],"expected_production_minutes":8,"manual_touch_target":0,"reusable_component_ratio_target":1.0}
+}

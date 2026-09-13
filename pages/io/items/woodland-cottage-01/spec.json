@@ -1,0 +1,39 @@
+{
+  "id": "woodland-cottage-01",
+  "family": "Home/Office",
+  "display_name": "Woodland Cottage",
+  "dimensions_m": [0.34, 0.30, 0.31],
+  "parts": [
+    {"component":"box","name":"body","size":[0.28,0.24,0.18],"position":[0,0,0.09],"rotation_deg":[0,0,0],"material":"plaster"},
+    {"component":"box","name":"timber_band","size":[0.29,0.020,0.028],"position":[0,-0.126,0.145],"rotation_deg":[0,0,0],"material":"timber"},
+    {"component":"box","name":"roof_left","size":[0.19,0.27,0.035],"position":[-0.070,0,0.235],"rotation_deg":[0,35,0],"material":"roof"},
+    {"component":"box","name":"roof_right","size":[0.19,0.27,0.035],"position":[0.070,0,0.235],"rotation_deg":[0,-35,0],"material":"roof"},
+    {"component":"box","name":"roof_edge_front","size":[0.30,0.020,0.020],"position":[0,-0.139,0.218],"rotation_deg":[0,0,0],"material":"timber"},
+    {"component":"box","name":"round_door_blockout","size":[0.075,0.018,0.125],"position":[-0.045,-0.129,0.0625],"rotation_deg":[0,0,0],"material":"door"},
+    {"component":"box","name":"door_header","size":[0.092,0.020,0.016],"position":[-0.045,-0.131,0.134],"rotation_deg":[0,0,0],"material":"timber"},
+    {"component":"box","name":"window","size":[0.065,0.016,0.060],"position":[0.075,-0.130,0.115],"rotation_deg":[0,0,0],"material":"window_warm"},
+    {"component":"box","name":"window_header","size":[0.082,0.020,0.015],"position":[0.075,-0.132,0.153],"rotation_deg":[0,0,0],"material":"timber"},
+    {"component":"box","name":"post_left","size":[0.018,0.018,0.165],"position":[-0.125,-0.128,0.100],"rotation_deg":[0,0,0],"material":"timber"},
+    {"component":"box","name":"post_right","size":[0.018,0.018,0.165],"position":[0.125,-0.128,0.100],"rotation_deg":[0,0,0],"material":"timber"},
+    {"component":"box","name":"cross_beam","size":[0.265,0.018,0.018],"position":[0,-0.128,0.175],"rotation_deg":[0,0,0],"material":"timber"},
+    {"component":"cylinder","name":"chimney","radius":0.018,"height":0.105,"position":[0.105,0.045,0.242],"vertices":8,"material":"stone"}
+  ],
+  "materials": {
+    "plaster":{"base_color":[0.72,0.61,0.43],"roughness":0.92,"metallic":0},
+    "timber":{"base_color":[0.28,0.14,0.06],"roughness":0.90,"metallic":0},
+    "roof":{"base_color":[0.34,0.16,0.08],"roughness":0.93,"metallic":0},
+    "door":{"base_color":[0.22,0.11,0.05],"roughness":0.90,"metallic":0},
+    "window_warm":{"base_color":[0.88,0.62,0.24],"roughness":0.52,"metallic":0},
+    "stone":{"base_color":[0.33,0.31,0.27],"roughness":0.95,"metallic":0}
+  },
+  "variants": [
+    {"id":"forest-green-roof","material_overrides":{"roof":{"base_color":[0.17,0.28,0.15],"roughness":0.95}}}
+  ],
+  "price_hypothesis":{"currency":"JPY","single":350,"mini_set_target":1000},
+  "license":{"name":"Proprietary / BOOTH terms pending","provenance":"Original generic procedural geometry and materials authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded geometry.","status":"DRAFT"},
+  "formats":["blend","glb","fbx"],
+  "unity_status":"UNVERIFIED",
+  "vrchat_status":"UNVERIFIED",
+  "booth_status":"UNVERIFIED",
+  "selection_evidence":{"observed_2026_09_12":["Required residential massing in woodland-tabletop-village-v0 blockout","Small asymmetrical housing supports the lived-in village silhouette"],"expected_production_minutes":8,"manual_touch_target":0,"reusable_component_ratio_target":1.0}
+}
