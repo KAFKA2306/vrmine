@@ -1,0 +1,88 @@
+{
+  "id": "WORLD_BLOCKOUT_SPEC",
+  "version": 1,
+  "subject": "woodland-tabletop-village-v0",
+  "purpose": "Machine-readable dependency contract for blockout completion. Design values remain owned by existing canonical sources and are referenced here, not copied.",
+  "canonical_sources": {
+    "world_design": "config/world-design/generated/woodland-tabletop-village-v0.json"
+  },
+  "completion": {
+    "operator": "all",
+    "requirements": [
+      {
+        "id": "spatial_layout",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/blockout/coordinate_system"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/blockout/anchors"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/world_build/circulation"}
+        ]
+      },
+      {
+        "id": "hero_view",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/world_build/hero_view"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/acceptance/must_pass"}
+        ]
+      },
+      {
+        "id": "scale",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/spatial_geometry"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/blockout/tabletop_top_z_m"}
+        ]
+      },
+      {
+        "id": "required_landmarks",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/blockout/composition_axis"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/blockout/anchors"}
+        ]
+      },
+      {
+        "id": "lighting",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/lighting_design"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/optical_lighting"}
+        ]
+      },
+      {
+        "id": "audio",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/soundscape"}
+        ]
+      },
+      {
+        "id": "life_traces",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/life_traces"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/acceptance/must_pass"}
+        ]
+      },
+      {
+        "id": "interaction",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/acceptance/gameplay_required"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/media_governance"}
+        ]
+      },
+      {
+        "id": "unity_prefab",
+        "evidence": [],
+        "unresolved_dependency": "No canonical UnityPrefab evidence reference is defined in current main. Empty evidence is a machine-readable blocking condition, not a duplicated implementation guess."
+      },
+      {
+        "id": "verification",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/acceptance/must_pass"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/runtime_budget"}
+        ]
+      }
+    ]
+  },
+  "evaluation": {
+    "require_canonical_source_exists": true,
+    "require_all_json_pointers_resolve": true,
+    "require_nonempty_evidence_per_requirement": true,
+    "pass_condition": "all requirements pass"
+  }
+}
