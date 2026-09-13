@@ -21,11 +21,20 @@ function Invoke-GitText {
 
 $repoRoot = Invoke-GitText @("rev-parse", "--show-toplevel")
 $repoRoot = [System.IO.Path]::GetFullPath($repoRoot)
+$sourceHead = Invoke-GitText @("rev-parse", "HEAD")
+$sourceStatus = Invoke-GitText @("status", "--porcelain=v1", "--untracked-files=all")
+$sourceDirty = -not [string]::IsNullOrWhiteSpace($sourceStatus)
 
 if ([string]::IsNullOrWhiteSpace($StateRoot)) {
     $StateRoot = Join-Path (Split-Path $repoRoot -Parent) ".vrmine-verify"
 }
 $StateRoot = [System.IO.Path]::GetFullPath($StateRoot)
+
+$policyPath = Join-Path $repoRoot "config\verification-worktree-policy.json"
+if (-not (Test-Path -LiteralPath $policyPath -PathType Leaf)) {
+    throw "verification worktree policy missing: $policyPath"
+}
+$policySha256 = (Get-FileHash -LiteralPath $policyPath -Algorithm SHA256).Hash.ToLowerInvariant()
 
 $revisionSha = Invoke-GitText @("rev-parse", "$Revision^{commit}")
 $shortSha = $revisionSha.Substring(0, 12)
@@ -43,12 +52,20 @@ $manifest = [ordered]@{
     schema_version = 1
     run_id = $runId
     repository = $repoRoot
+    source_head = $sourceHead
+    source_dirty = $sourceDirty
+    source_status_porcelain = $sourceStatus
+    requested_revision = $Revision
     revision = $revisionSha
+    state_root = $StateRoot
     worktree = $worktreePath
     evidence = $evidencePath
+    policy = $policyPath
+    policy_sha256 = $policySha256
     state = "ALLOCATING"
     created_at_utc = [DateTime]::UtcNow.ToString("o")
     recovery_policy = "allocate-new-run"
+    source_mutation_allowed = $false
 }
 $manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
 
@@ -68,7 +85,10 @@ try {
 [ordered]@{
     run_id = $runId
     revision = $revisionSha
+    source_head = $sourceHead
+    source_dirty = $sourceDirty
     worktree = $worktreePath
     evidence = $evidencePath
     manifest = $manifestPath
+    policy_sha256 = $policySha256
 } | ConvertTo-Json -Compress
