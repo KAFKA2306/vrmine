@@ -5,20 +5,21 @@ import { execFileSync } from 'node:child_process';
 import { Script } from 'node:vm';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { canonicalProducts, validateEvidence, distributionLedger, buildProductPages } from './build-product-pages.mjs';
+import { canonicalProducts, publishedProducts, validateEvidence, distributionLedger, buildProductPages } from './build-product-pages.mjs';
 
 const products = canonicalProducts();
+const published = publishedProducts(products,'pages');
 test('actual catalog, distribution ledger, sitemap and navigation agree after the Pages build',()=>{
   const site=mkdtempSync(join(tmpdir(),'vrmine-site-'));
   mkdirSync(join(site,'io'));
   try {
     for(const path of ['index.html','io/index.html','io/view.html'])cpSync(join('pages',path),join(site,path));
     symlinkSync(resolve('pages/io/items'),join(site,'io/items'),'junction');
-    buildProductPages(site);
+    const builtProducts=buildProductPages(site);
     execFileSync(process.execPath,['scripts/verify-product-pages.mjs',site],{stdio:'pipe'});
     const ledger=JSON.parse(readFileSync(join(site,'io/distributions.json'),'utf8'));
-    assert.equal(ledger.length,products.length);
-    assert.deepEqual(ledger.map(x=>x.id),products.map(x=>x.id));
+    assert.equal(ledger.length,builtProducts.length);
+    assert.deepEqual(ledger.map(x=>x.id),builtProducts.map(x=>x.id));
     for(const entry of ledger){
       assert.match(entry.status,/^(READY|BLOCKED_LICENSE)$/);
       assert.ok(entry.spec_sha256);
@@ -29,6 +30,16 @@ test('actual catalog, distribution ledger, sitemap and navigation agree after th
     for(const file of ['pages/io/index.html','pages/io/view.html']) {
       for(const script of readFileSync(file,'utf8').matchAll(/<script>([\s\S]*?)<\/script>/g))new Script(script[1],{filename:file});
     }
+  } finally {rmSync(site,{recursive:true,force:true});}
+});
+test('publication inventory includes only item directories backed by canonical specs',()=>{
+  const site=mkdtempSync(join(tmpdir(),'vrmine-publication-boundary-'));
+  const items=join(site,'io/items');
+  mkdirSync(join(items,products[0].id),{recursive:true});
+  try {
+    assert.deepEqual(publishedProducts(products,site).map(x=>x.id),[products[0].id]);
+    mkdirSync(join(items,'orphan-product'));
+    assert.throws(()=>publishedProducts(products,site),/no canonical spec/);
   } finally {rmSync(site,{recursive:true,force:true});}
 });
 test('product view gates model downloads on verified or published license status',()=>{
@@ -50,20 +61,20 @@ test('canonical package route is fail-closed and bound to manifest, spec and dec
   assert.match(source,/manifest\/spec SKU mismatch/);
 });
 test('distribution ledger binds current model and render files to the generation manifest',()=>{
-  const ledger=distributionLedger(products,'pages');
+  const ledger=distributionLedger(published,'pages');
   for(const entry of ledger){
-    const spec=products.find(x=>x.id===entry.id);
+    const spec=published.find(x=>x.id===entry.id);
     const expectedReady=/^(VERIFIED|PUBLISHED)$/i.test(spec.license?.status||'');
     assert.equal(entry.status,expectedReady?'READY':'BLOCKED_LICENSE');
     assert.equal(entry.models.length,spec.formats.length);
     assert.equal(entry.renders.length,6);
   }
 });
-test('all canonical products have matching real publication evidence',()=>validateEvidence(products,'pages'));
+test('all published products have matching real publication evidence',()=>validateEvidence(published,'pages'));
 for (const failure of ['missing hero','corrupt side image','stale spec','missing model']) {
   test(`publication rejects ${failure}`,()=>{
     const site=mkdtempSync(join(tmpdir(),'vrmine-product-'));
-    const spec=products[0];
+    const spec=published[0];
     const dest=join(site,'io/items',spec.id);
     mkdirSync(dest,{recursive:true});
     cpSync(join('pages/io/items',spec.id),dest,{recursive:true});
