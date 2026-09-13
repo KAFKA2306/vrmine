@@ -68,6 +68,47 @@
       "computer_use_requires_gui_only_reason": true,
       "computer_use_may_not_promote_release_evidence": true,
       "orchestrator_model_claim_is_not_evidence": true
+    },
+    "selection_policy": {
+      "repository_automation": {
+        "default_for": [
+          "asset_generation",
+          "scene_and_prefab_verification",
+          "vpm_resolution",
+          "release_gate_checks"
+        ]
+      },
+      "unity_mcp": {
+        "max_active_providers": 1,
+        "provider_order_for_unity_before_6000": [
+          "tuna_sync_vcc",
+          "coplaydev",
+          "ivanmurzak",
+          "codergamester"
+        ],
+        "requires_explicit_install_confirmation": true,
+        "requires_project_and_editor_probe_before_use": true
+      },
+      "blender_mcp": {
+        "default": "repository_automation",
+        "requires_explicit_selection": true
+      },
+      "skill_routing": {
+        "unity_project_workflow": "unity-mcp-workflow",
+        "unity_validation": "unity-build-validation",
+        "unity_diagnostics": "unity-project-health-check",
+        "unity_cli": "unity-cli-loop",
+        "vrchat_udonsharp": "agent-skills-vrc-udon",
+        "unity_cli_loop": {
+          "minimum_unity": "2022.3",
+          "requires_project_package_install": true,
+          "requires_cli_install": true
+        },
+        "agent_skills_vrc_udon": {
+          "requires_sdk_compatibility_check": true,
+          "requires_official_vrchat_docs_cross_check": true
+        }
+      }
     }
   }
 }
