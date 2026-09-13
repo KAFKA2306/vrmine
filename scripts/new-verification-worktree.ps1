@@ -23,7 +23,7 @@ $repoRoot = Invoke-GitText @("rev-parse", "--show-toplevel")
 $repoRoot = [System.IO.Path]::GetFullPath($repoRoot)
 
 if ([string]::IsNullOrWhiteSpace($StateRoot)) {
-    $StateRoot = Join-Path (Split-Path $repoRoot -Parent) ".vrmine-verify"
+    $StateRoot = Join-Path (Split-Path $repoRoot -Parent) "unity.vrmine-verify"
 }
 $StateRoot = [System.IO.Path]::GetFullPath($StateRoot)
 

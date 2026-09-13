@@ -28,7 +28,7 @@ if (!unityPath || !fs.existsSync(unityPath)) {
   throw new Error(`Unity ${projectVersion} was not found. Set UNITY_EXE to the exact Unity executable path.`);
 }
 
-const evidenceDir = path.join(projectRoot, 'Library', 'VRMine');
+const evidenceDir = path.resolve(process.env.VRMINE_EVIDENCE_DIR ?? path.join(projectRoot, 'Library', 'VRMine'));
 fs.mkdirSync(evidenceDir, { recursive: true });
 const timestamp = new Date().toISOString().replaceAll(':', '').replaceAll('-', '').replace(/\.\d{3}Z$/, 'Z');
 const logPath = path.join(evidenceDir, `woodland-tabletop-village-${timestamp}.log`);
