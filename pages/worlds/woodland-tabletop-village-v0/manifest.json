@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "source_commit": "c3dce93f397ce62a59cc61247494c0c2ab1ba50e",
+  "source_commit": "ce00da433574fd383ce20dcf21824dc42fbb79b9",
   "build_plan": ".artifacts/world-builds/woodland-tabletop-village-v0/build-plan.json",
   "build_plan_sha256": "7245c1a175b676431bb0308341b7248e821df65f036d96e354e111dccb1df71b",
   "source_spec": "config/world-design/generated/woodland-tabletop-village-v0.json",
@@ -360,11 +360,11 @@
   "asset_sources": {
     "woodland-great-tree-01": {
       "path": ".artifacts/world-build-source-items/woodland-great-tree-01/woodland-great-tree-01.glb",
-      "sha256": "21a3c3785f62cdc63b5cdf9d9b4b8f03af1896ee192a7dd0b9ddf8c49fba49a3"
+      "sha256": "3cb03c4b13e3376410d8020a3be06e8451d986a9697f31dd06ee144425119f3d"
     },
     "woodland-bridge-01": {
       "path": ".artifacts/world-build-source-items/woodland-bridge-01/woodland-bridge-01.glb",
-      "sha256": "8333924e73d595b9f05ce04c7ff9125ad41149cd994b4ab9108d2ed8478cab95"
+      "sha256": "13469b375c93406dabeaf0aada5c6eb45dd497fc578f79819304c8b899e5949d"
     },
     "woodland-lodge-01": {
       "path": ".artifacts/world-build-source-items/woodland-lodge-01/woodland-lodge-01.glb",
@@ -388,7 +388,7 @@
     },
     "woodland-moss-patch-01": {
       "path": ".artifacts/world-build-source-items/woodland-moss-patch-01/woodland-moss-patch-01.glb",
-      "sha256": "14e68adf47ad9a4b917a394445452eb3b5c32051ae24904d0b1151354a1feb01"
+      "sha256": "483970ee204f373089c9eaf99a86fdffdf043ab0d1eb66af210228eaa31b803d"
     },
     "woodland-exposed-root-01": {
       "path": ".artifacts/world-build-source-items/woodland-exposed-root-01/woodland-exposed-root-01.glb",
@@ -400,7 +400,7 @@
     },
     "woodland-mushroom-cluster-01": {
       "path": ".artifacts/world-build-source-items/woodland-mushroom-cluster-01/woodland-mushroom-cluster-01.glb",
-      "sha256": "c6fc57bdcfe3b55cb3fe64a1d01c5ef3f77d7bd932d20f358359613edca592d9"
+      "sha256": "915afa9ef29e4d1f401f8b628797f8d6afc04f45b15ba30a7d8af63cd0496bc5"
     },
     "woodland-grass-clump-01": {
       "path": ".artifacts/world-build-source-items/woodland-grass-clump-01/woodland-grass-clump-01.glb",
@@ -514,32 +514,32 @@
   "outputs": {
     "blend": {
       "path": "world.blend",
-      "sha256": "a8b0d64ac834de64182cbf7b4ce46cfd2faa433358c3d015ec00481a4209b449"
+      "sha256": "c679cd596ef0c004fb693738a7c3bfcacfce5ac2aa3f9e723e89fef1b50b7cab"
     },
     "glb": {
       "path": "world.glb",
-      "sha256": "936a67bb0586db2bb7a76a189290dc362b5e64be0ed10c139f204c0007b9c335"
+      "sha256": "e75f63c2c32d763ccae2842a738e5234c278d1d65d41d7cbae3bb0191317cfd8"
     },
     "renders": [
       {
         "path": "view-hero.png",
-        "sha256": "6973c5b7fd4e914a1e611b21cb39caefac2a4c3f9148d8f851ac42c8c2f109f4"
+        "sha256": "c63d8e8afb18e261c69a32c9cdd5ef961ce4f86d80e4f7813ce131ac60debb0b"
       },
       {
         "path": "view-top.png",
-        "sha256": "aaef1395e697733a5152e55750e2f8b221ce3df53e4cdd3da1af9ca26f8ce773"
+        "sha256": "791325988379872b91d91b4c33ebd32ab7c95e009f662479069b33b4561bc1d4"
       },
       {
         "path": "view-social-core.png",
-        "sha256": "a3964df6110b378d54df0f96b2630a2b7554760cc41058d70c34ecbedc121c14"
+        "sha256": "8242607a82b709c8dc3d4284b22a5bea56108749be8a22d80a1859c7b726d415"
       },
       {
         "path": "view-retreat.png",
-        "sha256": "7a580af52a9b3283d43a656aa96def1c4a9f33b1f5eabccba10a894f63227a02"
+        "sha256": "47d8f293a7c6a7e72a8e6dc8606d23c45840f6f7ca549afbb7186b9c6a90c778"
       },
       {
         "path": "view-circulation.png",
-        "sha256": "b617a6b781f7ccfb860dc6a0ec53daf003374de617256d9dee0467ac65bb3342"
+        "sha256": "89e0e0297149b37f0951cd388a574001bdf69376a62232ed86f50c69cd4f7453"
       }
     ]
   }
