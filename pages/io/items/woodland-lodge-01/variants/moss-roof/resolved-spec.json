@@ -1,0 +1,434 @@
+{
+  "id": "woodland-lodge-01--moss-roof",
+  "family": "Home/Office",
+  "display_name": "Woodland Lodge",
+  "dimensions_m": [
+    0.56,
+    0.44,
+    0.46
+  ],
+  "parts": [
+    {
+      "component": "box",
+      "name": "body",
+      "size": [
+        0.46,
+        0.34,
+        0.27
+      ],
+      "position": [
+        0,
+        0,
+        0.135
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "wood_wall"
+    },
+    {
+      "component": "box",
+      "name": "roof_left",
+      "size": [
+        0.31,
+        0.4,
+        0.04
+      ],
+      "position": [
+        -0.13,
+        0,
+        0.35
+      ],
+      "rotation_deg": [
+        0,
+        30,
+        0
+      ],
+      "material": "roof"
+    },
+    {
+      "component": "box",
+      "name": "roof_right",
+      "size": [
+        0.31,
+        0.4,
+        0.04
+      ],
+      "position": [
+        0.13,
+        0,
+        0.35
+      ],
+      "rotation_deg": [
+        0,
+        -30,
+        0
+      ],
+      "material": "roof"
+    },
+    {
+      "component": "box",
+      "name": "roof_edge_front",
+      "size": [
+        0.5,
+        0.025,
+        0.028
+      ],
+      "position": [
+        0,
+        -0.203,
+        0.33
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim"
+    },
+    {
+      "component": "box",
+      "name": "door",
+      "size": [
+        0.105,
+        0.022,
+        0.18
+      ],
+      "position": [
+        0,
+        -0.181,
+        0.09
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "door_wood"
+    },
+    {
+      "component": "box",
+      "name": "door_header",
+      "size": [
+        0.13,
+        0.026,
+        0.022
+      ],
+      "position": [
+        0,
+        -0.184,
+        0.19
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim"
+    },
+    {
+      "component": "box",
+      "name": "window_left",
+      "size": [
+        0.085,
+        0.018,
+        0.075
+      ],
+      "position": [
+        -0.145,
+        -0.182,
+        0.165
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "window_warm"
+    },
+    {
+      "component": "box",
+      "name": "window_right",
+      "size": [
+        0.085,
+        0.018,
+        0.075
+      ],
+      "position": [
+        0.145,
+        -0.182,
+        0.165
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "window_warm"
+    },
+    {
+      "component": "box",
+      "name": "window_left_header",
+      "size": [
+        0.105,
+        0.024,
+        0.018
+      ],
+      "position": [
+        -0.145,
+        -0.185,
+        0.212
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim"
+    },
+    {
+      "component": "box",
+      "name": "window_right_header",
+      "size": [
+        0.105,
+        0.024,
+        0.018
+      ],
+      "position": [
+        0.145,
+        -0.185,
+        0.212
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim"
+    },
+    {
+      "component": "box",
+      "name": "beam_left",
+      "size": [
+        0.026,
+        0.022,
+        0.25
+      ],
+      "position": [
+        -0.205,
+        -0.181,
+        0.145
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim"
+    },
+    {
+      "component": "box",
+      "name": "beam_right",
+      "size": [
+        0.026,
+        0.022,
+        0.25
+      ],
+      "position": [
+        0.205,
+        -0.181,
+        0.145
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim"
+    },
+    {
+      "component": "box",
+      "name": "beam_cross",
+      "size": [
+        0.43,
+        0.022,
+        0.024
+      ],
+      "position": [
+        0,
+        -0.181,
+        0.255
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim"
+    },
+    {
+      "component": "cylinder",
+      "name": "chimney",
+      "radius": 0.025,
+      "height": 0.15,
+      "position": [
+        0.17,
+        0.065,
+        0.37
+      ],
+      "vertices": 10,
+      "material": "stone"
+    },
+    {
+      "component": "box",
+      "name": "sign_bracket",
+      "size": [
+        0.075,
+        0.018,
+        0.018
+      ],
+      "position": [
+        -0.06,
+        -0.195,
+        0.235
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        0
+      ],
+      "material": "aged_brass"
+    },
+    {
+      "component": "box",
+      "name": "sign_board",
+      "size": [
+        0.07,
+        0.016,
+        0.05
+      ],
+      "position": [
+        -0.095,
+        -0.197,
+        0.205
+      ],
+      "rotation_deg": [
+        0,
+        0,
+        4
+      ],
+      "material": "door_wood"
+    }
+  ],
+  "materials": {
+    "wood_wall": {
+      "base_color": [
+        0.43,
+        0.25,
+        0.12
+      ],
+      "roughness": 0.84,
+      "metallic": 0
+    },
+    "roof": {
+      "base_color": [
+        0.2,
+        0.29,
+        0.15
+      ],
+      "roughness": 0.95,
+      "metallic": 0
+    },
+    "door_wood": {
+      "base_color": [
+        0.24,
+        0.12,
+        0.055
+      ],
+      "roughness": 0.88,
+      "metallic": 0
+    },
+    "trim": {
+      "base_color": [
+        0.19,
+        0.09,
+        0.04
+      ],
+      "roughness": 0.91,
+      "metallic": 0
+    },
+    "window_warm": {
+      "base_color": [
+        0.86,
+        0.58,
+        0.2
+      ],
+      "roughness": 0.5,
+      "metallic": 0
+    },
+    "stone": {
+      "base_color": [
+        0.32,
+        0.3,
+        0.26
+      ],
+      "roughness": 0.95,
+      "metallic": 0
+    },
+    "aged_brass": {
+      "base_color": [
+        0.42,
+        0.29,
+        0.12
+      ],
+      "roughness": 0.72,
+      "metallic": 0.55
+    }
+  },
+  "variants": [
+    {
+      "id": "moss-roof",
+      "material_overrides": {
+        "roof": {
+          "base_color": [
+            0.2,
+            0.29,
+            0.15
+          ],
+          "roughness": 0.95
+        }
+      }
+    }
+  ],
+  "price_hypothesis": {
+    "currency": "JPY",
+    "single": 400,
+    "mini_set_target": 1200
+  },
+  "license": {
+    "name": "Proprietary / BOOTH terms pending",
+    "provenance": "Original generic procedural geometry and materials authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded geometry.",
+    "status": "DRAFT"
+  },
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "selection_evidence": {
+    "observed_2026_09_12": [
+      "Required warm social anchor in woodland-tabletop-village-v0 blockout",
+      "Warm window light is a core atmosphere cue"
+    ],
+    "expected_production_minutes": 10,
+    "manual_touch_target": 0,
+    "reusable_component_ratio_target": 1.0
+  },
+  "base_id": "woodland-lodge-01",
+  "variant_id": "moss-roof"
+}

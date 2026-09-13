@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "id": "woodland-lodge-01",
+  "source_spec": "config/world-items/woodland-lodge-01.json",
+  "spec_sha256": "4a726386e758c39bf63cb72058befedd6118c953044a495e5e5fa14a5153a13f",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.5455396771430969,
+    0.4154999852180481,
+    0.4449999928474426
+  ],
+  "bounds_min_m": [
+    -0.27276983857154846,
+    -0.21549999713897705,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.27276983857154846,
+    0.20000000298023224,
+    0.4449999928474426
+  ],
+  "bounds_center_m": [
+    0.0,
+    -0.007749997079372406,
+    0.2224999964237213
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 1.86e-08,
+      "center_error_y": 1.673e-07,
+      "fill_ratio": 0.8399999777,
+      "normalized_bounds": [
+        -0.4199999702,
+        0.4200000074,
+        -0.4081395167,
+        0.4081398514
+      ],
+      "ortho_scale": 0.8014005423
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -3.44e-08,
+      "fill_ratio": 0.840000033,
+      "normalized_bounds": [
+        -0.4200000165,
+        0.4200000165,
+        -0.3779878636,
+        0.3779877948
+      ],
+      "ortho_scale": 0.6494519711
+    },
+    "rear": {
+      "center_error_x": -2.29e-08,
+      "center_error_y": -8.03e-08,
+      "fill_ratio": 0.8400000018,
+      "normalized_bounds": [
+        -0.4200000239,
+        0.419999978,
+        -0.3757101346,
+        0.375709974
+      ],
+      "ortho_scale": 0.6494520307
+    },
+    "left": {
+      "center_error_x": -1.24e-08,
+      "center_error_y": -1.242e-07,
+      "fill_ratio": 0.8400000179,
+      "normalized_bounds": [
+        -0.3464464378,
+        0.3464464129,
+        -0.4200001332,
+        0.4199998847
+      ],
+      "ortho_scale": 0.5996598601
+    },
+    "right": {
+      "center_error_x": 1.24e-08,
+      "center_error_y": -1.242e-07,
+      "fill_ratio": 0.8400000179,
+      "normalized_bounds": [
+        -0.3464464129,
+        0.3464464378,
+        -0.4200001332,
+        0.4199998847
+      ],
+      "ortho_scale": 0.5996598601
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.840000033,
+      "normalized_bounds": [
+        -0.4200000165,
+        0.4200000165,
+        -0.3200694319,
+        0.3200694319
+      ],
+      "ortho_scale": 0.6494519711
+    }
+  },
+  "triangles": 3296,
+  "parts_count": 16,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "woodland-lodge-01.blend": "e1d9833bdc27246d47c271d0ca87d0b2d0e55792123ee043778297c18cda2489",
+    "woodland-lodge-01.glb": "90fb685a46e76bfd8e1a21c87b2b407dedec30e404a084ed07a9b673348ca7db",
+    "woodland-lodge-01.fbx": "bb4e371940a8b62120d54bf74ce2654339752b85478fa7bdbd390788753bf7a3",
+    "thumbnail.png": "0786fb0c707bd3fd8035927dd053d8ab0c6be39c51cd3c2b69e091aa1297fc61",
+    "view-hero.png": "0786fb0c707bd3fd8035927dd053d8ab0c6be39c51cd3c2b69e091aa1297fc61",
+    "view-front.png": "eafeaab39b5ff403b7797bb8c594b68e204d818340490a3c466fa2da94b5be51",
+    "view-rear.png": "67b54e2ebc1644cbef4224d628ff9174354ad3ac0c4ba189e2442bc578b72322",
+    "view-left.png": "2d08e2221a65989b48de573368b14807b1bebd70eb2757b94b0a5f79cc422198",
+    "view-right.png": "39f67794c4f1585e918d41cee91b8a3cf2b22db839097dabc68b98e53c435fa4",
+    "view-top.png": "ce8882ab3c07bdaeb507ea40554dbea957f8397d5c94593d9c97cc223e19ead0"
+  }
+}

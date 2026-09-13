@@ -91,6 +91,7 @@ jobs:
         env:
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
           WORLD_ID: ${{ steps.select.outputs.world_id }}
+          BASE_REF: ${{ steps.pr.outputs.base_ref }}
         run: |
           set -euo pipefail
           out=".artifacts/world-builds/${WORLD_ID}"
@@ -99,8 +100,15 @@ jobs:
           node scripts/world-design-to-blender-plan.mjs "$SPEC_PATH" > "$out/build-plan.json"
           test "$(jq -r .schema_version "$out/build-plan.json")" = 4
           source_sha="$(git log -1 --format=%H -- "$SPEC_PATH" config/world-items scripts/world-design-to-blender-plan.mjs scripts/materialize_world_build_input.py scripts/world_item_factory.py scripts/world_build_factory.py scripts/verify_world_build.py Taskfile.yml .github/workflows/world-build.yml)"
+          inputs_changed=false
+          while IFS= read -r asset_id; do
+            if ! git diff --quiet "origin/${BASE_REF}...HEAD" -- "config/world-items/${asset_id}.json"; then
+              inputs_changed=true
+              break
+            fi
+          done < <(jq -r '.asset_ids[]?' "$out/build-plan.json")
           current=false
-          if [ -f "$dest/manifest.json" ] && [ -f "$dest/build-plan.json" ]; then
+          if [ "$inputs_changed" = false ] && [ -f "$dest/manifest.json" ] && [ -f "$dest/build-plan.json" ]; then
             recorded="$(jq -r '.source_commit // empty' "$dest/manifest.json")"
             if [ "$recorded" = "$source_sha" ] && cmp -s "$out/build-plan.json" "$dest/build-plan.json"; then
               required=(world.blend world.glb manifest.json build-plan.json view-hero.png view-top.png view-social-core.png view-retreat.png view-circulation.png)

@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "id": "woodland-great-tree-01",
+  "source_spec": "config/world-items/woodland-great-tree-01.json",
+  "spec_sha256": "7c59514d9b5675df25dd3f3c43471ed10a430b934b44c580020b7485bbb3776f",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.75,
+    0.6100000143051147,
+    0.9618817567825317
+  ],
+  "bounds_min_m": [
+    -0.3799999952316284,
+    -0.2600000202655792,
+    -0.011881798505783081
+  ],
+  "bounds_max_m": [
+    0.3700000047683716,
+    0.34999996423721313,
+    0.9499999284744263
+  ],
+  "bounds_center_m": [
+    -0.004999995231628418,
+    0.044999971985816956,
+    0.4690590500831604
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 1.441e-07,
+      "center_error_y": -1.179e-07,
+      "fill_ratio": 0.8399999591,
+      "normalized_bounds": [
+        -0.3165803606,
+        0.3165806487,
+        -0.4200000974,
+        0.4199998617
+      ],
+      "ortho_scale": 1.1378879547
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": 2.6e-08,
+      "fill_ratio": 0.8399999771,
+      "normalized_bounds": [
+        -0.3268736096,
+        0.3268736096,
+        -0.4199999626,
+        0.4200000145
+      ],
+      "ortho_scale": 1.1472324133
+    },
+    "rear": {
+      "center_error_x": -1.3e-08,
+      "center_error_y": 2.6e-08,
+      "fill_ratio": 0.8399999771,
+      "normalized_bounds": [
+        -0.3268736356,
+        0.3268736096,
+        -0.4199999626,
+        0.4200000145
+      ],
+      "ortho_scale": 1.1472324133
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": 7.82e-08,
+      "fill_ratio": 0.8399999667,
+      "normalized_bounds": [
+        -0.2666013013,
+        0.2666013013,
+        -0.4199999052,
+        0.4200000615
+      ],
+      "ortho_scale": 1.1440304518
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8400000228,
+      "normalized_bounds": [
+        -0.2651172856,
+        0.2651172856,
+        -0.4200000114,
+        0.4200000114
+      ],
+      "ortho_scale": 1.1504342556
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": -1.67e-08,
+      "fill_ratio": 0.840000008,
+      "normalized_bounds": [
+        -0.420000004,
+        0.420000004,
+        -0.3417731127,
+        0.3417730793
+      ],
+      "ortho_scale": 0.8928571343
+    }
+  },
+  "triangles": 3232,
+  "parts_count": 12,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "woodland-great-tree-01.blend": "8659ab16ac2167eb0faf2045f1641c994de89a38326958a2b34c759ebd26bdc3",
+    "woodland-great-tree-01.glb": "e527ca27e39977b8ed23a0272b1f6dfb64fcc589c63455f5289a56342997ed76",
+    "woodland-great-tree-01.fbx": "de2f09e1f6d59802c8ce97138ecc8b65fe8dac070801962883e3e0ba94ee43ec",
+    "thumbnail.png": "cbb52840b72ccde842eb833fac641012f46bd6585867a85fad58029857503a3b",
+    "view-hero.png": "cbb52840b72ccde842eb833fac641012f46bd6585867a85fad58029857503a3b",
+    "view-front.png": "b56dbc85b702b45d787c88f8d9180a33b88a4465bb4b142543d5997bd00b9086",
+    "view-rear.png": "763015ef01bb025f6c38c4b31f25bcfdb986d9ccca50f9de955c0726f03b1103",
+    "view-left.png": "c8d3570e6d20871ae8ff525b0678b078270f8e549b2026418063d7be66387424",
+    "view-right.png": "3615921aed58bb4170d31242cb34e6d0768f639dfb7886305fd4012b6f3b461d",
+    "view-top.png": "114d293844e683f23542e70927e5db8d25f22b1d4b9eccf1829f0b4215e67b90"
+  }
+}
