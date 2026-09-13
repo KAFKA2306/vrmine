@@ -55,5 +55,19 @@
       "exact_version"
     ],
     "rule": "version-sensitive external knowledge must be compatible with the current pinned project version before use"
+  },
+  "authoring_tool_selection": {
+    "preferred_order": [
+      "repository_automation",
+      "version_compatible_mcp",
+      "computer_use"
+    ],
+    "rules": {
+      "prefer_machine_readable_interfaces": true,
+      "version_sensitive_adapter_requires_compatibility_check": true,
+      "computer_use_requires_gui_only_reason": true,
+      "computer_use_may_not_promote_release_evidence": true,
+      "orchestrator_model_claim_is_not_evidence": true
+    }
   }
 }
