@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "source_commit": "a405d57130d4652d6070e3e55a691a30263832ca",
+  "source_commit": "769c7f6aff7735cd54d42d89adf49b5279da5d4c",
   "build_plan": ".artifacts/world-builds/woodland-tabletop-village-v0/build-plan.json",
   "build_plan_sha256": "7245c1a175b676431bb0308341b7248e821df65f036d96e354e111dccb1df71b",
   "source_spec": "config/world-design/generated/woodland-tabletop-village-v0.json",
@@ -360,7 +360,7 @@
   "asset_sources": {
     "woodland-great-tree-01": {
       "path": ".artifacts/world-build-source-items/woodland-great-tree-01/woodland-great-tree-01.glb",
-      "sha256": "d61cdc766ad391ec8832934230081ddb193525aaf704c8616117234fc0f3b23b"
+      "sha256": "9378345f0d0d00e6b5a23ea6bcc3adeec2484587335af29f97911649ae72ed27"
     },
     "woodland-bridge-01": {
       "path": ".artifacts/world-build-source-items/woodland-bridge-01/woodland-bridge-01.glb",
@@ -368,11 +368,11 @@
     },
     "woodland-lodge-01": {
       "path": ".artifacts/world-build-source-items/woodland-lodge-01/woodland-lodge-01.glb",
-      "sha256": "ec005c45350a07623fb1f4d2810907bae3b97e72b3ba42ac730cae7628a06b26"
+      "sha256": "90fb685a46e76bfd8e1a21c87b2b407dedec30e404a084ed07a9b673348ca7db"
     },
     "woodland-cottage-01": {
       "path": ".artifacts/world-build-source-items/woodland-cottage-01/woodland-cottage-01.glb",
-      "sha256": "48e2ab453913b109a28593e92a748be86369e523e85e1c2802af71a3fb6b60b6"
+      "sha256": "c85ae9e4ace2c7b39f97b18acf2ba2f0a21a73a929bc398967b44968623464c7"
     },
     "woodland-market-stall-01": {
       "path": ".artifacts/world-build-source-items/woodland-market-stall-01/woodland-market-stall-01.glb",
@@ -388,7 +388,7 @@
     },
     "woodland-moss-patch-01": {
       "path": ".artifacts/world-build-source-items/woodland-moss-patch-01/woodland-moss-patch-01.glb",
-      "sha256": "05e0423d5502b0ee956ccb011df171f552f0f9c275b352284e6f4694f36b30b3"
+      "sha256": "2f7a533853cb75008c9b2d0535141f4389477e874f29b8848371cb7201c6c2e2"
     },
     "woodland-exposed-root-01": {
       "path": ".artifacts/world-build-source-items/woodland-exposed-root-01/woodland-exposed-root-01.glb",
@@ -400,7 +400,7 @@
     },
     "woodland-mushroom-cluster-01": {
       "path": ".artifacts/world-build-source-items/woodland-mushroom-cluster-01/woodland-mushroom-cluster-01.glb",
-      "sha256": "0083392bb37860b8304967eba24c1dc57942b3bfd4af751ec35fd7daa01c94f5"
+      "sha256": "724e1a56083c51938c5066cbda29cb1028d1323bb9bf8b2b4017c1513362ff1e"
     },
     "woodland-grass-clump-01": {
       "path": ".artifacts/world-build-source-items/woodland-grass-clump-01/woodland-grass-clump-01.glb",
@@ -514,32 +514,32 @@
   "outputs": {
     "blend": {
       "path": "world.blend",
-      "sha256": "afa2e8d35e489f035d685a3cd2d8f5d4372a4362583ea632855fa6ece2bea647"
+      "sha256": "8c92773bfcbc217c87202d07a7bec060f3bbe837b0f34559d032c3318acffac0"
     },
     "glb": {
       "path": "world.glb",
-      "sha256": "d60f4b58d5ec1686387418452f1988f44497ad27b29d9f0ce8b234ee7ff847e6"
+      "sha256": "4c9543a1871e61f42a2f489a86f4b0c30cf22b8b3d4aba25c206b33bef375244"
     },
     "renders": [
       {
         "path": "view-hero.png",
-        "sha256": "be3ebd084d746fc2bf5926fe5877969bf22e3c4f03e3efb05155c6fbbf536bf0"
+        "sha256": "4677a99b88733144829612a90713615c97819e4c44ce253f9c46af5bfc786405"
       },
       {
         "path": "view-top.png",
-        "sha256": "4d34bb7d4f49da49d70e6a14e779d481da5b9a54802599bf5fc43677be4437f1"
+        "sha256": "71f148e90464460f8fd1d6257bcb9d8cc1eac3495cbe83b1659af0ed8f40ef28"
       },
       {
         "path": "view-social-core.png",
-        "sha256": "844c089ce9635c0c1c09a611451c5bc2998dec0fffa5349deabfc1feac5f9f9f"
+        "sha256": "7671ac2af2977985cfc799c546b97cc8f3ffb43c31f740e6e79b64e0ca08b173"
       },
       {
         "path": "view-retreat.png",
-        "sha256": "c3a79ea403b9dc01535ff2b5e3d9c646fe834ccda9638bb1323a3ffe146e371c"
+        "sha256": "431bd6edfa7b2f637350dc9c764f7c1ab759f938eaa9908e96323e807b520dcf"
       },
       {
         "path": "view-circulation.png",
-        "sha256": "72cbb633f071c2835db806888b84194f2def7243bc7c4f4f17cdd9597139eae5"
+        "sha256": "6748e7815f90ffb3507feec8a45929533e86de8d75e1372333d97215c30ed259"
       }
     ]
   }
