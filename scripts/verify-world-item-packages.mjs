@@ -3,7 +3,8 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
-const config = JSON.parse(readFileSync('config/world-item-packages.json', 'utf8'));
+const packagePath = 'config/world-items/packages/index.json';
+const config = JSON.parse(readFileSync(packagePath, 'utf8'));
 assert.equal(config.schema_version, 1, 'unsupported package schema');
 assert.ok(Array.isArray(config.packages) && config.packages.length >= 3, 'packages missing');
 

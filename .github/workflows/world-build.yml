@@ -110,7 +110,7 @@ jobs:
               fi
             done < <(git ls-files 'config/world-design/generated/*.json')
           fi
-          if [ "${#specs[@]}" -eq 0 ] && git diff --name-only "${base}...HEAD" | grep -Eq '^(.github/workflows/world-build\.yml|Taskfile\.yml|pages/worlds/|scripts/(world-design-to-blender-plan\.mjs|materialize_world_build_input\.py|world_item_factory\.py|verify_world_item\.py|world_build_factory\.py|verify_world_build\.py|publish_world_build_evidence\.py))'; then
+          if [ "${#specs[@]}" -eq 0 ] && git diff --name-only "${base}...HEAD" | grep -Eq '^(.github/workflows/world-build\.yml|Taskfile\.yml|config/world-items/packages/|pages/worlds/|scripts/(world-design-to-blender-plan\.mjs|materialize_world_build_input\.py|world_item_factory\.py|verify_world_item\.py|world_build_factory\.py|verify_world_build\.py|publish_world_build_evidence\.py))'; then
             # Build/verifier/generated-evidence changes must exercise the canonical blockout subject without publishing replacement product evidence.
             subject="$(jq -er '.subject' config/world-design/WORLD_BLOCKOUT_SPEC.json)"
             canonical="config/world-design/generated/${subject}.json"
