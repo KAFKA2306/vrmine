@@ -93,6 +93,7 @@ jobs:
           git fetch origin "$BASE_REF" main
           base="${BASE_SHA:-origin/${BASE_REF}}"
           git cat-file -e "${base}^{commit}"
+          publish_evidence=true
           mapfile -t specs < <(git diff --diff-filter=AM --name-only "${base}...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
           if [ "${#specs[@]}" -eq 0 ] && [ -z "$BASE_SHA" ] && [ "$BASE_REF" != main ]; then
             mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/main...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
@@ -108,11 +109,12 @@ jobs:
             done < <(git ls-files 'config/world-design/generated/*.json')
           fi
           if [ "${#specs[@]}" -eq 0 ] && git diff --name-only "${base}...HEAD" | grep -qx '.github/workflows/world-build.yml'; then
-            # A verifier/workflow-only change must exercise the canonical blockout subject, not pass or fail without building anything.
+            # A verifier/workflow-only change must exercise the canonical blockout subject without publishing replacement product evidence.
             subject="$(jq -er '.subject' config/world-design/WORLD_BLOCKOUT_SPEC.json)"
             canonical="config/world-design/generated/${subject}.json"
             test -f "$canonical"
             specs+=("$canonical")
+            publish_evidence=false
           fi
           if [ "${#specs[@]}" -ne 1 ]; then
             printf 'Expected exactly one effective generated World Design Spec, got %s\n' "${#specs[@]}" >&2
@@ -123,6 +125,7 @@ jobs:
           world_id="$(basename "$spec" .json)"
           echo "spec_path=$spec" >> "$GITHUB_OUTPUT"
           echo "world_id=$world_id" >> "$GITHUB_OUTPUT"
+          echo "publish_evidence=$publish_evidence" >> "$GITHUB_OUTPUT"
 
       - name: Materialize deterministic build plan and resolve source revision
         id: plan
@@ -272,7 +275,7 @@ jobs:
           retention-days: 7
 
       - name: Publish generated room evidence into PR branch
-        if: github.event_name != 'push'
+        if: github.event_name != 'push' && steps.select.outputs.publish_evidence == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           HEAD_REF: ${{ steps.revision.outputs.head_ref }}
