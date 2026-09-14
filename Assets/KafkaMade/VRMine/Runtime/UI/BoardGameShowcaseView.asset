@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: BoardGameShowcaseView
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: dc66224d18ea98740b9a6dfcbd0570c4, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 28de1bb6f1d87644cba91c1aed8be2e4, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: a171d2ed80b691a4a92406019619fad7, type: 3}

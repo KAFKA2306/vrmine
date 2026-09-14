@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "requestId": "vrmine-reproducible-verification",
+  "repository": {
+    "remote": "https://github.com/KAFKA2306/vrmine.git",
+    "defaultBranch": "main"
+  },
+  "verification": {
+    "stateDirectory": ".vrmine-verify",
+    "verificationCheckoutSibling": "unity.vrmine-verify",
+    "runDirectory": "runs",
+    "appendOnly": true,
+    "cleanup": "maintenance-only",
+    "always": [
+      "static",
+      "vpm"
+    ],
+    "onChange": {
+      "unity": [
+        "Assets/",
+        "Packages/",
+        "ProjectSettings/",
+        "scripts/*unity*",
+        "*.cs",
+        "*.unity",
+        "*.prefab",
+        "*.asset"
+      ],
+      "blender": [
+        "Taskfile.yml",
+        "scripts/*blender*",
+        "scripts/*world_item*",
+        "scripts/*world_build*",
+        "scripts/test_world_item_geometry.py",
+        "config/world-items/",
+        "config/world-design/",
+        "*.blend",
+        "*.fbx",
+        "*.glb",
+        "*.obj"
+      ],
+      "bridge": [
+        "Packages/manifest.json",
+        "ProjectSettings/",
+        "Assets/",
+        "scripts/*unity*"
+      ]
+    },
+    "full": [
+      "static",
+      "vpm",
+      "blender",
+      "unity",
+      "bridge"
+    ]
+  },
+  "toolchain": {
+    "unityVersion": "2022.3.22f1",
+    "blenderVersion": "4.2.0",
+    "vrcGetVersion": "1.9.2",
+    "vrchatSdkVersion": "3.9.0"
+  },
+  "gates": {
+    "vpmTask": "vpm:check",
+    "repositoryTask": "check",
+    "unityCompile": true,
+    "unityTests": [
+      "editmode",
+      "playmode"
+    ],
+    "blenderGeometrySmoke": "scripts/test_world_item_geometry.py",
+    "unityBridgeHealth": true
+  }
+}

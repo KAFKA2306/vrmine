@@ -37,7 +37,7 @@ if (!unityPath || !fs.existsSync(unityPath)) {
   throw new Error(`Unity ${projectVersion} was not found. Set UNITY_EXE to the exact Unity executable path.`);
 }
 
-const evidenceDir = path.join(projectRoot, 'Library', 'VRMine');
+const evidenceDir = path.resolve(process.env.VRMINE_EVIDENCE_DIR ?? path.join(projectRoot, 'Library', 'VRMine'));
 fs.mkdirSync(evidenceDir, { recursive: true });
 const evidencePath = path.join(evidenceDir, 'retro-cafe-u2.json');
 if (fs.existsSync(evidencePath)) fs.rmSync(evidencePath);
