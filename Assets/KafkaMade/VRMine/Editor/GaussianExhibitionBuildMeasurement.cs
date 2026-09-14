@@ -23,43 +23,52 @@ public static class GaussianWorldBuildMeasurement
         public string status;
     }
 
-    public static void MeasureBatch()
+    public static async void MeasureBatch()
     {
-        EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-
-        VRCSdkControlPanel panel = EditorWindow.GetWindow<VRCSdkControlPanel>();
-        var builder = new VRCSdkControlPanelWorldBuilder();
-        builder.RegisterBuilder(panel);
-        builder.Initialize();
-        if (!builder.IsValidBuilder(out string message))
-            throw new InvalidOperationException("VRChat world builder is not valid: " + message);
-
-        builder.CreateValidationsGUI(new VisualElement());
-        string bundlePath = builder.Build().GetAwaiter().GetResult();
-        if (string.IsNullOrWhiteSpace(bundlePath))
-            throw new InvalidOperationException("VRChat SDK Build() returned an empty bundle path.");
-
-        string absoluteBundlePath = Path.GetFullPath(bundlePath);
-        if (!File.Exists(absoluteBundlePath))
-            throw new FileNotFoundException("VRChat SDK Build() returned a bundle path that does not exist.", absoluteBundlePath);
-
-        long bundleBytes = new FileInfo(absoluteBundlePath).Length;
-        if (bundleBytes <= 0)
-            throw new InvalidOperationException("VRChat world bundle is empty: " + absoluteBundlePath);
-
-        var evidence = new BuildEvidence
+        try
         {
-            scene = ScenePath,
-            bundlePath = absoluteBundlePath,
-            bundleBytes = bundleBytes,
-            sha256 = ComputeSha256(absoluteBundlePath),
-            sdkVersion = "3.9.0",
-            status = "MEASURED_BUILD_COMPLETE"
-        };
+            EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
 
-        Directory.CreateDirectory(Path.GetDirectoryName(EvidencePath));
-        File.WriteAllText(EvidencePath, JsonUtility.ToJson(evidence, true));
-        Debug.Log("Gaussian VRChat build evidence: scene=" + evidence.scene + ", bundleBytes=" + evidence.bundleBytes + ", sha256=" + evidence.sha256 + ", status=" + evidence.status + ", path=" + EvidencePath);
+            VRCSdkControlPanel panel = EditorWindow.GetWindow<VRCSdkControlPanel>();
+            var builder = new VRCSdkControlPanelWorldBuilder();
+            builder.RegisterBuilder(panel);
+            builder.Initialize();
+            if (!builder.IsValidBuilder(out string message))
+                throw new InvalidOperationException("VRChat world builder is not valid: " + message);
+
+            builder.CreateValidationsGUI(new VisualElement());
+            string bundlePath = await builder.Build();
+            if (string.IsNullOrWhiteSpace(bundlePath))
+                throw new InvalidOperationException("VRChat SDK Build() returned an empty bundle path.");
+
+            string absoluteBundlePath = Path.GetFullPath(bundlePath);
+            if (!File.Exists(absoluteBundlePath))
+                throw new FileNotFoundException("VRChat SDK Build() returned a bundle path that does not exist.", absoluteBundlePath);
+
+            long bundleBytes = new FileInfo(absoluteBundlePath).Length;
+            if (bundleBytes <= 0)
+                throw new InvalidOperationException("VRChat world bundle is empty: " + absoluteBundlePath);
+
+            var evidence = new BuildEvidence
+            {
+                scene = ScenePath,
+                bundlePath = absoluteBundlePath,
+                bundleBytes = bundleBytes,
+                sha256 = ComputeSha256(absoluteBundlePath),
+                sdkVersion = "3.9.0",
+                status = "MEASURED_BUILD_COMPLETE"
+            };
+
+            Directory.CreateDirectory(Path.GetDirectoryName(EvidencePath));
+            File.WriteAllText(EvidencePath, JsonUtility.ToJson(evidence, true));
+            Debug.Log("Gaussian VRChat build evidence: scene=" + evidence.scene + ", bundleBytes=" + evidence.bundleBytes + ", sha256=" + evidence.sha256 + ", status=" + evidence.status + ", path=" + EvidencePath);
+            EditorApplication.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            EditorApplication.Exit(1);
+        }
     }
 
     static string ComputeSha256(string path)
