@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: DeckResetButton
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: d45b15d59321111458c957b1cd5cb7d9, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: ef94f539d68d70345b791b1a2b216b2d, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: f23c43ad1cc074a4f8b4ddaf99ae7312, type: 3}

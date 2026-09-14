@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: DeckManager
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 2b465d27cbf5dca43940d91ad4ba694f, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 51797c1115bce974da1c08db07b3810a, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: a47bdc6dd82584e41a6fe71561bcc9a9, type: 3}

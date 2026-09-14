@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: ScorePanelView
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 883dadf2042246348b342bd2737271c4, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: ab1469b49e8c52747885276a1e54d148, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 3f505c291efaab9489693790d3e5991d, type: 3}

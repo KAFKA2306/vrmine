@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: CardLogic
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: cae5d00b315024d488759e7b74819254, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: ee22d30672a8a3b41a0d154a3406f774, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 39d5e154d5594c647b7c57aeae0e83ff, type: 3}
