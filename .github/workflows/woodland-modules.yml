@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'config/world-items/woodland-*.json'
-      - 'config/world-item-packages.json'
+      - 'config/world-items/packages/index.json'
       - 'scripts/world_item_factory.py'
       - 'scripts/verify_world_item.py'
       - '.github/workflows/woodland-modules.yml'
