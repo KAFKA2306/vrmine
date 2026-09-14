@@ -228,6 +228,10 @@
       "warm_cream": "#E9D7B3",
       "accent_terracotta": "#A95F45",
       "lamp_gold": "#D6A85F"
+    },
+    "atmospheric_depth": {
+      "density": 0.006,
+      "color_palette_key": "warm_cream"
     }
   },
   "blockout": {

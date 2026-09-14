@@ -183,6 +183,11 @@ if (spec.blockout) {
   for (const key of requiredPaletteKeys) {
     if (typeof palette[key] !== 'string' || !/^#[0-9A-Fa-f]{6}$/.test(palette[key])) fail(`atmosphere.palette.${key} must be #RRGGBB`);
   }
+  const atmosphericDepth = spec.atmosphere?.atmospheric_depth ?? {};
+  const atmosphericDensity = finite(atmosphericDepth.density ?? 0.018, 'atmosphere.atmospheric_depth.density');
+  if (atmosphericDensity <= 0 || atmosphericDensity > 0.2) fail('atmosphere.atmospheric_depth.density must be in (0,0.2]');
+  const atmosphericColorKey = atmosphericDepth.color_palette_key ?? 'warm_cream';
+  if (!requiredPaletteKeys.includes(atmosphericColorKey)) fail(`atmosphere.atmospheric_depth.color_palette_key must reference ${requiredPaletteKeys.join(', ')}`);
   const materialPalette = {
     primary: strings(spec.material_palette?.primary ?? [], 'material_palette.primary'),
     secondary: strings(spec.material_palette?.secondary ?? [], 'material_palette.secondary'),
@@ -298,8 +303,8 @@ if (spec.blockout) {
     atmospheric_depth: {
       enabled: true,
       mechanism: 'world_volume_haze',
-      density: 0.018,
-      color_palette_key: 'warm_cream',
+      density: atmosphericDensity,
+      color_palette_key: atmosphericColorKey,
       camera_clip_start_m: finite(spec.runtime_budget?.camera_near_clip_m, 'runtime_budget.camera_near_clip_m'),
       camera_clip_end_m: finite(spec.runtime_budget?.background_max_distance_m, 'runtime_budget.background_max_distance_m'),
     },
@@ -340,4 +345,3 @@ const plan = {
   },
 };
 process.stdout.write(`${JSON.stringify(plan, null, 2)}\n`);
-

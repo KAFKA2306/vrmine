@@ -15,6 +15,7 @@ on:
       - 'scripts/materialize_world_build_input.py'
       - 'scripts/world_build_factory.py'
       - 'scripts/verify_world_build.py'
+      - 'scripts/publish_world_build_evidence.py'
       - 'scripts/world_item_factory.py'
       - 'Taskfile.yml'
       - '.github/workflows/world-build.yml'
@@ -28,6 +29,7 @@ on:
       - 'scripts/materialize_world_build_input.py'
       - 'scripts/world_build_factory.py'
       - 'scripts/verify_world_build.py'
+      - 'scripts/publish_world_build_evidence.py'
       - 'scripts/world_item_factory.py'
       - 'Taskfile.yml'
       - '.github/workflows/world-build.yml'
@@ -108,7 +110,7 @@ jobs:
               fi
             done < <(git ls-files 'config/world-design/generated/*.json')
           fi
-          if [ "${#specs[@]}" -eq 0 ] && git diff --name-only "${base}...HEAD" | grep -Eq '^(.github/workflows/world-build\.yml|Taskfile\.yml|pages/worlds/|scripts/(world-design-to-blender-plan\.mjs|materialize_world_build_input\.py|world_item_factory\.py|verify_world_item\.py|world_build_factory\.py|verify_world_build\.py))'; then
+          if [ "${#specs[@]}" -eq 0 ] && git diff --name-only "${base}...HEAD" | grep -Eq '^(.github/workflows/world-build\.yml|Taskfile\.yml|pages/worlds/|scripts/(world-design-to-blender-plan\.mjs|materialize_world_build_input\.py|world_item_factory\.py|verify_world_item\.py|world_build_factory\.py|verify_world_build\.py|publish_world_build_evidence\.py))'; then
             # Build/verifier/generated-evidence changes must exercise the canonical blockout subject without publishing replacement product evidence.
             subject="$(jq -er '.subject' config/world-design/WORLD_BLOCKOUT_SPEC.json)"
             canonical="config/world-design/generated/${subject}.json"
@@ -141,7 +143,7 @@ jobs:
           mkdir -p "$out"
           node scripts/world-design-to-blender-plan.mjs "$SPEC_PATH" > "$out/build-plan.json"
           test "$(jq -r .schema_version "$out/build-plan.json")" = 4
-          source_sha="$(git log -1 --format=%H -- "$SPEC_PATH" config/world-items scripts/world-design-to-blender-plan.mjs scripts/materialize_world_build_input.py scripts/world_item_factory.py scripts/world_build_factory.py scripts/verify_world_build.py Taskfile.yml .github/workflows/world-build.yml)"
+          source_sha="$(git log -1 --format=%H -- "$SPEC_PATH" config/world-items scripts/world-design-to-blender-plan.mjs scripts/materialize_world_build_input.py scripts/world_item_factory.py scripts/world_build_factory.py scripts/verify_world_build.py scripts/publish_world_build_evidence.py Taskfile.yml .github/workflows/world-build.yml)"
           base="${BASE_SHA:-origin/${BASE_REF}}"
           inputs_changed=false
           while IFS= read -r asset_id; do
@@ -189,7 +191,15 @@ jobs:
             spec="config/world-items/${asset_id}.json"
             published="pages/io/items/${asset_id}/${asset_id}.glb"
             if [ -f "$spec" ]; then
-              blender -b --python-exit-code 1 --python scripts/materialize_world_build_input.py -- "$spec" "$source_root"
+              materialized=false
+              for attempt in 1 2 3 4 5; do
+                if blender -b --python-exit-code 1 --python scripts/materialize_world_build_input.py -- "$spec" "$source_root"; then
+                  materialized=true
+                  break
+                fi
+                echo "Retrying non-canonical materialized GLB for ${asset_id} (attempt ${attempt}/5)." >&2
+              done
+              test "$materialized" = true
               test -s "$source_root/$asset_id/${asset_id}.glb"
               test -s "$source_root/$asset_id/world-build-input.json"
             elif [ -s "$published" ]; then
@@ -285,22 +295,18 @@ jobs:
           set -euo pipefail
           src=".artifacts/world-builds/${WORLD_ID}"
           dest="pages/worlds/${WORLD_ID}"
+          source_root=".artifacts/world-build-source-items"
           mkdir -p "$dest"
-          for file in world.blend world.glb manifest.json build-plan.json view-hero.png view-top.png view-social-core.png view-retreat.png view-circulation.png; do
-            cp "$src/$file" "$dest/$file"
-          done
           cp "$SPEC_PATH" "$dest/spec.json"
-          (
-            cd "$dest"
-            sha256sum view-hero.png view-top.png view-social-core.png view-retreat.png view-circulation.png > render.sha256
-          )
+          python scripts/publish_world_build_evidence.py -- "$src" "$dest" "$source_root"
+          blender -b --python-exit-code 1 --python scripts/verify_world_build.py -- "$dest/build-plan.json" "$dest"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add "$dest"
           if ! git diff --cached --quiet; then
             git commit -m "chore(world): publish ${WORLD_ID} generated room evidence"
             git fetch origin "$HEAD_REF"
-            git diff --exit-code HEAD "origin/$HEAD_REF" -- config/world-items scripts/world_item_factory.py scripts/verify_world_item.py scripts/world_build_factory.py scripts/verify_world_build.py scripts/world-design-to-blender-plan.mjs config/world-design/generated .github/workflows/world-build.yml
+            git diff --exit-code HEAD "origin/$HEAD_REF" -- config/world-items scripts/world_item_factory.py scripts/verify_world_item.py scripts/world_build_factory.py scripts/verify_world_build.py scripts/publish_world_build_evidence.py scripts/world-design-to-blender-plan.mjs config/world-design/generated .github/workflows/world-build.yml Taskfile.yml
             git rebase "origin/$HEAD_REF"
             git push origin "HEAD:${HEAD_REF}"
           fi

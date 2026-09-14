@@ -465,7 +465,18 @@ def main():
             image = bpy.data.images.load(str(path), check_existing=False)
             if tuple(int(v) for v in image.size) != (960, 540):
                 fail(f"render {name} has wrong dimensions {tuple(image.size)}")
+            pixels = image.pixels[:]
+            if not pixels:
+                fail(f"render {name} has no decoded pixels")
+            max_luminance = max(
+                0.2126 * pixels[index] + 0.7152 * pixels[index + 1] + 0.0722 * pixels[index + 2]
+                for index in range(0, len(pixels), 4)
+            )
+            if max_luminance < 0.08:
+                fail(f"render {name} is effectively black (max_luminance={max_luminance:.3f})")
             bpy.data.images.remove(image)
+        except RuntimeError:
+            raise
         except Exception as exc:
             fail(f"render {name} cannot be decoded: {exc}")
 
