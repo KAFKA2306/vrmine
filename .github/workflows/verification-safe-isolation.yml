@@ -1,0 +1,37 @@
+name: Verification safe isolation
+
+on:
+  pull_request:
+    paths:
+      - "scripts/new-verification-worktree.ps1"
+      - "scripts/verify_verification_worktree.py"
+      - "tests/test_verification_worktree.py"
+      - "config/verification-worktree-policy.json"
+      - ".github/workflows/verification-safe-isolation.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/new-verification-worktree.ps1"
+      - "scripts/verify_verification_worktree.py"
+      - "tests/test_verification_worktree.py"
+      - "config/verification-worktree-policy.json"
+      - ".github/workflows/verification-safe-isolation.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  safe-isolation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run stdlib validator regression tests
+        run: python3 tests/test_verification_worktree.py
+      - name: Reject destructive allocator commands
+        run: |
+          if grep -En 'git[[:space:]]+(worktree[[:space:]]+remove|clean|reset[[:space:]]+--hard)|Remove-Item[[:space:]]+-Recurse|rm[[:space:]]+-rf' scripts/new-verification-worktree.ps1; then
+            echo 'allocator contains destructive recovery command' >&2
+            exit 1
+          fi

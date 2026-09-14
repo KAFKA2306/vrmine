@@ -21,9 +21,16 @@ function Invoke-GitText {
 
 $repoRoot = Invoke-GitText @("rev-parse", "--show-toplevel")
 $repoRoot = [System.IO.Path]::GetFullPath($repoRoot)
+$sourceHead = Invoke-GitText @("rev-parse", "HEAD")
+$sourceStatusText = Invoke-GitText @("status", "--porcelain=v1", "--untracked-files=all")
+$sourceStatus = @()
+if (-not [string]::IsNullOrEmpty($sourceStatusText)) {
+    $sourceStatus = @($sourceStatusText -split "`n")
+}
+$sourceDirty = $sourceStatus.Count -gt 0
 
 if ([string]::IsNullOrWhiteSpace($StateRoot)) {
-    $StateRoot = Join-Path (Split-Path $repoRoot -Parent) ".vrmine-verify"
+    $StateRoot = Join-Path (Split-Path $repoRoot -Parent) "unity.vrmine-verify"
 }
 $StateRoot = [System.IO.Path]::GetFullPath($StateRoot)
 
@@ -40,9 +47,13 @@ $evidencePath = Join-Path $evidenceRoot $runId
 
 $manifestPath = Join-Path $evidencePath "allocation.json"
 $manifest = [ordered]@{
-    schema_version = 1
+    schema_version = 2
     run_id = $runId
     repository = $repoRoot
+    source_head = $sourceHead
+    source_dirty = $sourceDirty
+    source_status_porcelain = $sourceStatus
+    state_root = $StateRoot
     revision = $revisionSha
     worktree = $worktreePath
     evidence = $evidencePath
@@ -67,6 +78,8 @@ try {
 
 [ordered]@{
     run_id = $runId
+    source_head = $sourceHead
+    source_dirty = $sourceDirty
     revision = $revisionSha
     worktree = $worktreePath
     evidence = $evidencePath
