@@ -42,13 +42,18 @@ const evidenceDir = path.resolve(process.env.VRMINE_EVIDENCE_DIR ?? path.join(pr
 fs.mkdirSync(evidenceDir, { recursive: true });
 const timestamp = new Date().toISOString().replaceAll(':', '').replaceAll('-', '').replace(/\.\d{3}Z$/, 'Z');
 const logPath = path.join(evidenceDir, `unity-${mode}-${timestamp}.log`);
-const args = [
-  '-batchmode',
-  '-quit',
-  '-projectPath', projectRoot,
-  '-executeMethod', method,
-  '-logFile', logPath,
-];
+
+function unityArgs(executeMethod, logFile, { quit = true } = {}) {
+  return [
+    '-batchmode',
+    ...(quit ? ['-quit'] : []),
+    '-projectPath', projectRoot,
+    '-executeMethod', executeMethod,
+    '-logFile', logFile,
+  ];
+}
+
+const args = unityArgs(method, logPath, { quit: mode !== 'build' });
 
 console.log(`Unity: ${unityPath}`);
 console.log(`Project: ${projectRoot}`);
@@ -107,13 +112,7 @@ if (mode === 'registered') {
   console.log('PASS: strict final Gaussian exhibition verification.');
 
   const buildLogPath = path.join(evidenceDir, `unity-build-${timestamp}.log`);
-  const buildRun = spawnSync(unityPath, [
-    '-batchmode',
-    '-quit',
-    '-projectPath', projectRoot,
-    '-executeMethod', modes.build,
-    '-logFile', buildLogPath,
-  ], { cwd: projectRoot, stdio: 'inherit' });
+  const buildRun = spawnSync(unityPath, unityArgs(modes.build, buildLogPath, { quit: false }), { cwd: projectRoot, stdio: 'inherit' });
   if (buildRun.error) throw buildRun.error;
   if (!fs.existsSync(buildLogPath)) throw new Error(`Unity did not create the build log file: ${buildLogPath}`);
   const buildLog = fs.readFileSync(buildLogPath, 'utf8');
