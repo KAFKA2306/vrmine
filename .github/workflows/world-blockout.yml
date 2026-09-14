@@ -5,19 +5,23 @@ on:
     paths:
       - 'config/world-design/WORLD_BLOCKOUT_SPEC.json'
       - 'config/world-design/generated/woodland-tabletop-village-v0.json'
+      - 'Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillageAudioBuild.cs'
       - 'Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillagePrefabBuild.cs'
       - 'scripts/run-woodland-tabletop-village-unity.mjs'
       - 'scripts/verify-world-blockout.mjs'
       - '.github/workflows/world-blockout.yml'
+      - '.github/workflows/woodland-unity-verification.yml'
   push:
     branches: [main]
     paths:
       - 'config/world-design/WORLD_BLOCKOUT_SPEC.json'
       - 'config/world-design/generated/woodland-tabletop-village-v0.json'
+      - 'Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillageAudioBuild.cs'
       - 'Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillagePrefabBuild.cs'
       - 'scripts/run-woodland-tabletop-village-unity.mjs'
       - 'scripts/verify-world-blockout.mjs'
       - '.github/workflows/world-blockout.yml'
+      - '.github/workflows/woodland-unity-verification.yml'
 
 permissions:
   contents: read
