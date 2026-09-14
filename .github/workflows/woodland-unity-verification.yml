@@ -36,6 +36,14 @@ jobs:
         with:
           node-version: 22
 
+      - name: Resolve pinned VRChat packages
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          node scripts/install-vrc-get.mjs
+          & .tools\vrc-get.exe resolve
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Verify exact PR head
         shell: pwsh
         run: |
