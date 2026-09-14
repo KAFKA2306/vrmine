@@ -392,12 +392,12 @@ def create_natural_layers(plan, collection, asset_root, record_source, material_
     return created
 
 
-def render_view(name, position, target, out_dir, clip_start, clip_end, resolution=(960, 540)):
+def render_view(name, position, target, out_dir, clip_start, clip_end, resolution=(960, 540), lens=34):
     bpy.ops.object.camera_add(location=position)
     camera = bpy.context.object
     camera.name = f"RenderCamera_{name}"
     look_at(camera, target)
-    camera.data.lens = 34
+    camera.data.lens = lens
     camera.data.clip_start = float(clip_start)
     camera.data.clip_end = float(clip_end)
     camera["target_m_json"] = json.dumps(target)
@@ -527,12 +527,17 @@ def main():
     clip_end = depth.get("camera_clip_end_m", 100)
     views = {
         "hero": (plan["hero_view"]["position_m"], plan["hero_view"]["target_m"]),
-        "top": ([0, 0, max(plan["footprint"]["width"], plan["footprint"]["depth"]) * 1.05], [0, 0, 0]),
+        # Keep overview cameras inside the authored shell so the ceiling and front wall
+        # cannot turn valid evidence renders into opaque black frames.
+        "top": ([0, 0, max(0.8, plan["footprint"]["height"] - 0.12)], [0, 0, 0.78]),
         "social-core": ([2.8, -2.8, 2.0], [*plan["social_core"]["center_m"][:2], 0.75]),
         "retreat": ([3.15, -0.4, 1.65], [*plan["retreat"]["center_m"][:2], 0.75]),
-        "circulation": ([0, -3.35, 1.55], [0, 2.2, 0.75]),
+        "circulation": ([0, -3.0, 1.55], [0, 2.2, 0.75]),
     }
-    render_paths = [render_view(name, pos, target, out_dir, clip_start, clip_end) for name, (pos, target) in views.items()]
+    render_paths = [
+        render_view(name, pos, target, out_dir, clip_start, clip_end, lens=18 if name == "top" else 34)
+        for name, (pos, target) in views.items()
+    ]
     blend_path = out_dir / "world.blend"
     bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
 
