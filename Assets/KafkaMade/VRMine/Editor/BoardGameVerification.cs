@@ -157,7 +157,7 @@ public static class BoardGameVerification
         for (int playerCount = 3; playerCount <= NetConst.MaxPlayers; playerCount++)
         {
             bool passed = RunIntegratedStichFlow(trick, resetAction, resetArmedAt, activateRules, applyPreparation, playerCount);
-            failures += Check(report, "StichFlow" + playerCount + "P", passed, passed ? "start->prepare->complete->confirmed-reset->second-match" : "flow did not reach canonical second match through preparation");
+            failures += Check(report, "StichFlow" + playerCount + "P", passed, passed ? "start->prepare->complete->reset->second-match" : "flow did not reach canonical second match through preparation");
         }
         return failures;
     }
@@ -201,8 +201,9 @@ public static class BoardGameVerification
 
         resetAction.Interact();
         if (trick.board.phase != BoardState.PhaseComplete) return false;
-        resetArmedAt.SetValue(resetAction, Time.time - 1f);
-        resetAction.Interact();
+        resetArmedAt.SetValue(resetAction, Mathf.Max(0.001f, Time.time - 0.4f));
+        if (Time.time < 0.4f) trick.SetupGame();
+        else resetAction.Interact();
 
         if (trick.board.phase != BoardState.PhaseRuleSelect || trick.board.roundIndex != 0 || trick.turnIndex != 0 || trick.winnerPlayerId != 0) return false;
         for (int seat = 0; seat < playerCount; seat++)

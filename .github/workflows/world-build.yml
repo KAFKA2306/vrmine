@@ -108,7 +108,7 @@ jobs:
               fi
             done < <(git ls-files 'config/world-design/generated/*.json')
           fi
-          if [ "${#specs[@]}" -eq 0 ] && git diff --name-only "${base}...HEAD" | grep -qx '.github/workflows/world-build.yml'; then
+          if [ "${#specs[@]}" -eq 0 ] && git diff --name-only "${base}...HEAD" | grep -Eq '^(.github/workflows/world-build\.yml|Taskfile\.yml)$'; then
             # A verifier/workflow-only change must exercise the canonical blockout subject without publishing replacement product evidence.
             subject="$(jq -er '.subject' config/world-design/WORLD_BLOCKOUT_SPEC.json)"
             canonical="config/world-design/generated/${subject}.json"

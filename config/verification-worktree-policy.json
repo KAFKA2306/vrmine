@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "state_root_from_repo": "../.vrmine-verify",
-  "run_root_from_repo": "../.vrmine-verify/runs",
+  "state_root_from_repo": "../unity.vrmine-verify",
+  "run_root_from_repo": "../unity.vrmine-verify/runs",
   "normal_run": {
     "delete_existing_run": false,
     "reuse_failed_run": false,

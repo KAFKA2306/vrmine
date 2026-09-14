@@ -30,7 +30,7 @@ if (-not [string]::IsNullOrEmpty($sourceStatusText)) {
 $sourceDirty = $sourceStatus.Count -gt 0
 
 if ([string]::IsNullOrWhiteSpace($StateRoot)) {
-    $StateRoot = Join-Path (Split-Path $repoRoot -Parent) ".vrmine-verify"
+    $StateRoot = Join-Path (Split-Path $repoRoot -Parent) "unity.vrmine-verify"
 }
 $StateRoot = [System.IO.Path]::GetFullPath($StateRoot)
 
