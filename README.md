@@ -1,3 +1,6 @@
+https://kafka2306.github.io/vrmine/
+https://kafka2306.github.io/vrmine/io/
+
 # VRMine
 
 VRChat向けワールド素材、ワールド設計、関連インタラクティブコンテンツを、仕様・生成・検証・配布まで一つのrepositoryで扱います。
