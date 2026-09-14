@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: SnapOnDrop
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: bd82a40d3b7269848ae2b07389f302e2, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 2b85d0758c712334890300117e70559f, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 7e8ad6e2ba2d6f847a678301503fc8eb, type: 3}

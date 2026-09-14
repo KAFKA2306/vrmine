@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "id": "woodland-cottage-01",
+  "source_spec": "config/world-items/woodland-cottage-01.json",
+  "spec_sha256": "f7736f16cb42be0072e72cb86d5c0efd05cc7497b14ead444182197e462ce518",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.31254127621650696,
+    0.2840000092983246,
+    0.3022385239601135
+  ],
+  "bounds_min_m": [
+    -0.15627063810825348,
+    -0.14900000393390656,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.15627063810825348,
+    0.13500000536441803,
+    0.3022385239601135
+  ],
+  "bounds_center_m": [
+    0.0,
+    -0.006999999284744263,
+    0.15111926198005676
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 1.592e-07,
+      "center_error_y": -3.04e-07,
+      "fill_ratio": 0.8400000081,
+      "normalized_bounds": [
+        -0.399270876,
+        0.3992711945,
+        -0.4200003081,
+        0.4199997
+      ],
+      "ortho_scale": 0.5146504641
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -1.12e-07,
+      "fill_ratio": 0.840000003,
+      "normalized_bounds": [
+        -0.3916900923,
+        0.3916900923,
+        -0.4200001135,
+        0.4199998894
+      ],
+      "ortho_scale": 0.3989650011
+    },
+    "rear": {
+      "center_error_x": 0.0,
+      "center_error_y": 1.88e-08,
+      "fill_ratio": 0.8400000256,
+      "normalized_bounds": [
+        -0.3945399026,
+        0.3945399026,
+        -0.419999994,
+        0.4200000316
+      ],
+      "ortho_scale": 0.3960832655
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": 2.607e-07,
+      "fill_ratio": 0.8399999851,
+      "normalized_bounds": [
+        -0.3548603919,
+        0.3548603919,
+        -0.4199997319,
+        0.4200002532
+      ],
+      "ortho_scale": 0.4001574218
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 2.607e-07,
+      "fill_ratio": 0.8399999851,
+      "normalized_bounds": [
+        -0.3548603919,
+        0.3548603919,
+        -0.4199997319,
+        0.4200002532
+      ],
+      "ortho_scale": 0.4001574218
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8400000288,
+      "normalized_bounds": [
+        -0.4200000144,
+        0.4200000144,
+        -0.3818782211,
+        0.3818782211
+      ],
+      "ortho_scale": 0.3720729351
+    }
+  },
+  "triangles": 2636,
+  "parts_count": 13,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "woodland-cottage-01.blend": "381630e9a0714a1acb8ae160d9619b162b65e6fa447b89fcf21f49c109555611",
+    "woodland-cottage-01.glb": "34dc0c528c531947092799504f74b0c8f6989cfe16c825e8e6f311c5434262ca",
+    "woodland-cottage-01.fbx": "3008a72ed40b51a446dc62f5862bf1692d96e7aba627d9e2c8145927dc994913",
+    "thumbnail.png": "160ee6120624bebe3005d7c74670d2bda62a1ac755e070b6355c02695e894398",
+    "view-hero.png": "160ee6120624bebe3005d7c74670d2bda62a1ac755e070b6355c02695e894398",
+    "view-front.png": "df2898b251d0018d41b3f3061a76a35692ce1b54d3c48dc8411dab6621f26fee",
+    "view-rear.png": "2cc2d8e0527bd4ea5c00ba58c04f43b44225f2b60878b423d354140c10ef7547",
+    "view-left.png": "2c7e6d6c6f0f7075fb07bf206d1331cafb2c46442154e95108922e24e3fae077",
+    "view-right.png": "2db99b7be82e8c90a0b59ab0037cc5e5cd47448bede772024a0fbc06003f6cd6",
+    "view-top.png": "06b71f27a49d7d051aaf28494024e3807a1afd8fd40e5adfed85bdc0309a08ac"
+  }
+}

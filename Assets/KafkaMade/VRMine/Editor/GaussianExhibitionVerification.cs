@@ -14,11 +14,14 @@ public static class GaussianExhibitionVerification
 {
     const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity";
     const string RegistryPath = "config/gaussian-splats.json";
+    const string ConfigPath = "config/gaussian-exhibition.json";
     const string GaussianSplatObjectTypeName = "GaussianSplatting.GaussianSplatObject";
     const string GaussianSplatRendererTypeName = "GaussianSplatting.GaussianSplatRenderer";
 
     [Serializable] sealed class Registry { public RegistryEntry[] environments; }
     [Serializable] sealed class RegistryEntry { public string id; }
+    [Serializable] sealed class ExhibitionConfig { public MaterialConfig materials; }
+    [Serializable] sealed class MaterialConfig { public string shell; public string pad; }
 
     [Serializable]
     sealed class RegisteredMeasurement
@@ -52,7 +55,7 @@ public static class GaussianExhibitionVerification
         public int spawnPoints;
         public int referenceCameras;
         public int enabledBuildScenes;
-        public bool canonicalBuildSceneOnly;
+        public bool canonicalBuildSceneEnabled;
         public int missingScripts;
         public bool sceneDirty;
         public RegisteredMeasurement[] measurements;
@@ -98,7 +101,7 @@ public static class GaussianExhibitionVerification
             spawnPoints = CountNamed(scene, "SpawnPoint"),
             referenceCameras = CountNamed(scene, "ReferenceCamera"),
             enabledBuildScenes = CountEnabledBuildScenes(),
-            canonicalBuildSceneOnly = HasOnlyCanonicalBuildScene(),
+            canonicalBuildSceneEnabled = IsCanonicalBuildSceneEnabled(),
             missingScripts = CountMissingScripts(scene),
             sceneDirty = scene.isDirty,
             measurements = MeasureSplats(scene)
@@ -119,7 +122,7 @@ public static class GaussianExhibitionVerification
         System.IO.File.WriteAllText(evidencePath, JsonUtility.ToJson(evidence, true));
         foreach (RegisteredMeasurement measurement in evidence.measurements)
             Debug.Log("Gaussian measurement: id=" + measurement.id + ", extent=" + measurement.extent.ToString("F6") + ", floorBottom=" + measurement.floorBottom.ToString("F6") + ", position=" + measurement.position);
-        Debug.Log("Gaussian evidence: scene=" + evidence.activeScene + ", registered=" + evidence.registered + ", splats=" + evidence.gaussianSplatObjects + ", prefabs=" + evidence.prefabs + ", exhibits=" + evidence.exhibits + ", pads=" + evidence.pads + ", labels=" + evidence.labels + ", renderer=" + evidence.renderers + ", descriptor=" + evidence.descriptors + ", pipelineManager=" + evidence.pipelineManagers + ", spawn=" + evidence.spawnPoints + ", referenceCamera=" + evidence.referenceCameras + ", missingScripts=" + evidence.missingScripts + ", dirty=" + evidence.sceneDirty + ", path=" + evidencePath);
+        Debug.Log("Gaussian evidence: scene=" + evidence.activeScene + ", registered=" + evidence.registered + ", splats=" + evidence.gaussianSplatObjects + ", prefabs=" + evidence.prefabs + ", exhibits=" + evidence.exhibits + ", pads=" + evidence.pads + ", labels=" + evidence.labels + ", renderer=" + evidence.renderers + ", descriptor=" + evidence.descriptors + ", pipelineManager=" + evidence.pipelineManagers + ", spawn=" + evidence.spawnPoints + ", referenceCamera=" + evidence.referenceCameras + ", enabledBuildScenes=" + evidence.enabledBuildScenes + ", canonicalBuildSceneEnabled=" + evidence.canonicalBuildSceneEnabled + ", missingScripts=" + evidence.missingScripts + ", dirty=" + evidence.sceneDirty + ", path=" + evidencePath);
     }
 
     static int CountRegisteredSources()
@@ -212,6 +215,7 @@ public static class GaussianExhibitionVerification
 
         GameObject floor = GameObject.Find("WalkableFloor");
         if (floor == null || floor.scene != scene || floor.GetComponent<Collider>() == null) errors.Add("WalkableFloor collider is missing");
+        ValidatePresentationMaterials(floor, registered, errors);
 
         GameObject video = GameObject.Find("SourceVideoPlayer");
         if (video == null || video.scene != scene) errors.Add("SourceVideoPlayer is missing");
@@ -251,12 +255,48 @@ public static class GaussianExhibitionVerification
             if (lightingSettings.realtimeGI) errors.Add("Realtime GI must be disabled");
         }
 
-        if (!HasOnlyCanonicalBuildScene()) errors.Add("EditorBuildSettings must contain exactly one enabled canonical scene");
+        if (!IsCanonicalBuildSceneEnabled()) errors.Add("canonical Gaussian exhibition scene must be enabled exactly once in EditorBuildSettings");
 
         if (errors.Count > 0)
             throw new InvalidOperationException("Gaussian exhibition verification failed:\n- " + string.Join("\n- ", errors));
 
-        Debug.Log("Gaussian exhibition verification PASS: registered=" + registered + ", splats=" + registered + ", renderer=1, video=1, playlist=" + registered + ", missingScripts=0, buildScenes=1, canonicalBuildSceneOnly=true");
+        Debug.Log("Gaussian exhibition verification PASS: registered=" + registered + ", splats=" + registered + ", renderer=1, video=1, playlist=" + registered + ", missingScripts=0, enabledBuildScenes=" + CountEnabledBuildScenes() + ", canonicalBuildSceneEnabled=true");
+    }
+
+    static void ValidatePresentationMaterials(GameObject floor, int registered, List<string> errors)
+    {
+        if (!System.IO.File.Exists(ConfigPath))
+        {
+            errors.Add("Gaussian exhibition config is missing");
+            return;
+        }
+
+        ExhibitionConfig config = JsonUtility.FromJson<ExhibitionConfig>(System.IO.File.ReadAllText(ConfigPath));
+        if (config == null || config.materials == null || string.IsNullOrEmpty(config.materials.shell) || string.IsNullOrEmpty(config.materials.pad))
+        {
+            errors.Add("Gaussian exhibition material configuration is incomplete");
+            return;
+        }
+
+        Material shell = AssetDatabase.LoadAssetAtPath<Material>(config.materials.shell);
+        Material pad = AssetDatabase.LoadAssetAtPath<Material>(config.materials.pad);
+        if (shell == null || pad == null)
+        {
+            errors.Add("Gaussian exhibition configured material asset is missing");
+            return;
+        }
+
+        if (floor == null || floor.GetComponent<Renderer>()?.sharedMaterial != shell)
+            errors.Add("WalkableFloor does not use the configured shell material");
+
+        int padCount = 0;
+        foreach (Renderer renderer in UnityEngine.Object.FindObjectsOfType<Renderer>(true))
+        {
+            if (!renderer.gameObject.name.StartsWith("ExhibitPad_", StringComparison.Ordinal)) continue;
+            padCount++;
+            if (renderer.sharedMaterial != pad) errors.Add(renderer.gameObject.name + " does not use the configured pad material");
+        }
+        if (padCount != registered) errors.Add("exhibit pad count must match canonical registry");
     }
 
     public static void VerifyBatch() => Verify();
@@ -339,9 +379,12 @@ public static class GaussianExhibitionVerification
         return count;
     }
 
-    static bool HasOnlyCanonicalBuildScene()
+    static bool IsCanonicalBuildSceneEnabled()
     {
-        return CountEnabledBuildScenes() == 1 && EditorBuildSettings.scenes.Length == 1 && EditorBuildSettings.scenes[0].enabled && EditorBuildSettings.scenes[0].path == ScenePath;
+        int enabledCanonicalScenes = 0;
+        foreach (EditorBuildSettingsScene buildScene in EditorBuildSettings.scenes)
+            if (buildScene.enabled && buildScene.path == ScenePath) enabledCanonicalScenes++;
+        return enabledCanonicalScenes == 1;
     }
 
     static int CountSceneComponents(Type componentType, Scene scene)

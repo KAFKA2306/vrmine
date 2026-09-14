@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "state_root_from_repo": "../unity.vrmine-verify",
+  "run_root_from_repo": "../unity.vrmine-verify/runs",
+  "normal_run": {
+    "delete_existing_run": false,
+    "reuse_failed_run": false,
+    "reuse_partial_run": false,
+    "collision_strategy": "allocate-new-run",
+    "retry_strategy": "allocate-new-run",
+    "stale_resource_strategy": "record-and-skip"
+  },
+  "destructive_recovery": {
+    "allowed": false,
+    "forbidden_commands": [
+      "git worktree remove",
+      "git clean",
+      "git reset --hard",
+      "Remove-Item -Recurse",
+      "rm -rf"
+    ]
+  },
+  "cleanup": {
+    "owner": "maintenance-job",
+    "normal_run_behavior": "defer",
+    "minimum_age_hours": 168,
+    "required_preconditions": [
+      "run-not-active",
+      "git-status-clean",
+      "terminal-manifest-present",
+      "no-live-process-owns-path"
+    ]
+  },
+  "approval_avoidance": {
+    "destructive_cleanup_must_not_block_normal_run": true,
+    "approval_required_for_retry": false
+  }
+}

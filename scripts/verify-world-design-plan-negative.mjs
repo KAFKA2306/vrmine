@@ -41,7 +41,7 @@ assert.ok(baseline.circulation_contract.waypoints_m.length >= 2);
 
 expectFail('spawn outside room', (spec) => {
   spec.world_build.spawn.position_m[0] = spec.spatial_geometry.overall_width_m;
-}, /spawn lies outside room bounds/);
+}, /spawn\.position_m is outside room footprint\/height|spawn lies outside room bounds/);
 
 expectFail('spawn buffer penetration', (spec) => {
   spec.world_build.spawn.position_m[1] = -spec.spatial_geometry.overall_depth_m / 2 + spec.world_build.spawn.buffer_radius_m - 0.01;
@@ -49,25 +49,25 @@ expectFail('spawn buffer penetration', (spec) => {
 
 expectFail('circulation clearance', (spec) => {
   spec.world_build.circulation.waypoints_m[0][0] = spec.spatial_geometry.overall_width_m / 2 - 0.01;
-}, /violates half-clearance from room wall/);
+}, /circulation waypoint 0 violates wall clearance|violates half-clearance from room wall/);
 
 expectFail('activity unreachable', (spec) => {
   spec.world_build.activity_anchor.position_m = [spec.spatial_geometry.overall_width_m / 2 - 0.1, spec.spatial_geometry.overall_depth_m / 2 - 0.1, 0];
   spec.world_build.activity_anchor.approach_clearance_m = 0.01;
-}, /circulation does not reach the activity anchor approach zone/);
+}, /activity anchor is not reachable from circulation path|circulation does not reach the activity anchor approach zone/);
 
 expectFail('retreat unreachable', (spec) => {
   spec.world_build.retreat.center_m = [-spec.spatial_geometry.overall_width_m / 2 + 0.1, spec.spatial_geometry.overall_depth_m / 2 - 0.1, 0];
   spec.world_build.circulation.minimum_clearance_m = 0.1;
-}, /circulation does not reach the retreat zone/);
+}, /retreat center is not reachable from circulation path|circulation does not reach the retreat zone/);
 
 expectFail('face distance exceeded', (spec) => {
   spec.world_build.social_core.seat_radius_m = spec.social_clusters.primary_core.max_face_distance_m;
-}, /exceed max face distance/);
+}, /exceeds? max face distance/);
 
 expectFail('invalid hero camera', (spec) => {
   spec.world_build.hero_view.position_m[1] = spec.spatial_geometry.overall_depth_m;
-}, /hero_view\.position lies outside room bounds/);
+}, /hero_view\.position_m is outside room footprint\/height|hero_view\.position lies outside room bounds/);
 
 console.log(JSON.stringify({
   status: 'PASS',

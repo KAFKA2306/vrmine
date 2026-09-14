@@ -15,6 +15,11 @@ const taskfileSource = await readFile(new URL('../Taskfile.yml', import.meta.url
 
 assert.equal(exhibition.schema_version, 3, 'unsupported gaussian exhibition schema');
 assert.match(builderSource, /config\.schema_version != 3/, 'Unity builder schema validation must match the canonical exhibition schema');
+const builderLightingConfiguration = builderSource.indexOf('ConfigureBakedLighting();');
+const builderLightingBake = builderSource.indexOf('if (!Lightmapping.Bake())');
+assert.ok(builderLightingConfiguration >= 0 && builderLightingConfiguration < builderLightingBake, 'Gaussian builder must apply the canonical baked-lighting settings before baking');
+assert.match(builderSource, /settings\.bakedGI\s*=\s*true/, 'Gaussian builder must enable baked GI before baking');
+assert.match(builderSource, /settings\.realtimeGI\s*=\s*false/, 'Gaussian builder must disable realtime GI before baking');
 assert.equal(Object.hasOwn(exhibition, 'final_expected_exhibits'), false, 'exhibit count must derive from the canonical registry');
 assert.equal(exhibition.canonical_platform, 'windows');
 assert.equal(exhibition.source_registry, 'config/gaussian-splats.json');

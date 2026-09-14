@@ -131,7 +131,25 @@ def make_part(part, materials):
             vertices=int(part.get("vertices", 48)), radius=float(part["radius"]),
             depth=float(part["height"]), location=position,
         )
-        obj = finish(bpy.context.object, mat)
+        obj = bpy.context.object
+        obj.rotation_euler = [math.radians(float(v)) for v in part.get("rotation_deg", [0, 0, 0])]
+        obj = finish(obj, mat)
+    elif part["component"] in {"cone", "sphere"}:
+        # Low-poly solid silhouettes avoid alpha overdraw on small foliage.
+        vertices = int(part.get("vertices", 8))
+        if vertices < 4 or vertices > 64:
+            raise ValueError("cone/sphere vertices must be in [4,64]")
+        if part["component"] == "cone":
+            bpy.ops.mesh.primitive_cone_add(vertices=vertices, radius1=0.5, radius2=0, depth=1, location=position)
+        else:
+            bpy.ops.mesh.primitive_uv_sphere_add(segments=vertices, ring_count=max(4, vertices // 2), radius=0.5, location=position)
+        obj = bpy.context.object
+        size = tuple(float(v) for v in part["size"])
+        if len(size) != 3 or any(not math.isfinite(v) or v <= 0 for v in size):
+            raise ValueError("cone/sphere size must contain three positive finite values")
+        obj.dimensions = size
+        obj.rotation_euler = [math.radians(float(v)) for v in part.get("rotation_deg", [0, 0, 0])]
+        finish(obj, mat, bevel=0)
     else:
         raise ValueError(f'unsupported component: {part["component"]}')
     obj.name = part["name"]

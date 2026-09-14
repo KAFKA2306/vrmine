@@ -43,7 +43,7 @@ public static class GaussianExhibitionPipeline
         Debug.Log("VRMine 3DGS pipeline: building canonical scene from the current registry...");
         GaussianExhibitionBuilder.Build();
         GaussianExhibitionPresentation.Apply();
-        ConfigureBakedLighting();
+        GaussianExhibitionBuilder.ConfigureBakedLighting();
         EditorSceneManager.SaveOpenScenes();
 
         Debug.Log("VRMine 3DGS scene ready. Registered PLYs, presentation scale, floor/world shell, spawn, labels, playback controls, lighting configuration and one Gaussian renderer are wired in GaussianSplatExhibition.unity.");
@@ -73,17 +73,4 @@ public static class GaussianExhibitionPipeline
 
     public static void PrepareBatch() => Prepare();
 
-    static void ConfigureBakedLighting()
-    {
-        LightingSettings settings;
-        if (!Lightmapping.TryGetLightingSettings(out settings) || settings == null)
-        {
-            settings = new LightingSettings();
-            Lightmapping.lightingSettings = settings;
-        }
-        settings.autoGenerate = false;
-        settings.bakedGI = true;
-        settings.realtimeGI = false;
-        EditorUtility.SetDirty(settings);
-    }
 }

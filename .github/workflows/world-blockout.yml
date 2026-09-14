@@ -1,0 +1,38 @@
+name: WORLD_BLOCKOUT_SPEC verification
+
+on:
+  pull_request:
+    paths:
+      - 'config/world-design/WORLD_BLOCKOUT_SPEC.json'
+      - 'config/world-design/generated/woodland-tabletop-village-v0.json'
+      - 'Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillageAudioBuild.cs'
+      - 'Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillagePrefabBuild.cs'
+      - 'scripts/run-woodland-tabletop-village-unity.mjs'
+      - 'scripts/verify-world-blockout.mjs'
+      - '.github/workflows/world-blockout.yml'
+      - '.github/workflows/woodland-unity-verification.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'config/world-design/WORLD_BLOCKOUT_SPEC.json'
+      - 'config/world-design/generated/woodland-tabletop-village-v0.json'
+      - 'Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillageAudioBuild.cs'
+      - 'Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillagePrefabBuild.cs'
+      - 'scripts/run-woodland-tabletop-village-unity.mjs'
+      - 'scripts/verify-world-blockout.mjs'
+      - '.github/workflows/world-blockout.yml'
+      - '.github/workflows/woodland-unity-verification.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+      - run: node scripts/verify-world-blockout.mjs

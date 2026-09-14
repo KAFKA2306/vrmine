@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: ChessGame
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 7d2b89a1d22338743bf75cf5a8b30509, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 723c5fa9149de534baaee5570ebd3aea, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: d637073d056c05e419fd6d8e140249ef, type: 3}

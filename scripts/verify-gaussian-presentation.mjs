@@ -3,11 +3,15 @@ import { readFile } from 'node:fs/promises';
 
 const config = JSON.parse(await readFile(new URL('../config/gaussian-exhibition.json', import.meta.url), 'utf8'));
 const pipelineSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianExhibitionPipeline.cs', import.meta.url), 'utf8');
+const builderSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianExhibitionBuilder.cs', import.meta.url), 'utf8');
 const presentationSource = await readFile(new URL('../Assets/KafkaMade/VRMine/Editor/GaussianExhibitionPresentation.cs', import.meta.url), 'utf8');
 
 assert.equal(config.target_extent_m, 1, 'reusable imported prefabs must remain normalized to approximately 1 m');
 assert.equal(config.presentation_scale_multiplier, 2, 'canonical exhibition presentation multiplier must be exactly 2x');
 assert.equal(config.target_extent_m * config.presentation_scale_multiplier, 2, 'canonical presented extent must target approximately 2 m');
+assert.ok(config.materials && typeof config.materials === 'object', 'canonical exhibition materials must be configured');
+assert.match(config.materials.shell, /^Assets\/KafkaMade\/VRMine\/Materials\/Dark\.mat$/, 'shell material must use the existing dark VRMine material');
+assert.match(config.materials.pad, /^Assets\/KafkaMade\/VRMine\/Materials\/Gold\.mat$/, 'pad material must use the existing gold VRMine material');
 
 const buildCall = pipelineSource.indexOf('GaussianExhibitionBuilder.Build();');
 const presentationCalls = [...pipelineSource.matchAll(/GaussianExhibitionPresentation\.Apply\(\);/g)].map((match) => match.index);
@@ -15,6 +19,9 @@ assert.ok(buildCall >= 0, 'canonical pipeline must build the scene from the regi
 assert.equal(presentationCalls.length, 1, 'the single canonical build path must apply presentation scaling exactly once');
 assert.ok(presentationCalls[0] > buildCall, 'presentation scaling must run after registry-driven scene generation');
 assert.doesNotMatch(pipelineSource, /BuildLocalPreview|BuildFinal/, 'count-specific preview/final builder paths must not return');
+assert.match(builderSource, /public MaterialConfig materials;/, 'builder must own the configured exhibition materials');
+assert.match(builderSource, /LoadMaterial\(config\.materials\.shell/, 'builder must fail closed when the configured shell material is unavailable');
+assert.match(builderSource, /LoadMaterial\(config\.materials\.pad/, 'builder must fail closed when the configured pad material is unavailable');
 
 assert.match(presentationSource, /exhibit\.localScale\s*=\s*exhibit\.localScale\s*\*\s*config\.presentation_scale_multiplier/, 'presentation must scale each exhibit from its prefab-derived scene transform');
 assert.match(presentationSource, /exhibit\.position\s*\+=\s*Vector3\.up\s*\*\s*-bounds\.min\.y/, 'scaled exhibits must be realigned to the floor from measured world bounds');

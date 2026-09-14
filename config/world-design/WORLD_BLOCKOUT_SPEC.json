@@ -1,0 +1,101 @@
+{
+  "id": "WORLD_BLOCKOUT_SPEC",
+  "version": 3,
+  "subject": "woodland-tabletop-village-v0",
+  "purpose": "Machine-readable dependency contract for blockout completion. Design values remain owned by existing canonical sources and are referenced here, not copied.",
+  "canonical_sources": {
+    "world_design": "config/world-design/generated/woodland-tabletop-village-v0.json",
+    "unity_prefab_builder": "Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillagePrefabBuild.cs",
+    "unity_prefab_runner": "scripts/run-woodland-tabletop-village-unity.mjs",
+    "unity_audio_builder": "Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillageAudioBuild.cs",
+    "unity_verification_workflow": ".github/workflows/woodland-unity-verification.yml"
+  },
+  "completion": {
+    "operator": "all",
+    "requirements": [
+      {
+        "id": "spatial_layout",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/blockout/coordinate_system"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/blockout/anchors"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/world_build/circulation"}
+        ]
+      },
+      {
+        "id": "hero_view",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/world_build/hero_view"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/acceptance/must_pass"}
+        ]
+      },
+      {
+        "id": "scale",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/spatial_geometry"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/blockout/tabletop_top_z_m"}
+        ]
+      },
+      {
+        "id": "required_landmarks",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/blockout/composition_axis"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/blockout/anchors"}
+        ]
+      },
+      {
+        "id": "lighting",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/lighting_design"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/optical_lighting"}
+        ]
+      },
+      {
+        "id": "audio",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/soundscape"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/retreat_protocol/acoustic_attenuation_db"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/spatial_geometry"},
+          {"type": "repository_file_contains", "source": "unity_audio_builder", "tokens": ["AudioSource", "WriteAmbientWav", "VerifyNegativeVolumeFixture", "AudioRolloffMode.Linear", "source.spatialBlend = 1.0f"]},
+          {"type": "repository_file_contains", "source": "unity_prefab_builder", "tokens": ["WoodlandTabletopVillageAudioBuild.MaterializeAndVerifyScene", "WoodlandTabletopVillageAudioBuild.VerifyPrefab"]}
+        ]
+      },
+      {
+        "id": "life_traces",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/life_traces"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/acceptance/must_pass"}
+        ]
+      },
+      {
+        "id": "interaction",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/acceptance/gameplay_required"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/media_governance"}
+        ]
+      },
+      {
+        "id": "unity_prefab",
+        "evidence": [
+          {"type": "repository_file_contains", "source": "unity_prefab_builder", "tokens": ["PrefabUtility.SaveAsPrefabAsset", "VerifyPrefabOrThrow", "VRCSceneDescriptor"]},
+          {"type": "repository_file_contains", "source": "unity_prefab_runner", "tokens": ["WoodlandTabletopVillagePrefabBuild.BuildAndVerifyBatch", "WoodlandTabletopVillage.prefab", "fs.statSync(prefabPath).size === 0"]}
+        ]
+      },
+      {
+        "id": "verification",
+        "evidence": [
+          {"type": "json_pointer", "source": "world_design", "pointer": "/acceptance/must_pass"},
+          {"type": "json_pointer", "source": "world_design", "pointer": "/runtime_budget"},
+          {"type": "repository_file_contains", "source": "unity_verification_workflow", "tokens": ["Exact-head Unity scene/prefab verification", "github.event.pull_request.head.sha", "run-woodland-tabletop-village-unity.mjs"]}
+        ]
+      }
+    ]
+  },
+  "evaluation": {
+    "supported_evidence_types": ["json_pointer", "repository_file_contains"],
+    "require_canonical_source_exists": true,
+    "require_all_json_pointers_resolve": true,
+    "require_repository_file_tokens_present": true,
+    "require_nonempty_evidence_per_requirement": true,
+    "pass_condition": "all requirements pass"
+  }
+}

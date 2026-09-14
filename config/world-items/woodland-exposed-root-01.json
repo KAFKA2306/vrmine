@@ -1,0 +1,20 @@
+{
+  "id": "woodland-exposed-root-01",
+  "family": "Plants/Planters",
+  "display_name": "Woodland Exposed Root",
+  "dimensions_m": [0.30496, 0.1521, 0.04913],
+  "parts": [
+    {"name": "tapered_root_1", "component": "cone", "size": [0.043, 0.043, 0.2], "position": [-0.065, 0, 0.035208], "material": "root", "rotation_deg": [0, 82, 0], "vertices": 8},
+    {"name": "tapered_root_2", "component": "cone", "size": [0.03, 0.03, 0.17], "position": [0.045, 0.015, 0.029208], "material": "root_dark", "rotation_deg": [0, 86, 18], "vertices": 8},
+    {"name": "tapered_root_3", "component": "cone", "size": [0.022, 0.022, 0.12], "position": [0.085, -0.034, 0.026208], "material": "root", "rotation_deg": [0, 88, -28], "vertices": 8},
+    {"name": "tapered_root_4", "component": "cone", "size": [0.023, 0.023, 0.13], "position": [-0.005, 0.037, 0.029208], "material": "root_dark", "rotation_deg": [0, 84, 55], "vertices": 8}
+  ],
+  "materials": {"root": {"base_color": [0.28, 0.16, 0.08], "roughness": 0.98, "metallic": 0}, "root_dark": {"base_color": [0.19, 0.1, 0.05], "roughness": 1.0, "metallic": 0}},
+  "variants": [],
+  "price_hypothesis": {"currency": "JPY", "single": 100, "mini_set_target": 400},
+  "license": {"name": "Proprietary / BOOTH terms pending", "provenance": "Original generic procedural geometry and materials authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded geometry.", "status": "DRAFT"},
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED"
+}

@@ -10,6 +10,8 @@ on:
       - "ProjectSettings/ProjectVersion.txt"
       - "config/vrchat-toolchain.json"
       - "config/quality-gates.json"
+      - "config/agent-knowledge.json"
+      - "config/verification-worktree-policy.json"
       - "config/perspective-cage.json"
       - "config/stich-meister-rules.json"
       - "config/factory-timing.json"
@@ -25,16 +27,23 @@ on:
       - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs.meta"
+      - "Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillage*.cs"
       - "pages/games/stich-meister/index.html"
       - "docs/QUALITY_GATES.md"
       - ".github/PULL_REQUEST_TEMPLATE.md"
       - "scripts/install-vrc-get.mjs"
       - "scripts/verify-vpm.mjs"
+      - "vrmine.ps1"
       - "scripts/verify-quality-gates.mjs"
+      - "scripts/new-verification-worktree.ps1"
+      - "scripts/verify-verification-worktree-policy.mjs"
+      - "scripts/resolve-agent-knowledge.mjs"
+      - "scripts/resolve-agent-knowledge.test.mjs"
       - "scripts/verify-factory-timing.mjs"
       - "scripts/verify-world-item-packages.mjs"
       - "scripts/world-item-graph.mjs"
       - "scripts/world-item-impact.mjs"
+      - "scripts/world-item-build-order.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
       - "scripts/verify-world-design-plan-negative.mjs"
@@ -43,6 +52,7 @@ on:
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
       - "scripts/run-retro-cafe-unity.mjs"
+      - "scripts/run-woodland-tabletop-village-unity.mjs"
       - "Taskfile.yml"
       - "skills/**"
       - "agr.toml"
@@ -56,6 +66,8 @@ on:
       - "ProjectSettings/ProjectVersion.txt"
       - "config/vrchat-toolchain.json"
       - "config/quality-gates.json"
+      - "config/agent-knowledge.json"
+      - "config/verification-worktree-policy.json"
       - "config/perspective-cage.json"
       - "config/stich-meister-rules.json"
       - "config/factory-timing.json"
@@ -71,16 +83,23 @@ on:
       - "Assets/KafkaMade/VRMine/Editor/GlbConsumerVerification.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs"
       - "Assets/KafkaMade/VRMine/Editor/RetroCafePrefabBuilder.cs.meta"
+      - "Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillage*.cs"
       - "pages/games/stich-meister/index.html"
       - "docs/QUALITY_GATES.md"
       - ".github/PULL_REQUEST_TEMPLATE.md"
       - "scripts/install-vrc-get.mjs"
       - "scripts/verify-vpm.mjs"
+      - "vrmine.ps1"
       - "scripts/verify-quality-gates.mjs"
+      - "scripts/new-verification-worktree.ps1"
+      - "scripts/verify-verification-worktree-policy.mjs"
+      - "scripts/resolve-agent-knowledge.mjs"
+      - "scripts/resolve-agent-knowledge.test.mjs"
       - "scripts/verify-factory-timing.mjs"
       - "scripts/verify-world-item-packages.mjs"
       - "scripts/world-item-graph.mjs"
       - "scripts/world-item-impact.mjs"
+      - "scripts/world-item-build-order.mjs"
       - "scripts/verify-world-design.mjs"
       - "scripts/world-design-to-blender-plan.mjs"
       - "scripts/verify-world-design-plan-negative.mjs"
@@ -89,6 +108,7 @@ on:
       - "scripts/run-perspective-cage-unity.mjs"
       - "scripts/run-glb-consumer-unity.mjs"
       - "scripts/run-retro-cafe-unity.mjs"
+      - "scripts/run-woodland-tabletop-village-unity.mjs"
       - "Taskfile.yml"
       - "skills/**"
       - "agr.toml"
@@ -115,8 +135,16 @@ jobs:
         with:
           node-version: 22
 
+      - name: Verify agent knowledge compatibility
+        run: |
+          node --test scripts/resolve-agent-knowledge.test.mjs
+          node scripts/resolve-agent-knowledge.mjs
+
       - name: Verify repository and quality gate contracts
         run: node scripts/verify-quality-gates.mjs
+
+      - name: Verify non-destructive verification worktree policy
+        run: node scripts/verify-verification-worktree-policy.mjs
 
       - name: Verify World Item Factory timing evidence
         run: node scripts/verify-factory-timing.mjs
@@ -135,6 +163,14 @@ jobs:
           node scripts/world-item-impact.mjs --node "$ROOT_NODE" > /tmp/world-item-impact.json
           node -e 'const r=require("/tmp/world-item-impact.json"); if (!r.root || !r.summary || !Array.isArray(r.affected)) process.exit(1);'
 
+      - name: Verify World Item build order
+        shell: bash
+        run: |
+          node --check scripts/world-item-build-order.mjs
+          ROOT_NODE=$(node scripts/world-item-graph.mjs | node -e 'let s=""; process.stdin.on("data", d => s += d).on("end", () => { const g = JSON.parse(s); const n = g.nodes.find(x => x.type === "Material"); if (!n) process.exit(1); process.stdout.write(n.id); });')
+          node scripts/world-item-build-order.mjs --node "$ROOT_NODE" > /tmp/world-item-build-order.json
+          node -e 'const r=require("/tmp/world-item-build-order.json"); if (!r.root || !r.summary || !Array.isArray(r.order) || r.order.length < 1 || r.order[0].id !== r.root.id) process.exit(1);'
+
       - name: Verify World Design dataset, DRC and provenance
         run: |
           node scripts/verify-world-design.mjs
@@ -152,6 +188,7 @@ jobs:
           node --check scripts/run-perspective-cage-unity.mjs
           node --check scripts/run-glb-consumer-unity.mjs
           node --check scripts/run-retro-cafe-unity.mjs
+          node --check scripts/run-woodland-tabletop-village-unity.mjs
 
       - name: Install pinned vrc-get
         run: node scripts/install-vrc-get.mjs

@@ -143,6 +143,8 @@ def verify_one(spec_path: Path, base: dict, variant_id: str | None) -> None:
         raise AssertionError("manifest identity mismatch")
     if manifest["spec_sha256"] != digest(spec_path):
         raise AssertionError("spec hash mismatch")
+    if manifest["formats"] != expected_spec["formats"]:
+        raise AssertionError("manifest formats differ from canonical spec")
     if manifest["unity_status"] != "UNVERIFIED" or manifest["vrchat_status"] != "UNVERIFIED":
         raise AssertionError("runtime status was promoted without runtime evidence")
 

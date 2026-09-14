@@ -30,6 +30,7 @@ public static class GaussianExhibitionBuilder
         public string renderer;
         public float target_extent_m;
         public LayoutConfig layout;
+        public MaterialConfig materials;
         public CameraConfig reference_camera;
         public VideoPlayerConfig video_player;
     }
@@ -41,6 +42,12 @@ public static class GaussianExhibitionBuilder
         public float margin_m;
         public float pad_size_m;
         public float wall_height_m;
+    }
+
+    [Serializable] sealed class MaterialConfig
+    {
+        public string shell;
+        public string pad;
     }
 
     [Serializable] sealed class CameraConfig { public float field_of_view; }
@@ -94,8 +101,10 @@ public static class GaussianExhibitionBuilder
             throw new InvalidOperationException("Gaussian exhibition prefabs are incomplete. Run the registered-source importer first:\n- " + string.Join("\n- ", missing));
 
         Vector2 floorSize = ComputeFloorSize(config, exhibits.Count);
+        Material shellMaterial = LoadMaterial(config.materials.shell, "shell");
+        Material padMaterial = LoadMaterial(config.materials.pad, "pad");
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        CreateFloorAndShell(config, floorSize);
+        CreateFloorAndShell(config, floorSize, shellMaterial);
         CreateBakedDirectionalLight();
         CreateLightProbes(floorSize);
         CreateDescriptor(config, floorSize);
@@ -109,7 +118,7 @@ public static class GaussianExhibitionBuilder
             instance.transform.SetPositionAndRotation(exhibit.position, exhibit.rotation);
             AlignExhibitToFloor(instance);
             instance.SetActive(true);
-            CreatePad(config, exhibit);
+            CreatePad(config, exhibit, padMaterial);
             CreateLabel(exhibit);
         }
 
@@ -118,6 +127,7 @@ public static class GaussianExhibitionBuilder
 
         EnsureAssetFolder(Path.GetDirectoryName(config.scene_path)?.Replace('\\', '/'));
         EditorSceneManager.SaveScene(scene, config.scene_path);
+        ConfigureBakedLighting();
         if (!Lightmapping.Bake())
             throw new InvalidOperationException("Gaussian exhibition lighting bake failed.");
         EditorSceneManager.SaveScene(scene);
@@ -127,6 +137,20 @@ public static class GaussianExhibitionBuilder
         Selection.activeObject = AssetDatabase.LoadAssetAtPath<SceneAsset>(config.scene_path);
 
         Debug.Log("Gaussian exhibition scene ready: registered=" + exhibits.Count + ", scene=" + config.scene_path);
+    }
+
+    public static void ConfigureBakedLighting()
+    {
+        LightingSettings settings;
+        if (!Lightmapping.TryGetLightingSettings(out settings) || settings == null)
+        {
+            settings = new LightingSettings();
+            Lightmapping.lightingSettings = settings;
+        }
+        settings.autoGenerate = false;
+        settings.bakedGI = true;
+        settings.realtimeGI = false;
+        EditorUtility.SetDirty(settings);
     }
 
     static List<Exhibit> BuildExhibitLayout(ExhibitionConfig config, Registry registry)
@@ -206,6 +230,8 @@ public static class GaussianExhibitionBuilder
         if (config.layout == null || config.layout.center_spacing_m <= 0 || config.layout.aisle_width_m <= 0 ||
             config.layout.margin_m < 0 || config.layout.pad_size_m <= 0 || config.layout.wall_height_m <= 0)
             throw new InvalidDataException("Gaussian exhibition layout values are invalid.");
+        if (config.materials == null || string.IsNullOrEmpty(config.materials.shell) || string.IsNullOrEmpty(config.materials.pad))
+            throw new InvalidDataException("Gaussian exhibition materials are incomplete.");
         if (config.reference_camera == null || config.reference_camera.field_of_view <= 0)
             throw new InvalidDataException("Reference camera configuration is invalid.");
         if (config.video_player == null || string.IsNullOrEmpty(config.video_player.prefab_path))
@@ -233,34 +259,42 @@ public static class GaussianExhibitionBuilder
         }
     }
 
-    static void CreateFloorAndShell(ExhibitionConfig config, Vector2 floorSize)
+    static Material LoadMaterial(string path, string role)
+    {
+        Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
+        if (material == null) throw new InvalidOperationException("Gaussian exhibition " + role + " material is missing: " + path);
+        return material;
+    }
+
+    static void CreateFloorAndShell(ExhibitionConfig config, Vector2 floorSize, Material shellMaterial)
     {
         Vector3 center = new Vector3(0f, -0.1f, 0f);
         Vector3 size = new Vector3(floorSize.x, 0.2f, floorSize.y);
-        CreatePrimitive("WalkableFloor", center, size, true);
+        CreatePrimitive("WalkableFloor", center, size, true, shellMaterial);
         float h = config.layout.wall_height_m;
         float t = 0.2f;
         float y = h * 0.5f;
-        CreatePrimitive("Wall_Left", new Vector3(-floorSize.x * 0.5f, y, 0f), new Vector3(t, h, floorSize.y), true);
-        CreatePrimitive("Wall_Right", new Vector3(floorSize.x * 0.5f, y, 0f), new Vector3(t, h, floorSize.y), true);
-        CreatePrimitive("Wall_Back", new Vector3(0f, y, -floorSize.y * 0.5f), new Vector3(floorSize.x, h, t), true);
-        CreatePrimitive("Wall_Front", new Vector3(0f, y, floorSize.y * 0.5f), new Vector3(floorSize.x, h, t), true);
+        CreatePrimitive("Wall_Left", new Vector3(-floorSize.x * 0.5f, y, 0f), new Vector3(t, h, floorSize.y), true, shellMaterial);
+        CreatePrimitive("Wall_Right", new Vector3(floorSize.x * 0.5f, y, 0f), new Vector3(t, h, floorSize.y), true, shellMaterial);
+        CreatePrimitive("Wall_Back", new Vector3(0f, y, -floorSize.y * 0.5f), new Vector3(floorSize.x, h, t), true, shellMaterial);
+        CreatePrimitive("Wall_Front", new Vector3(0f, y, floorSize.y * 0.5f), new Vector3(floorSize.x, h, t), true, shellMaterial);
     }
 
-    static GameObject CreatePrimitive(string name, Vector3 position, Vector3 scale, bool isStatic)
+    static GameObject CreatePrimitive(string name, Vector3 position, Vector3 scale, bool isStatic, Material material)
     {
         GameObject value = GameObject.CreatePrimitive(PrimitiveType.Cube);
         value.name = name;
         value.transform.position = position;
         value.transform.localScale = scale;
         value.isStatic = isStatic;
+        value.GetComponent<Renderer>().sharedMaterial = material;
         return value;
     }
 
-    static void CreatePad(ExhibitionConfig config, Exhibit exhibit)
+    static void CreatePad(ExhibitionConfig config, Exhibit exhibit, Material material)
     {
         CreatePrimitive("ExhibitPad_" + exhibit.index.ToString("00"), new Vector3(exhibit.position.x, 0.05f, exhibit.position.z),
-            new Vector3(config.layout.pad_size_m, 0.1f, config.layout.pad_size_m), true);
+            new Vector3(config.layout.pad_size_m, 0.1f, config.layout.pad_size_m), true, material);
     }
 
     static void CreateLabel(Exhibit exhibit)

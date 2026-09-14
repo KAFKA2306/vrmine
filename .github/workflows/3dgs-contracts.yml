@@ -241,3 +241,124 @@ jobs:
             Library/VRMine/hf-oidc-error.txt
           if-no-files-found: error
           retention-days: 14
+
+  unity-final-evidence:
+    needs: contracts
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      UNITY_EXE: C:\Program Files\Unity\Hub\Editor\2022.3.22f1\Editor\Unity.exe
+      HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          clean: true
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      - name: Require exact revision and Unity runtime
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = '${{ github.event.pull_request.head.sha || github.sha }}'
+          $actual = (git rev-parse HEAD).Trim()
+          if ($actual -ne $expected) { throw "Checkout is not exact requested revision: expected $expected, got $actual" }
+          if (!(Test-Path -LiteralPath $env:UNITY_EXE)) { throw "Unity editor not found: $env:UNITY_EXE" }
+          & $env:UNITY_EXE -version -batchmode -quit
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Resolve pinned VRChat packages
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          node scripts/install-vrc-get.mjs
+          & .tools\vrc-get.exe resolve
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Materialize pinned Gaussian renderer
+        shell: pwsh
+        run: node scripts/materialize-gaussian-renderer.mjs
+
+      - name: Verify canonical Unity scene and SDK validation
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          node scripts/run-gaussian-unity.mjs registered
+          node scripts/run-gaussian-unity.mjs sdk
+          node scripts/run-gaussian-unity.mjs final
+
+      - name: Resolve private Gaussian artifact authentication
+        id: unity_access
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Continue'
+          New-Item -ItemType Directory -Force -Path 'Library\VRMine' | Out-Null
+          python -m pip install --quiet "huggingface_hub>=1.19,<2" "PyYAML>=6.0,<7" "filelock>=3.0"
+          $errorPath = 'Library\VRMine\hf-oidc-error.txt'
+          $token = (& hf auth token 2>$errorPath | Out-String).Trim()
+          if ($LASTEXITCODE -eq 0 -and ![string]::IsNullOrWhiteSpace($token)) {
+            Write-Output "::add-mask::$token"
+            "HF_TOKEN=$token" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+            "available=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            Write-Output 'Hugging Face artifact authentication method: trusted_publisher_oidc' | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+          } else {
+            "available=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            Write-Output '::warning::Private Gaussian performance measurement is BLOCKED: no matching HF Trusted Publisher. Canonical Unity/SDK evidence remains valid; private-byte measurements are not claimed.'
+            Write-Output '### 3DGS Unity final evidence' | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+            Write-Output 'BLOCKED: configure Hugging Face Trusted Publisher for buckets/k4fka/kafka-data-lake to materialize exact registered PLYs and complete performance measurement.' | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+          }
+          exit 0
+
+      - name: Check out pinned artifact resolver
+        if: steps.unity_access.outputs.available == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: KAFKA2306/hf-cache-hub
+          ref: b41ca5a6601a6ac7724cb09b3fe90554c7356d69
+          path: .hf-cache-hub
+
+      - name: Materialize exact registered PLYs
+        if: steps.unity_access.outputs.available == 'true'
+        shell: pwsh
+        env:
+          HF_CACHE_HUB_ROOT: ${{ github.workspace }}\.hf-cache-hub
+          HF_HOME: ${{ runner.temp }}\hf-cache
+        run: node scripts/materialize-gaussian-sources.mjs
+
+      - name: Measure exact registered PLYs in Unity
+        if: steps.unity_access.outputs.available == 'true'
+        shell: pwsh
+        run: node scripts/run-gaussian-unity.mjs performance
+
+      - name: Require measured registry-complete evidence
+        if: steps.unity_access.outputs.available == 'true'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $evidencePath = 'Library\VRMine\gaussian-performance-evidence.json'
+          if (!(Test-Path -LiteralPath $evidencePath)) { throw "Missing performance evidence: $evidencePath" }
+          $evidence = Get-Content -Raw -LiteralPath $evidencePath | ConvertFrom-Json
+          if ($evidence.status -ne 'MEASURED_REGISTRY_COMPLETE') { throw "Gaussian performance evidence is not registry-complete: $($evidence.status)" }
+          if ([int]$evidence.registered -le 0 -or [int]$evidence.sourcePlyFiles -ne [int]$evidence.registered) {
+            throw "Gaussian source measurement mismatch: registered=$($evidence.registered), sourcePlyFiles=$($evidence.sourcePlyFiles)"
+          }
+
+      - name: Persist exact-revision Unity evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: 3dgs-unity-final-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            Library/VRMine/unity-*.log
+            Library/VRMine/gaussian-u2-evidence.json
+            Library/VRMine/gaussian-build-evidence.json
+            Library/VRMine/gaussian-performance-evidence.json
+            Library/VRMine/hf-oidc-error.txt
+          if-no-files-found: warn
+          retention-days: 14

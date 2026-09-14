@@ -51,6 +51,46 @@
       "performance_targets_not_measured_on_actual_client"
     ]
   },
+  "authoring_evidence_policy": {
+    "states": [
+      "PASS",
+      "FAIL",
+      "UNVERIFIED"
+    ],
+    "preferred_execution_order": [
+      "repository_automation",
+      "version_compatible_mcp",
+      "computer_use"
+    ],
+    "adapters": {
+      "repository_automation": {
+        "role": "primary_deterministic_path",
+        "machine_readable": true,
+        "version_compatibility_required": true,
+        "may_produce_stage_evidence": true
+      },
+      "version_compatible_mcp": {
+        "role": "structured_editor_control_and_inspection",
+        "machine_readable": true,
+        "version_compatibility_required": true,
+        "may_produce_stage_evidence": true
+      },
+      "computer_use": {
+        "role": "gui_fallback_only",
+        "machine_readable": false,
+        "version_compatibility_required": true,
+        "may_produce_stage_evidence": false
+      }
+    },
+    "rules": {
+      "missing_producer_is_unverified": true,
+      "missing_measurement_is_unverified": true,
+      "tool_success_is_not_runtime_success": true,
+      "computer_use_observation_is_not_release_evidence": true,
+      "evidence_must_name_exact_revision": true,
+      "authoring_adapter_success_may_not_promote_release_gate": true
+    }
+  },
   "state_rules": {
     "implementation_issue_may_close_after_merge_gate": true,
     "release_issue_may_close_without_product_release_gate": false,

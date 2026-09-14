@@ -25,9 +25,10 @@ tasks:
       - node --test pages/games/answer-impostor/engine.test.mjs
       - node scripts/verify-quality-gates.mjs
       - node scripts/verify-factory-timing.mjs
+      - node scripts/verify-world-item-packages.mjs
       - node scripts/world-item-graph.mjs --check
       - task: world-design:check
-      - python3 -m py_compile scripts/world_build_factory.py scripts/verify_world_build.py
+      - uv --cache-dir .uv-cache run --offline --python .tools/venv python -m py_compile scripts/world_build_factory.py scripts/verify_world_build.py scripts/publish_world_build_evidence.py
       - node scripts/verify-perspective-cage.mjs
       - node scripts/verify-stich-meister-rules.mjs
       - node --check scripts/run-perspective-cage-unity.mjs
@@ -45,6 +46,25 @@ tasks:
     cmds:
       - node scripts/verify-world-design.mjs
       - node scripts/world-design-to-blender-plan.mjs config/world-design/generated/cyber-alley-tea-nook.json
+
+  woodland:modules:
+    desc: Manufacture and verify the seven anchor modules for Woodland Tabletop Village with Blender 4.2
+    cmds:
+      - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-great-tree-01.json
+      - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-great-tree-01.json
+      - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-lodge-01.json
+      - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-lodge-01.json
+      - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-cottage-01.json
+      - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-cottage-01.json
+      - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-bridge-01.json
+      - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-bridge-01.json
+      - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-market-stall-01.json
+      - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-market-stall-01.json
+      - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-reading-bench-01.json
+      - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-reading-bench-01.json
+      - blender -b --python-exit-code 1 --python scripts/world_item_factory.py -- config/world-items/woodland-stream-segment-01.json
+      - blender -b --python-exit-code 1 --python scripts/verify_world_item.py -- config/world-items/woodland-stream-segment-01.json
+      - node scripts/verify-world-item-packages.mjs
 
   world-build:pilot:
     desc: Generate and verify the canonical pilot room with Blender 4.2

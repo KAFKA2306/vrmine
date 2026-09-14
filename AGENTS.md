@@ -13,6 +13,8 @@ current GitHub `main` is the integration base. Machine-readable owners define po
 - Automation / verification: `scripts/`
 - Commands: `Taskfile.yml`
 - Verification / release policy: `config/quality-gates.json`
+- Verification worktree lifecycle: `config/verification-worktree-policy.json`
+- Agent knowledge authority: `config/agent-knowledge.json`
 
 ## Rules
 
@@ -25,6 +27,12 @@ current GitHub `main` is the integration base. Machine-readable owners define po
 - silent fallbackや根拠のないdefaultで失敗を隠さない。
 - Unityのserialized referenceとtracked `.meta` を意図せず変更しない。
 
+## Knowledge selection
+
+`config/agent-knowledge.json` owns knowledge precedence and version-source selection. Resolve the current project versions from their canonical files before using version-sensitive Unity, VRChat SDK, Blender, official documentation, or specialized Skills. Project facts outrank external guidance; specialized Skills and general knowledge are advisory only. Reject or explicitly mark guidance incompatible when its declared minimum or exact version does not match the pinned project state. Do not copy pinned version values into this prose.
+
+Use `node scripts/resolve-agent-knowledge.mjs` to read the current project state. For version-sensitive guidance, pass `--tool`, plus `--minimum-version` or `--exact-version`, before applying it. Generated behavior still requires the existing smallest-surface verifier and exact-revision evidence.
+
 ## Generated assets
 
 Use the existing generation path and preserve the direct render evidence it produces. Merge/release behavior for generated assets is owned by `config/quality-gates.json`; do not restate that policy here.
@@ -32,3 +40,5 @@ Use the existing generation path and preserve the direct render evidence it prod
 ## Verification
 
 Use the smallest `Taskfile.yml` command for the changed surface and the verifier selected by `config/quality-gates.json`. Tie CI, main read-back, production, Unity, and VRChat claims to the exact revision that produced the evidence; never infer an unobserved runtime result.
+
+Verification retry and worktree recovery must follow `config/verification-worktree-policy.json`. A normal run must not delete, reset, clean, or reuse an existing partial, failed, or stale verification worktree. Allocate a fresh detached worktree for every retry, record stale resources without mutating them, and continue. Destructive cleanup belongs to the separate maintenance path and must not block a normal run or create a human-approval dependency when a fresh isolated run can proceed.

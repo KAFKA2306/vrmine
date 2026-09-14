@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "authority_order": [
+    {
+      "id": "project_facts",
+      "sources": [
+        "AGENTS.md",
+        "config/world-design/",
+        "config/world-items/",
+        "config/quality-gates.json",
+        "Packages/manifest.json",
+        "ProjectSettings/ProjectVersion.txt",
+        "Taskfile.yml",
+        "Assets/KafkaMade/VRMine/"
+      ]
+    },
+    {
+      "id": "version_matched_official_docs"
+    },
+    {
+      "id": "specialized_skills",
+      "requires_compatibility_check": true,
+      "authority": false
+    },
+    {
+      "id": "general_knowledge",
+      "authority": false
+    },
+    {
+      "id": "runtime_evidence",
+      "verification_only": true
+    }
+  ],
+  "version_sources": {
+    "unity": {
+      "path": "ProjectSettings/ProjectVersion.txt",
+      "parser": "unity_project_version"
+    },
+    "vrchat_sdk": {
+      "path": "Packages/manifest.json",
+      "parser": "package_pair",
+      "packages": [
+        "com.vrchat.base",
+        "com.vrchat.worlds"
+      ]
+    },
+    "blender": {
+      "path": "Taskfile.yml",
+      "parser": "unique_blender_major_minor"
+    }
+  },
+  "compatibility": {
+    "supported_claims": [
+      "minimum_version",
+      "exact_version"
+    ],
+    "rule": "version-sensitive external knowledge must be compatible with the current pinned project version before use"
+  },
+  "authoring_tool_selection": {
+    "preferred_order": [
+      "repository_automation",
+      "version_compatible_mcp",
+      "computer_use"
+    ],
+    "rules": {
+      "prefer_machine_readable_interfaces": true,
+      "version_sensitive_adapter_requires_compatibility_check": true,
+      "computer_use_requires_gui_only_reason": true,
+      "computer_use_may_not_promote_release_evidence": true,
+      "orchestrator_model_claim_is_not_evidence": true
+    },
+    "selection_policy": {
+      "repository_automation": {
+        "default_for": [
+          "asset_generation",
+          "scene_and_prefab_verification",
+          "vpm_resolution",
+          "release_gate_checks"
+        ]
+      },
+      "unity_mcp": {
+        "max_active_providers": 1,
+        "provider_order_for_unity_before_6000": [
+          "tuna_sync_vcc",
+          "coplaydev",
+          "ivanmurzak",
+          "codergamester"
+        ],
+        "requires_explicit_install_confirmation": true,
+        "requires_project_and_editor_probe_before_use": true
+      },
+      "blender_mcp": {
+        "default": "repository_automation",
+        "requires_explicit_selection": true
+      },
+      "skill_routing": {
+        "unity_project_workflow": "unity-mcp-workflow",
+        "unity_validation": "unity-build-validation",
+        "unity_diagnostics": "unity-project-health-check",
+        "unity_cli": "unity-cli-loop",
+        "vrchat_udonsharp": "agent-skills-vrc-udon",
+        "unity_cli_loop": {
+          "minimum_unity": "2022.3",
+          "requires_project_package_install": true,
+          "requires_cli_install": true
+        },
+        "agent_skills_vrc_udon": {
+          "requires_sdk_compatibility_check": true,
+          "requires_official_vrchat_docs_cross_check": true
+        }
+      }
+    }
+  }
+}

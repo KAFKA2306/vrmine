@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "id": "woodland-bridge-01",
+  "source_spec": "config/world-items/woodland-bridge-01.json",
+  "spec_sha256": "f997654b878c096b97320faf8db9e6df7afa0ab8a19589613159b14ced009677",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.41999998688697815,
+    0.3160000145435333,
+    0.09300000220537186
+  ],
+  "bounds_min_m": [
+    -0.20999999344348907,
+    -0.15800000727176666,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.20999999344348907,
+    0.15800000727176666,
+    0.09300000220537186
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.04650000110268593
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 7.26e-08,
+      "center_error_y": 7.26e-08,
+      "fill_ratio": 0.839999971,
+      "normalized_bounds": [
+        -0.4199999129,
+        0.420000058,
+        -0.2339679925,
+        0.2339681376
+      ],
+      "ortho_scale": 0.6161671877
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": 1.49e-08,
+      "fill_ratio": 0.8400000238,
+      "normalized_bounds": [
+        -0.4200000119,
+        0.4200000119,
+        -0.1201556471,
+        0.1201556769
+      ],
+      "ortho_scale": 0.4999999702
+    },
+    "rear": {
+      "center_error_x": 0.0,
+      "center_error_y": 1.49e-08,
+      "fill_ratio": 0.8400000334,
+      "normalized_bounds": [
+        -0.4200000167,
+        0.4200000167,
+        -0.1201556697,
+        0.1201556996
+      ],
+      "ortho_scale": 0.5
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": 1.287e-07,
+      "fill_ratio": 0.8399999683,
+      "normalized_bounds": [
+        -0.4199999842,
+        0.4199999842,
+        -0.1943385255,
+        0.194338783
+      ],
+      "ortho_scale": 0.3761905432
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 1.287e-07,
+      "fill_ratio": 0.8399999683,
+      "normalized_bounds": [
+        -0.4199999842,
+        0.4199999842,
+        -0.1943385255,
+        0.194338783
+      ],
+      "ortho_scale": 0.3761905432
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8400000238,
+      "normalized_bounds": [
+        -0.4200000119,
+        0.4200000119,
+        -0.3160759101,
+        0.3160759101
+      ],
+      "ortho_scale": 0.4999999702
+    }
+  },
+  "triangles": 2068,
+  "parts_count": 11,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "woodland-bridge-01.blend": "1271f2e4cc9de7a5a8d924c1ed7d2b6ec3718399d5f0f8bc30054778b34e513e",
+    "woodland-bridge-01.glb": "5b4d3116a871f237fb7c0eb192f6832e0a99d7ac9d6cf9b000888021f8bd7b0a",
+    "woodland-bridge-01.fbx": "e83ed22c667cc69eb4b328977bc0d3977246d8ac1510a4842bbd51b63083590c",
+    "thumbnail.png": "9de714dcaee08e053009fb5fd1cd00764e9679385882c56f2f7f7286a03588be",
+    "view-hero.png": "9de714dcaee08e053009fb5fd1cd00764e9679385882c56f2f7f7286a03588be",
+    "view-front.png": "f603b6b7b38fb4884307f29b705ae967bac16a37e25773efed1a34f61d39aa88",
+    "view-rear.png": "eeb6b7c3ecd2f054ccd32aa05929440fc69821029cee40482bf985ee94f50349",
+    "view-left.png": "5ff62770c4618176eb624b0c53c8a544ad2e9cc798bbd8ae3354eaccead08728",
+    "view-right.png": "97d86b7950437085dc3dadbb1d5b9023e1319f19dbc6e76db941535470bf643d",
+    "view-top.png": "ed9073e21b00a6d5bb7bd02f82656eae907e39be547041dc1560c1996f565c32"
+  }
+}
