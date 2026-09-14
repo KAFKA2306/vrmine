@@ -110,15 +110,15 @@
   "vrchat_status": "UNVERIFIED",
   "booth_status": "UNVERIFIED",
   "sha256": {
-    "woodland-cottage-01.blend": "ce941603b93660c030d394991b700f9fa19d83e58deb4df289a563371fc20426",
-    "woodland-cottage-01.glb": "c85ae9e4ace2c7b39f97b18acf2ba2f0a21a73a929bc398967b44968623464c7",
-    "woodland-cottage-01.fbx": "f6b0aa83bde7de62fd103d391535e1a6f0c7f9bdf7fba3ddc268cc3fe8dab1c5",
-    "thumbnail.png": "3b6fe7892337361015d58462590081f2fbfc2a0b97fea0bdd3779131fa6d52d2",
-    "view-hero.png": "3b6fe7892337361015d58462590081f2fbfc2a0b97fea0bdd3779131fa6d52d2",
-    "view-front.png": "57e9286cc7e8c07d14b917c71bb88c7b503dba645cc11dd36a8672ea1e17bcc8",
-    "view-rear.png": "e4fd32f5773962b3f04bdbde8d0464f493649bead7f110d83499c89f1904ed6d",
-    "view-left.png": "e70e7248e8a30e6d5bf9d9b1476f27fd19b249da823aa341dd7824bbe24f64f7",
-    "view-right.png": "09395a0bd27a093d7c49f64e521858f1a461099bf4578c54fe18a741be82b00e",
-    "view-top.png": "fb8ab5884e9a28d74ec18ba179d63a442c8d01be6f160afceb55cdef6245b702"
+    "woodland-cottage-01.blend": "381630e9a0714a1acb8ae160d9619b162b65e6fa447b89fcf21f49c109555611",
+    "woodland-cottage-01.glb": "34dc0c528c531947092799504f74b0c8f6989cfe16c825e8e6f311c5434262ca",
+    "woodland-cottage-01.fbx": "3008a72ed40b51a446dc62f5862bf1692d96e7aba627d9e2c8145927dc994913",
+    "thumbnail.png": "160ee6120624bebe3005d7c74670d2bda62a1ac755e070b6355c02695e894398",
+    "view-hero.png": "160ee6120624bebe3005d7c74670d2bda62a1ac755e070b6355c02695e894398",
+    "view-front.png": "df2898b251d0018d41b3f3061a76a35692ce1b54d3c48dc8411dab6621f26fee",
+    "view-rear.png": "2cc2d8e0527bd4ea5c00ba58c04f43b44225f2b60878b423d354140c10ef7547",
+    "view-left.png": "2c7e6d6c6f0f7075fb07bf206d1331cafb2c46442154e95108922e24e3fae077",
+    "view-right.png": "2db99b7be82e8c90a0b59ab0037cc5e5cd47448bede772024a0fbc06003f6cd6",
+    "view-top.png": "06b71f27a49d7d051aaf28494024e3807a1afd8fd40e5adfed85bdc0309a08ac"
   }
 }

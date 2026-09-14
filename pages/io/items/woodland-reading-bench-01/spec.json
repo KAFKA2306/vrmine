@@ -1,0 +1,28 @@
+{
+  "id": "woodland-reading-bench-01",
+  "family": "Tables/Stools/Shelves",
+  "display_name": "Woodland Reading Bench",
+  "dimensions_m": [0.34, 0.20, 0.22],
+  "parts": [
+    {"component":"box","name":"seat","size":[0.30,0.14,0.035],"position":[0,0,0.13],"rotation_deg":[0,0,0],"material":"wood"},
+    {"component":"box","name":"back","size":[0.30,0.035,0.13],"position":[0,0.06,0.185],"rotation_deg":[0,0,0],"material":"wood_dark"},
+    {"component":"box","name":"leg_left","size":[0.035,0.11,0.12],"position":[-0.11,0,0.06],"rotation_deg":[0,0,0],"material":"wood_dark"},
+    {"component":"box","name":"leg_right","size":[0.035,0.11,0.12],"position":[0.11,0,0.06],"rotation_deg":[0,0,0],"material":"wood_dark"},
+    {"component":"box","name":"book","size":[0.10,0.07,0.012],"position":[0.055,-0.015,0.155],"rotation_deg":[0,0,-8],"material":"paper"}
+  ],
+  "materials": {
+    "wood":{"base_color":[0.39,0.22,0.10],"roughness":0.9,"metallic":0},
+    "wood_dark":{"base_color":[0.22,0.11,0.05],"roughness":0.93,"metallic":0},
+    "paper":{"base_color":[0.80,0.70,0.52],"roughness":0.96,"metallic":0}
+  },
+  "variants": [
+    {"id":"mossy","material_overrides":{"wood":{"base_color":[0.31,0.27,0.14],"roughness":0.95}}}
+  ],
+  "price_hypothesis":{"currency":"JPY","single":200,"mini_set_target":700},
+  "license":{"name":"Proprietary / BOOTH terms pending","provenance":"Original generic procedural geometry and materials authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded geometry.","status":"DRAFT"},
+  "formats":["blend","glb","fbx"],
+  "unity_status":"UNVERIFIED",
+  "vrchat_status":"UNVERIFIED",
+  "booth_status":"UNVERIFIED",
+  "selection_evidence":{"observed_2026_09_12":["Required emotional spot in woodland-tabletop-village-v0 blockout","Open book makes the module carry a life trace without NPCs"],"expected_production_minutes":5,"manual_touch_target":0,"reusable_component_ratio_target":1.0}
+}

@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "id": "woodland-market-stall-01",
+  "source_spec": "config/world-items/woodland-market-stall-01.json",
+  "spec_sha256": "99623b0f5c09fa7b802a7694fa762711820bf2987a271480f70fd25ee5d6e32b",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.4399999976158142,
+    0.30000001192092896,
+    0.42250001430511475
+  ],
+  "bounds_min_m": [
+    -0.2199999988079071,
+    -0.15000000596046448,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.2199999988079071,
+    0.15000000596046448,
+    0.42250001430511475
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.21125000715255737
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 2.23e-08,
+      "center_error_y": 1.113e-07,
+      "fill_ratio": 0.8400000053,
+      "normalized_bounds": [
+        -0.3951551748,
+        0.3951552193,
+        -0.4199998914,
+        0.4200001139
+      ],
+      "ortho_scale": 0.6696740389
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -2.78e-08,
+      "fill_ratio": 0.8400000312,
+      "normalized_bounds": [
+        -0.4107928708,
+        0.4107928708,
+        -0.4200000434,
+        0.4199999878
+      ],
+      "ortho_scale": 0.5355497003
+    },
+    "rear": {
+      "center_error_x": 0.0,
+      "center_error_y": -2.78e-08,
+      "fill_ratio": 0.8399999933,
+      "normalized_bounds": [
+        -0.4107928529,
+        0.4107928529,
+        -0.4200000245,
+        0.4199999688
+      ],
+      "ortho_scale": 0.5355497599
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": 5.33e-08,
+      "fill_ratio": 0.840000032,
+      "normalized_bounds": [
+        -0.268065777,
+        0.268065777,
+        -0.4199999627,
+        0.4200000692
+      ],
+      "ortho_scale": 0.5595642328
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 5.33e-08,
+      "fill_ratio": 0.840000032,
+      "normalized_bounds": [
+        -0.268065777,
+        0.268065777,
+        -0.4199999627,
+        0.4200000692
+      ],
+      "ortho_scale": 0.5595642328
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8400000455,
+      "normalized_bounds": [
+        -0.4200000228,
+        0.4200000228,
+        -0.2864149844,
+        0.2864149844
+      ],
+      "ortho_scale": 0.5238094926
+    }
+  },
+  "triangles": 1316,
+  "parts_count": 7,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "woodland-market-stall-01.blend": "ef0bfbd8cc4e95eb1c7135756750eae30ecb13db2c270e47fac03280a6c6cdbf",
+    "woodland-market-stall-01.glb": "4a56be70a8188a93727e0d7743291c1dfed46a37162ba83b5d3eb6f474e9f5b8",
+    "woodland-market-stall-01.fbx": "70dac04fd3ef37e6f338673b7c5227ffe3a2ace817f0d9646930fd7bc1dff338",
+    "thumbnail.png": "afa877dc2909e6ce2aecf9f9384a374396a73cf033541c59df731dafbaf9a65d",
+    "view-hero.png": "afa877dc2909e6ce2aecf9f9384a374396a73cf033541c59df731dafbaf9a65d",
+    "view-front.png": "bca9edb03a4ed7bb3fbc7ee41ce8e250b74a018bb32535cd7e36f81be8a1bcf4",
+    "view-rear.png": "9795c72ce1dca8fbc56376c1435b75e6d55c15525b184c346eb54ae43078fd26",
+    "view-left.png": "d2abab74f78d5c8ab259a19121258e3230227fb6dec1e243f72d8e086ec0c801",
+    "view-right.png": "2d4964af9dc57444fb4e8858acba0ec440cf78c62c1d447dcf45c610fd1f1fdc",
+    "view-top.png": "416bf44cc42b8410d1fab3d85a8c1e3999757875b28fd8654545ab943344d7e7"
+  }
+}

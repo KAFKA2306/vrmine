@@ -9,6 +9,9 @@ from pathlib import Path
 from mathutils import Vector
 
 
+ROOT = Path(__file__).resolve().parents[1]
+
+
 def args_after_double_dash():
     return sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 
@@ -33,6 +36,14 @@ def source_commit():
         return subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     except Exception:
         return "UNVERIFIED"
+
+
+def repository_relative(path):
+    resolved = Path(path).resolve()
+    try:
+        return resolved.relative_to(ROOT).as_posix()
+    except ValueError:
+        fail(f"source asset must be inside repository: {resolved}")
 
 
 def look_at(obj, target):
@@ -131,7 +142,7 @@ def import_glb_instance(asset_id, instance_id, position, facing_target, collecti
     set_instance_rotation(root, position, facing_target, yaw_deg)
     root["asset_id"] = asset_id
     root["source_kind"] = "glb"
-    root["source_glb"] = str(source)
+    root["source_glb"] = repository_relative(source)
     root["source_sha256"] = sha256(source)
     return root, source
 
@@ -368,7 +379,7 @@ def create_natural_layers(plan, collection, asset_root, record_source, material_
             for original, obj in copies.items():
                 if original != template:
                     obj.parent = copies[original.parent]
-            source = Path(root["source_glb"])
+            source = ROOT / root["source_glb"]
         root.location = layer["position_m"]
         root.rotation_euler = (0, 0, math.radians(layer["yaw_deg"]))
         root.scale = (layer["scale"],) * 3
@@ -406,9 +417,9 @@ def main():
     argv = args_after_double_dash()
     if len(argv) not in (2, 3):
         fail("usage: blender -b --python scripts/world_build_factory.py -- <build-plan.json> <output-dir> [asset-root]")
-    plan_path = Path(argv[0])
-    out_dir = Path(argv[1])
-    asset_root = Path(argv[2]) if len(argv) == 3 else Path("pages/io/items")
+    plan_path = Path(argv[0]).resolve()
+    out_dir = Path(argv[1]).resolve()
+    asset_root = (Path(argv[2]) if len(argv) == 3 else Path("pages/io/items")).resolve()
     if not plan_path.is_file():
         fail(f"missing build plan {plan_path}")
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -456,7 +467,7 @@ def main():
     def record_source(root, source):
         asset_id = root["asset_id"]
         if root["source_kind"] == "glb":
-            asset_sources[asset_id] = {"path": str(source), "sha256": root["source_sha256"]}
+            asset_sources[asset_id] = {"path": repository_relative(source), "sha256": root["source_sha256"]}
         else:
             procedural_sources[asset_id] = json.loads(root["geometry_json"])
 
@@ -533,7 +544,7 @@ def main():
     manifest = {
         "schema_version": 3 if visual else 2,
         "source_commit": source_commit(),
-        "build_plan": str(plan_path),
+        "build_plan": repository_relative(plan_path),
         "build_plan_sha256": sha256(plan_path),
         "source_spec": plan.get("source_spec"),
         "source_spec_sha256": plan.get("source_spec_sha256"),

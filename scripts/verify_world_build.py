@@ -7,6 +7,9 @@ from pathlib import Path
 from mathutils import Vector
 
 
+ROOT = Path(__file__).resolve().parents[1]
+
+
 def args_after_double_dash():
     return sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 
@@ -338,8 +341,8 @@ def main():
     argv = args_after_double_dash()
     if len(argv) < 2:
         fail("usage: blender -b --python scripts/verify_world_build.py -- <build-plan.json> <output-dir>")
-    plan_path = Path(argv[0])
-    out_dir = Path(argv[1])
+    plan_path = Path(argv[0]).resolve()
+    out_dir = Path(argv[1]).resolve()
     plan = json.loads(plan_path.read_text())
     if plan.get("schema_version") != 4:
         fail("build plan schema_version must be 4")
@@ -468,6 +471,9 @@ def main():
 
     for asset_id, record in manifest.get("asset_sources", {}).items():
         source = Path(record["path"])
+        if source.is_absolute():
+            fail(f"source asset path must be repository-relative: {asset_id}")
+        source = ROOT / source
         if not source.is_file():
             fail(f"source asset disappeared: {asset_id}")
         if sha256(source) != record["sha256"]:
@@ -524,4 +530,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

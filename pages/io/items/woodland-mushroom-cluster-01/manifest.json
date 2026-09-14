@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "id": "woodland-mushroom-cluster-01",
+  "source_spec": "config/world-items/woodland-mushroom-cluster-01.json",
+  "spec_sha256": "769d81ad5f6f6a54b54071ff81f8ebddc4d48bb2c1cc82a4787ed7dea2318b54",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.1470000147819519,
+    0.1088000014424324,
+    0.10480000078678131
+  ],
+  "bounds_min_m": [
+    -0.07699999958276749,
+    -0.05420000106096268,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.07000000774860382,
+    0.05460000038146973,
+    0.10480000078678131
+  ],
+  "bounds_center_m": [
+    -0.003499995917081833,
+    0.00019999966025352478,
+    0.052400000393390656
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 1.0927e-06,
+      "center_error_y": 8.142e-07,
+      "fill_ratio": 0.8399999777,
+      "normalized_bounds": [
+        -0.4199988962,
+        0.4200010816,
+        -0.3706756548,
+        0.3706772831
+      ],
+      "ortho_scale": 0.1738729179
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -4.26e-08,
+      "fill_ratio": 0.8400000272,
+      "normalized_bounds": [
+        -0.4200000136,
+        0.4200000136,
+        -0.3100954211,
+        0.3100953359
+      ],
+      "ortho_scale": 0.1750000119
+    },
+    "rear": {
+      "center_error_x": -2.13e-08,
+      "center_error_y": 2.129e-07,
+      "fill_ratio": 0.8399999847,
+      "normalized_bounds": [
+        -0.4200000136,
+        0.419999971,
+        -0.3074055488,
+        0.3074059745
+      ],
+      "ortho_scale": 0.1750000119
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": -2.732e-07,
+      "fill_ratio": 0.8399999839,
+      "normalized_bounds": [
+        -0.4199999919,
+        0.4199999919,
+        -0.4031762802,
+        0.4031757337
+      ],
+      "ortho_scale": 0.1295238137
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": -6.85e-08,
+      "fill_ratio": 0.8399999595,
+      "normalized_bounds": [
+        -0.3999337282,
+        0.3999337282,
+        -0.4200000482,
+        0.4199999113
+      ],
+      "ortho_scale": 0.1360225379
+    },
+    "top": {
+      "center_error_x": -2.13e-08,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999847,
+      "normalized_bounds": [
+        -0.4200000136,
+        0.419999971,
+        -0.3109830406,
+        0.3109830406
+      ],
+      "ortho_scale": 0.1750000119
+    }
+  },
+  "triangles": 744,
+  "parts_count": 9,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "woodland-mushroom-cluster-01.blend": "e53de16098a6b6f2ea1fb968c0be8c8e55003a0a75fdded80a78c5900be9a4f6",
+    "woodland-mushroom-cluster-01.glb": "1c9a942a6a4c906c827379c0031d989988c710d46f21ec399de80755e1a0f451",
+    "woodland-mushroom-cluster-01.fbx": "b8b47524a29ae8d7b46a2dd0aed6ae2f15edbba9b6da5fc3db0fac99595599a7",
+    "thumbnail.png": "975d6f952bef0027539d6dfb1ce31d0af99cd6363cd9ad79425d9207888aca8b",
+    "view-hero.png": "975d6f952bef0027539d6dfb1ce31d0af99cd6363cd9ad79425d9207888aca8b",
+    "view-front.png": "491aff01562d2d272777594c2e871e79336f408545f43265cbbd8c51fe5562ad",
+    "view-rear.png": "9658cec9e52193296e270610283baadf9b4e22e39c7393afeb106366bbae9862",
+    "view-left.png": "d047aa83ccc93eced47dbed45210898d4e69c35d68d220a9b9dc76656efe86e8",
+    "view-right.png": "cc53f543e388abb40552b25b4584f0888a8c8a40da4d734590cd3ed64f2baf91",
+    "view-top.png": "dc17eaa208d504e516a8083628f796d23acce8a2c43d9c6559d78480d62641a6"
+  }
+}

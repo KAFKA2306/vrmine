@@ -1,0 +1,25 @@
+{
+  "id": "woodland-grass-clump-01",
+  "family": "Plants/Planters",
+  "display_name": "Woodland Grass Clump",
+  "dimensions_m": [0.08029, 0.07017, 0.15713],
+  "parts": [
+    {"name": "blade_1", "component": "cone", "size": [0.015, 0.006, 0.1], "position": [0.014, 0.0, 0.050076], "material": "grass", "rotation_deg": [12, 0, 0.0], "vertices": 6},
+    {"name": "blade_2", "component": "cone", "size": [0.015, 0.006, 0.14], "position": [-0.01622, 0.014863, 0.069276], "material": "grass_dark", "rotation_deg": [17, 0, 137.5], "vertices": 6},
+    {"name": "blade_3", "component": "cone", "size": [0.015, 0.006, 0.12], "position": [0.002615, -0.029886, 0.059676], "material": "grass", "rotation_deg": [22, 0, 275.0], "vertices": 6},
+    {"name": "blade_4", "component": "cone", "size": [0.015, 0.006, 0.16], "position": [0.008523, 0.011107, 0.078876], "material": "grass_dark", "rotation_deg": [12, 0, 412.5], "vertices": 6},
+    {"name": "blade_5", "component": "cone", "size": [0.015, 0.006, 0.09], "position": [-0.021666, -0.00382, 0.045276], "material": "grass", "rotation_deg": [17, 0, 550.0], "vertices": 6},
+    {"name": "blade_6", "component": "cone", "size": [0.015, 0.006, 0.13], "position": [0.025302, -0.016119, 0.064476], "material": "grass_dark", "rotation_deg": [22, 0, 687.5], "vertices": 6},
+    {"name": "blade_7", "component": "cone", "size": [0.015, 0.006, 0.115], "position": [-0.003623, 0.013523, 0.057276], "material": "grass", "rotation_deg": [12, 0, 825.0], "vertices": 6},
+    {"name": "blade_8", "component": "cone", "size": [0.015, 0.006, 0.15], "position": [-0.010158, -0.019514, 0.074076], "material": "grass_dark", "rotation_deg": [17, 0, 962.5], "vertices": 6},
+    {"name": "blade_9", "component": "cone", "size": [0.015, 0.006, 0.11], "position": [0.028191, 0.010261, 0.054876], "material": "grass", "rotation_deg": [22, 0, 1100.0], "vertices": 6}
+  ],
+  "materials": {"grass": {"base_color": [0.22, 0.34, 0.16], "roughness": 0.96, "metallic": 0}, "grass_dark": {"base_color": [0.14, 0.25, 0.11], "roughness": 0.98, "metallic": 0}},
+  "variants": [],
+  "price_hypothesis": {"currency": "JPY", "single": 100, "mini_set_target": 400},
+  "license": {"name": "Proprietary / BOOTH terms pending", "provenance": "Original generic procedural geometry and materials authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded geometry.", "status": "DRAFT"},
+  "formats": ["blend", "glb", "fbx"],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED"
+}
