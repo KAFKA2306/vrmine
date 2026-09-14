@@ -76,12 +76,6 @@ jobs:
               fi
             done < <(git ls-files 'config/world-design/generated/*.json')
           fi
-          if [ "${#specs[@]}" -eq 0 ]; then
-            echo 'No effective generated World Design Spec; world build is not applicable to this PR.'
-            echo 'spec_path=' >> "$GITHUB_OUTPUT"
-            echo 'world_id=' >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
           if [ "${#specs[@]}" -ne 1 ]; then
             printf 'Expected exactly one effective generated World Design Spec, got %s\n' "${#specs[@]}" >&2
             printf '%s\n' "${specs[@]:-}" >&2
@@ -94,10 +88,10 @@ jobs:
 
       - name: Materialize deterministic build plan and resolve source revision
         id: plan
-        if: steps.select.outputs.world_id != ''
         env:
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
           WORLD_ID: ${{ steps.select.outputs.world_id }}
+          BASE_REF: ${{ steps.pr.outputs.base_ref }}
         run: |
           set -euo pipefail
           out=".artifacts/world-builds/${WORLD_ID}"
@@ -106,8 +100,15 @@ jobs:
           node scripts/world-design-to-blender-plan.mjs "$SPEC_PATH" > "$out/build-plan.json"
           test "$(jq -r .schema_version "$out/build-plan.json")" = 4
           source_sha="$(git log -1 --format=%H -- "$SPEC_PATH" config/world-items scripts/world-design-to-blender-plan.mjs scripts/materialize_world_build_input.py scripts/world_item_factory.py scripts/world_build_factory.py scripts/verify_world_build.py Taskfile.yml .github/workflows/world-build.yml)"
+          inputs_changed=false
+          while IFS= read -r asset_id; do
+            if ! git diff --quiet "origin/${BASE_REF}...HEAD" -- "config/world-items/${asset_id}.json"; then
+              inputs_changed=true
+              break
+            fi
+          done < <(jq -r '.asset_ids[]?' "$out/build-plan.json")
           current=false
-          if [ -f "$dest/manifest.json" ] && [ -f "$dest/build-plan.json" ]; then
+          if [ "$inputs_changed" = false ] && [ -f "$dest/manifest.json" ] && [ -f "$dest/build-plan.json" ]; then
             recorded="$(jq -r '.source_commit // empty' "$dest/manifest.json")"
             if [ "$recorded" = "$source_sha" ] && cmp -s "$out/build-plan.json" "$dest/build-plan.json"; then
               required=(world.blend world.glb manifest.json build-plan.json view-hero.png view-top.png view-social-core.png view-retreat.png view-circulation.png)
@@ -121,7 +122,6 @@ jobs:
           echo "current=$current" >> "$GITHUB_OUTPUT"
 
       - name: Install official Blender 4.2.0
-        if: steps.select.outputs.world_id != ''
         run: |
           set -euo pipefail
           curl --fail --location --retry 3 -O https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz
@@ -133,7 +133,6 @@ jobs:
           echo "$PWD/blender-4.2.0-linux-x64" >> "$GITHUB_PATH"
 
       - name: Materialize verified world-item inputs
-        if: steps.select.outputs.world_id != ''
         env:
           WORLD_ID: ${{ steps.select.outputs.world_id }}
         run: |
@@ -161,7 +160,6 @@ jobs:
           printf '%s\n' "${asset_ids[@]}" > "$out/asset-ids.txt"
 
       - name: Generate or reuse actual room and run spatial DRC
-        if: steps.select.outputs.world_id != ''
         env:
           GH_TOKEN: ${{ github.token }}
           WORLD_ID: ${{ steps.select.outputs.world_id }}
@@ -204,7 +202,6 @@ jobs:
           fi
 
       - name: Prove spatial DRC rejects a broken seat placement
-        if: steps.select.outputs.world_id != ''
         env:
           WORLD_ID: ${{ steps.select.outputs.world_id }}
         run: |
@@ -232,7 +229,6 @@ jobs:
           retention-days: 7
 
       - name: Publish generated room evidence into PR branch
-        if: steps.select.outputs.world_id != ''
         env:
           GH_TOKEN: ${{ github.token }}
           HEAD_REF: ${{ steps.pr.outputs.head_ref }}
