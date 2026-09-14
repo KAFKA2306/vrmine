@@ -252,8 +252,6 @@ jobs:
     env:
       UNITY_EXE: C:\Program Files\Unity\Hub\Editor\2022.3.22f1\Editor\Unity.exe
       HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
-      HF_CACHE_HUB_ROOT: ${{ github.workspace }}\.hf-cache-hub
-      HF_HOME: ${{ runner.temp }}\hf-cache
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -310,6 +308,9 @@ jobs:
 
       - name: Materialize exact registered PLYs
         shell: pwsh
+        env:
+          HF_CACHE_HUB_ROOT: ${{ github.workspace }}\.hf-cache-hub
+          HF_HOME: ${{ runner.temp }}\hf-cache
         run: node scripts/materialize-gaussian-sources.mjs
 
       - name: Verify canonical Unity scene and SDK validation
