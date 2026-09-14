@@ -6,6 +6,11 @@ on:
     paths:
       - 'config/world-design/generated/woodland-tabletop-village-v0.json'
       - 'Assets/KafkaMade/VRMine/Editor/WoodlandTabletopVillage*.cs'
+      - 'Assets/KafkaMade/VRMine/Audio/WoodlandTabletopVillage/**'
+      - 'Assets/KafkaMade/VRMine/Materials/WoodlandTabletopVillage/**'
+      - 'Assets/KafkaMade/VRMine/Prefabs/WoodlandTabletopVillage.prefab*'
+      - 'Assets/KafkaMade/VRMine/Scenes/WoodlandTabletopVillage.unity*'
+      - 'ProjectSettings/EditorBuildSettings.asset'
       - 'scripts/run-woodland-tabletop-village-unity.mjs'
       - 'Packages/**'
       - 'ProjectSettings/ProjectVersion.txt'
