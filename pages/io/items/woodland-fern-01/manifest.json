@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "id": "woodland-fern-01",
+  "source_spec": "config/world-items/woodland-fern-01.json",
+  "spec_sha256": "aaef65ff9757e74209cbc57c823cd0bd14aaaa6a79e1aacab1c3e41a16e15b27",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.19138076901435852,
+    0.20609551668167114,
+    0.1108587384223938
+  ],
+  "bounds_min_m": [
+    -0.09351649135351181,
+    -0.08951976895332336,
+    2.1675714378943667e-07
+  ],
+  "bounds_max_m": [
+    0.09786427021026611,
+    0.11657575517892838,
+    0.11085895448923111
+  ],
+  "bounds_center_m": [
+    0.0021738894283771515,
+    0.013527993112802505,
+    0.05542958527803421
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": 3.931e-07,
+      "center_error_y": 2.268e-07,
+      "fill_ratio": 0.8400000169,
+      "normalized_bounds": [
+        -0.4199996154,
+        0.4200004015,
+        -0.2671569514,
+        0.2671574049
+      ],
+      "ortho_scale": 0.2464213669
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": -5.151e-07,
+      "fill_ratio": 0.8399999791,
+      "normalized_bounds": [
+        -0.4199999895,
+        0.4199999895,
+        -0.2615803792,
+        0.261579349
+      ],
+      "ortho_scale": 0.2278342545
+    },
+    "rear": {
+      "center_error_x": -1.64e-08,
+      "center_error_y": -2.698e-07,
+      "fill_ratio": 0.8400000013,
+      "normalized_bounds": [
+        -0.420000017,
+        0.4199999843,
+        -0.2600681197,
+        0.2600675801
+      ],
+      "ortho_scale": 0.2278342396
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": 2.28e-08,
+      "fill_ratio": 0.8400000073,
+      "normalized_bounds": [
+        -0.4200000036,
+        0.4200000036,
+        -0.2406697316,
+        0.2406697772
+      ],
+      "ortho_scale": 0.2453518212
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 9.87e-08,
+      "fill_ratio": 0.8399999976,
+      "normalized_bounds": [
+        -0.4199999988,
+        0.4199999988,
+        -0.2405416282,
+        0.2405418256
+      ],
+      "ortho_scale": 0.2453518063
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 1.52e-08,
+      "fill_ratio": 0.8400000109,
+      "normalized_bounds": [
+        -0.3900137429,
+        0.3900137429,
+        -0.4199999903,
+        0.4200000206
+      ],
+      "ortho_scale": 0.2453513145
+    }
+  },
+  "triangles": 420,
+  "parts_count": 70,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "woodland-fern-01.blend": "7eb5a4f60cb572941e21e7e4c57f78e8357e355a9774d2b4c5ede71ccfc7fefb",
+    "woodland-fern-01.glb": "13d651b1673443fcdff10d3fa4b6ee8fe4cee8209fbfb05e7b1e8b90f42c2a96",
+    "woodland-fern-01.fbx": "886ba00bb6ca96cb3823a6e039fde4a5e843c1dbb7de0349d66b6d11baa755b2",
+    "thumbnail.png": "d59fff7dcdc287e911f8323b88d243a1677c28766ee8d062f59a309f0075f2eb",
+    "view-hero.png": "d59fff7dcdc287e911f8323b88d243a1677c28766ee8d062f59a309f0075f2eb",
+    "view-front.png": "398bba4d6559b77ae642618af332bbea3a1e6b873e56546f87c6a8a88d580020",
+    "view-rear.png": "ccf5c6864be6aeeb1b09ee7bb68df16cf9f538f858dd7fe693666a365e8c7846",
+    "view-left.png": "1c441e5b0257a5e4dfc25ad678d99f37f2a506e87c7eb5d4f6b5b3eebdaaa241",
+    "view-right.png": "6f6cc195ba43286c4dd59990568d39376c86b193294b2ff3cc1ce56f5da03907",
+    "view-top.png": "f5c2ce8c92edcbbd12c53a6930d07addf342a153cd3b2f08a75393947aba5c55"
+  }
+}

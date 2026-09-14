@@ -1,0 +1,28 @@
+{
+  "id": "woodland-stream-segment-01",
+  "family": "Decorative",
+  "display_name": "Woodland Stream Segment",
+  "dimensions_m": [1.60, 0.24, 0.08],
+  "parts": [
+    {"component":"box","name":"water","size":[1.52,0.14,0.018],"position":[0,0,0.018],"rotation_deg":[0,0,0],"material":"water"},
+    {"component":"box","name":"bank_left","size":[1.58,0.05,0.055],"position":[0,0.095,0.028],"rotation_deg":[0,0,0],"material":"bank"},
+    {"component":"box","name":"bank_right","size":[1.58,0.05,0.055],"position":[0,-0.095,0.028],"rotation_deg":[0,0,0],"material":"bank"},
+    {"component":"box","name":"stone_a","size":[0.11,0.09,0.05],"position":[-0.42,0.02,0.045],"rotation_deg":[0,0,12],"material":"stone"},
+    {"component":"box","name":"stone_b","size":[0.09,0.08,0.045],"position":[0.31,-0.025,0.042],"rotation_deg":[0,0,-18],"material":"stone"}
+  ],
+  "materials": {
+    "water":{"base_color":[0.18,0.38,0.42],"roughness":0.34,"metallic":0},
+    "bank":{"base_color":[0.23,0.31,0.15],"roughness":0.96,"metallic":0},
+    "stone":{"base_color":[0.35,0.34,0.30],"roughness":0.95,"metallic":0}
+  },
+  "variants": [
+    {"id":"autumn-bank","material_overrides":{"bank":{"base_color":[0.37,0.28,0.13],"roughness":0.97}}}
+  ],
+  "price_hypothesis":{"currency":"JPY","single":250,"mini_set_target":800},
+  "license":{"name":"Proprietary / BOOTH terms pending","provenance":"Original generic procedural geometry and materials authored in KAFKA2306/vrmine; no third-party meshes, textures, logos, trademarks, or branded geometry.","status":"DRAFT"},
+  "formats":["blend","glb","fbx"],
+  "unity_status":"UNVERIFIED",
+  "vrchat_status":"UNVERIFIED",
+  "booth_status":"UNVERIFIED",
+  "selection_evidence":{"observed_2026_09_12":["Required slow-motion anchor in woodland-tabletop-village-v0 blockout","Separates visual zones while preserving the quiet village composition"],"expected_production_minutes":5,"manual_touch_target":0,"reusable_component_ratio_target":1.0}
+}

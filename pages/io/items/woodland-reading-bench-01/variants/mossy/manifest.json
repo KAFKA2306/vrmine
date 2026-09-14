@@ -1,0 +1,128 @@
+{
+  "schema_version": 3,
+  "id": "woodland-reading-bench-01--mossy",
+  "source_spec": "config/world-items/woodland-reading-bench-01.json",
+  "spec_sha256": "04395100582d6437517747876cf845bd418fda83fa38d7c824a82d49c6e893ba",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.30000001192092896,
+    0.14750000834465027,
+    0.25
+  ],
+  "bounds_min_m": [
+    -0.15000000596046448,
+    -0.07000000029802322,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.15000000596046448,
+    0.07750000059604645,
+    0.25
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.003750000149011612,
+    0.125
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": -9.21e-08,
+      "center_error_y": 5.53e-08,
+      "fill_ratio": 0.8400000192,
+      "normalized_bounds": [
+        -0.4040320158,
+        0.4040318316,
+        -0.4199999543,
+        0.4200000648
+      ],
+      "ortho_scale": 0.4044185877
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": 4.17e-08,
+      "fill_ratio": 0.8400000134,
+      "normalized_bounds": [
+        -0.4200000067,
+        0.4200000067,
+        -0.3702607186,
+        0.370260802
+      ],
+      "ortho_scale": 0.3571428657
+    },
+    "rear": {
+      "center_error_x": 0.0,
+      "center_error_y": -3.13e-08,
+      "fill_ratio": 0.8400000267,
+      "normalized_bounds": [
+        -0.4200000134,
+        0.4200000134,
+        -0.3476679042,
+        0.3476678416
+      ],
+      "ortho_scale": 0.3571428955
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": 4.41e-08,
+      "fill_ratio": 0.8400000353,
+      "normalized_bounds": [
+        -0.2181555415,
+        0.2181555415,
+        -0.4199999736,
+        0.4200000617
+      ],
+      "ortho_scale": 0.3380616009
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 4.41e-08,
+      "fill_ratio": 0.8400000353,
+      "normalized_bounds": [
+        -0.2181555415,
+        0.2181555415,
+        -0.4199999736,
+        0.4200000617
+      ],
+      "ortho_scale": 0.3380616009
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8400000134,
+      "normalized_bounds": [
+        -0.4200000067,
+        0.4200000067,
+        -0.2068645845,
+        0.2068645845
+      ],
+      "ortho_scale": 0.3571428657
+    }
+  },
+  "triangles": 940,
+  "parts_count": 5,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "woodland-reading-bench-01--mossy.blend": "3c28d83e191886910a335032a442e20a626fe5fc169afa8207b65d2496c32d20",
+    "woodland-reading-bench-01--mossy.glb": "24e7b632c76ccadead0a6d5be68835960395f41116a71917774f926cc55b37a2",
+    "woodland-reading-bench-01--mossy.fbx": "ae0c4bd3a948d35fb5cd58882fd6ae353ab139a0f13677fc5af6994a9871839b",
+    "thumbnail.png": "257be55a590cebfc609b5bb562b15732720204b1ebcf9317f6570a8cb3378e1f",
+    "view-hero.png": "257be55a590cebfc609b5bb562b15732720204b1ebcf9317f6570a8cb3378e1f",
+    "view-front.png": "f4681c347fe4a09b090e533264e91fd06c188c4400e420cba899c03b64b7277f",
+    "view-rear.png": "5f2a305476ab24e442e4dff687f45739958ab657f83f75e081a00ef60001f6ea",
+    "view-left.png": "e650dcdcb314e85057a42c45e10a49ddf7b5bf8bd0922a8e38f522a655da847b",
+    "view-right.png": "42750dd01eccf0e3d8fdfb4077f1c443997ebaba176dc61a6d354f0f72ab196c",
+    "view-top.png": "beef8d2869bdf2da1e5280078504c8afccdfd80b838c7ebb16e33d4f0008fa45"
+  },
+  "base_id": "woodland-reading-bench-01",
+  "variant_id": "mossy",
+  "resolved_spec_sha256": "9eb99a5144761042e7931b0393bf38b2c7fc2a8314e663de2a1fce519c944737",
+  "variant_sha256": "f84f4b64b2ed153f877f29ac75f63fae257498ef1ddcc3bc83c0aefdefd41dbd"
+}

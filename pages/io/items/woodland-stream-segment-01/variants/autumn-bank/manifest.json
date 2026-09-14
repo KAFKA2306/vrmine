@@ -1,0 +1,128 @@
+{
+  "schema_version": 3,
+  "id": "woodland-stream-segment-01--autumn-bank",
+  "source_spec": "config/world-items/woodland-stream-segment-01.json",
+  "spec_sha256": "496c89ed41c6fc45256fce8e6761a9aa409301c4a650cef2ff205317f416fe2d",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    1.5800000429153442,
+    0.23999999463558197,
+    0.06949999928474426
+  ],
+  "bounds_min_m": [
+    -0.7900000214576721,
+    -0.11999999731779099,
+    0.0005000010132789612
+  ],
+  "bounds_max_m": [
+    0.7900000214576721,
+    0.11999999731779099,
+    0.07000000029802322
+  ],
+  "bounds_center_m": [
+    0.0,
+    0.0,
+    0.03525000065565109
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": -1.76e-08,
+      "center_error_y": 7.03e-08,
+      "fill_ratio": 0.8399999761,
+      "normalized_bounds": [
+        -0.4200000056,
+        0.4199999705,
+        -0.1606607195,
+        0.1606608602
+      ],
+      "ortho_scale": 1.6950042248
+    },
+    "front": {
+      "center_error_x": 0.0,
+      "center_error_y": 2.38e-08,
+      "fill_ratio": 0.8399999797,
+      "normalized_bounds": [
+        -0.4199999899,
+        0.4199999899,
+        -0.024981303,
+        0.0249813505
+      ],
+      "ortho_scale": 1.8809524775
+    },
+    "rear": {
+      "center_error_x": 0.0,
+      "center_error_y": 2.57e-08,
+      "fill_ratio": 0.8399999797,
+      "normalized_bounds": [
+        -0.4199999899,
+        0.4199999899,
+        -0.0235754704,
+        0.0235755219
+      ],
+      "ortho_scale": 1.8809524775
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": -4.71e-08,
+      "fill_ratio": 0.8399999661,
+      "normalized_bounds": [
+        -0.3790827318,
+        0.3790827318,
+        -0.4200000301,
+        0.419999936
+      ],
+      "ortho_scale": 0.3165536821
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": -4.71e-08,
+      "fill_ratio": 0.8399999661,
+      "normalized_bounds": [
+        -0.3790827318,
+        0.3790827318,
+        -0.4200000301,
+        0.419999936
+      ],
+      "ortho_scale": 0.3165536821
+    },
+    "top": {
+      "center_error_x": 0.0,
+      "center_error_y": 0.0,
+      "fill_ratio": 0.8399999797,
+      "normalized_bounds": [
+        -0.4199999899,
+        0.4199999899,
+        -0.0638224857,
+        0.0638224857
+      ],
+      "ortho_scale": 1.8809524775
+    }
+  },
+  "triangles": 940,
+  "parts_count": 5,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "woodland-stream-segment-01--autumn-bank.blend": "a1e374cd5276805821a63faf2b75ee8c752a9d245e740d370d474cc17edb3e81",
+    "woodland-stream-segment-01--autumn-bank.glb": "208c06f5a5f1b26abbcaf57b6d9b89546bf53e9b6ba2ec048eb088282e5c514e",
+    "woodland-stream-segment-01--autumn-bank.fbx": "c760ed43b61ab1ea17a57e1692cba107d8c6ebc97374c52b4915d32fc31d9aec",
+    "thumbnail.png": "01d0cd16f5895c8b57eafe552f27671d33898941c9cb1e8e778ea1796acb4e3a",
+    "view-hero.png": "01d0cd16f5895c8b57eafe552f27671d33898941c9cb1e8e778ea1796acb4e3a",
+    "view-front.png": "fa3e295b48595bc71ba37a763561291372257a0e322a7dfda7e40743b6db548a",
+    "view-rear.png": "126a46cc8a6329335982df508ab53fce1faf7bad45cb610120e7a93a765a2921",
+    "view-left.png": "358abede8bd3aab29a2b1451297703108c00f1ff5b06f806ec9d34d42019eb20",
+    "view-right.png": "cf30fba6bccde58d7dab81b5e14ae17a14f728d3b9e12d8f96b947db81951082",
+    "view-top.png": "31980111b60e076f3c63a8d7669b30e1dc5df36dffd9945d776ef33e27b1fa13"
+  },
+  "base_id": "woodland-stream-segment-01",
+  "variant_id": "autumn-bank",
+  "resolved_spec_sha256": "4911afe1c3cd8e8e0e5524b178aad04c315138ad7fb36ab49985c82f50d7c8c9",
+  "variant_sha256": "d61fd683f6302ba9940330862fa7a0f01a980c6e00753060421936cd451c7118"
+}

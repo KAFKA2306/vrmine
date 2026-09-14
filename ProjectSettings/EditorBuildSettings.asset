@@ -8,5 +8,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity
     guid: 0dc09a2a8aac00a4bbb151b6930da4b5
+  - enabled: 1
+    path: Assets/KafkaMade/VRMine/Scenes/WoodlandTabletopVillage.unity
+    guid: 4778b22d8a8a646479b993ac12cbceeb
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 19871b7defa8e494b906943abe098a12, type: 2}

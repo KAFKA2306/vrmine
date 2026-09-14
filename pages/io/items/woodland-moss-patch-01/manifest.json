@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "id": "woodland-moss-patch-01",
+  "source_spec": "config/world-items/woodland-moss-patch-01.json",
+  "spec_sha256": "c4b0bdb29b255eda338ea9cabdcaae9e828a580ef4c7af63d21bd07a9001590f",
+  "blender": "4.2.0",
+  "units": "metres",
+  "dimensions_m_actual": [
+    0.2789999842643738,
+    0.16374999284744263,
+    0.026000000536441803
+  ],
+  "bounds_min_m": [
+    -0.14000000059604645,
+    -0.09412500262260437,
+    0.0
+  ],
+  "bounds_max_m": [
+    0.13899999856948853,
+    0.06962499767541885,
+    0.026000000536441803
+  ],
+  "bounds_center_m": [
+    -0.0005000010132789612,
+    -0.012250002473592758,
+    0.013000000268220901
+  ],
+  "render_framing": {
+    "hero": {
+      "center_error_x": -4.175e-07,
+      "center_error_y": -7.168e-07,
+      "fill_ratio": 0.8400000445,
+      "normalized_bounds": [
+        -0.4200004398,
+        0.4199996047,
+        -0.1952395951,
+        0.1952381615
+      ],
+      "ortho_scale": 0.2676573396
+    },
+    "front": {
+      "center_error_x": -2.24e-08,
+      "center_error_y": -1.96e-08,
+      "fill_ratio": 0.839999991,
+      "normalized_bounds": [
+        -0.4200000179,
+        0.4199999731,
+        -0.0556584411,
+        0.0556584019
+      ],
+      "ortho_scale": 0.3321428597
+    },
+    "rear": {
+      "center_error_x": 2.24e-08,
+      "center_error_y": -6.45e-08,
+      "fill_ratio": 0.839999991,
+      "normalized_bounds": [
+        -0.4199999731,
+        0.4200000179,
+        -0.0501675828,
+        0.0501674538
+      ],
+      "ortho_scale": 0.3321428597
+    },
+    "left": {
+      "center_error_x": 0.0,
+      "center_error_y": -1.529e-07,
+      "fill_ratio": 0.8399999694,
+      "normalized_bounds": [
+        -0.4199999847,
+        0.4199999847,
+        -0.1238529578,
+        0.1238526521
+      ],
+      "ortho_scale": 0.1949404925
+    },
+    "right": {
+      "center_error_x": 0.0,
+      "center_error_y": 9.08e-08,
+      "fill_ratio": 0.8400000214,
+      "normalized_bounds": [
+        -0.4200000107,
+        0.4200000107,
+        -0.1324613982,
+        0.1324615798
+      ],
+      "ortho_scale": 0.1949404627
+    },
+    "top": {
+      "center_error_x": -2.24e-08,
+      "center_error_y": -1.12e-08,
+      "fill_ratio": 0.839999991,
+      "normalized_bounds": [
+        -0.4200000179,
+        0.4199999731,
+        -0.2465310257,
+        0.2465310033
+      ],
+      "ortho_scale": 0.3321428597
+    }
+  },
+  "triangles": 400,
+  "parts_count": 5,
+  "formats": [
+    "blend",
+    "glb",
+    "fbx"
+  ],
+  "unity_status": "UNVERIFIED",
+  "vrchat_status": "UNVERIFIED",
+  "booth_status": "UNVERIFIED",
+  "sha256": {
+    "woodland-moss-patch-01.blend": "592ad985ddfae996d6282ef2fd70f153d64fcb9b2fb9778ac26511900299a5d9",
+    "woodland-moss-patch-01.glb": "8ed3bbb674242da577ca07fa62d96eaa6097506f084daa3343041a648a1aef87",
+    "woodland-moss-patch-01.fbx": "6234ae295337c5dd4e6a2fcbac1542219af5b8c79d2b489720fc1b4773c5e352",
+    "thumbnail.png": "56013926181124b01a27d55eb5797f9ab78e705668aa0114a69b6b5d220afb82",
+    "view-hero.png": "56013926181124b01a27d55eb5797f9ab78e705668aa0114a69b6b5d220afb82",
+    "view-front.png": "b29529887491ed03ceff3b6a2e44e2a33533c5af8579afd81773d6d7e1595813",
+    "view-rear.png": "fb53a2d187828b7ac5d6a4175312c258670e932eaa83e334ac7257d3f7b41098",
+    "view-left.png": "efbb6029792878bc0d07f39029d6d50f1c95f8fb3503db875b9add7317644b72",
+    "view-right.png": "479f88fa043607316df12679ca526dfec2517c76d6916f2bd4bde73699e19174",
+    "view-top.png": "67a00f1d63a95461659e0a7a4704d06e71ef174d59251d7f2ed263ece1f93378"
+  }
+}
