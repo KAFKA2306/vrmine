@@ -8,6 +8,20 @@ VRChat向けワールド素材、ワールド設計、関連インタラクテ�
 - Public site: https://kafka2306.github.io/vrmine/
 - 3D item catalog: https://kafka2306.github.io/vrmine/io/
 
+## VRMine World Create
+
+企画・設計・素材生成・Unity実装・検証までを、ひとつの再現可能なVRChatワールド制作パイプラインとして扱います。
+
+<p align="center">
+  <img src="pages/images/world-create/overview.webp" alt="VRMine World Create - VRChatワールド制作を工場化する" />
+</p>
+
+| 設計を具体化 | Unity実装までつなぐ | 完成条件で検証 |
+| --- | --- | --- |
+| <img src="pages/images/world-create/spec.webp" alt="思いつきを設計図にする" /> | <img src="pages/images/world-create/unity.webp" alt="Unity実装まで途中で止まらない" /> | <img src="pages/images/world-create/quality.webp" alt="完成条件でワールドを検証する" /> |
+
+アイデアを「それっぽい画像」で終わらせず、`WORLD_BLOCKOUT_SPEC`、必要アセット、Unity上の配置・調整、VRChat向けの完成条件へ順に落とし込みます。
+
 ## Start here
 
 - 開発・agentルールとcanonical path: [`AGENTS.md`](AGENTS.md)
