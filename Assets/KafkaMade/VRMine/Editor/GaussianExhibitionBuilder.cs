@@ -118,6 +118,7 @@ public static class GaussianExhibitionBuilder
 
         EnsureAssetFolder(Path.GetDirectoryName(config.scene_path)?.Replace('\\', '/'));
         EditorSceneManager.SaveScene(scene, config.scene_path);
+        ConfigureBakedLighting();
         if (!Lightmapping.Bake())
             throw new InvalidOperationException("Gaussian exhibition lighting bake failed.");
         EditorSceneManager.SaveScene(scene);
@@ -127,6 +128,20 @@ public static class GaussianExhibitionBuilder
         Selection.activeObject = AssetDatabase.LoadAssetAtPath<SceneAsset>(config.scene_path);
 
         Debug.Log("Gaussian exhibition scene ready: registered=" + exhibits.Count + ", scene=" + config.scene_path);
+    }
+
+    public static void ConfigureBakedLighting()
+    {
+        LightingSettings settings;
+        if (!Lightmapping.TryGetLightingSettings(out settings) || settings == null)
+        {
+            settings = new LightingSettings();
+            Lightmapping.lightingSettings = settings;
+        }
+        settings.autoGenerate = false;
+        settings.bakedGI = true;
+        settings.realtimeGI = false;
+        EditorUtility.SetDirty(settings);
     }
 
     static List<Exhibit> BuildExhibitLayout(ExhibitionConfig config, Registry registry)
