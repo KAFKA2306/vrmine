@@ -345,6 +345,7 @@ jobs:
           path: |
             Library/VRMine/unity-*.log
             Library/VRMine/gaussian-u2-evidence.json
+            Library/VRMine/gaussian-build-evidence.json
             Library/VRMine/gaussian-performance-evidence.json
             Library/VRMine/hf-oidc-error.txt
           if-no-files-found: warn
