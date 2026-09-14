@@ -19,6 +19,18 @@ on:
       - 'Taskfile.yml'
       - '.github/workflows/world-build.yml'
       - 'pages/worlds/**'
+  push:
+    branches: [main]
+    paths:
+      - 'config/world-design/generated/**'
+      - 'config/world-items/**'
+      - 'scripts/world-design-to-blender-plan.mjs'
+      - 'scripts/materialize_world_build_input.py'
+      - 'scripts/world_build_factory.py'
+      - 'scripts/verify_world_build.py'
+      - 'scripts/world_item_factory.py'
+      - 'Taskfile.yml'
+      - '.github/workflows/world-build.yml'
 
 permissions:
   actions: write
@@ -26,7 +38,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: vrmine-generated-world-pr-${{ github.event.pull_request.number || inputs.pr_number }}
+  group: vrmine-generated-world-${{ github.event.pull_request.number || inputs.pr_number || github.sha }}
   cancel-in-progress: true
 
 jobs:
@@ -34,47 +46,73 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
-      - name: Resolve PR
-        id: pr
+      - name: Resolve revision
+        id: revision
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
           EVENT_PR: ${{ github.event.pull_request.number }}
           INPUT_PR: ${{ inputs.pr_number }}
+          PUSH_HEAD_REF: ${{ github.ref_name }}
+          PUSH_HEAD_SHA: ${{ github.sha }}
+          PUSH_BASE_SHA: ${{ github.event.before }}
         run: |
           set -euo pipefail
-          pr_number="${EVENT_PR:-${INPUT_PR:-}}"
-          test -n "$pr_number"
-          gh pr view "$pr_number" --repo "$GITHUB_REPOSITORY" --json headRefName,headRefOid,baseRefName > /tmp/pr.json
-          echo "number=$pr_number" >> "$GITHUB_OUTPUT"
-          echo "head_ref=$(jq -r .headRefName /tmp/pr.json)" >> "$GITHUB_OUTPUT"
-          echo "head_sha=$(jq -r .headRefOid /tmp/pr.json)" >> "$GITHUB_OUTPUT"
-          echo "base_ref=$(jq -r .baseRefName /tmp/pr.json)" >> "$GITHUB_OUTPUT"
+          if [ "$EVENT_NAME" = push ]; then
+            test "$PUSH_HEAD_REF" = main
+            test -n "$PUSH_HEAD_SHA"
+            test -n "$PUSH_BASE_SHA"
+            echo "number=" >> "$GITHUB_OUTPUT"
+            echo "head_ref=$PUSH_HEAD_REF" >> "$GITHUB_OUTPUT"
+            echo "head_sha=$PUSH_HEAD_SHA" >> "$GITHUB_OUTPUT"
+            echo "base_ref=main" >> "$GITHUB_OUTPUT"
+            echo "base_sha=$PUSH_BASE_SHA" >> "$GITHUB_OUTPUT"
+          else
+            pr_number="${EVENT_PR:-${INPUT_PR:-}}"
+            test -n "$pr_number"
+            gh pr view "$pr_number" --repo "$GITHUB_REPOSITORY" --json headRefName,headRefOid,baseRefName > /tmp/pr.json
+            echo "number=$pr_number" >> "$GITHUB_OUTPUT"
+            echo "head_ref=$(jq -r .headRefName /tmp/pr.json)" >> "$GITHUB_OUTPUT"
+            echo "head_sha=$(jq -r .headRefOid /tmp/pr.json)" >> "$GITHUB_OUTPUT"
+            echo "base_ref=$(jq -r .baseRefName /tmp/pr.json)" >> "$GITHUB_OUTPUT"
+            echo "base_sha=" >> "$GITHUB_OUTPUT"
+          fi
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ steps.pr.outputs.head_sha }}
+          ref: ${{ steps.revision.outputs.head_sha }}
           fetch-depth: 0
 
       - name: Select one canonical World Design Spec
         id: select
         env:
-          BASE_REF: ${{ steps.pr.outputs.base_ref }}
+          BASE_REF: ${{ steps.revision.outputs.base_ref }}
+          BASE_SHA: ${{ steps.revision.outputs.base_sha }}
         run: |
           set -euo pipefail
           git fetch origin "$BASE_REF" main
-          mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/${BASE_REF}...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
-          if [ "${#specs[@]}" -eq 0 ] && [ "$BASE_REF" != main ]; then
+          base="${BASE_SHA:-origin/${BASE_REF}}"
+          git cat-file -e "${base}^{commit}"
+          mapfile -t specs < <(git diff --diff-filter=AM --name-only "${base}...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
+          if [ "${#specs[@]}" -eq 0 ] && [ -z "$BASE_SHA" ] && [ "$BASE_REF" != main ]; then
             mapfile -t specs < <(git diff --diff-filter=AM --name-only "origin/main...HEAD" | grep -E '^config/world-design/generated/[^/]+\.json$' || true)
           fi
           if [ "${#specs[@]}" -eq 0 ]; then
             # A canonical SKU edit must rebuild the world that consumes it.
-            git diff --diff-filter=AM --name-only "origin/${BASE_REF}...HEAD" > /tmp/world-changed-files.txt
+            git diff --diff-filter=AM --name-only "${base}...HEAD" > /tmp/world-changed-files.txt
             while IFS= read -r candidate; do
               node scripts/world-design-to-blender-plan.mjs "$candidate" > /tmp/candidate-world-plan.json
               if jq -er --rawfile changed /tmp/world-changed-files.txt '.asset_ids[] | select(("config/world-items/" + . + ".json\n") as $path | $changed | contains($path))' /tmp/candidate-world-plan.json >/dev/null; then
                 specs+=("$candidate")
               fi
             done < <(git ls-files 'config/world-design/generated/*.json')
+          fi
+          if [ "${#specs[@]}" -eq 0 ] && git diff --name-only "${base}...HEAD" | grep -qx '.github/workflows/world-build.yml'; then
+            # A verifier/workflow-only change must exercise the canonical blockout subject, not pass or fail without building anything.
+            subject="$(jq -er '.subject' config/world-design/WORLD_BLOCKOUT_SPEC.json)"
+            canonical="config/world-design/generated/${subject}.json"
+            test -f "$canonical"
+            specs+=("$canonical")
           fi
           if [ "${#specs[@]}" -ne 1 ]; then
             printf 'Expected exactly one effective generated World Design Spec, got %s\n' "${#specs[@]}" >&2
@@ -91,7 +129,8 @@ jobs:
         env:
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
           WORLD_ID: ${{ steps.select.outputs.world_id }}
-          BASE_REF: ${{ steps.pr.outputs.base_ref }}
+          BASE_REF: ${{ steps.revision.outputs.base_ref }}
+          BASE_SHA: ${{ steps.revision.outputs.base_sha }}
         run: |
           set -euo pipefail
           out=".artifacts/world-builds/${WORLD_ID}"
@@ -100,9 +139,10 @@ jobs:
           node scripts/world-design-to-blender-plan.mjs "$SPEC_PATH" > "$out/build-plan.json"
           test "$(jq -r .schema_version "$out/build-plan.json")" = 4
           source_sha="$(git log -1 --format=%H -- "$SPEC_PATH" config/world-items scripts/world-design-to-blender-plan.mjs scripts/materialize_world_build_input.py scripts/world_item_factory.py scripts/world_build_factory.py scripts/verify_world_build.py Taskfile.yml .github/workflows/world-build.yml)"
+          base="${BASE_SHA:-origin/${BASE_REF}}"
           inputs_changed=false
           while IFS= read -r asset_id; do
-            if ! git diff --quiet "origin/${BASE_REF}...HEAD" -- "config/world-items/${asset_id}.json"; then
+            if ! git diff --quiet "${base}...HEAD" -- "config/world-items/${asset_id}.json"; then
               inputs_changed=true
               break
             fi
@@ -165,6 +205,7 @@ jobs:
           WORLD_ID: ${{ steps.select.outputs.world_id }}
           SOURCE_COMMIT: ${{ steps.plan.outputs.source_sha }}
           CURRENT: ${{ steps.plan.outputs.current }}
+          PR_NUMBER: ${{ steps.revision.outputs.number }}
         run: |
           set -uo pipefail
           out=".artifacts/world-builds/${WORLD_ID}"
@@ -190,14 +231,16 @@ jobs:
           cat /tmp/world-build.log
           if [ "$status" -ne 0 ]; then
             tail -n 80 /tmp/world-build.log > /tmp/world-build-tail.log
-            {
-              echo '<!-- world-build-failure-log -->'
-              echo 'World Build failed at the exact PR head. Last log lines:'
-              echo '```text'
-              cat /tmp/world-build-tail.log
-              echo '```'
-            } > /tmp/world-build-comment.md
-            gh pr comment "${{ steps.pr.outputs.number }}" --repo "$GITHUB_REPOSITORY" --body-file /tmp/world-build-comment.md
+            if [ -n "$PR_NUMBER" ]; then
+              {
+                echo '<!-- world-build-failure-log -->'
+                echo 'World Build failed at the exact PR head. Last log lines:'
+                echo '```text'
+                cat /tmp/world-build-tail.log
+                echo '```'
+              } > /tmp/world-build-comment.md
+              gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/world-build-comment.md
+            fi
             exit "$status"
           fi
 
@@ -223,15 +266,16 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always() && steps.select.outputs.world_id != ''
         with:
-          name: world-build-${{ steps.select.outputs.world_id }}-${{ steps.pr.outputs.head_sha }}
+          name: world-build-${{ steps.select.outputs.world_id }}-${{ steps.revision.outputs.head_sha }}
           path: .artifacts/world-builds/${{ steps.select.outputs.world_id }}/
           if-no-files-found: error
           retention-days: 7
 
       - name: Publish generated room evidence into PR branch
+        if: github.event_name != 'push'
         env:
           GH_TOKEN: ${{ github.token }}
-          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+          HEAD_REF: ${{ steps.revision.outputs.head_ref }}
           WORLD_ID: ${{ steps.select.outputs.world_id }}
           SPEC_PATH: ${{ steps.select.outputs.spec_path }}
         run: |
