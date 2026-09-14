@@ -73,12 +73,30 @@ function Hash-Text {
 }
 
 function Hash-File {
-  param([string]$Path)
-  $hashAlgorithm = [Security.Cryptography.SHA256]::Create()
-  try {
-    return ([BitConverter]::ToString($hashAlgorithm.ComputeHash([IO.File]::ReadAllBytes($Path))) -replace '-', '').ToLowerInvariant()
-  } finally {
-    $hashAlgorithm.Dispose()
+  param(
+    [string]$Path,
+    [int]$RetryCount = 24,
+    [int]$RetryDelayMilliseconds = 250
+  )
+  $lastError = $null
+  for ($attempt = 1; $attempt -le [Math]::Max(1, $RetryCount); $attempt++) {
+    $hashAlgorithm = [Security.Cryptography.SHA256]::Create()
+    try {
+      # Unity owns its -logFile briefly after the child process exits. Retry
+      # transient sharing violations so evidence finalization is deterministic.
+      $bytes = [IO.File]::ReadAllBytes($Path)
+      return ([BitConverter]::ToString($hashAlgorithm.ComputeHash($bytes)) -replace '-', '').ToLowerInvariant()
+    } catch {
+      $lastError = $_
+      if ($attempt -lt [Math]::Max(1, $RetryCount)) {
+        Start-Sleep -Milliseconds ([Math]::Max(1, $RetryDelayMilliseconds))
+      }
+    } finally {
+      $hashAlgorithm.Dispose()
+    }
+  }
+  if ($lastError) {
+    throw $lastError
   }
 }
 
