@@ -191,7 +191,15 @@ jobs:
             spec="config/world-items/${asset_id}.json"
             published="pages/io/items/${asset_id}/${asset_id}.glb"
             if [ -f "$spec" ]; then
-              blender -b --python-exit-code 1 --python scripts/materialize_world_build_input.py -- "$spec" "$source_root"
+              materialized=false
+              for attempt in 1 2 3 4 5; do
+                if blender -b --python-exit-code 1 --python scripts/materialize_world_build_input.py -- "$spec" "$source_root"; then
+                  materialized=true
+                  break
+                fi
+                echo "Retrying non-canonical materialized GLB for ${asset_id} (attempt ${attempt}/5)." >&2
+              done
+              test "$materialized" = true
               test -s "$source_root/$asset_id/${asset_id}.glb"
               test -s "$source_root/$asset_id/world-build-input.json"
             elif [ -s "$published" ]; then

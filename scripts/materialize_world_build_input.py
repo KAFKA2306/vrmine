@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import struct
 import sys
 from pathlib import Path
 
@@ -27,6 +28,71 @@ def fail(message: str) -> None:
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def canonicalize_glb(path: Path) -> None:
+    """Canonicalize triangle index order without changing mesh geometry."""
+    data = bytearray(path.read_bytes())
+    if data[:4] != b"glTF" or len(data) < 28:
+        fail(f"invalid GLB header: {path}")
+    json_length = struct.unpack_from("<I", data, 12)[0]
+    json_start = 20
+    json_end = json_start + json_length
+    if json_end + 8 > len(data):
+        fail(f"truncated GLB JSON chunk: {path}")
+    document = json.loads(bytes(data[json_start:json_end]).rstrip(b" \t\r\n\0"))
+    bin_header = json_end
+    bin_length, bin_type = struct.unpack_from("<II", data, bin_header)
+    if bin_type != 0x004E4942 or bin_header + 8 + bin_length > len(data):
+        fail(f"missing GLB binary chunk: {path}")
+    bin_start = bin_header + 8
+    component_formats = {5121: ("B", 1), 5123: ("H", 2), 5125: ("I", 4)}
+    index_accessors = {
+        primitive.get("indices")
+        for mesh in document.get("meshes", [])
+        for primitive in mesh.get("primitives", [])
+        if primitive.get("mode", 4) == 4 and primitive.get("indices") is not None
+    }
+    triangle_primitives = [
+        primitive
+        for mesh in document.get("meshes", [])
+        for primitive in mesh.get("primitives", [])
+        if primitive.get("mode", 4) == 4 and primitive.get("indices") is not None
+    ]
+    if len(index_accessors) != len(triangle_primitives):
+        fail("GLB exporter reused a triangle index accessor across material primitives")
+    for accessor_index in sorted(index_accessors):
+        accessor = document["accessors"][accessor_index]
+        if accessor.get("type") != "SCALAR" or accessor.get("componentType") not in component_formats:
+            fail(f"unsupported triangle index accessor: {accessor_index}")
+        count = int(accessor["count"])
+        if count % 3:
+            fail(f"triangle index count is not divisible by three: {accessor_index}")
+        fmt, width = component_formats[accessor["componentType"]]
+        view = document["bufferViews"][accessor["bufferView"]]
+        start = bin_start + int(view.get("byteOffset", 0)) + int(accessor.get("byteOffset", 0))
+        length = count * width
+        end = start + length
+        if end > bin_start + bin_length:
+            fail(f"triangle index accessor exceeds GLB binary chunk: {accessor_index}")
+        values = list(struct.unpack_from(f"<{count}{fmt}", data, start))
+        triplets = [tuple(values[offset : offset + 3]) for offset in range(0, count, 3)]
+        triplets.sort()
+        ordered = [value for triplet in triplets for value in triplet]
+        struct.pack_into(f"<{count}{fmt}", data, start, *ordered)
+    path.write_bytes(data)
+
+
+def export_canonical_glb(product, path: Path) -> None:
+    last_error = None
+    for _attempt in range(5):
+        bpy.ops.export_scene.gltf(filepath=str(path), export_format="GLB", use_selection=True)
+        try:
+            canonicalize_glb(path)
+            return
+        except RuntimeError as exc:
+            last_error = exc
+    raise last_error or RuntimeError(f"unable to export canonical GLB: {path}")
 
 
 def args() -> tuple[Path, Path]:
@@ -57,12 +123,15 @@ def main() -> None:
     materials = {name: make_material(name, data) for name, data in spec["materials"].items()}
     parts = [make_part(part, materials) for part in spec["parts"]]
     product = join_parts(parts, sku)
+    # These base inputs contain no textures; UV islands only add exporter noise.
+    while product.data.uv_layers:
+        product.data.uv_layers.remove(product.data.uv_layers[0])
     bpy.ops.object.select_all(action="DESELECT")
     product.select_set(True)
     bpy.context.view_layer.objects.active = product
 
     glb = out / f"{sku}.glb"
-    bpy.ops.export_scene.gltf(filepath=str(glb), export_format="GLB", use_selection=True)
+    export_canonical_glb(product, glb)
     if not glb.is_file() or glb.stat().st_size == 0 or glb.read_bytes()[:4] != b"glTF":
         fail(f"invalid generated GLB: {glb}")
 
