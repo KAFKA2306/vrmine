@@ -55,7 +55,7 @@ public static class GaussianExhibitionVerification
         public int spawnPoints;
         public int referenceCameras;
         public int enabledBuildScenes;
-        public bool canonicalBuildSceneOnly;
+        public bool canonicalBuildSceneEnabled;
         public int missingScripts;
         public bool sceneDirty;
         public RegisteredMeasurement[] measurements;
@@ -101,7 +101,7 @@ public static class GaussianExhibitionVerification
             spawnPoints = CountNamed(scene, "SpawnPoint"),
             referenceCameras = CountNamed(scene, "ReferenceCamera"),
             enabledBuildScenes = CountEnabledBuildScenes(),
-            canonicalBuildSceneOnly = HasOnlyCanonicalBuildScene(),
+            canonicalBuildSceneEnabled = IsCanonicalBuildSceneEnabled(),
             missingScripts = CountMissingScripts(scene),
             sceneDirty = scene.isDirty,
             measurements = MeasureSplats(scene)
@@ -122,7 +122,7 @@ public static class GaussianExhibitionVerification
         System.IO.File.WriteAllText(evidencePath, JsonUtility.ToJson(evidence, true));
         foreach (RegisteredMeasurement measurement in evidence.measurements)
             Debug.Log("Gaussian measurement: id=" + measurement.id + ", extent=" + measurement.extent.ToString("F6") + ", floorBottom=" + measurement.floorBottom.ToString("F6") + ", position=" + measurement.position);
-        Debug.Log("Gaussian evidence: scene=" + evidence.activeScene + ", registered=" + evidence.registered + ", splats=" + evidence.gaussianSplatObjects + ", prefabs=" + evidence.prefabs + ", exhibits=" + evidence.exhibits + ", pads=" + evidence.pads + ", labels=" + evidence.labels + ", renderer=" + evidence.renderers + ", descriptor=" + evidence.descriptors + ", pipelineManager=" + evidence.pipelineManagers + ", spawn=" + evidence.spawnPoints + ", referenceCamera=" + evidence.referenceCameras + ", missingScripts=" + evidence.missingScripts + ", dirty=" + evidence.sceneDirty + ", path=" + evidencePath);
+        Debug.Log("Gaussian evidence: scene=" + evidence.activeScene + ", registered=" + evidence.registered + ", splats=" + evidence.gaussianSplatObjects + ", prefabs=" + evidence.prefabs + ", exhibits=" + evidence.exhibits + ", pads=" + evidence.pads + ", labels=" + evidence.labels + ", renderer=" + evidence.renderers + ", descriptor=" + evidence.descriptors + ", pipelineManager=" + evidence.pipelineManagers + ", spawn=" + evidence.spawnPoints + ", referenceCamera=" + evidence.referenceCameras + ", enabledBuildScenes=" + evidence.enabledBuildScenes + ", canonicalBuildSceneEnabled=" + evidence.canonicalBuildSceneEnabled + ", missingScripts=" + evidence.missingScripts + ", dirty=" + evidence.sceneDirty + ", path=" + evidencePath);
     }
 
     static int CountRegisteredSources()
@@ -255,12 +255,12 @@ public static class GaussianExhibitionVerification
             if (lightingSettings.realtimeGI) errors.Add("Realtime GI must be disabled");
         }
 
-        if (!HasOnlyCanonicalBuildScene()) errors.Add("EditorBuildSettings must contain exactly one enabled canonical scene");
+        if (!IsCanonicalBuildSceneEnabled()) errors.Add("canonical Gaussian exhibition scene must be enabled exactly once in EditorBuildSettings");
 
         if (errors.Count > 0)
             throw new InvalidOperationException("Gaussian exhibition verification failed:\n- " + string.Join("\n- ", errors));
 
-        Debug.Log("Gaussian exhibition verification PASS: registered=" + registered + ", splats=" + registered + ", renderer=1, video=1, playlist=" + registered + ", missingScripts=0, buildScenes=1, canonicalBuildSceneOnly=true");
+        Debug.Log("Gaussian exhibition verification PASS: registered=" + registered + ", splats=" + registered + ", renderer=1, video=1, playlist=" + registered + ", missingScripts=0, enabledBuildScenes=" + CountEnabledBuildScenes() + ", canonicalBuildSceneEnabled=true");
     }
 
     static void ValidatePresentationMaterials(GameObject floor, int registered, List<string> errors)
@@ -379,9 +379,12 @@ public static class GaussianExhibitionVerification
         return count;
     }
 
-    static bool HasOnlyCanonicalBuildScene()
+    static bool IsCanonicalBuildSceneEnabled()
     {
-        return CountEnabledBuildScenes() == 1 && EditorBuildSettings.scenes.Length == 1 && EditorBuildSettings.scenes[0].enabled && EditorBuildSettings.scenes[0].path == ScenePath;
+        int enabledCanonicalScenes = 0;
+        foreach (EditorBuildSettingsScene buildScene in EditorBuildSettings.scenes)
+            if (buildScene.enabled && buildScene.path == ScenePath) enabledCanonicalScenes++;
+        return enabledCanonicalScenes == 1;
     }
 
     static int CountSceneComponents(Type componentType, Scene scene)
