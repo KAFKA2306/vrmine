@@ -1,10 +1,10 @@
 {
   "schema_version": 3,
-  "source_commit": "9c0f71b0ec370203426096a7c5bcc005eb772406",
-  "build_plan": ".artifacts/world-builds/woodland-tabletop-village-v0/build-plan.json",
-  "build_plan_sha256": "7245c1a175b676431bb0308341b7248e821df65f036d96e354e111dccb1df71b",
+  "source_commit": "3864ac97fbc648553da68770194363ea5506b96e",
+  "build_plan": ".artifacts/world-builds/woodland-improvement-final/build-plan.json",
+  "build_plan_sha256": "27c686a687f59f1f4186e6b92085db802a8c8746c3206eb6aa9ed590f3e92b2c",
   "source_spec": "config/world-design/generated/woodland-tabletop-village-v0.json",
-  "source_spec_sha256": "db183ce804e35d617bca29cbf735fff206190f091f6cf0ce6c12b2eef86b1474",
+  "source_spec_sha256": "f8257090b79ade29065eda333fb0fdc471a9a83e2a406f739368cdb991118445",
   "blender_version": "4.2.0",
   "footprint": {
     "width": 6.5,
@@ -503,7 +503,7 @@
     "atmospheric_depth": {
       "enabled": true,
       "mechanism": "world_volume_haze",
-      "density": 0.018,
+      "density": 0.006,
       "color_palette_key": "warm_cream"
     }
   },
@@ -514,32 +514,32 @@
   "outputs": {
     "blend": {
       "path": "world.blend",
-      "sha256": "3084e58ef709ce7ac2274872ebc48802a47b8c343dde8759fe88442231a8067e"
+      "sha256": "26a28bdc5fe49de311db4c8b3a7ce03bac4b672fb2198ce2eaa75262c80c2b52"
     },
     "glb": {
       "path": "world.glb",
-      "sha256": "03dd98371291aa994e9eb906ba979001f12982968c53162cc3c4f65a9c81b569"
+      "sha256": "f392bcfdedbba7a72b23c34ba1f4c2ae5893d403c0dba82d4be317b10e5472a3"
     },
     "renders": [
       {
         "path": "view-hero.png",
-        "sha256": "4c249b7c91a759fc573d65a8d36b66bd9ad46e80ff98d12d83f3d09c370a7095"
+        "sha256": "d43fbf528e7faeee982a0a787d09b7a657bc74fd4f59d6e75e537f809c012599"
       },
       {
         "path": "view-top.png",
-        "sha256": "3eb1bd87f20d80d9b96e5cead6a39dd4f0c7242e330a8bda8be5933b0e822079"
+        "sha256": "462bf6321c94f9df32007bdaa10833f4d53e1f580f8c648d828d49a6efae9a8b"
       },
       {
         "path": "view-social-core.png",
-        "sha256": "c8be9a79472f564004d67be0022da7fdf3a0def49360bb70e0b7b20c1e3b1db5"
+        "sha256": "0d7dadd14a7ca05937ba06452cfdf4df085424772bd770dd5b89571ea9f12c61"
       },
       {
         "path": "view-retreat.png",
-        "sha256": "fef174c9207ca443dd450ac0e0674ea93c47fbde2ef0eac9db83f9f251d9d063"
+        "sha256": "536117999068f9b7c09e0d5dfa4365f2bdd4fd0342e3831bc029c95288a0f901"
       },
       {
         "path": "view-circulation.png",
-        "sha256": "a09fef73a714bc4b1dd3a81dfe3a8e0882ddbf1c44c80bc0af862e5a188c954e"
+        "sha256": "480226e2dbb97f0577cb5883ea831da8a9e9e1550f0beb0545bfb2123dd0e120"
       }
     ]
   }

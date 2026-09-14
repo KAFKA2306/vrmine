@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
   "source_spec": "config/world-design/generated/woodland-tabletop-village-v0.json",
-  "source_spec_sha256": "db183ce804e35d617bca29cbf735fff206190f091f6cf0ce6c12b2eef86b1474",
+  "source_spec_sha256": "f8257090b79ade29065eda333fb0fdc471a9a83e2a406f739368cdb991118445",
   "world_id": "woodland-tabletop-village-v0",
   "theme_name": "大樹のふもとの小さな村",
   "platform_target": "CROSS_PLATFORM_QUEST",
@@ -1133,7 +1133,7 @@
     "atmospheric_depth": {
       "enabled": true,
       "mechanism": "world_volume_haze",
-      "density": 0.018,
+      "density": 0.006,
       "color_palette_key": "warm_cream",
       "camera_clip_start_m": 0.01,
       "camera_clip_end_m": 80
