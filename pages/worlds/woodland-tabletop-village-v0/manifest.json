@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "source_commit": "ce00da433574fd383ce20dcf21824dc42fbb79b9",
+  "source_commit": "f7aec3722f4adee56382ea8ab9b2779364bc0e84",
   "build_plan": ".artifacts/world-builds/woodland-tabletop-village-v0/build-plan.json",
   "build_plan_sha256": "7245c1a175b676431bb0308341b7248e821df65f036d96e354e111dccb1df71b",
   "source_spec": "config/world-design/generated/woodland-tabletop-village-v0.json",
@@ -360,7 +360,7 @@
   "asset_sources": {
     "woodland-great-tree-01": {
       "path": ".artifacts/world-build-source-items/woodland-great-tree-01/woodland-great-tree-01.glb",
-      "sha256": "3cb03c4b13e3376410d8020a3be06e8451d986a9697f31dd06ee144425119f3d"
+      "sha256": "b1bcaa8c108d5610373f31c2128154ab0b86d2fc921cf41b7038ba5c79f7e8bb"
     },
     "woodland-bridge-01": {
       "path": ".artifacts/world-build-source-items/woodland-bridge-01/woodland-bridge-01.glb",
@@ -388,7 +388,7 @@
     },
     "woodland-moss-patch-01": {
       "path": ".artifacts/world-build-source-items/woodland-moss-patch-01/woodland-moss-patch-01.glb",
-      "sha256": "483970ee204f373089c9eaf99a86fdffdf043ab0d1eb66af210228eaa31b803d"
+      "sha256": "df88fca80c7c4c538d99277b0f2dd828fa4308f9d62ed869dada3603faf8772f"
     },
     "woodland-exposed-root-01": {
       "path": ".artifacts/world-build-source-items/woodland-exposed-root-01/woodland-exposed-root-01.glb",
@@ -400,7 +400,7 @@
     },
     "woodland-mushroom-cluster-01": {
       "path": ".artifacts/world-build-source-items/woodland-mushroom-cluster-01/woodland-mushroom-cluster-01.glb",
-      "sha256": "915afa9ef29e4d1f401f8b628797f8d6afc04f45b15ba30a7d8af63cd0496bc5"
+      "sha256": "7bc81ce70bb963464fe98dbfa7596b4be742ba37a93c850dac11025d380985c8"
     },
     "woodland-grass-clump-01": {
       "path": ".artifacts/world-build-source-items/woodland-grass-clump-01/woodland-grass-clump-01.glb",
@@ -514,32 +514,32 @@
   "outputs": {
     "blend": {
       "path": "world.blend",
-      "sha256": "c679cd596ef0c004fb693738a7c3bfcacfce5ac2aa3f9e723e89fef1b50b7cab"
+      "sha256": "2554872b89a662be84fc7514a21ed2ab05f39068ce8f81ede45c3779cc6e9fc7"
     },
     "glb": {
       "path": "world.glb",
-      "sha256": "e75f63c2c32d763ccae2842a738e5234c278d1d65d41d7cbae3bb0191317cfd8"
+      "sha256": "f3166ddbd445e08e9c3a22e37119c0fe06af2ee4a7cfbb99edf4302ad058c5ef"
     },
     "renders": [
       {
         "path": "view-hero.png",
-        "sha256": "c63d8e8afb18e261c69a32c9cdd5ef961ce4f86d80e4f7813ce131ac60debb0b"
+        "sha256": "f14343e29a0939ccbf00d5065f0ede52fadfbe046e6d45701634afadfcf209bd"
       },
       {
         "path": "view-top.png",
-        "sha256": "791325988379872b91d91b4c33ebd32ab7c95e009f662479069b33b4561bc1d4"
+        "sha256": "819c1e6d5972a2848d933008473c567b93815338a813ec5d733dae42974b497b"
       },
       {
         "path": "view-social-core.png",
-        "sha256": "8242607a82b709c8dc3d4284b22a5bea56108749be8a22d80a1859c7b726d415"
+        "sha256": "ebe2803b3295bcfd9b0fddfc5d108b764ba859ea5996d1c8c3ea2b0b3bbd3dbe"
       },
       {
         "path": "view-retreat.png",
-        "sha256": "47d8f293a7c6a7e72a8e6dc8606d23c45840f6f7ca549afbb7186b9c6a90c778"
+        "sha256": "00b8e5bac2bd9fceb5744c8727cb043d389cf34a6b8ad7d0dbedb494c10917c7"
       },
       {
         "path": "view-circulation.png",
-        "sha256": "89e0e0297149b37f0951cd388a574001bdf69376a62232ed86f50c69cd4f7453"
+        "sha256": "89cf944e37599fce6b79c779f845f6c8c2db725b0516f3c6d6c7019e7b91d8f5"
       }
     ]
   }
