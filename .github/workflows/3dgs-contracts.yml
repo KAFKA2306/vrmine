@@ -285,6 +285,14 @@ jobs:
         shell: pwsh
         run: node scripts/materialize-gaussian-renderer.mjs
 
+      - name: Verify canonical Unity scene and SDK validation
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          node scripts/run-gaussian-unity.mjs registered
+          node scripts/run-gaussian-unity.mjs sdk
+          node scripts/run-gaussian-unity.mjs final
+
       - name: Resolve private Gaussian artifact authentication
         shell: pwsh
         run: |
@@ -313,14 +321,9 @@ jobs:
           HF_HOME: ${{ runner.temp }}\hf-cache
         run: node scripts/materialize-gaussian-sources.mjs
 
-      - name: Verify canonical Unity scene and SDK validation
+      - name: Measure exact registered PLYs in Unity
         shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          node scripts/run-gaussian-unity.mjs registered
-          node scripts/run-gaussian-unity.mjs sdk
-          node scripts/run-gaussian-unity.mjs performance
-          node scripts/run-gaussian-unity.mjs final
+        run: node scripts/run-gaussian-unity.mjs performance
 
       - name: Require measured registry-complete evidence
         shell: pwsh
