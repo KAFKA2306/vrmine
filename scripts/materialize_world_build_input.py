@@ -10,6 +10,7 @@ import hashlib
 import json
 import struct
 import sys
+from copy import deepcopy
 from pathlib import Path
 
 import bpy
@@ -31,7 +32,7 @@ def sha256(path: Path) -> str:
 
 
 def canonicalize_glb(path: Path) -> None:
-    """Canonicalize triangle index order without changing mesh geometry."""
+    """Canonicalize primitive buffer layout without changing mesh geometry."""
     data = bytearray(path.read_bytes())
     if data[:4] != b"glTF" or len(data) < 28:
         fail(f"invalid GLB header: {path}")
@@ -46,41 +47,84 @@ def canonicalize_glb(path: Path) -> None:
     if bin_type != 0x004E4942 or bin_header + 8 + bin_length > len(data):
         fail(f"missing GLB binary chunk: {path}")
     bin_start = bin_header + 8
-    component_formats = {5121: ("B", 1), 5123: ("H", 2), 5125: ("I", 4)}
-    index_accessors = {
-        primitive.get("indices")
-        for mesh in document.get("meshes", [])
-        for primitive in mesh.get("primitives", [])
-        if primitive.get("mode", 4) == 4 and primitive.get("indices") is not None
-    }
-    triangle_primitives = [
-        primitive
-        for mesh in document.get("meshes", [])
-        for primitive in mesh.get("primitives", [])
-        if primitive.get("mode", 4) == 4 and primitive.get("indices") is not None
-    ]
-    if len(index_accessors) != len(triangle_primitives):
-        fail("GLB exporter reused a triangle index accessor across material primitives")
-    for accessor_index in sorted(index_accessors):
+    source_bin = bytes(data[bin_start : bin_start + bin_length])
+    component_widths = {5121: 1, 5123: 2, 5125: 4, 5126: 4}
+    component_counts = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT2": 4, "MAT3": 9, "MAT4": 16}
+    rebuilt = deepcopy(document)
+    rebuilt["bufferViews"] = []
+    rebuilt["accessors"] = []
+    rebuilt_bin = bytearray()
+
+    def aligned_append(blob: bytes) -> int:
+        while len(rebuilt_bin) % 4:
+            rebuilt_bin.append(0)
+        offset = len(rebuilt_bin)
+        rebuilt_bin.extend(blob)
+        return offset
+
+    def copy_accessor(accessor_index: int, *, canonical_indices: bool) -> int:
         accessor = document["accessors"][accessor_index]
-        if accessor.get("type") != "SCALAR" or accessor.get("componentType") not in component_formats:
-            fail(f"unsupported triangle index accessor: {accessor_index}")
+        if accessor.get("sparse") is not None:
+            fail(f"sparse accessor is not supported by canonicalizer: {accessor_index}")
+        component_width = component_widths.get(accessor.get("componentType"))
+        component_count = component_counts.get(accessor.get("type"))
+        if component_width is None or component_count is None:
+            fail(f"unsupported accessor format: {accessor_index}")
         count = int(accessor["count"])
-        if count % 3:
-            fail(f"triangle index count is not divisible by three: {accessor_index}")
-        fmt, width = component_formats[accessor["componentType"]]
+        element_width = component_width * component_count
         view = document["bufferViews"][accessor["bufferView"]]
-        start = bin_start + int(view.get("byteOffset", 0)) + int(accessor.get("byteOffset", 0))
-        length = count * width
-        end = start + length
-        if end > bin_start + bin_length:
-            fail(f"triangle index accessor exceeds GLB binary chunk: {accessor_index}")
-        values = list(struct.unpack_from(f"<{count}{fmt}", data, start))
-        triplets = [tuple(values[offset : offset + 3]) for offset in range(0, count, 3)]
-        triplets.sort()
-        ordered = [value for triplet in triplets for value in triplet]
-        struct.pack_into(f"<{count}{fmt}", data, start, *ordered)
-    path.write_bytes(data)
+        if view.get("byteStride") is not None:
+            fail(f"interleaved accessor is not supported by canonicalizer: {accessor_index}")
+        start = int(view.get("byteOffset", 0)) + int(accessor.get("byteOffset", 0))
+        length = count * element_width
+        raw = source_bin[start : start + length]
+        if len(raw) != length:
+            fail(f"accessor exceeds GLB binary chunk: {accessor_index}")
+        if canonical_indices:
+            if accessor.get("type") != "SCALAR" or count % 3:
+                fail(f"triangle index accessor is not a complete triangle list: {accessor_index}")
+            fmt = {5121: "B", 5123: "H", 5125: "I"}[accessor["componentType"]]
+            values = list(struct.unpack(f"<{count}{fmt}", raw))
+            triplets = [tuple(values[offset : offset + 3]) for offset in range(0, count, 3)]
+            triplets.sort()
+            raw = struct.pack(f"<{count}{fmt}", *(value for triplet in triplets for value in triplet))
+        view_copy = deepcopy(view)
+        view_copy["buffer"] = 0
+        view_copy["byteOffset"] = aligned_append(raw)
+        view_copy["byteLength"] = len(raw)
+        view_copy.pop("byteStride", None)
+        view_index = len(rebuilt["bufferViews"])
+        rebuilt["bufferViews"].append(view_copy)
+        accessor_copy = deepcopy(accessor)
+        accessor_copy["bufferView"] = view_index
+        accessor_copy.pop("byteOffset", None)
+        rebuilt_index = len(rebuilt["accessors"])
+        rebuilt["accessors"].append(accessor_copy)
+        return rebuilt_index
+
+    for mesh in rebuilt.get("meshes", []):
+        for primitive in mesh.get("primitives", []):
+            attributes = primitive.get("attributes", {})
+            primitive["attributes"] = {
+                name: copy_accessor(attributes[name], canonical_indices=False) for name in sorted(attributes)
+            }
+            if primitive.get("indices") is not None:
+                primitive["indices"] = copy_accessor(primitive["indices"], canonical_indices=primitive.get("mode", 4) == 4)
+
+    if rebuilt.get("buffers"):
+        rebuilt["buffers"][0]["byteLength"] = len(rebuilt_bin)
+    json_bytes = json.dumps(rebuilt, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    json_bytes += b" " * ((-len(json_bytes)) % 4)
+    bin_bytes = bytes(rebuilt_bin)
+    bin_bytes += b"\0" * ((-len(bin_bytes)) % 4)
+    total_length = 12 + 8 + len(json_bytes) + 8 + len(bin_bytes)
+    path.write_bytes(
+        struct.pack("<4sII", b"glTF", 2, total_length)
+        + struct.pack("<II", len(json_bytes), 0x4E4F534A)
+        + json_bytes
+        + struct.pack("<II", len(bin_bytes), 0x004E4942)
+        + bin_bytes
+    )
 
 
 def export_canonical_glb(product, path: Path) -> None:
