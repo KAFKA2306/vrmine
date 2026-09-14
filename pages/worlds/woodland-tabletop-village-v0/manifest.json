@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "source_commit": "86a3de1b5b2e4d99870960b430e35fb06612bf14",
+  "source_commit": "b71183a8c7c9ea8565904bc99e32416e941f3531",
   "build_plan": "pages/worlds/woodland-tabletop-village-v0/build-plan.json",
   "build_plan_sha256": "e7c50a620bddec895514248665120c27fd0769ac1370c98a055e94d2968ba5b1",
   "source_spec": "config/world-design/generated/woodland-tabletop-village-v0.json",
@@ -360,51 +360,51 @@
   "asset_sources": {
     "woodland-bridge-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-bridge-01.glb",
-      "sha256": "13469b375c93406dabeaf0aada5c6eb45dd497fc578f79819304c8b899e5949d"
+      "sha256": "1239faf3cca8a80125c2a390f5d5d7532d927397816951e3049ba78523af824c"
     },
     "woodland-cottage-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-cottage-01.glb",
-      "sha256": "c85ae9e4ace2c7b39f97b18acf2ba2f0a21a73a929bc398967b44968623464c7"
+      "sha256": "76787f1edaab4f5689131248cc74594b38b136525b31e10609cd037ae1d152e5"
     },
     "woodland-exposed-root-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-exposed-root-01.glb",
-      "sha256": "d32a218eb4f62e48b12642a79ac55380e0d036379b474a92418457e3bb240c5d"
+      "sha256": "558f42de1e7c56218e6d6430a8d8eccbf7a84d7d757dde97a4b8e78f5c09f889"
     },
     "woodland-fern-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-fern-01.glb",
-      "sha256": "1fc7a13987f111dd415125c7c19e076d0e3329390eb8c95e1ea5d98ebf03038d"
+      "sha256": "4f4294191809f59a1e81bca893dab96debe97ce7b82203c934c94c20842a0cb9"
     },
     "woodland-grass-clump-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-grass-clump-01.glb",
-      "sha256": "f7205ca0fee600a25748637825c3b813fd54bc69c3b2d2c5f8ac993e74d5584b"
+      "sha256": "dd3eb758abe4f57fbd433ac23d3343dff15c563ae6e2d80de660ded3b773f5a8"
     },
     "woodland-great-tree-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-great-tree-01.glb",
-      "sha256": "437f8b44091e69155a4220fde66ce5df4398d62a23ec23e657e36361ae497ec9"
+      "sha256": "8055962dd946ff8ad5b33c3d9c1040965350ff9c2220a14c0390c36251c0d537"
     },
     "woodland-lodge-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-lodge-01.glb",
-      "sha256": "90fb685a46e76bfd8e1a21c87b2b407dedec30e404a084ed07a9b673348ca7db"
+      "sha256": "823d5b0c7528e61d41690448e41b58ae9d1eac4996fbcdf090845d09d3a5648f"
     },
     "woodland-market-stall-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-market-stall-01.glb",
-      "sha256": "43405c6ebdc690e86079dd7115b3397b2303a5ad4d47f9db84005f880a778842"
+      "sha256": "51ec2d7048de24f08521edc8d7abd33543275ff5e7e28be02ad2daf7409c2e36"
     },
     "woodland-moss-patch-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-moss-patch-01.glb",
-      "sha256": "70a0e078aba5fdddb09a2331d5cfda626affe28660ec3261288bb3e5f230f127"
+      "sha256": "ba755cb6b5dbe7cdec95e254b7708fe31a5425d076d53f6584aa195496558af4"
     },
     "woodland-mushroom-cluster-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-mushroom-cluster-01.glb",
-      "sha256": "8789c33c22397c6c156a09b5ec48e55e46eeaa47aba434f8b5fe6ae754ac4f1d"
+      "sha256": "136c1940201c6db8e8c712e44a43310ef1c06d69e9383425f13f27b12fcdfd3d"
     },
     "woodland-reading-bench-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-reading-bench-01.glb",
-      "sha256": "1f766f6b71a6500d3c61529399ce39d6c812c68201ea679875b4904b60574ed7"
+      "sha256": "f11219fb67a2500368a490fa360774ea274189d2c0e3d9d769a6e29b4d40efda"
     },
     "woodland-stream-segment-01": {
       "path": "pages/worlds/woodland-tabletop-village-v0/source-assets/woodland-stream-segment-01.glb",
-      "sha256": "ccd33ed8ccb99cde65bd896f5ad1ff4d63556fad6ca0cab0ebbd95dae6350bd8"
+      "sha256": "5e7df61e6bb3b4cfcc8d9717d81be9efb9459d5caef5f14c8ed010b27e3ec9a3"
     }
   },
   "procedural_sources": {
@@ -514,32 +514,32 @@
   "outputs": {
     "blend": {
       "path": "world.blend",
-      "sha256": "4b3855ceeac7a2de98b0c219fcfcf3ac6a981f98ddc63d53c1d2a6919359f501"
+      "sha256": "f9c4dccabeec18f376e15f1f6c847ec0535fd91ea99a73f0a6932f456f0ece2f"
     },
     "glb": {
       "path": "world.glb",
-      "sha256": "45163d2a370bd4a321e3b5367202991924ab94f33c6efdaeec72f05a1d62292d"
+      "sha256": "36cab9e735dbb7e8da9088348135e8ea96b90542b3825bfb831b781b1d4ca0e8"
     },
     "renders": [
       {
         "path": "view-hero.png",
-        "sha256": "6b70f8f7858084a1b773200b48398508bcdb5c99f87603a4e0141a7d562e136f"
+        "sha256": "335d3ee764abf99b53df7299ab5a27612ba7826aa7ebec44642685bcd5b221d3"
       },
       {
         "path": "view-top.png",
-        "sha256": "1f87a431e199a06a370260c72d58097fc52a0ae468dd91ef7e25183892d86df2"
+        "sha256": "8cf58cfe30534a4b649fb0ee3e525b15291dbc336ccb43a544d834dc4cc1e4fd"
       },
       {
         "path": "view-social-core.png",
-        "sha256": "cea994ac75874db3863b84784537feb119841b70f512895da409e718b12f2eb7"
+        "sha256": "77e87d0eaa80ba13e926d3c6a6b2fe05642f70a1318e03f3c68473a13f664251"
       },
       {
         "path": "view-retreat.png",
-        "sha256": "7d44e0cf3949f4375dc2dd32dbe7cb48f95d0064b055ddc8dde10d3629d59529"
+        "sha256": "e5232b9511e95a2adfcebfa7138c54d63d0e15df927d931847866e01bd6e4e1a"
       },
       {
         "path": "view-circulation.png",
-        "sha256": "69cf2160f6ed22638f454bd0128118b92d537a2d081e4959885eadc80ebd448e"
+        "sha256": "a2aa457f485addaea7f35d7d33e5649b299c745630d52c790882d273d4ea882a"
       }
     ]
   }
