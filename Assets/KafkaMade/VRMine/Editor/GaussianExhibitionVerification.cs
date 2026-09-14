@@ -14,11 +14,14 @@ public static class GaussianExhibitionVerification
 {
     const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/GaussianSplatExhibition.unity";
     const string RegistryPath = "config/gaussian-splats.json";
+    const string ConfigPath = "config/gaussian-exhibition.json";
     const string GaussianSplatObjectTypeName = "GaussianSplatting.GaussianSplatObject";
     const string GaussianSplatRendererTypeName = "GaussianSplatting.GaussianSplatRenderer";
 
     [Serializable] sealed class Registry { public RegistryEntry[] environments; }
     [Serializable] sealed class RegistryEntry { public string id; }
+    [Serializable] sealed class ExhibitionConfig { public MaterialConfig materials; }
+    [Serializable] sealed class MaterialConfig { public string shell; public string pad; }
 
     [Serializable]
     sealed class RegisteredMeasurement
@@ -212,6 +215,7 @@ public static class GaussianExhibitionVerification
 
         GameObject floor = GameObject.Find("WalkableFloor");
         if (floor == null || floor.scene != scene || floor.GetComponent<Collider>() == null) errors.Add("WalkableFloor collider is missing");
+        ValidatePresentationMaterials(floor, registered, errors);
 
         GameObject video = GameObject.Find("SourceVideoPlayer");
         if (video == null || video.scene != scene) errors.Add("SourceVideoPlayer is missing");
@@ -257,6 +261,42 @@ public static class GaussianExhibitionVerification
             throw new InvalidOperationException("Gaussian exhibition verification failed:\n- " + string.Join("\n- ", errors));
 
         Debug.Log("Gaussian exhibition verification PASS: registered=" + registered + ", splats=" + registered + ", renderer=1, video=1, playlist=" + registered + ", missingScripts=0, buildScenes=1, canonicalBuildSceneOnly=true");
+    }
+
+    static void ValidatePresentationMaterials(GameObject floor, int registered, List<string> errors)
+    {
+        if (!System.IO.File.Exists(ConfigPath))
+        {
+            errors.Add("Gaussian exhibition config is missing");
+            return;
+        }
+
+        ExhibitionConfig config = JsonUtility.FromJson<ExhibitionConfig>(System.IO.File.ReadAllText(ConfigPath));
+        if (config == null || config.materials == null || string.IsNullOrEmpty(config.materials.shell) || string.IsNullOrEmpty(config.materials.pad))
+        {
+            errors.Add("Gaussian exhibition material configuration is incomplete");
+            return;
+        }
+
+        Material shell = AssetDatabase.LoadAssetAtPath<Material>(config.materials.shell);
+        Material pad = AssetDatabase.LoadAssetAtPath<Material>(config.materials.pad);
+        if (shell == null || pad == null)
+        {
+            errors.Add("Gaussian exhibition configured material asset is missing");
+            return;
+        }
+
+        if (floor == null || floor.GetComponent<Renderer>()?.sharedMaterial != shell)
+            errors.Add("WalkableFloor does not use the configured shell material");
+
+        int padCount = 0;
+        foreach (Renderer renderer in UnityEngine.Object.FindObjectsOfType<Renderer>(true))
+        {
+            if (!renderer.gameObject.name.StartsWith("ExhibitPad_", StringComparison.Ordinal)) continue;
+            padCount++;
+            if (renderer.sharedMaterial != pad) errors.Add(renderer.gameObject.name + " does not use the configured pad material");
+        }
+        if (padCount != registered) errors.Add("exhibit pad count must match canonical registry");
     }
 
     public static void VerifyBatch() => Verify();

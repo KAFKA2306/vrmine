@@ -36,6 +36,10 @@
     "pad_size_m": 1.4,
     "wall_height_m": 3.0
   },
+  "materials": {
+    "shell": "Assets/KafkaMade/VRMine/Materials/Dark.mat",
+    "pad": "Assets/KafkaMade/VRMine/Materials/Gold.mat"
+  },
   "reference_camera": {"field_of_view": 55.0},
   "video_player": {"prefab_path": "Packages/com.vrchat.worlds/Samples/UdonExampleScene/Prefabs/VideoPlayers/UdonSyncPlayer (Unity).prefab"}
 }
