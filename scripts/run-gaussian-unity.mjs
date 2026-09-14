@@ -8,6 +8,7 @@ const modes = {
   final: 'GaussianExhibitionVerification.VerifyBatch',
   sdk: 'GaussianExhibitionVerification.VerifySdkWorldBuilderBatch',
   performance: 'GaussianExhibitionVerification.VerifyPerformanceBatch',
+  build: 'GaussianWorldBuildMeasurement.MeasureBatch',
 };
 
 const mode = process.argv[2] ?? 'registered';
@@ -84,6 +85,14 @@ if (mode === 'registered') {
   const evidencePath = path.join(evidenceDir, 'gaussian-performance-evidence.json');
   if (!fs.existsSync(evidencePath)) throw new Error(`Performance verification exited 0 but evidence is missing: ${evidencePath}`);
   console.log(`PASS: performance evidence collection. Evidence: ${evidencePath}`);
+} else if (mode === 'build') {
+  const evidencePath = path.join(evidenceDir, 'gaussian-build-evidence.json');
+  if (!fs.existsSync(evidencePath)) throw new Error(`Build measurement exited 0 but evidence is missing: ${evidencePath}`);
+  const evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  if (evidence.status !== 'MEASURED_BUILD_COMPLETE' || !Number.isSafeInteger(evidence.bundleBytes) || evidence.bundleBytes <= 0 || !/^[0-9a-f]{64}$/.test(evidence.sha256 ?? '')) {
+    throw new Error(`Build evidence is incomplete: ${JSON.stringify(evidence)}`);
+  }
+  console.log(`PASS: VRChat world bundle measured at ${evidence.bundleBytes} bytes, sha256=${evidence.sha256}. Evidence: ${evidencePath}`);
 } else if (mode === 'sdk') {
   const marker = 'Gaussian SDK world builder validation completed without exception';
   if (!log.includes(marker)) throw new Error(`SDK verification exited 0 without the expected completion marker. See ${logPath}`);
