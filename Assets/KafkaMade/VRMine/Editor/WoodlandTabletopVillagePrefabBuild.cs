@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using VRC.Core;
 using VRC.SDK3.Components;
 
 public static class WoodlandTabletopVillagePrefabBuild
@@ -49,6 +50,10 @@ public static class WoodlandTabletopVillagePrefabBuild
         Require(anchors.Length == 8 && anchors.Distinct().Count() == 8, "canonical spec must contain eight unique anchors");
         Transform village = Find(prefab.transform, "VillageBlockout");
         Require(village != null, "VillageBlockout is missing from prefab");
+        Require(Find(prefab.transform, "VisualPolish") != null, "VisualPolish is missing from prefab");
+        Require(Find(prefab.transform, "PhotoSpot_HeroTree") != null, "hero tree photo spot is missing from prefab");
+        Require(Find(prefab.transform, "PhotoSpot_Bridge") != null, "bridge photo spot is missing from prefab");
+        Require(Find(prefab.transform, "PhotoSpot_Market") != null, "market photo spot is missing from prefab");
         Require(village.childCount == anchors.Length, "prefab anchor count differs from canonical spec");
         foreach (string id in anchors)
             Require(Find(prefab.transform, id) != null, "canonical anchor is missing from prefab: " + id);
@@ -61,6 +66,7 @@ public static class WoodlandTabletopVillagePrefabBuild
 
         VRCSceneDescriptor descriptor = prefab.GetComponentInChildren<VRCSceneDescriptor>(true);
         Require(descriptor != null, "VRCSceneDescriptor is missing from prefab");
+        Require(prefab.GetComponentInChildren<PipelineManager>(true) != null, "PipelineManager is missing from prefab");
         Require(descriptor.spawns != null && descriptor.spawns.Length == 1 && descriptor.spawns[0] != null, "prefab must preserve exactly one spawn reference");
         Require(descriptor.ReferenceCamera != null, "prefab must preserve VRChat reference camera");
 

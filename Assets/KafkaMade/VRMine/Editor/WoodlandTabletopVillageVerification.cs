@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using VRC.Core;
 using VRC.SDK3.Components;
 
 public static class WoodlandTabletopVillageVerification
@@ -42,6 +43,12 @@ public static class WoodlandTabletopVillageVerification
 
         Require(GameObject.Find("WoodlandTabletopVillage") != null, "root object is missing");
         Require(GameObject.Find("WoodlandTabletop") != null, "tabletop is missing");
+        Require(GameObject.Find("VisualPolish") != null, "visual polish group is missing");
+        Require(GameObject.Find("MossGround") != null, "ground variation is missing");
+        Require(GameObject.Find("PhotoSpot_HeroTree") != null, "hero tree photo spot is missing");
+        Require(GameObject.Find("PhotoSpot_Bridge") != null, "bridge photo spot is missing");
+        Require(GameObject.Find("PhotoSpot_Market") != null, "market photo spot is missing");
+        Require(GameObject.Find("Fireflies") != null, "subtle firefly accent is missing");
         Require(GameObject.Find("ReadingNook") != null, "reading nook is missing");
 
         string[] anchors = spec.blockout.anchors.Select(a => a.id).ToArray();
@@ -56,6 +63,7 @@ public static class WoodlandTabletopVillageVerification
 
         VRCSceneDescriptor descriptor = UnityEngine.Object.FindObjectOfType<VRCSceneDescriptor>();
         Require(descriptor != null, "VRCSceneDescriptor is missing");
+        Require(UnityEngine.Object.FindObjectOfType<PipelineManager>() != null, "PipelineManager is missing");
         Require(descriptor.spawns != null && descriptor.spawns.Length == 1 && descriptor.spawns[0] != null, "exactly one spawn is required");
         Require(descriptor.ReferenceCamera != null, "VRChat reference camera is missing");
 
@@ -69,9 +77,10 @@ public static class WoodlandTabletopVillageVerification
         int realtime = lights.Count(l => l.lightmapBakeType != LightmapBakeType.Baked);
         Require(realtime == spec.runtime_budget.realtime_light_count, "realtime light count drifted from canonical runtime budget");
         Require(lights.Any(l => l.name == "BakedSun" && l.lightmapBakeType == LightmapBakeType.Baked), "baked key light is missing");
+        Require(RenderSettings.fog, "woodland atmosphere fog is missing");
 
         Renderer[] renderers = UnityEngine.Object.FindObjectsOfType<Renderer>();
-        Require(renderers.Length >= 30, "blockout is unexpectedly sparse: " + renderers.Length + " renderers");
+        Require(renderers.Length >= 75, "visual blockout is unexpectedly sparse: " + renderers.Length + " renderers");
         Require(renderers.All(r => r.sharedMaterial != null), "every visible primitive must have a material");
         Require(renderers.All(r => (GameObjectUtility.GetStaticEditorFlags(r.gameObject) & StaticEditorFlags.ContributeGI) != 0), "all generated renderers must contribute GI");
         Require(UnityEngine.Object.FindObjectsOfType<Collider>().Length >= 20, "expected tabletop and room collision geometry");

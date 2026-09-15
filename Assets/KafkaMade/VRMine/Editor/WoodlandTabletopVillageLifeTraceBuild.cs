@@ -8,6 +8,7 @@ using UnityEngine;
 public static class WoodlandTabletopVillageLifeTraceBuild
 {
     const string SpecPath = "config/world-design/generated/woodland-tabletop-village-v0.json";
+    const string MaterialFolder = "Assets/KafkaMade/VRMine/Materials/WoodlandTabletopVillage";
     const int RequiredVisibleLifeTraces = 3;
 
     [Serializable] class Spec { public string[] life_traces; }
@@ -58,9 +59,57 @@ public static class WoodlandTabletopVillageLifeTraceBuild
 
         Renderer source = anchor.GetComponentInChildren<Renderer>();
         Require(source != null && source.sharedMaterial != null, "life-trace anchor lacks a material: " + anchorName);
-        trace.GetComponent<Renderer>().sharedMaterial = source.sharedMaterial;
+        Material traceMaterial = source.sharedMaterial;
+        if (id == "open_book") traceMaterial = LoadMaterial("Paper", traceMaterial);
+        if (id == "half_finished_mug") traceMaterial = LoadMaterial("LampGold", traceMaterial);
+        trace.GetComponent<Renderer>().sharedMaterial = traceMaterial;
         GameObjectUtility.SetStaticEditorFlags(trace,
             StaticEditorFlags.BatchingStatic | StaticEditorFlags.ContributeGI | StaticEditorFlags.OccluderStatic | StaticEditorFlags.OccludeeStatic);
+
+        if (id == "open_book")
+        {
+            GameObject page = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            page.name = "OpenBookPage";
+            page.transform.SetParent(trace.transform, false);
+            page.transform.localPosition = new Vector3(0.42f, 0.06f, 0);
+            page.transform.localRotation = Quaternion.Euler(0, 0, -8);
+            page.transform.localScale = new Vector3(0.70f, 0.06f, 0.90f);
+            page.GetComponent<Renderer>().sharedMaterial = traceMaterial;
+            MarkStatic(page);
+        }
+        else if (id == "half_finished_mug")
+        {
+            GameObject handle = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            handle.name = "MugRim";
+            handle.transform.SetParent(trace.transform, false);
+            handle.transform.localPosition = new Vector3(0, 0.48f, 0);
+            handle.transform.localScale = new Vector3(0.72f, 0.05f, 0.72f);
+            handle.GetComponent<Renderer>().sharedMaterial = traceMaterial;
+            MarkStatic(handle);
+        }
+        else if (id == "stacked_firewood")
+        {
+            GameObject log = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            log.name = "FirewoodLog";
+            log.transform.SetParent(trace.transform, false);
+            log.transform.localPosition = new Vector3(0, 0.30f, 0.32f);
+            log.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            log.transform.localScale = new Vector3(0.60f, 0.08f, 0.60f);
+            log.GetComponent<Renderer>().sharedMaterial = traceMaterial;
+            MarkStatic(log);
+        }
+    }
+
+    static void MarkStatic(GameObject gameObject)
+    {
+        GameObjectUtility.SetStaticEditorFlags(gameObject,
+            StaticEditorFlags.BatchingStatic | StaticEditorFlags.ContributeGI | StaticEditorFlags.OccluderStatic | StaticEditorFlags.OccludeeStatic);
+    }
+
+    static Material LoadMaterial(string name, Material fallback)
+    {
+        Material material = AssetDatabase.LoadAssetAtPath<Material>(MaterialFolder + "/" + name + ".mat");
+        return material ?? fallback;
     }
 
     static Spec LoadSpec()
