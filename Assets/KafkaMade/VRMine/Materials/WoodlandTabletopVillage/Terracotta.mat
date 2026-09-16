@@ -12,6 +12,7 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _EMISSION
   - _ENABLE_GEOMETRIC_SPECULAR_AA
   - _GLOSSYREFLECTIONS_OFF
   - _SPECULARHIGHLIGHTS_OFF
@@ -75,5 +76,5 @@ Material:
     - _UVSec: 0
     m_Colors:
     - _Color: {r: 0.6627451, g: 0.37254903, b: 0.27058825, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 0.13254903, g: 0.0745098, b: 0.05411764, a: 0.2}
   m_BuildTextureStacks: []

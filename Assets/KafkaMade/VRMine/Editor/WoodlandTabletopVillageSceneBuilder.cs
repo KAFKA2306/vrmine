@@ -50,14 +50,28 @@ public static class WoodlandTabletopVillageSceneBuilder
         Material moss = Mat("Moss", new Color(0.20f, 0.30f, 0.18f), 0.98f);
         Material path = Mat("Path", new Color(0.38f, 0.29f, 0.19f), 0.98f);
         Material paper = Mat("Paper", new Color(0.78f, 0.68f, 0.48f), 0.98f);
+        SoftEmission(wood, 0.34f);
+        SoftEmission(forest, 0.26f);
+        SoftEmission(forestLight, 0.36f);
+        SoftEmission(cream, 0.18f);
+        SoftEmission(roof, 0.20f);
+        SoftEmission(stone, 0.14f);
+        SoftEmission(water, 0.16f);
+        SoftEmission(moss, 0.24f);
+        SoftEmission(path, 0.14f);
+        SoftEmission(paper, 0.10f);
 
         Room(root, spec, wall, wood);
+        ForestBoundary(root, spec, wood, forest, forestLight, moss);
         Tabletop(root, spec, wood, forest, forestLight, cream, roof, lamp, stone, water, moss, path, paper);
         Seats(root, spec, wood, cream);
         ReadingNook(root, spec, wood, cream, lamp);
         Lighting(root);
         Descriptor(root, spec);
         EditorSceneManager.SaveScene(scene, ScenePath);
+        ConfigureBakedLighting();
+        if (!Lightmapping.Bake()) throw new InvalidOperationException("Woodland Tabletop Village lighting bake failed");
+        EditorSceneManager.SaveScene(scene);
         AddScene(ScenePath);
         AssetDatabase.SaveAssets();
     }
@@ -91,11 +105,52 @@ public static class WoodlandTabletopVillageSceneBuilder
         float w = s.spatial_geometry.overall_width_m, d = s.spatial_geometry.overall_depth_m, h = s.world_build.ceiling_height_m, t = 0.08f;
         Transform r = Empty("ObservationRoom", parent);
         Cube("Floor", new Vector3(0, -t / 2, 0), new Vector3(w, t, d), floor, r);
-        Cube("Ceiling", new Vector3(0, h + t / 2, 0), new Vector3(w, t, d), wall, r);
-        Cube("WallLeft", new Vector3(-w / 2 - t / 2, h / 2, 0), new Vector3(t, h, d), wall, r);
-        Cube("WallRight", new Vector3(w / 2 + t / 2, h / 2, 0), new Vector3(t, h, d), wall, r);
-        Cube("WallFront", new Vector3(0, h / 2, -d / 2 - t / 2), new Vector3(w, h, t), wall, r);
-        Cube("WallBack", new Vector3(0, h / 2, d / 2 + t / 2), new Vector3(w, h, t), wall, r);
+        HideRenderer(Cube("Ceiling", new Vector3(0, h + t / 2, 0), new Vector3(w, t, d), wall, r));
+        HideRenderer(Cube("WallLeft", new Vector3(-w / 2 - t / 2, h / 2, 0), new Vector3(t, h, d), wall, r));
+        HideRenderer(Cube("WallRight", new Vector3(w / 2 + t / 2, h / 2, 0), new Vector3(t, h, d), wall, r));
+        HideRenderer(Cube("WallFront", new Vector3(0, h / 2, -d / 2 - t / 2), new Vector3(w, h, t), wall, r));
+        HideRenderer(Cube("WallBack", new Vector3(0, h / 2, d / 2 + t / 2), new Vector3(w, h, t), wall, r));
+    }
+
+    static void ForestBoundary(Transform parent, WorldSpec s, Material wood, Material forest, Material forestLight, Material moss)
+    {
+        float w = s.spatial_geometry.overall_width_m;
+        float d = s.spatial_geometry.overall_depth_m;
+        Transform boundary = Empty("ForestBoundary", parent);
+
+        int index = 0;
+        for (int i = -2; i <= 2; i++)
+        {
+            BackdropTree(boundary, "BackTree_" + index++, new Vector3(i * 1.18f, 0, d * 0.42f), 1.18f + (Mathf.Abs(i) % 2) * 0.12f, wood, forest, forestLight);
+        }
+        for (int i = -1; i <= 1; i++)
+        {
+            BackdropTree(boundary, "LeftTree_" + index++, new Vector3(-w * 0.43f, 0, i * 1.42f), 1.08f + (i == 0 ? 0.12f : 0f), wood, forest, forestLight);
+            BackdropTree(boundary, "RightTree_" + index++, new Vector3(w * 0.43f, 0, i * 1.42f), 1.04f + (i == 0 ? 0.10f : 0f), wood, forest, forestLight);
+        }
+
+        Transform understory = Empty("Understory", boundary);
+        for (int i = 0; i < 14; i++)
+        {
+            float angle = Mathf.PI * 2f * i / 14f;
+            float radius = Mathf.Min(w, d) * 0.43f;
+            VisualSphere("Bush_" + i,
+                new Vector3(Mathf.Cos(angle) * radius, 0.34f + (i % 3) * 0.05f, Mathf.Sin(angle) * radius),
+                new Vector3(0.38f + (i % 2) * 0.08f, 0.28f, 0.34f + (i % 3) * 0.05f),
+                i % 3 == 0 ? forestLight : forest, understory);
+            VisualSphere("Moss_" + i,
+                new Vector3(Mathf.Cos(angle) * (radius - 0.08f), 0.035f, Mathf.Sin(angle) * (radius - 0.08f)),
+                new Vector3(0.25f, 0.045f, 0.16f), moss, understory);
+        }
+    }
+
+    static void BackdropTree(Transform parent, string name, Vector3 position, float scale, Material wood, Material forest, Material forestLight)
+    {
+        Transform tree = Empty(name, parent);
+        tree.localPosition = position;
+        VisualCylinder("Trunk", new Vector3(0, scale * 0.44f, 0), scale * 0.18f, scale * 0.88f, wood, tree);
+        VisualSphere("CanopyLow", new Vector3(-scale * 0.08f, scale * 0.92f, 0), new Vector3(scale * 0.72f, scale * 0.55f, scale * 0.72f), forest, tree);
+        VisualSphere("CanopyHigh", new Vector3(scale * 0.14f, scale * 1.28f, scale * 0.02f), new Vector3(scale * 0.52f, scale * 0.38f, scale * 0.55f), forestLight, tree);
     }
 
     static void Tabletop(Transform parent, WorldSpec s, Material wood, Material forest, Material forestLight, Material cream, Material roof, Material lamp, Material stone, Material water, Material moss, Material path, Material paper)
@@ -222,7 +277,9 @@ public static class WoodlandTabletopVillageSceneBuilder
         r.position = Pos(s.world_build.retreat.center_m);
         r.rotation = Quaternion.Euler(0, 135, 0);
         Cube("ReadingBenchSeat", new Vector3(0, 0.34f, 0), new Vector3(1.05f, 0.12f, 0.42f), wood, r);
-        Cube("ReadingBenchBack", new Vector3(0, 0.68f, 0.18f), new Vector3(1.05f, 0.62f, 0.10f), wood, r);
+        Cube("ReadingBenchBackRail", new Vector3(0, 0.62f, 0.18f), new Vector3(1.05f, 0.10f, 0.10f), wood, r);
+        for (int i = -1; i <= 1; i++)
+            Cube("ReadingBenchBackSlat_" + i, new Vector3(i * 0.34f, 0.77f, 0.18f), new Vector3(0.08f, 0.34f, 0.08f), wood, r);
         Cube("ReadingCushion", new Vector3(0, 0.43f, -0.02f), new Vector3(0.92f, 0.07f, 0.34f), cream, r);
         Cylinder("NookSideTable", new Vector3(-0.68f, 0.26f, 0.02f), 0.22f, 0.52f, wood, r);
         Sphere("NookLamp", new Vector3(-0.68f, 0.60f, 0.02f), Vector3.one * 0.10f, lamp, r);
@@ -330,14 +387,64 @@ public static class WoodlandTabletopVillageSceneBuilder
     static void Lighting(Transform parent)
     {
         GameObject go = new GameObject("BakedSun"); go.transform.SetParent(parent, false); go.transform.rotation = Quaternion.Euler(38, -32, 0);
-        Light l = go.AddComponent<Light>(); l.type = LightType.Directional; l.color = new Color(1, 0.78f, 0.58f); l.intensity = 1.0f; l.shadows = LightShadows.Soft; l.lightmapBakeType = LightmapBakeType.Baked;
+        Light l = go.AddComponent<Light>(); l.type = LightType.Directional; l.color = new Color(1, 0.78f, 0.58f); l.intensity = 1.80f; l.shadows = LightShadows.Soft; l.lightmapBakeType = LightmapBakeType.Baked;
         RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
-        RenderSettings.ambientSkyColor = new Color(0.28f, 0.34f, 0.30f); RenderSettings.ambientEquatorColor = new Color(0.16f, 0.19f, 0.16f); RenderSettings.ambientGroundColor = new Color(0.08f, 0.07f, 0.055f);
-        RenderSettings.ambientIntensity = 1.0f;
+        RenderSettings.ambientSkyColor = new Color(0.42f, 0.50f, 0.46f); RenderSettings.ambientEquatorColor = new Color(0.24f, 0.30f, 0.26f); RenderSettings.ambientGroundColor = new Color(0.13f, 0.11f, 0.08f);
+        RenderSettings.ambientIntensity = 1.30f;
+        Material sky = SkyMaterial();
+        RenderSettings.skybox = sky;
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.ExponentialSquared;
-        RenderSettings.fogColor = new Color(0.08f, 0.13f, 0.11f);
-        RenderSettings.fogDensity = 0.022f;
+        RenderSettings.fogColor = new Color(0.30f, 0.40f, 0.35f);
+        RenderSettings.fogDensity = 0.006f;
+        RenderSettings.sun = l;
+        CreateLightProbes(parent);
+        DynamicGI.UpdateEnvironment();
+    }
+
+    static void CreateLightProbes(Transform parent)
+    {
+        GameObject go = new GameObject("WoodlandLightProbes");
+        go.transform.SetParent(parent, false);
+        LightProbeGroup group = go.AddComponent<LightProbeGroup>();
+        group.probePositions = new[]
+        {
+            new Vector3(-2.20f, 0.35f, -2.10f), new Vector3(0f, 0.35f, -2.10f), new Vector3(2.20f, 0.35f, -2.10f),
+            new Vector3(-2.20f, 1.05f, 0f), new Vector3(0f, 1.05f, 0f), new Vector3(2.20f, 1.05f, 0f),
+            new Vector3(-2.20f, 1.95f, 1.90f), new Vector3(0f, 1.95f, 1.90f), new Vector3(2.20f, 1.95f, 1.90f),
+        };
+    }
+
+    static void ConfigureBakedLighting()
+    {
+        LightingSettings settings;
+        if (!Lightmapping.TryGetLightingSettings(out settings) || settings == null)
+        {
+            settings = new LightingSettings();
+            Lightmapping.lightingSettings = settings;
+        }
+        settings.autoGenerate = false;
+        settings.bakedGI = true;
+        settings.realtimeGI = false;
+        EditorUtility.SetDirty(settings);
+    }
+
+    static Material SkyMaterial()
+    {
+        string path = MaterialFolder + "/WoodlandSky.mat";
+        Material sky = AssetDatabase.LoadAssetAtPath<Material>(path);
+        Shader shader = Shader.Find("Skybox/Procedural");
+        if (shader == null) throw new InvalidOperationException("Unity built-in Skybox/Procedural shader is required for the woodland backdrop");
+        if (sky == null) { sky = new Material(shader); AssetDatabase.CreateAsset(sky, path); }
+        else if (sky.shader != shader) sky.shader = shader;
+        if (sky.HasProperty("_SkyTint")) sky.SetColor("_SkyTint", new Color(0.48f, 0.64f, 0.60f));
+        if (sky.HasProperty("_GroundColor")) sky.SetColor("_GroundColor", new Color(0.18f, 0.24f, 0.19f));
+        if (sky.HasProperty("_AtmosphereThickness")) sky.SetFloat("_AtmosphereThickness", 0.72f);
+        if (sky.HasProperty("_SunSize")) sky.SetFloat("_SunSize", 0.035f);
+        if (sky.HasProperty("_SunSizeConvergence")) sky.SetFloat("_SunSizeConvergence", 4f);
+        if (sky.HasProperty("_Exposure")) sky.SetFloat("_Exposure", 0.50f);
+        EditorUtility.SetDirty(sky);
+        return sky;
     }
 
     static void Descriptor(Transform parent, WorldSpec s)
@@ -345,7 +452,7 @@ public static class WoodlandTabletopVillageSceneBuilder
         GameObject world = new GameObject("VRCWorld"); world.transform.SetParent(parent, false); VRCSceneDescriptor d = world.AddComponent<VRCSceneDescriptor>(); world.AddComponent<PipelineManager>();
         Transform spawn = Empty("SpawnPoint", parent); spawn.position = Pos(s.world_build.spawn.position_m) + Vector3.up * 0.02f; spawn.rotation = Quaternion.Euler(0, s.world_build.spawn.facing_deg, 0); d.spawns = new[] { spawn };
         GameObject cameraGo = new GameObject("ReferenceCamera"); cameraGo.transform.SetParent(parent, false); cameraGo.transform.position = Pos(s.world_build.hero_view.position_m); Face(cameraGo.transform, Pos(s.world_build.hero_view.target_m));
-        Camera c = cameraGo.AddComponent<Camera>(); c.enabled = false; c.fieldOfView = 58; c.nearClipPlane = Mathf.Max(0.01f, s.runtime_budget.camera_near_clip_m); d.ReferenceCamera = cameraGo;
+        Camera c = cameraGo.AddComponent<Camera>(); c.enabled = false; c.clearFlags = CameraClearFlags.Skybox; c.fieldOfView = 46; c.nearClipPlane = Mathf.Max(0.01f, s.runtime_budget.camera_near_clip_m); d.ReferenceCamera = cameraGo;
     }
 
     static Vector3 Pos(float[] xyz) { if (xyz == null || xyz.Length != 3) throw new InvalidDataException("Expected xyz vector"); return new Vector3(xyz[0], xyz[2], xyz[1]); }
@@ -353,6 +460,10 @@ public static class WoodlandTabletopVillageSceneBuilder
     static GameObject Cube(string n, Vector3 p, Vector3 s, Material m, Transform parent) { GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cube); Setup(g, n, p, s, m, parent); return g; }
     static GameObject Cylinder(string n, Vector3 p, float dia, float h, Material m, Transform parent) { GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cylinder); Setup(g, n, p, new Vector3(dia, h / 2, dia), m, parent); return g; }
     static GameObject Sphere(string n, Vector3 p, Vector3 s, Material m, Transform parent) { GameObject g = GameObject.CreatePrimitive(PrimitiveType.Sphere); Setup(g, n, p, s, m, parent); return g; }
+    static GameObject VisualCylinder(string n, Vector3 p, float dia, float h, Material m, Transform parent) { GameObject g = Cylinder(n, p, dia, h, m, parent); DisableCollider(g); return g; }
+    static GameObject VisualSphere(string n, Vector3 p, Vector3 s, Material m, Transform parent) { GameObject g = Sphere(n, p, s, m, parent); DisableCollider(g); return g; }
+    static void HideRenderer(GameObject g) { Renderer renderer = g.GetComponent<Renderer>(); if (renderer != null) renderer.enabled = false; }
+    static void DisableCollider(GameObject g) { Collider collider = g.GetComponent<Collider>(); if (collider != null) collider.enabled = false; }
 
     static void Setup(GameObject g, string n, Vector3 p, Vector3 s, Material m, Transform parent)
     {
@@ -367,6 +478,14 @@ public static class WoodlandTabletopVillageSceneBuilder
         m.color = color; if (m.HasProperty("_Glossiness")) m.SetFloat("_Glossiness", 1 - roughness);
         if (emission && m.HasProperty("_EmissionColor")) { m.EnableKeyword("_EMISSION"); m.SetColor("_EmissionColor", color * 1.85f); }
         EditorUtility.SetDirty(m); return m;
+    }
+
+    static void SoftEmission(Material material, float strength)
+    {
+        if (material == null || !material.HasProperty("_EmissionColor")) return;
+        material.EnableKeyword("_EMISSION");
+        material.SetColor("_EmissionColor", material.color * strength);
+        EditorUtility.SetDirty(material);
     }
 
     static Color Html(string value) { Color c; if (!ColorUtility.TryParseHtmlString(value, out c)) throw new InvalidDataException("Invalid palette color: " + value); return c; }
