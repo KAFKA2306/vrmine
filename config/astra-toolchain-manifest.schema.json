@@ -4,7 +4,7 @@
   "title": "VRMine Astra Toolchain Manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["$schema", "schema_version", "kind", "source", "policy", "tools", "runtime"],
+  "required": ["$schema", "schema_version", "kind", "source", "provenance", "policy", "tools", "runtime"],
   "properties": {
     "$schema": { "const": "config/astra-toolchain-manifest.schema.json" },
     "schema_version": { "const": 1 },
@@ -17,6 +17,20 @@
         "canonical_spec": { "type": "string", "pattern": "^config/world-items/.+\\.json$" },
         "canonical_spec_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
         "repository_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generated_with", "generation_method", "human_reviewed", "source_asset_license", "source_asset_license_status", "source_asset_provenance", "source_asset_urls"],
+      "properties": {
+        "generated_with": { "const": "gpt-6-astra" },
+        "generation_method": { "const": "procedural" },
+        "human_reviewed": { "type": "boolean" },
+        "source_asset_license": { "type": "string", "minLength": 1 },
+        "source_asset_license_status": { "type": "string", "minLength": 1 },
+        "source_asset_provenance": { "type": "string", "minLength": 1 },
+        "source_asset_urls": { "type": "array", "items": { "type": "string", "format": "uri" }, "uniqueItems": true }
       }
     },
     "policy": {
