@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "platforms": {
+    "pc": {
+      "runtime_status": "UNVERIFIED",
+      "texture_memory": {
+        "target": "good"
+      },
+      "physbone_affected_transforms": {
+        "hard_limit": null
+      }
+    },
+    "android": {
+      "runtime_status": "UNVERIFIED",
+      "texture_memory": {
+        "target": "good"
+      },
+      "physbone_affected_transforms": {
+        "hard_limit": 64
+      }
+    }
+  }
+}
