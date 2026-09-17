@@ -31,7 +31,7 @@ tasks:
       - node scripts/verify-world-item-packages.mjs
       - node scripts/world-item-graph.mjs --check
       - task: world-design:check
-      - uv --cache-dir .uv-cache run --offline --python .tools/venv python -m py_compile scripts/world_build_factory.py scripts/verify_world_build.py scripts/publish_world_build_evidence.py
+      - uv --cache-dir .uv-cache run --offline --python .tools/venv python -m py_compile scripts/world_build_factory.py scripts/verify_world_build.py scripts/publish_world_build_evidence.py scripts/verify_rig_contract.py scripts/test_rig_contract.py
       - node scripts/verify-perspective-cage.mjs
       - node scripts/verify-stich-meister-rules.mjs
       - node --check scripts/run-perspective-cage-unity.mjs
@@ -43,6 +43,11 @@ tasks:
       - node scripts/verify-gaussian-exhibition.mjs
       - node scripts/verify-gaussian-video-playlist.mjs
       - node scripts/verify-vpm.mjs
+
+  rig:check:
+    desc: Exercise independent rig hierarchy and skin-weight contracts in Blender 4.2
+    cmds:
+      - blender -b --python-exit-code 1 --python scripts/test_rig_contract.py
 
   world-design:check:
     desc: Validate World Design source records, schema, DRC, aggregate summary and generated spec provenance
