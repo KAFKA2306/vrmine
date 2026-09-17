@@ -6,11 +6,18 @@ import { execFileSync } from "node:child_process";
 
 const root = path.resolve(import.meta.dirname, "..");
 const spec = "config/world-items/cafe-bar-stool-01.json";
+const schemaPath = "config/astra-build-request.schema.json";
 const run = () => JSON.parse(execFileSync(process.execPath, ["scripts/compile-astra-build-request.mjs", spec], { cwd: root, encoding: "utf8" }));
 const first = run();
 const second = run();
+const schema = JSON.parse(fs.readFileSync(path.join(root, schemaPath), "utf8"));
 
 assert.deepEqual(first, second, "same canonical spec must compile deterministically");
+assert.equal(first.$schema, schemaPath);
+assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
+assert.equal(schema.properties.schema_version.const, first.schema_version);
+assert.equal(schema.properties.kind.const, first.kind);
+assert.ok(schema.required.every((key) => Object.hasOwn(first, key)), "request must contain every schema-required top-level field");
 assert.equal(first.kind, "astra_build_request");
 assert.equal(first.source.canonical_spec, spec);
 assert.equal(first.intent.id, "cafe-bar-stool-01");
