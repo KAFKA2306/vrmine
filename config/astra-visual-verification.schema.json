@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vrmine.invalid/schema/astra-visual-verification.schema.json",
+  "title": "Astra visual verification evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_sha256", "views", "checks", "verdict", "repair_required"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "views": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["front_3_4", "rear_3_4", "left", "right", "top", "geometry_diagnostic"],
+      "properties": {
+        "front_3_4": {"$ref": "#/$defs/view"},
+        "rear_3_4": {"$ref": "#/$defs/view"},
+        "left": {"$ref": "#/$defs/view"},
+        "right": {"$ref": "#/$defs/view"},
+        "top": {"$ref": "#/$defs/view"},
+        "geometry_diagnostic": {"$ref": "#/$defs/view"}
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scale_dimensions", "floating_parts", "mesh_intersection", "topology", "material_assignment", "texture_uv", "rig_joint_placement", "collider_placement", "camera_clipping", "world_obstruction"],
+      "properties": {
+        "scale_dimensions": {"$ref": "#/$defs/check"},
+        "floating_parts": {"$ref": "#/$defs/check"},
+        "mesh_intersection": {"$ref": "#/$defs/check"},
+        "topology": {"$ref": "#/$defs/check"},
+        "material_assignment": {"$ref": "#/$defs/check"},
+        "texture_uv": {"$ref": "#/$defs/check"},
+        "rig_joint_placement": {"$ref": "#/$defs/check"},
+        "collider_placement": {"$ref": "#/$defs/check"},
+        "camera_clipping": {"$ref": "#/$defs/check"},
+        "world_obstruction": {"$ref": "#/$defs/check"}
+      }
+    },
+    "verdict": {"enum": ["PASS", "FAIL"]},
+    "repair_required": {"type": "boolean"},
+    "repair_targets": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  },
+  "$defs": {
+    "view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "evidence"],
+      "properties": {
+        "status": {"enum": ["PASS", "FAIL", "NOT_APPLICABLE"]},
+        "evidence": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
