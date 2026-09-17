@@ -10,6 +10,7 @@ const compile = () => JSON.parse(execFileSync(process.execPath, ["scripts/compil
 const first = compile();
 const second = compile();
 const request = JSON.parse(execFileSync(process.execPath, ["scripts/compile-astra-build-request.mjs", spec], { cwd: root, encoding: "utf8" }));
+const canonicalSpec = JSON.parse(fs.readFileSync(path.join(root, spec), "utf8"));
 const unityVersion = fs.readFileSync(path.join(root, "ProjectSettings/ProjectVersion.txt"), "utf8").match(/^m_EditorVersion: (.+)$/m)[1];
 const sdkVersion = JSON.parse(fs.readFileSync(path.join(root, "Packages/manifest.json"), "utf8")).dependencies["com.vrchat.worlds"];
 const head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
@@ -19,6 +20,15 @@ assert.deepEqual(first, second, "toolchain manifest must be deterministic for an
 assert.equal(first.$schema, "config/astra-toolchain-manifest.schema.json");
 assert.equal(first.source.canonical_spec_sha256, request.source.sha256);
 assert.equal(first.source.repository_commit, head);
+assert.deepEqual(first.provenance, {
+  generated_with: "gpt-6-astra",
+  generation_method: "procedural",
+  human_reviewed: false,
+  source_asset_license: canonicalSpec.license.name,
+  source_asset_license_status: canonicalSpec.license.status,
+  source_asset_provenance: canonicalSpec.license.provenance,
+  source_asset_urls: canonicalSpec.license.source_urls ?? []
+});
 assert.equal(first.policy.tier, "P0");
 assert.deepEqual(first.policy.control_priority, request.toolchain_policy.control_priority);
 assert.equal(first.policy.experimental, false);
