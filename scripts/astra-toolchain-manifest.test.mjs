@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { assertProductionEligible } from "./assert-astra-production-eligibility.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const spec = "config/world-items/cafe-bar-stool-01.json";
@@ -12,6 +13,7 @@ const request = JSON.parse(execFileSync(process.execPath, ["scripts/compile-astr
 const unityVersion = fs.readFileSync(path.join(root, "ProjectSettings/ProjectVersion.txt"), "utf8").match(/^m_EditorVersion: (.+)$/m)[1];
 const sdkVersion = JSON.parse(fs.readFileSync(path.join(root, "Packages/manifest.json"), "utf8")).dependencies["com.vrchat.worlds"];
 const head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+const policy = JSON.parse(fs.readFileSync(path.join(root, "config/astra-toolchain-policy.json"), "utf8"));
 
 assert.deepEqual(first, second, "toolchain manifest must be deterministic for an exact HEAD");
 assert.equal(first.$schema, "config/astra-toolchain-manifest.schema.json");
@@ -23,4 +25,10 @@ assert.equal(first.policy.experimental, false);
 assert.equal(first.tools.find((tool) => tool.name === "Unity")?.version, unityVersion);
 assert.equal(first.tools.find((tool) => tool.name === "VRChat SDK Worlds")?.version, sdkVersion);
 assert.deepEqual(Object.values(first.runtime).map((stage) => stage.status), Array(5).fill("UNVERIFIED"));
+assert.equal(assertProductionEligible(first, policy).status, "PASS");
+const experimental = structuredClone(first);
+experimental.policy.tier = "P2";
+experimental.policy.experimental = true;
+experimental.tools[0].tier = "P2";
+assert.throws(() => assertProductionEligible(experimental, policy), /not production eligible/);
 console.log("astra toolchain manifest contract: PASS");
