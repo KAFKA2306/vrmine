@@ -28,7 +28,7 @@
         "display_name": { "type": "string", "minLength": 1 },
         "dimensions_m": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number", "exclusiveMinimum": 0 } },
         "parts": { "type": "array", "minItems": 1 },
-        "materials": { "type": "array", "minItems": 1 }
+        "materials": { "type": "object", "minProperties": 1 }
       }
     },
     "constraints": {
