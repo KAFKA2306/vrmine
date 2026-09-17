@@ -15,11 +15,17 @@ export function assertProductionEligible(manifest, policy = JSON.parse(fs.readFi
   if (declaredExperimental !== tierPolicy.experimental) {
     throw new Error(`experimental flag disagrees with ${tier} policy`);
   }
-  const toolTiers = [...new Set((manifest.tools ?? []).map((tool) => tool.tier))];
+  const tools = manifest.tools ?? [];
+  const toolTiers = [...new Set(tools.map((tool) => tool.tier))];
   for (const toolTier of toolTiers) {
     const toolPolicy = policy.tiers?.[toolTier];
     if (!toolPolicy) throw new Error(`unknown tool tier: ${toolTier}`);
     if (!toolPolicy.production_eligible) throw new Error(`production blocked: tool tier ${toolTier} is not production eligible`);
+  }
+  for (const tool of tools.filter((candidate) => candidate.tier === "P1")) {
+    if (!tool.source || !tool.license || !tool.exact_revision) {
+      throw new Error(`production blocked: P1 tool ${tool.name ?? "unnamed"} requires source, license, and exact_revision provenance`);
+    }
   }
   if (!tierPolicy.production_eligible) throw new Error(`production blocked: ${tier} is not production eligible`);
   return { status: "PASS", tier, production_eligible: true };
