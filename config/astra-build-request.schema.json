@@ -81,8 +81,9 @@
     "toolchain_policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["production_tier", "control_priority", "one_responsibility_one_authority"],
+      "required": ["source", "production_tier", "control_priority", "one_responsibility_one_authority"],
       "properties": {
+        "source": { "const": "config/astra-toolchain-policy.json" },
         "production_tier": { "enum": ["P0", "P1", "P2", "P3"] },
         "control_priority": { "const": ["code_cli", "blender_bpy_geometry_nodes", "mcp", "unity_batchmode", "cua"] },
         "one_responsibility_one_authority": { "const": true }

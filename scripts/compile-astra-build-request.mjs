@@ -27,6 +27,12 @@ if (!Array.isArray(spec.dimensions_m) || spec.dimensions_m.length !== 3 || spec.
 if (!Array.isArray(spec.parts) || spec.parts.length === 0) throw new Error("parts must be a non-empty array");
 if (!spec.license?.provenance || !spec.license?.status) throw new Error("license provenance/status are required");
 
+const policyPath = "config/astra-toolchain-policy.json";
+const policy = JSON.parse(fs.readFileSync(path.join(root, policyPath), "utf8"));
+const tier = policy.default_production_tier;
+if (!policy.tiers?.[tier]?.production_eligible) throw new Error(`default toolchain tier is not production eligible: ${tier}`);
+if (!Array.isArray(policy.control_priority) || policy.control_priority.length === 0) throw new Error("toolchain control priority is empty");
+
 const seed = Number.parseInt(crypto.createHash("sha256").update(raw).digest("hex").slice(0, 8), 16);
 const request = {
   $schema: "config/astra-build-request.schema.json",
@@ -67,9 +73,10 @@ const request = {
     platforms: { pc: "UNVERIFIED", android: "UNVERIFIED" }
   },
   toolchain_policy: {
-    production_tier: "P0",
-    control_priority: ["code_cli", "blender_bpy_geometry_nodes", "mcp", "unity_batchmode", "cua"],
-    one_responsibility_one_authority: true
+    source: policyPath,
+    production_tier: tier,
+    control_priority: policy.control_priority,
+    one_responsibility_one_authority: policy.one_responsibility_one_authority
   }
 };
 
