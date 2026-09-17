@@ -22,6 +22,8 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD_SHA"
+      - name: Verify exact-head evidence contract
+        run: node --test scripts/write-exact-head-ci-evidence.test.mjs
       - name: Run canonical merge gate
         run: |
           set -euo pipefail
