@@ -1,0 +1,26 @@
+import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
+
+const root = path.resolve(import.meta.dirname, "..");
+const spec = "config/world-items/cafe-bar-stool-01.json";
+const compile = () => JSON.parse(execFileSync(process.execPath, ["scripts/compile-astra-toolchain-manifest.mjs", spec], { cwd: root, encoding: "utf8" }));
+const first = compile();
+const second = compile();
+const request = JSON.parse(execFileSync(process.execPath, ["scripts/compile-astra-build-request.mjs", spec], { cwd: root, encoding: "utf8" }));
+const unityVersion = fs.readFileSync(path.join(root, "ProjectSettings/ProjectVersion.txt"), "utf8").match(/^m_EditorVersion: (.+)$/m)[1];
+const sdkVersion = JSON.parse(fs.readFileSync(path.join(root, "Packages/manifest.json"), "utf8")).dependencies["com.vrchat.worlds"];
+const head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+
+assert.deepEqual(first, second, "toolchain manifest must be deterministic for an exact HEAD");
+assert.equal(first.$schema, "config/astra-toolchain-manifest.schema.json");
+assert.equal(first.source.canonical_spec_sha256, request.source.sha256);
+assert.equal(first.source.repository_commit, head);
+assert.equal(first.policy.tier, "P0");
+assert.deepEqual(first.policy.control_priority, request.toolchain_policy.control_priority);
+assert.equal(first.policy.experimental, false);
+assert.equal(first.tools.find((tool) => tool.name === "Unity")?.version, unityVersion);
+assert.equal(first.tools.find((tool) => tool.name === "VRChat SDK Worlds")?.version, sdkVersion);
+assert.deepEqual(Object.values(first.runtime).map((stage) => stage.status), Array(5).fill("UNVERIFIED"));
+console.log("astra toolchain manifest contract: PASS");
