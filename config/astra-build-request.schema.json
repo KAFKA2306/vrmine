@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "config/astra-build-request.schema.json",
+  "title": "VRMine Astra Build Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schema_version", "kind", "source", "intent", "constraints", "required_artifacts", "verification", "toolchain_policy"],
+  "properties": {
+    "$schema": { "const": "config/astra-build-request.schema.json" },
+    "schema_version": { "const": 1 },
+    "kind": { "const": "astra_build_request" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonical_spec", "sha256"],
+      "properties": {
+        "canonical_spec": { "type": "string", "pattern": "^config/world-items/.+\\.json$" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "family", "display_name", "dimensions_m", "parts", "materials"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "family": { "type": "string", "minLength": 1 },
+        "display_name": { "type": "string", "minLength": 1 },
+        "dimensions_m": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number", "exclusiveMinimum": 0 } },
+        "parts": { "type": "array", "minItems": 1 },
+        "materials": { "type": "array", "minItems": 1 }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deterministic_seed", "generation_method", "canonical_source", "manual_mesh_edit_as_authority", "preserve_dimensions", "external_asset_policy", "license"],
+      "properties": {
+        "deterministic_seed": { "type": "integer", "minimum": 0 },
+        "generation_method": { "const": "procedural" },
+        "canonical_source": { "type": "array", "minItems": 1, "items": { "enum": ["bpy", "geometry_nodes"] }, "uniqueItems": true },
+        "manual_mesh_edit_as_authority": { "const": false },
+        "preserve_dimensions": { "const": true },
+        "external_asset_policy": { "const": "licensed_and_provenance_required" },
+        "license": { "type": "object", "required": ["provenance", "status"] }
+      }
+    },
+    "required_artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "models", "renders", "metadata"],
+      "properties": {
+        "source": { "type": "array", "contains": { "const": "generator" }, "minContains": 1 },
+        "models": { "type": "array", "minItems": 1 },
+        "renders": { "type": "array", "minItems": 6, "items": { "enum": ["front_3_4", "rear_3_4", "left", "right", "top", "geometry_diagnostic"] }, "uniqueItems": true },
+        "metadata": { "type": "array", "minItems": 3, "items": { "enum": ["manifest", "toolchain_manifest", "provenance"] }, "uniqueItems": true }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["independent_static_gate", "visual_loop", "unity", "vrchat", "platforms"],
+      "properties": {
+        "independent_static_gate": { "const": true },
+        "visual_loop": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "repair_on_fail", "rerender_after_repair"],
+          "properties": { "required": { "const": true }, "repair_on_fail": { "const": true }, "rerender_after_repair": { "const": true } }
+        },
+        "unity": { "$ref": "#/$defs/unverifiedStage" },
+        "vrchat": { "$ref": "#/$defs/unverifiedStage" },
+        "platforms": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pc", "android"],
+          "properties": { "pc": { "const": "UNVERIFIED" }, "android": { "const": "UNVERIFIED" } }
+        }
+      }
+    },
+    "toolchain_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["production_tier", "control_priority", "one_responsibility_one_authority"],
+      "properties": {
+        "production_tier": { "enum": ["P0", "P1", "P2", "P3"] },
+        "control_priority": { "const": ["code_cli", "blender_bpy_geometry_nodes", "mcp", "unity_batchmode", "cua"] },
+        "one_responsibility_one_authority": { "const": true }
+      }
+    }
+  },
+  "$defs": {
+    "unverifiedStage": {
+      "type": "object",
+      "required": ["status"],
+      "properties": { "status": { "const": "UNVERIFIED" } }
+    }
+  }
+}
