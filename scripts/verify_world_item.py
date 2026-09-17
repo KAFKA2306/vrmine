@@ -169,6 +169,47 @@ def assert_geometry_contract(path: Path, expected_spec: dict) -> dict:
     return {"islands": islands, "triangles": len(mesh.loop_triangles), "dimensions_m": dimensions}
 
 
+def assert_uv_texture_contract(path: Path) -> dict:
+    """Independently inspect exported UVs and any image textures."""
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.ops.import_scene.gltf(filepath=str(path))
+    meshes = [obj for obj in bpy.context.scene.objects if obj.type == "MESH"]
+    if not meshes:
+        raise AssertionError("UV/texture validator found no exported mesh")
+    uv_loops = 0
+    for obj in meshes:
+        mesh = obj.data
+        if not mesh.uv_layers or mesh.uv_layers.active is None:
+            raise AssertionError(f"UV map missing: {obj.name}")
+        layer = mesh.uv_layers.active.data
+        if len(layer) != len(mesh.loops):
+            raise AssertionError(f"UV loop count mismatch: {obj.name}")
+        invalid = [loop.index for loop in layer if not all(math.isfinite(value) for value in loop.uv)]
+        if invalid:
+            raise AssertionError(f"invalid UV coordinates: {obj.name}: {invalid[:10]}")
+        uv_loops += len(layer)
+    textures = 0
+    for material in bpy.data.materials:
+        if not material.use_nodes or not material.node_tree:
+            continue
+        for node in material.node_tree.nodes:
+            if node.type != "TEX_IMAGE" or node.image is None:
+                continue
+            textures += 1
+            image = node.image
+            if image.source == "FILE" and not Path(bpy.path.abspath(image.filepath)).is_file():
+                raise AssertionError(f"texture path missing: {image.filepath}")
+            feeds_data = any(
+                link.to_node.type in {"NORMAL_MAP", "BUMP"}
+                for output in node.outputs
+                for link in output.links
+            )
+            expected = "Non-Color" if feeds_data else "sRGB"
+            if image.colorspace_settings.name != expected:
+                raise AssertionError(f"texture colorspace mismatch: {image.name}: {image.colorspace_settings.name} != {expected}")
+    return {"uv_loops": uv_loops, "textures": textures}
+
+
 def assert_variant_pages_stage(base_id: str, variant_id: str, out: Path) -> None:
     staged = ROOT / "pages" / "io" / "items" / base_id / "variants" / variant_id
     required = [
@@ -248,6 +289,7 @@ def verify_one(spec_path: Path, base: dict, variant_id: str | None) -> None:
     assert_mesh_import(glb, "glb")
     assert_mesh_import(fbx, "fbx")
     geometry = assert_geometry_contract(glb, expected_spec)
+    uv_texture = assert_uv_texture_contract(glb)
 
     expected_pngs = ["thumbnail.png"] + [f"view-{name}.png" for name in EXPECTED_VIEWS]
     for name in expected_pngs:
@@ -296,7 +338,7 @@ def verify_one(spec_path: Path, base: dict, variant_id: str | None) -> None:
         if metric_data.get("manual_blender_touch_count") != 0 or metric_data.get("reusable_component_ratio") != 1.0:
             raise AssertionError(f"variant reuse metrics invalid: {variant_id}")
         assert_variant_pages_stage(base["id"], variant_id, out)
-    print(json.dumps({"id": sku, "variant": variant_id, "formats": "PASS", "geometry": "PASS", "renders": "PASS", "framing": "PASS", "triangles": manifest["triangles"], "islands": geometry["islands"]}))
+    print(json.dumps({"id": sku, "variant": variant_id, "formats": "PASS", "geometry": "PASS", "uv_texture": "PASS", "renders": "PASS", "framing": "PASS", "triangles": manifest["triangles"], "islands": geometry["islands"], "uv_loops": uv_texture["uv_loops"], "textures": uv_texture["textures"]}))
 
 
 def main() -> None:
