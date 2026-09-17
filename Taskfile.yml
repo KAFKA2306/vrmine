@@ -25,6 +25,7 @@ tasks:
       - node --test pages/games/answer-impostor/engine.test.mjs
       - node scripts/astra-build-request.test.mjs
       - node scripts/astra-context.test.mjs
+      - node scripts/astra-toolchain-manifest.test.mjs
       - node scripts/verify-quality-gates.mjs
       - node scripts/verify-factory-timing.mjs
       - node scripts/verify-world-item-packages.mjs
