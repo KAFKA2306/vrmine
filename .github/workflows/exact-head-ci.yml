@@ -1,0 +1,39 @@
+name: Exact-head merge gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  merge-gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+      - name: Prove checkout is exact PR head
+        env:
+          EXPECTED_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD_SHA"
+      - name: Run canonical merge gate
+        run: |
+          set -euo pipefail
+          go install github.com/go-task/task/v3/cmd/task@v3.45.4
+          task merge:check
+      - name: Write exact-head PASS evidence
+        env:
+          EXPECTED_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/write-exact-head-ci-evidence.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exact-head-ci-${{ github.event.pull_request.head.sha }}
+          path: .artifacts/ci/exact-head.json
+          if-no-files-found: error
+          retention-days: 14
