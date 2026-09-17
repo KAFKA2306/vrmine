@@ -36,6 +36,7 @@ tasks:
       - node scripts/verify-stich-meister-rules.mjs
       - node --check scripts/run-perspective-cage-unity.mjs
       - node --check scripts/run-glb-consumer-unity.mjs
+      - node --check scripts/run-world-build-unity.mjs
       - node --check scripts/run-retro-cafe-unity.mjs
       - node --check scripts/run-gaussian-unity.mjs
       - node --check scripts/open-gaussian-project.mjs
@@ -82,6 +83,12 @@ tasks:
       - blender -b --python-exit-code 1 --python scripts/world_build_factory.py -- .artifacts/world-builds/cyber-alley-tea-nook/build-plan.json .artifacts/world-builds/cyber-alley-tea-nook
       - blender -b --python-exit-code 1 --python scripts/verify_world_build.py -- .artifacts/world-builds/cyber-alley-tea-nook/build-plan.json .artifacts/world-builds/cyber-alley-tea-nook
 
+  world-build:verify-u2:
+    desc: Generate Pilot A, verify it in Blender, then import its exact GLB through the canonical Unity 2022.3.22f1 consumer verifier
+    deps: [world-build:pilot]
+    cmds:
+      - node scripts/run-world-build-unity.mjs .artifacts/world-builds/cyber-alley-tea-nook
+
   merge:check:
     desc: PR Merge Gate — run repository checks that may decide integration into main
     deps: [check]
@@ -113,7 +120,7 @@ tasks:
       - node scripts/materialize-gaussian-sources.mjs
 
   gaussian:prepare:
-    desc: Materialize renderer and registered PLYs, then request automatic scene preparation on next Unity open
+    desc: Materialize renderer and registered PLYs, register/resolve the project in VCC, and open the pinned Unity editor
     deps: [gaussian:renderer, gaussian:sources]
     cmds:
       - node -e "const fs=require('fs'); fs.mkdirSync('Library/VRMine',{recursive:true}); fs.writeFileSync('Library/VRMine/prepare-gaussian-on-open','1\n')"
