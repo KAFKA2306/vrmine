@@ -29,6 +29,7 @@ if (!spec.license?.provenance || !spec.license?.status) throw new Error("license
 
 const seed = Number.parseInt(crypto.createHash("sha256").update(raw).digest("hex").slice(0, 8), 16);
 const request = {
+  $schema: "config/astra-build-request.schema.json",
   schema_version: 1,
   kind: "astra_build_request",
   source: {
