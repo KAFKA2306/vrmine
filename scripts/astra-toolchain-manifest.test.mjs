@@ -36,6 +36,26 @@ assert.equal(first.tools.find((tool) => tool.name === "Unity")?.version, unityVe
 assert.equal(first.tools.find((tool) => tool.name === "VRChat SDK Worlds")?.version, sdkVersion);
 assert.deepEqual(Object.values(first.runtime).map((stage) => stage.status), Array(5).fill("UNVERIFIED"));
 assert.equal(assertProductionEligible(first, policy).status, "PASS");
+
+const p1 = structuredClone(first);
+p1.policy.tier = "P1";
+p1.tools.push({
+  name: "external-mesh-generator",
+  version: "1",
+  role: "mesh_generation",
+  control_mode: "code",
+  tier: "P1",
+  source: "https://example.invalid/generator",
+  license: "commercial-use-permitted",
+  exact_revision: "asset-sha256:0123456789abcdef"
+});
+assert.equal(assertProductionEligible(p1, policy).status, "PASS");
+for (const field of ["source", "license", "exact_revision"]) {
+  const invalid = structuredClone(p1);
+  invalid.tools.at(-1)[field] = null;
+  assert.throws(() => assertProductionEligible(invalid, policy), /requires source, license, and exact_revision provenance/);
+}
+
 const experimental = structuredClone(first);
 experimental.policy.tier = "P2";
 experimental.policy.experimental = true;
