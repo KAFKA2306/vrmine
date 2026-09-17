@@ -11,11 +11,15 @@ if (!specArg) {
 
 const root = process.cwd();
 const request = JSON.parse(execFileSync(process.execPath, ["scripts/compile-astra-build-request.mjs", specArg], { cwd: root, encoding: "utf8" }));
+const spec = JSON.parse(fs.readFileSync(path.resolve(root, specArg), "utf8"));
 const projectVersion = fs.readFileSync(path.join(root, "ProjectSettings/ProjectVersion.txt"), "utf8").match(/^m_EditorVersion: (.+)$/m)?.[1];
 const packages = JSON.parse(fs.readFileSync(path.join(root, "Packages/manifest.json"), "utf8")).dependencies;
 const repositoryCommit = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
 if (!projectVersion) throw new Error("Unity version is missing from ProjectSettings/ProjectVersion.txt");
 if (!/^[0-9a-f]{40}$/.test(repositoryCommit)) throw new Error("repository HEAD is not an exact Git commit");
+if (!spec.license?.name || !spec.license?.provenance || !spec.license?.status) {
+  throw new Error("canonical spec must declare license.name, license.provenance, and license.status");
+}
 
 const manifest = {
   $schema: "config/astra-toolchain-manifest.schema.json",
@@ -25,6 +29,15 @@ const manifest = {
     canonical_spec: request.source.canonical_spec,
     canonical_spec_sha256: request.source.sha256,
     repository_commit: repositoryCommit
+  },
+  provenance: {
+    generated_with: "gpt-6-astra",
+    generation_method: "procedural",
+    human_reviewed: false,
+    source_asset_license: spec.license.name,
+    source_asset_license_status: spec.license.status,
+    source_asset_provenance: spec.license.provenance,
+    source_asset_urls: spec.license.source_urls ?? []
   },
   policy: {
     tier: request.toolchain_policy.production_tier,
