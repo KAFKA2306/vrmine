@@ -28,7 +28,7 @@ jobs:
         run: |
           set -euo pipefail
           go install github.com/go-task/task/v3/cmd/task@v3.45.4
-          task merge:check
+          "$(go env GOPATH)/bin/task" merge:check
       - name: Write exact-head PASS evidence
         env:
           EXPECTED_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
