@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -16,6 +17,7 @@ CENTER_ERROR_LIMIT = 0.02
 FILL_RATIO_MIN = 0.80
 FILL_RATIO_MAX = 0.88
 FRAME_LIMIT = 0.500001
+DEGENERATE_AREA_EPSILON = 1e-12
 PART_OVERRIDE_FIELDS = {"radius", "height", "size", "position", "rotation_deg", "vertices", "material"}
 MATERIAL_OVERRIDE_FIELDS = {"base_color", "roughness", "metallic"}
 
@@ -98,6 +100,75 @@ def assert_mesh_import(path: Path, kind: str) -> None:
         raise AssertionError(f"no mesh geometry after {kind} import")
 
 
+def connected_islands(mesh) -> int:
+    adjacency = {vertex.index: set() for vertex in mesh.vertices}
+    for edge in mesh.edges:
+        a, b = edge.vertices
+        adjacency[a].add(b)
+        adjacency[b].add(a)
+    unseen = set(adjacency)
+    islands = 0
+    while unseen:
+        islands += 1
+        stack = [unseen.pop()]
+        while stack:
+            for neighbor in adjacency[stack.pop()]:
+                if neighbor in unseen:
+                    unseen.remove(neighbor)
+                    stack.append(neighbor)
+    return islands
+
+
+def assert_geometry_contract(path: Path, expected_spec: dict) -> dict:
+    """Independently inspect the exported GLB instead of trusting generator metadata."""
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.ops.import_scene.gltf(filepath=str(path))
+    meshes = [obj for obj in bpy.context.scene.objects if obj.type == "MESH"]
+    if len(meshes) != 1:
+        raise AssertionError(f"geometry validator expected one product mesh, got {len(meshes)}")
+    obj = meshes[0]
+    mesh = obj.data
+    mesh.calc_loop_triangles()
+    mesh.update()
+
+    degenerate_faces = [poly.index for poly in mesh.polygons if not math.isfinite(poly.area) or poly.area <= DEGENERATE_AREA_EPSILON]
+    if degenerate_faces:
+        raise AssertionError(f"degenerate faces: {degenerate_faces[:10]}")
+    invalid_normals = [poly.index for poly in mesh.polygons if not all(math.isfinite(v) for v in poly.normal) or poly.normal.length < 0.999]
+    if invalid_normals:
+        raise AssertionError(f"invalid face normals: {invalid_normals[:10]}")
+
+    edge_face_counts = [0] * len(mesh.edges)
+    for poly in mesh.polygons:
+        for edge_key in poly.edge_keys:
+            key = tuple(sorted(edge_key))
+            for edge in mesh.edges:
+                if tuple(sorted(edge.vertices)) == key:
+                    edge_face_counts[edge.index] += 1
+                    break
+    non_manifold_edges = [index for index, count in enumerate(edge_face_counts) if count != 2]
+    if non_manifold_edges:
+        raise AssertionError(f"non-manifold edges: {non_manifold_edges[:10]}")
+
+    islands = connected_islands(mesh)
+    if islands > len(expected_spec["parts"]):
+        raise AssertionError(f"unexpected disconnected islands: {islands} > declared parts {len(expected_spec['parts'])}")
+
+    world_points = [obj.matrix_world @ vertex.co for vertex in mesh.vertices]
+    lo = [min(point[i] for point in world_points) for i in range(3)]
+    hi = [max(point[i] for point in world_points) for i in range(3)]
+    dimensions = [hi[i] - lo[i] for i in range(3)]
+    target = expected_spec["dimensions_m"]
+    for actual, wanted in zip(dimensions, target):
+        if not math.isfinite(actual) or actual <= 0 or actual > wanted * 1.15:
+            raise AssertionError(f"geometry bounds exceed contract: actual={dimensions}, spec={target}")
+    if any(abs(value - 1.0) > 1e-5 for value in obj.scale):
+        raise AssertionError(f"unapplied scale in exported geometry: {tuple(obj.scale)}")
+    if len(mesh.loop_triangles) <= 0 or len(mesh.loop_triangles) > 10000:
+        raise AssertionError(f"triangle budget exceeded: {len(mesh.loop_triangles)}")
+    return {"islands": islands, "triangles": len(mesh.loop_triangles), "dimensions_m": dimensions}
+
+
 def assert_variant_pages_stage(base_id: str, variant_id: str, out: Path) -> None:
     staged = ROOT / "pages" / "io" / "items" / base_id / "variants" / variant_id
     required = [
@@ -176,6 +247,7 @@ def verify_one(spec_path: Path, base: dict, variant_id: str | None) -> None:
         raise AssertionError("invalid blend header")
     assert_mesh_import(glb, "glb")
     assert_mesh_import(fbx, "fbx")
+    geometry = assert_geometry_contract(glb, expected_spec)
 
     expected_pngs = ["thumbnail.png"] + [f"view-{name}.png" for name in EXPECTED_VIEWS]
     for name in expected_pngs:
@@ -214,6 +286,8 @@ def verify_one(spec_path: Path, base: dict, variant_id: str | None) -> None:
             raise AssertionError(f"unexpected dimensions: actual={dims}, spec={target}")
     if manifest["triangles"] <= 0 or manifest["triangles"] > 10000:
         raise AssertionError(f"triangle budget exceeded: {manifest['triangles']}")
+    if geometry["triangles"] != manifest["triangles"]:
+        raise AssertionError(f"exported triangle count differs from manifest: {geometry['triangles']} != {manifest['triangles']}")
     if variant_id:
         metrics = out / "factory-metrics.json"
         if not metrics.is_file():
@@ -222,7 +296,7 @@ def verify_one(spec_path: Path, base: dict, variant_id: str | None) -> None:
         if metric_data.get("manual_blender_touch_count") != 0 or metric_data.get("reusable_component_ratio") != 1.0:
             raise AssertionError(f"variant reuse metrics invalid: {variant_id}")
         assert_variant_pages_stage(base["id"], variant_id, out)
-    print(json.dumps({"id": sku, "variant": variant_id, "formats": "PASS", "geometry": "PASS", "renders": "PASS", "framing": "PASS", "triangles": manifest["triangles"]}))
+    print(json.dumps({"id": sku, "variant": variant_id, "formats": "PASS", "geometry": "PASS", "renders": "PASS", "framing": "PASS", "triangles": manifest["triangles"], "islands": geometry["islands"]}))
 
 
 def main() -> None:
