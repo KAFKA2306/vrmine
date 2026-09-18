@@ -11,6 +11,14 @@ import bpy
 from verify_rig_contract import assert_rig_contract
 
 OUT = Path(sys.argv[-1]).resolve()
+REQUIRED_RENDERS = {
+    "front_3_4.png",
+    "rear_3_4.png",
+    "left_side.png",
+    "right_side.png",
+    "top_overview.png",
+    "geometry_diagnostic.png",
+}
 
 
 def sha256(path: Path) -> str:
@@ -24,6 +32,9 @@ def main() -> None:
         raise AssertionError("Pilot B identity/seed drift")
     if manifest.get("source_asset_license") != "CC0-1.0":
         raise AssertionError("Pilot B provenance missing")
+    render_paths = {output["path"] for output in manifest["outputs"]["renders"]}
+    if render_paths != REQUIRED_RENDERS:
+        raise AssertionError(f"Pilot B diagnostic render set drift: {sorted(render_paths)}")
     for output in (manifest["outputs"]["blend"], manifest["outputs"]["glb"], *manifest["outputs"]["renders"]):
         path = OUT / output["path"]
         if not path.is_file() or sha256(path) != output["sha256"]:
@@ -47,7 +58,7 @@ def main() -> None:
     basis = shape_keys.key_blocks["Basis"]
     if not any((bend.data[i].co - basis.data[i].co).length > 1e-6 for i in range(len(bend.data))):
         raise AssertionError("Pilot B shape key has no deformation")
-    print(json.dumps({"status": "PASS", "pilot": "B", "rig": rig, "uv": True, "shape_key": "bend"}))
+    print(json.dumps({"status": "PASS", "pilot": "B", "rig": rig, "uv": True, "shape_key": "bend", "renders": sorted(render_paths)}))
 
 
 if __name__ == "__main__":
