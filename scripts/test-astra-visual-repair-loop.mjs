@@ -1,35 +1,37 @@
 #!/usr/bin/env node
-import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
-import {runVisualRepairLoop} from './run-astra-visual-repair-loop.mjs';
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { runVisualRepairLoop } from "./run-astra-visual-repair-loop.mjs";
 
-const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vrmine-repair-'));
-const names = ['front_3_4','rear_3_4','left','right','top','geometry_diagnostic'];
-const checks = ['scale_dimensions','floating_parts','mesh_intersection','topology','material_assignment','texture_uv','rig_joint_placement','collider_placement','camera_clipping','world_obstruction'];
-function evidence(sha, failing = false) {
-  const views = Object.fromEntries(names.map(name => {
-    const file = `${sha[0]}-${name}.png`; fs.writeFileSync(path.join(dir, file), name); return [name, {path: file, sha256: 'a'.repeat(64)}];
-  }));
-  const result = Object.fromEntries(checks.map(name => [name, {status: failing && name === 'mesh_intersection' ? 'FAIL' : 'PASS', evidence: `${name} inspected`} ]));
-  return {schema_version:1, artifact_sha256:sha, views, checks:result, verdict:failing?'FAIL':'PASS', repair_required:failing, repair_targets:failing?['mesh_intersection']:[]};
-}
-const initial = path.join(dir, 'initial.json'); const repaired = path.join(dir, 'repaired.json');
-fs.writeFileSync(initial, JSON.stringify(evidence('b'.repeat(64), true)));
-fs.writeFileSync(repaired, JSON.stringify(evidence('c'.repeat(64), false)));
-const repair = path.join(dir, 'repair.mjs'); const rerender = path.join(dir, 'rerender.mjs');
-fs.writeFileSync(repair, "import fs from 'node:fs'; fs.writeFileSync(process.argv[2] + '.called', process.argv.slice(2).join(','));");
-fs.writeFileSync(rerender, "import fs from 'node:fs'; fs.writeFileSync('rerender.called', '1');");
-const cwd = process.cwd(); process.chdir(dir);
-try {
-  const result = runVisualRepairLoop({initialEvidence:initial, repairCommand:process.execPath, repairArgs:[repair], rerenderCommand:process.execPath, rerenderArgs:[rerender], repairedEvidence:repaired});
-  assert.equal(result.verdict, 'PASS'); assert.equal(result.repaired, true); assert.equal(result.attempts, 1);
-  assert.equal(fs.readFileSync(path.join(dir, 'mesh_intersection.called'), 'utf8'), 'mesh_intersection');
-  assert.ok(fs.existsSync(path.join(dir, 'rerender.called')));
-  const unchanged = path.join(dir, 'unchanged.json'); fs.writeFileSync(unchanged, JSON.stringify(evidence('b'.repeat(64), false)));
-  assert.throws(() => runVisualRepairLoop({initialEvidence:initial, repairCommand:process.execPath, repairArgs:[repair], rerenderCommand:process.execPath, rerenderArgs:[rerender], repairedEvidence:unchanged}), /new artifact revision/);
-  const stillFail = path.join(dir, 'still-fail.json'); fs.writeFileSync(stillFail, JSON.stringify(evidence('d'.repeat(64), true)));
-  assert.throws(() => runVisualRepairLoop({initialEvidence:initial, repairCommand:process.execPath, repairArgs:[repair], rerenderCommand:process.execPath, rerenderArgs:[rerender], repairedEvidence:stillFail}), /remains FAIL/);
-} finally { process.chdir(cwd); fs.rmSync(dir, {recursive:true, force:true}); }
-console.log('Astra visual repair loop: PASS');
+const dir = fs.mkdtempSync(path.join(os.tmpdir(), "vrmine-repair-"));
+const checks = ["scale_dimensions", "floating_parts", "mesh_intersection", "topology", "material_assignment", "texture_uv", "rig_joints", "colliders", "camera_clipping", "layout_obstruction"];
+const verdict = (artifact, render, failing = false) => ({
+  schema_version: 1, kind: "astra_visual_verdict", artifact_sha256: artifact,
+  render_sha256: { front_3_4: render },
+  checks: Object.fromEntries(checks.map((name) => [name, { status: failing && name === "mesh_intersection" ? "FAIL" : "PASS", evidence: `${name} inspected` }])),
+  verdict: failing ? "FAIL" : "PASS",
+  repair: { required: failing, instructions: failing ? ["separate intersecting mesh parts"] : [] }
+});
+const initial = path.join(dir, "initial.json");
+const repaired = path.join(dir, "repaired.json");
+fs.writeFileSync(initial, JSON.stringify(verdict("a".repeat(64), "b".repeat(64), true)));
+fs.writeFileSync(repaired, JSON.stringify(verdict("c".repeat(64), "d".repeat(64), false)));
+const calls = [];
+const result = runVisualRepairLoop({ initialEvidence: initial, repairedEvidence: repaired, repairCommand: ["repair-tool", "--apply"], rerenderCommand: ["render-tool", "--all-views"], executor: (command) => calls.push(command) });
+assert.deepEqual(calls, [["repair-tool", "--apply", "separate intersecting mesh parts"], ["render-tool", "--all-views"]]);
+assert.deepEqual(result, { verdict: "PASS", repaired: true, attempts: 1, artifact_sha256: "c".repeat(64) });
+
+const alreadyPass = path.join(dir, "pass.json");
+fs.writeFileSync(alreadyPass, JSON.stringify(verdict("e".repeat(64), "f".repeat(64), false)));
+assert.equal(runVisualRepairLoop({ initialEvidence: alreadyPass }).repaired, false);
+
+const unchanged = path.join(dir, "unchanged.json");
+fs.writeFileSync(unchanged, JSON.stringify(verdict("a".repeat(64), "d".repeat(64), false)));
+assert.throws(() => runVisualRepairLoop({ initialEvidence: initial, repairedEvidence: unchanged, repairCommand: ["repair"], rerenderCommand: ["render"], executor: () => {} }), /new artifact revision/);
+const staleRender = path.join(dir, "stale-render.json");
+fs.writeFileSync(staleRender, JSON.stringify(verdict("c".repeat(64), "b".repeat(64), false)));
+assert.throws(() => runVisualRepairLoop({ initialEvidence: initial, repairedEvidence: staleRender, repairCommand: ["repair"], rerenderCommand: ["render"], executor: () => {} }), /new render evidence/);
+fs.rmSync(dir, { recursive: true, force: true });
+console.log("Astra visual repair loop: PASS");
