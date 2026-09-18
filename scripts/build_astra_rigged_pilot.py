@@ -8,15 +8,34 @@ import sys
 from pathlib import Path
 
 import bpy
+from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = Path(sys.argv[-1]).resolve() if "--" in sys.argv else ROOT / ".artifacts" / "astra-pilot-b"
 OUT.mkdir(parents=True, exist_ok=True)
 SEED = 40102
+RENDER_VIEWS = {
+    "front_3_4": (4, -6, 3),
+    "rear_3_4": (-4, 6, 3),
+    "left_side": (-6, 0, 2),
+    "right_side": (6, 0, 2),
+    "top_overview": (0, 0, 8),
+}
 
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def point_camera(camera: bpy.types.Object, target: tuple[float, float, float]) -> None:
+    camera.rotation_euler = (Vector(target) - camera.location).to_track_quat("-Z", "Y").to_euler()
+
+
+def render_view(scene: bpy.types.Scene, camera: bpy.types.Object, name: str, location: tuple[float, float, float]) -> None:
+    camera.location = location
+    point_camera(camera, (0, 0, 1))
+    scene.render.filepath = str(OUT / f"{name}.png")
+    bpy.ops.render.render(write_still=True)
 
 
 def main() -> None:
@@ -72,12 +91,14 @@ def main() -> None:
     camera = bpy.data.objects.new("Camera", camera_data)
     bpy.context.collection.objects.link(camera)
     scene.camera = camera
-    camera.location = (4, -6, 3)
-    camera.rotation_euler = (math.radians(72), 0, math.radians(34))
-    for name, location in (("front_3_4", (4, -6, 3)), ("rear_3_4", (-4, 6, 3))):
-        camera.location = location
-        scene.render.filepath = str(OUT / f"{name}.png")
-        bpy.ops.render.render(write_still=True)
+    for name, location in RENDER_VIEWS.items():
+        render_view(scene, camera, name, location)
+
+    obj.show_wire = True
+    obj.show_all_edges = True
+    render_view(scene, camera, "geometry_diagnostic", (4, -6, 3))
+    obj.show_wire = False
+    obj.show_all_edges = False
 
     blend_path = OUT / "pilot-b.blend"
     glb_path = OUT / "pilot-b.glb"
@@ -87,6 +108,7 @@ def main() -> None:
     obj.select_set(True)
     bpy.ops.export_scene.gltf(filepath=str(glb_path), export_format="GLB", use_selection=True, export_skins=True, export_morph=True)
 
+    render_names = [*RENDER_VIEWS, "geometry_diagnostic"]
     manifest = {
         "schema_version": 1,
         "pilot": "B",
@@ -101,8 +123,7 @@ def main() -> None:
             "blend": {"path": "pilot-b.blend", "sha256": sha256(blend_path)},
             "glb": {"path": "pilot-b.glb", "sha256": sha256(glb_path)},
             "renders": [
-                {"path": "front_3_4.png", "sha256": sha256(OUT / "front_3_4.png")},
-                {"path": "rear_3_4.png", "sha256": sha256(OUT / "rear_3_4.png")},
+                {"path": f"{name}.png", "sha256": sha256(OUT / f"{name}.png")} for name in render_names
             ],
         },
     }
