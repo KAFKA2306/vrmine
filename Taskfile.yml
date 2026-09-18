@@ -33,7 +33,7 @@ tasks:
       - node scripts/verify-world-item-packages.mjs
       - node scripts/world-item-graph.mjs --check
       - task: world-design:check
-      - uv --cache-dir .uv-cache run --offline --python .tools/venv python -m py_compile scripts/world_build_factory.py scripts/verify_world_build.py scripts/publish_world_build_evidence.py scripts/verify_rig_contract.py scripts/test_rig_contract.py scripts/build_astra_rigged_pilot.py scripts/verify_astra_rigged_pilot.py
+      - uv --cache-dir .uv-cache run --offline --python .tools/venv python -m py_compile scripts/world_build_factory.py scripts/verify_world_build.py scripts/publish_world_build_evidence.py scripts/verify_rig_contract.py scripts/verify_uv_texture_contract.py scripts/test_rig_contract.py scripts/build_astra_rigged_pilot.py scripts/verify_astra_rigged_pilot.py
       - node scripts/verify-perspective-cage.mjs
       - node scripts/verify-stich-meister-rules.mjs
       - node --check scripts/run-perspective-cage-unity.mjs
