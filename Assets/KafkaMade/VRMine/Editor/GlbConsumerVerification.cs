@@ -8,7 +8,7 @@ using UnityEngine;
 public static class GlbConsumerVerification
 {
     const string ImportedAssetPath = "Assets/KafkaMade/VRMine/Verification/consumer-proof.glb";
-    const string EvidencePath = "Library/VRMine/glb-consumer-evidence.json";
+    const string DefaultEvidencePath = "Library/VRMine/glb-consumer-evidence.json";
 
     [Serializable]
     sealed class Evidence
@@ -104,9 +104,17 @@ public static class GlbConsumerVerification
             unityVersion = Application.unityVersion,
             status = "PASS"
         };
-        Directory.CreateDirectory(Path.GetDirectoryName(EvidencePath));
-        File.WriteAllText(EvidencePath, JsonUtility.ToJson(evidence, true));
-        Debug.Log("GLB consumer verification PASS: sha256=" + actualSha + ", meshes=" + meshes.Length + ", vertices=" + vertices + ", triangles=" + triangles + ", materials=" + materials + ", bounds=" + bounds + ", evidence=" + EvidencePath);
+        string evidencePath = ResolveEvidencePath();
+        Directory.CreateDirectory(Path.GetDirectoryName(evidencePath));
+        File.WriteAllText(evidencePath, JsonUtility.ToJson(evidence, true));
+        Debug.Log("GLB consumer verification PASS: sha256=" + actualSha + ", meshes=" + meshes.Length + ", vertices=" + vertices + ", triangles=" + triangles + ", materials=" + materials + ", bounds=" + bounds + ", evidence=" + evidencePath);
+    }
+
+    static string ResolveEvidencePath()
+    {
+        string evidenceDirectory = Environment.GetEnvironmentVariable("VRMINE_EVIDENCE_DIR");
+        if (string.IsNullOrEmpty(evidenceDirectory)) return DefaultEvidencePath;
+        return Path.Combine(evidenceDirectory, "glb-consumer-evidence.json");
     }
 
     static int ReadExpectedInt(string name)
