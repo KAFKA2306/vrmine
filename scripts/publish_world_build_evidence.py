@@ -55,6 +55,27 @@ def arguments() -> tuple[Path, Path, Path]:
     return tuple(inside_root(Path(value), label) for value, label in zip(values, ("artifact root", "destination root", "source root")))
 
 
+def source_license(asset_id: str) -> dict:
+    spec_path = ROOT / "config" / "world-items" / f"{asset_id}.json"
+    if not spec_path.is_file():
+        fail(f"canonical source spec is missing for provenance: {asset_id}")
+    spec = json.loads(spec_path.read_text(encoding="utf-8-sig"))
+    license_data = spec.get("license") or {}
+    required = ("name", "status", "provenance")
+    missing = [field for field in required if not license_data.get(field)]
+    if missing:
+        fail(f"source license metadata missing for {asset_id}: {', '.join(missing)}")
+    urls = license_data.get("source_urls", [])
+    if not isinstance(urls, list) or any(not isinstance(url, str) or not url for url in urls):
+        fail(f"source license URLs must be a string array: {asset_id}")
+    return {
+        "name": license_data["name"],
+        "status": license_data["status"],
+        "provenance": license_data["provenance"],
+        "source_urls": urls,
+    }
+
+
 def main() -> None:
     artifact_root, destination_root, source_root = arguments()
     manifest_path = artifact_root / "manifest.json"
@@ -77,6 +98,7 @@ def main() -> None:
     source_destination = destination_root / "source-assets"
     source_destination.mkdir(parents=True, exist_ok=True)
     published_sources = {}
+    provenance_sources = []
     destination_prefix = destination_root.relative_to(ROOT).as_posix()
     for asset_id in asset_ids:
         source = source_root / asset_id / f"{asset_id}.glb"
@@ -84,14 +106,27 @@ def main() -> None:
             fail(f"materialized source is missing or empty: {asset_id}")
         destination = source_destination / f"{asset_id}.glb"
         shutil.copy2(source, destination)
+        digest = sha256(destination)
         published_sources[asset_id] = {
             "path": f"{destination_prefix}/source-assets/{asset_id}.glb",
-            "sha256": sha256(destination),
+            "sha256": digest,
         }
+        provenance_sources.append({
+            "asset_id": asset_id,
+            "sha256": digest,
+            "license": source_license(asset_id),
+        })
 
     manifest["build_plan"] = f"{destination_prefix}/build-plan.json"
     manifest["build_plan_sha256"] = sha256(destination_root / "build-plan.json")
     manifest["asset_sources"] = published_sources
+    manifest["provenance"] = {
+        "generated_with": "gpt-6-astra",
+        "generation_method": "procedural",
+        "human_reviewed": False,
+        "source_assets": provenance_sources,
+        "procedural_source_ids": sorted(manifest.get("procedural_sources", {})),
+    }
     manifest["outputs"]["blend"]["sha256"] = sha256(destination_root / "world.blend")
     manifest["outputs"]["glb"]["sha256"] = sha256(destination_root / "world.glb")
     manifest["outputs"]["renders"] = [
