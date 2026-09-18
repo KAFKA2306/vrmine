@@ -9,6 +9,7 @@ from pathlib import Path
 import bpy
 
 from verify_rig_contract import assert_rig_contract
+from verify_uv_texture_contract import assert_uv_texture_contract
 
 OUT = Path(sys.argv[-1]).resolve()
 REQUIRED_RENDERS = {
@@ -44,13 +45,10 @@ def main() -> None:
     meshes = [obj for obj in bpy.data.objects if obj.type == "MESH"]
     armatures = [obj for obj in bpy.data.objects if obj.type == "ARMATURE"]
     rig = assert_rig_contract(meshes, armatures)
+    uv_texture = assert_uv_texture_contract(meshes, artifact_root=OUT)
     if len(meshes) != 1:
         raise AssertionError(f"expected one mesh, got {len(meshes)}")
     mesh = meshes[0]
-    if not mesh.data.uv_layers.active or len(mesh.data.uv_layers.active.data) == 0:
-        raise AssertionError("Pilot B UV is missing")
-    if not mesh.data.materials:
-        raise AssertionError("Pilot B material is missing")
     shape_keys = mesh.data.shape_keys
     if not shape_keys or "bend" not in shape_keys.key_blocks:
         raise AssertionError("Pilot B shape key is missing")
@@ -58,7 +56,7 @@ def main() -> None:
     basis = shape_keys.key_blocks["Basis"]
     if not any((bend.data[i].co - basis.data[i].co).length > 1e-6 for i in range(len(bend.data))):
         raise AssertionError("Pilot B shape key has no deformation")
-    print(json.dumps({"status": "PASS", "pilot": "B", "rig": rig, "uv": True, "shape_key": "bend", "renders": sorted(render_paths)}))
+    print(json.dumps({"status": "PASS", "pilot": "B", "rig": rig, "uv_texture": uv_texture, "shape_key": "bend", "renders": sorted(render_paths)}))
 
 
 if __name__ == "__main__":
