@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "source_policy": {"mutate_source_assets": false, "build_clone_only": true, "rollback": "discard_build_clone"},
+  "tools": [
+    {"id":"ndmf","role":"build_orchestration","order":10,"authority":"pipeline"},
+    {"id":"modular-avatar","role":"avatar_composition","order":20,"authority":"composition"},
+    {"id":"avatar-optimizer","role":"optimization","order":30,"authority":"optimization"},
+    {"id":"vrcfury","role":"optional_feature_composition","order":20,"authority":"composition","optional":true},
+    {"id":"mochifitter","role":"optional_clothing_fit","order":15,"authority":"clothing_fit","optional":true},
+    {"id":"d4rk-avatar-optimizer","role":"alternative_optimization","order":30,"authority":"optimization","optional":true,"exclusive_with":["avatar-optimizer"]}
+  ],
+  "responsibilities": {
+    "pipeline":"ndmf",
+    "composition":"modular-avatar",
+    "optimization":"avatar-optimizer",
+    "clothing_fit":"mochifitter"
+  },
+  "build_order":["ndmf","mochifitter","modular-avatar","avatar-optimizer"],
+  "metrics": {
+    "before_after":["triangles","vertices","materials","skinned_meshes","bones","blendshapes","physbone_components","texture_memory_bytes"],
+    "artifact":"reports/avatar-build-metrics.json",
+    "require_diff":true
+  },
+  "validation": {
+    "reject_duplicate_authority":true,
+    "reject_source_mutation":true,
+    "require_before_after_metrics":true,
+    "require_build_clone":true
+  }
+}
