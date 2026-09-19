@@ -1,0 +1,19 @@
+name: Authoring control plane
+
+on:
+  pull_request:
+    paths:
+      - 'config/authoring-control-plane.json'
+      - 'scripts/verify-authoring-control-plane.mjs'
+      - '.github/workflows/authoring-control-plane.yml'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/verify-authoring-control-plane.mjs
