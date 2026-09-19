@@ -1,0 +1,98 @@
+name: Astra Pilot B Unity evidence
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - '.github/workflows/astra-pilot-b-unity.yml'
+      - 'scripts/build_astra_rigged_pilot.py'
+      - 'scripts/run-glb-consumer-unity.mjs'
+      - 'Assets/Editor/GlbConsumerVerification.cs'
+      - 'Packages/**'
+      - 'ProjectSettings/ProjectVersion.txt'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/astra-pilot-b-unity.yml'
+      - 'scripts/build_astra_rigged_pilot.py'
+      - 'scripts/run-glb-consumer-unity.mjs'
+      - 'Assets/Editor/GlbConsumerVerification.cs'
+      - 'Packages/**'
+      - 'ProjectSettings/ProjectVersion.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  pilot-b-unity:
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 30
+    env:
+      UNITY_EXE: C:\Program Files\Unity\Hub\Editor\2022.3.22f1\Editor\Unity.exe
+      PILOT_B_DIR: .artifacts\astra-pilot-b
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          clean: true
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+
+      - name: Require exact revision and pinned Unity
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = '${{ github.event.pull_request.head.sha || github.sha }}'
+          $actual = (git rev-parse HEAD).Trim()
+          if ($actual -ne $expected) { throw "Checkout is not exact requested revision: expected $expected, got $actual" }
+          if (!(Test-Path -LiteralPath $env:UNITY_EXE)) { throw "Unity editor not found: $env:UNITY_EXE" }
+          $projectVersion = ((Get-Content -LiteralPath 'ProjectSettings\ProjectVersion.txt' | Select-String '^m_EditorVersion:').Line -split ': ', 2)[1]
+          if ($projectVersion -ne '2022.3.22f1') { throw "Project Unity version drift: $projectVersion" }
+
+      - name: Resolve pinned VRChat packages
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          node scripts/install-vrc-get.mjs
+          & .tools\vrc-get.exe resolve
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Generate reproducible Pilot B
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $blender = (Get-Command blender -ErrorAction SilentlyContinue).Source
+          if (!$blender) {
+            $blender = Get-ChildItem 'C:\Program Files\Blender Foundation\Blender *\blender.exe' -ErrorAction SilentlyContinue | Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
+          }
+          if (!$blender) { throw 'Blender executable not found on self-hosted runner.' }
+          & $blender --background --python scripts/build_astra_rigged_pilot.py -- $env:PILOT_B_DIR
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if (!(Test-Path "$env:PILOT_B_DIR\pilot-b.glb")) { throw 'Pilot B GLB was not generated.' }
+
+      - name: Verify generated Pilot B in canonical Unity
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $glb = (Resolve-Path "$env:PILOT_B_DIR\pilot-b.glb").Path
+          $env:VRMINE_GLB_PATH = $glb
+          $env:VRMINE_GLB_SHA256 = (Get-FileHash -LiteralPath $glb -Algorithm SHA256).Hash.ToLowerInvariant()
+          $env:VRMINE_GLB_VERTEX_COUNT = '6'
+          $env:VRMINE_GLB_TRIANGLE_COUNT = '4'
+          $env:VRMINE_EVIDENCE_DIR = (Join-Path (Resolve-Path $env:PILOT_B_DIR).Path 'unity-evidence')
+          node scripts/run-glb-consumer-unity.mjs
+
+      - name: Persist exact-revision Pilot B Unity evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: astra-pilot-b-unity-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            .artifacts/astra-pilot-b/manifest.json
+            .artifacts/astra-pilot-b/pilot-b.glb
+            .artifacts/astra-pilot-b/unity-evidence/glb-consumer-evidence.json
+            .artifacts/astra-pilot-b/unity-evidence/glb-consumer-*.log
+          if-no-files-found: error
+          retention-days: 14
