@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "authority": "repository_automation",
+  "selection_order": ["direct_code", "editor_api", "mcp", "cua"],
+  "discovery": {
+    "mode": "on_demand",
+    "eager_tool_catalog": false
+  },
+  "providers": {
+    "direct_code": {"transport": "local", "role": "deterministic_authoring", "authority": true},
+    "editor_api": {"transport": "local", "role": "structured_editor_authoring", "authority": false},
+    "mcp": {"transport": "mcp", "role": "structured_remote_control", "authority": false},
+    "cua": {"transport": "gui", "role": "gui_escape_hatch", "authority": false}
+  },
+  "responsibilities": {
+    "blender_authoring": {"primary": "direct_code", "fallback": ["mcp", "cua"]},
+    "unity_authoring": {"primary": "editor_api", "fallback": ["mcp", "cua"]},
+    "verification": {"primary": "direct_code", "fallback": []}
+  },
+  "ports": {
+    "policy": "provider_owned_not_canonical",
+    "rule": "Ports are runtime configuration and must not create a second authority."
+  },
+  "reconnect": {
+    "strategy": "bounded_exponential_backoff",
+    "max_attempts": 5,
+    "initial_delay_ms": 500,
+    "max_delay_ms": 8000,
+    "on_exhausted": "UNVERIFIED"
+  },
+  "failure": {
+    "silent_fallback": false,
+    "record_provider_failure": true,
+    "fallback_requires_same_responsibility": true
+  }
+}
