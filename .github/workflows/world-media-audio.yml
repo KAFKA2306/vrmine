@@ -1,0 +1,26 @@
+name: World media audio
+
+on:
+  pull_request:
+    paths:
+      - 'config/world-media-audio.json'
+      - 'scripts/verify-world-media-audio.mjs'
+      - 'Assets/KafkaMade/VRMine/Editor/WorldMediaAudioContractTests.cs'
+      - '.github/workflows/world-media-audio.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'config/world-media-audio.json'
+      - 'scripts/verify-world-media-audio.mjs'
+      - 'Assets/KafkaMade/VRMine/Editor/WorldMediaAudioContractTests.cs'
+      - '.github/workflows/world-media-audio.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/verify-world-media-audio.mjs
