@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "config/astra-visual-verdict.schema.json",
+  "title": "VRMine Astra Visual Verification Verdict",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "artifact_sha256", "render_sha256", "checks", "verdict", "repair"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "kind": { "const": "astra_visual_verdict" },
+    "artifact_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "render_sha256": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scale_dimensions", "floating_parts", "mesh_intersection", "topology", "material_assignment", "texture_uv", "rig_joints", "colliders", "camera_clipping", "layout_obstruction"],
+      "properties": {
+        "scale_dimensions": { "$ref": "#/$defs/check" },
+        "floating_parts": { "$ref": "#/$defs/check" },
+        "mesh_intersection": { "$ref": "#/$defs/check" },
+        "topology": { "$ref": "#/$defs/check" },
+        "material_assignment": { "$ref": "#/$defs/check" },
+        "texture_uv": { "$ref": "#/$defs/check" },
+        "rig_joints": { "$ref": "#/$defs/check" },
+        "colliders": { "$ref": "#/$defs/check" },
+        "camera_clipping": { "$ref": "#/$defs/check" },
+        "layout_obstruction": { "$ref": "#/$defs/check" }
+      }
+    },
+    "verdict": { "enum": ["PASS", "FAIL"] },
+    "repair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "instructions"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "instructions": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "evidence"],
+      "properties": {
+        "status": { "enum": ["PASS", "FAIL", "NOT_APPLICABLE"] },
+        "evidence": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "verdict": { "const": "FAIL" } } },
+      "then": {
+        "properties": {
+          "repair": {
+            "properties": { "required": { "const": true }, "instructions": { "minItems": 1 } }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "verdict": { "const": "PASS" } } },
+      "then": {
+        "properties": {
+          "repair": {
+            "properties": { "required": { "const": false }, "instructions": { "maxItems": 0 } }
+          }
+        }
+      }
+    }
+  ]
+}

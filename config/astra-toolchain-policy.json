@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "default_production_tier": "P0",
+  "one_responsibility_one_authority": true,
+  "control_priority": [
+    "code_cli",
+    "blender_bpy_geometry_nodes",
+    "mcp",
+    "unity_batchmode",
+    "cua"
+  ],
+  "tiers": {
+    "P0": {
+      "production_eligible": true,
+      "experimental": false,
+      "role": "canonical_production"
+    },
+    "P1": {
+      "production_eligible": true,
+      "experimental": false,
+      "role": "conditional_production",
+      "requires": ["manifest_declaration", "additional_validator"]
+    },
+    "P2": {
+      "production_eligible": false,
+      "experimental": true,
+      "role": "experimental"
+    },
+    "P3": {
+      "production_eligible": false,
+      "experimental": true,
+      "role": "future_rnd_non_production"
+    }
+  }
+}
