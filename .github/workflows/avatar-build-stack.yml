@@ -1,0 +1,17 @@
+name: Avatar build stack
+on:
+  pull_request:
+    paths:
+      - config/avatar-build-stack.json
+      - scripts/verify-avatar-build-stack.mjs
+      - .github/workflows/avatar-build-stack.yml
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/verify-avatar-build-stack.mjs
