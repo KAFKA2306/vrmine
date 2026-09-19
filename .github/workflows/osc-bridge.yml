@@ -1,0 +1,28 @@
+name: OSC bridge contract
+
+on:
+  pull_request:
+    paths:
+      - 'config/osc-bridge.json'
+      - 'scripts/verify-osc-bridge.mjs'
+      - '.github/workflows/osc-bridge.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'config/osc-bridge.json'
+      - 'scripts/verify-osc-bridge.mjs'
+      - '.github/workflows/osc-bridge.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify OSC namespace, rate, smoothing, reconnect and bidirectional harness
+        run: node scripts/verify-osc-bridge.mjs
