@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "authority": "udon_networking",
+  "responsibilities": {
+    "runtime": ["state_mutation", "ownership", "serialization", "rpc_receive"],
+    "editor": ["scene_wiring", "default_values", "static_validation"]
+  },
+  "state_sync": {
+    "preferred": "UdonSynced",
+    "manual_sync_requires_request_serialization": true,
+    "ownership_required_before_mutation": true,
+    "late_join_state_must_be_serialized": true
+  },
+  "network_limits": {
+    "max_continuous_synced_bytes": 200,
+    "max_manual_synced_bytes": 100000,
+    "max_rpc_calls_per_second": 5,
+    "forbid_rpc_for_persistent_state": true,
+    "forbid_request_serialization_in_update": true
+  },
+  "unsupported_csharp": [
+    "System.Threading",
+    "System.Reflection",
+    "System.IO",
+    "unsafe",
+    "dynamic"
+  ],
+  "representative_gimmick": {
+    "name": "owner_synced_toggle",
+    "source": "tests/fixtures/udon/OwnerSyncedToggle.cs",
+    "requires": ["UdonSynced", "RequestSerialization", "Networking.SetOwner", "OnDeserialization"]
+  }
+}
