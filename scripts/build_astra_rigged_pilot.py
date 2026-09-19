@@ -106,7 +106,15 @@ def main() -> None:
     bpy.context.view_layer.objects.active = arm
     arm.select_set(True)
     obj.select_set(True)
-    bpy.ops.export_scene.gltf(filepath=str(glb_path), export_format="GLB", use_selection=True, export_skins=True, export_morph=True)
+    bpy.ops.export_scene.gltf(
+        filepath=str(glb_path),
+        export_format="GLB",
+        use_selection=True,
+        export_skins=True,
+        export_morph=True,
+        export_morph_normal=False,
+        export_morph_tangent=False,
+    )
 
     render_names = [*RENDER_VIEWS, "geometry_diagnostic"]
     manifest = {
