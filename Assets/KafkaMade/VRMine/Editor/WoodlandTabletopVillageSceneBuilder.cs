@@ -52,21 +52,21 @@ public static class WoodlandTabletopVillageSceneBuilder
         Material path = Mat("Path", new Color(0.38f, 0.29f, 0.19f), 0.98f);
         Material paper = Mat("Paper", new Color(0.78f, 0.68f, 0.48f), 0.98f);
         Material mossWood = Mat("MossWoodAccent", new Color(0.52f, 0.42f, 0.26f), 0.92f);
-        ApplySurface(wood, "WoodTable/WoodTable_Diffuse_2K.jpg", "WoodTable/WoodTable_Normal_2K.jpg", "WoodTable/WoodTable_AO_2K.jpg", new Vector2(0.72f, 0.72f), new Color(0.90f, 0.76f, 0.58f), 0.26f);
-        ApplySurface(stone, "MossyRock/MossyRock_Diffuse_2K.jpg", "MossyRock/MossyRock_Normal_2K.jpg", "MossyRock/MossyRock_AO_2K.jpg", new Vector2(0.68f, 0.68f), new Color(0.70f, 0.72f, 0.66f), 0.28f);
-        ApplySurface(path, "ForestGround/ForestGround_Diffuse_2K.jpg", "ForestGround/ForestGround_Normal_2K.jpg", "ForestGround/ForestGround_AO_2K.jpg", new Vector2(0.56f, 0.56f), new Color(0.76f, 0.62f, 0.44f), 0.24f);
-        ApplySurface(mossWood, "MossWood/MossWood_Diffuse_2K.jpg", "MossWood/MossWood_Normal_2K.jpg", "MossWood/MossWood_AO_2K.jpg", new Vector2(0.72f, 0.72f), new Color(0.78f, 0.68f, 0.50f), 0.30f);
-        SoftEmission(wood, 0.26f);
-        SoftEmission(forest, 0.50f);
-        SoftEmission(forestLight, 0.66f);
-        SoftEmission(cream, 0.34f);
-        SoftEmission(roof, 0.40f);
-        SoftEmission(stone, 0.15f);
-        SoftEmission(water, 0.34f);
-        SoftEmission(moss, 0.42f);
-        SoftEmission(path, 0.12f);
-        SoftEmission(paper, 0.28f);
-        SoftEmission(mossWood, 0.10f);
+        ApplySurface(wood, "WoodTable/WoodTable_Diffuse_2K.jpg", "WoodTable/WoodTable_Normal_2K.jpg", "WoodTable/WoodTable_AO_2K.jpg", new Vector2(1.35f, 1.35f), new Color(0.98f, 0.84f, 0.66f), 0.26f);
+        ApplySurface(stone, "MossyRock/MossyRock_Diffuse_2K.jpg", "MossyRock/MossyRock_Normal_2K.jpg", "MossyRock/MossyRock_AO_2K.jpg", new Vector2(1.20f, 1.20f), new Color(0.92f, 0.94f, 0.86f), 0.28f);
+        ApplySurface(path, "ForestGround/ForestGround_Diffuse_2K.jpg", "ForestGround/ForestGround_Normal_2K.jpg", "ForestGround/ForestGround_AO_2K.jpg", new Vector2(1.05f, 1.05f), new Color(0.94f, 0.80f, 0.58f), 0.24f);
+        ApplySurface(mossWood, "MossWood/MossWood_Diffuse_2K.jpg", "MossWood/MossWood_Normal_2K.jpg", "MossWood/MossWood_AO_2K.jpg", new Vector2(1.18f, 1.18f), new Color(0.88f, 0.76f, 0.56f), 0.30f);
+        SoftEmission(wood, 0.34f);
+        SoftEmission(forest, 0.72f);
+        SoftEmission(forestLight, 0.92f);
+        SoftEmission(cream, 0.46f);
+        SoftEmission(roof, 0.52f);
+        SoftEmission(stone, 0.25f);
+        SoftEmission(water, 0.50f);
+        SoftEmission(moss, 0.60f);
+        SoftEmission(path, 0.24f);
+        SoftEmission(paper, 0.40f);
+        SoftEmission(mossWood, 0.22f);
 
         Room(root, spec, wall, wood);
         ForestBoundary(root, spec, wood, forest, forestLight, moss);
@@ -156,9 +156,16 @@ public static class WoodlandTabletopVillageSceneBuilder
     {
         Transform tree = Empty(name, parent);
         tree.localPosition = position;
+        tree.localRotation = Quaternion.Euler(0, (position.x * 19f + position.z * 13f) % 28f, 0);
         VisualCylinder("Trunk", new Vector3(0, scale * 0.44f, 0), scale * 0.18f, scale * 0.88f, wood, tree);
+        GameObject branchA = VisualCylinder("BranchA", new Vector3(-scale * 0.12f, scale * 0.70f, 0), scale * 0.07f, scale * 0.42f, wood, tree);
+        branchA.transform.localRotation = Quaternion.Euler(0, 0, -56f);
+        GameObject branchB = VisualCylinder("BranchB", new Vector3(scale * 0.10f, scale * 0.78f, 0), scale * 0.06f, scale * 0.36f, wood, tree);
+        branchB.transform.localRotation = Quaternion.Euler(0, 0, 52f);
         VisualSphere("CanopyLow", new Vector3(-scale * 0.08f, scale * 0.92f, 0), new Vector3(scale * 0.72f, scale * 0.55f, scale * 0.72f), forest, tree);
         VisualSphere("CanopyHigh", new Vector3(scale * 0.14f, scale * 1.28f, scale * 0.02f), new Vector3(scale * 0.52f, scale * 0.38f, scale * 0.55f), forestLight, tree);
+        VisualSphere("CanopyWingA", new Vector3(-scale * 0.34f, scale * 1.08f, scale * 0.13f), new Vector3(scale * 0.34f, scale * 0.28f, scale * 0.38f), forestLight, tree);
+        VisualSphere("CanopyWingB", new Vector3(scale * 0.31f, scale * 0.98f, -scale * 0.15f), new Vector3(scale * 0.30f, scale * 0.24f, scale * 0.34f), forest, tree);
     }
 
     static void Tabletop(Transform parent, WorldSpec s, Material wood, Material mossWood, Material forest, Material forestLight, Material cream, Material roof, Material lamp, Material stone, Material water, Material moss, Material path, Material paper)
@@ -198,21 +205,21 @@ public static class WoodlandTabletopVillageSceneBuilder
         {
             float t = i / 8f;
             Vector3 p = new Vector3(Mathf.Sin(t * Mathf.PI * 1.25f) * 0.15f, tabletopHeight + 0.048f, -0.84f + t * 0.98f);
-            GameObject step = Cube("PathStone_" + i, p, new Vector3(0.13f, 0.035f, 0.085f), path, pathRoot);
+            GameObject step = VisualSphere("PathStone_" + i, p, new Vector3(0.14f + (i % 3) * 0.012f, 0.035f, 0.09f + (i % 2) * 0.015f), path, pathRoot);
             step.transform.localRotation = Quaternion.Euler(0, (i % 2 == 0 ? -8f : 12f), 0);
         }
         for (int i = 0; i < 4; i++)
         {
             float t = i / 3f;
             Vector3 p = Vector3.Lerp(new Vector3(0.10f, tabletopHeight + 0.05f, -0.10f), new Vector3(0.60f, tabletopHeight + 0.05f, -0.43f), t);
-            GameObject step = Cube("MarketBranchStone_" + i, p, new Vector3(0.10f, 0.03f, 0.07f), path, pathRoot);
+            GameObject step = VisualSphere("MarketBranchStone_" + i, p, new Vector3(0.11f + (i % 2) * 0.015f, 0.03f, 0.075f), path, pathRoot);
             step.transform.localRotation = Quaternion.Euler(0, 18f, 0);
         }
         for (int i = 0; i < 4; i++)
         {
             float t = i / 3f;
             Vector3 p = Vector3.Lerp(new Vector3(-0.10f, tabletopHeight + 0.05f, -0.10f), new Vector3(-0.58f, tabletopHeight + 0.05f, -0.39f), t);
-            GameObject step = Cube("BenchBranchStone_" + i, p, new Vector3(0.10f, 0.03f, 0.07f), path, pathRoot);
+            GameObject step = VisualSphere("BenchBranchStone_" + i, p, new Vector3(0.105f + (i % 2) * 0.012f, 0.03f, 0.075f), path, pathRoot);
             step.transform.localRotation = Quaternion.Euler(0, -18f, 0);
         }
 
@@ -277,11 +284,13 @@ public static class WoodlandTabletopVillageSceneBuilder
 
         Transform book = Empty("OpenBook", traces);
         book.position = new Vector3(-0.70f, tabletopHeight + 0.18f, -0.40f);
-        GameObject leftPage = VisualCube("LeftPage", new Vector3(-0.045f, 0.015f, 0), new Vector3(0.085f, 0.018f, 0.12f), paper, book);
-        GameObject rightPage = VisualCube("RightPage", new Vector3(0.045f, 0.015f, 0), new Vector3(0.085f, 0.018f, 0.12f), paper, book);
+        GameObject leftPage = VisualCube("LeftPage", new Vector3(-0.055f, 0.015f, 0), new Vector3(0.10f, 0.018f, 0.14f), paper, book);
+        GameObject rightPage = VisualCube("RightPage", new Vector3(0.055f, 0.015f, 0), new Vector3(0.10f, 0.018f, 0.14f), paper, book);
         leftPage.transform.localRotation = Quaternion.Euler(0, 0, -6f);
         rightPage.transform.localRotation = Quaternion.Euler(0, 0, 6f);
-        VisualCube("BookSpine", new Vector3(0, 0, 0), new Vector3(0.025f, 0.012f, 0.12f), wood, book);
+        VisualCube("BookSpine", new Vector3(0, 0, 0), new Vector3(0.025f, 0.012f, 0.14f), wood, book);
+        VisualCube("PageMarkLeft", new Vector3(-0.055f, 0.027f, 0.015f), new Vector3(0.055f, 0.004f, 0.008f), wood, book);
+        VisualCube("PageMarkRight", new Vector3(0.055f, 0.027f, -0.018f), new Vector3(0.050f, 0.004f, 0.008f), wood, book);
 
         Transform mug = Empty("HalfFinishedMug", traces);
         mug.position = new Vector3(-0.42f, tabletopHeight + 0.16f, -0.04f);
@@ -475,7 +484,23 @@ public static class WoodlandTabletopVillageSceneBuilder
             new Vector3(-0.18f, tabletopHeight + 0.20f, -0.66f)
         };
         for (int i = 0; i < positions.Length; i++)
-            Sphere("Firefly_" + i, positions[i], Vector3.one * 0.025f, lamp, fireflies);
+            Sphere("Firefly_" + i, positions[i], Vector3.one * 0.014f, lamp, fireflies);
+    }
+
+    static void LanternFixture(Transform parent, string name, Vector3 position, float size, Material frame, Material lamp)
+    {
+        Transform fixture = Empty(name, parent);
+        fixture.localPosition = position;
+        float bar = Mathf.Max(0.008f, size * 0.11f);
+        float width = size * 0.78f;
+        float height = size * 0.90f;
+        VisualCube("Backplate", new Vector3(0, 0, size * 0.10f), new Vector3(width, height, bar), frame, fixture);
+        VisualSphere("Glow", new Vector3(0, 0, -size * 0.03f), Vector3.one * size * 0.40f, lamp, fixture);
+        VisualCube("FrameTop", new Vector3(0, height * 0.52f, -size * 0.07f), new Vector3(width + bar, bar, bar), frame, fixture);
+        VisualCube("FrameBottom", new Vector3(0, -height * 0.52f, -size * 0.07f), new Vector3(width + bar, bar, bar), frame, fixture);
+        VisualCube("FrameLeft", new Vector3(-width * 0.52f, 0, -size * 0.07f), new Vector3(bar, height, bar), frame, fixture);
+        VisualCube("FrameRight", new Vector3(width * 0.52f, 0, -size * 0.07f), new Vector3(bar, height, bar), frame, fixture);
+        VisualCube("Hanger", new Vector3(0, height * 0.67f, size * 0.02f), new Vector3(bar, size * 0.24f, bar), frame, fixture);
     }
 
     static void PhotoSpot(Transform parent, string name, Vector3 center, float radius, Material stone, Material moss)
@@ -502,8 +527,8 @@ public static class WoodlandTabletopVillageSceneBuilder
             Transform seat = Empty("SocialSeat_" + (i + 1), group);
             seat.position = new Vector3(c.x + Mathf.Cos(a) * radius, 0, c.z + Mathf.Sin(a) * radius);
             Face(seat, new Vector3(c.x, 0, c.z));
-            Cylinder("Base", new Vector3(0, 0.22f, 0), 0.42f, 0.44f, wood, seat);
-            Cylinder("Top", new Vector3(0, 0.46f, 0), 0.48f, 0.08f, cream, seat);
+            Cylinder("Base", new Vector3(0, 0.17f, 0), 0.34f, 0.34f, wood, seat);
+            Cylinder("Top", new Vector3(0, 0.36f, 0), 0.39f, 0.06f, cream, seat);
         }
     }
 
@@ -518,7 +543,7 @@ public static class WoodlandTabletopVillageSceneBuilder
             Cube("ReadingBenchBackSlat_" + i, new Vector3(i * 0.34f, 0.77f, 0.18f), new Vector3(0.08f, 0.34f, 0.08f), wood, r);
         Cube("ReadingCushion", new Vector3(0, 0.43f, -0.02f), new Vector3(0.92f, 0.07f, 0.34f), cream, r);
         Cylinder("NookSideTable", new Vector3(-0.68f, 0.26f, 0.02f), 0.22f, 0.52f, wood, r);
-        Sphere("NookLamp", new Vector3(-0.68f, 0.60f, 0.02f), Vector3.one * 0.10f, lamp, r);
+        LanternFixture(r, "NookLamp", new Vector3(-0.68f, 0.60f, 0.02f), 0.10f, wood, lamp);
     }
 
     static Transform AnchorRoot(Transform parent, Anchor a, Vector3 p)
@@ -539,12 +564,16 @@ public static class WoodlandTabletopVillageSceneBuilder
                 new Vector3(a.footprint_m[0] * 0.48f, 0.08f, 0.12f), wood, r);
             root.transform.localRotation = Quaternion.Euler(0, angle * Mathf.Rad2Deg, 0);
         }
+        GameObject branchA = VisualCylinder("BranchA", new Vector3(-a.footprint_m[0] * 0.12f, a.height_m * 0.53f, 0), a.footprint_m[0] * 0.09f, a.footprint_m[0] * 0.54f, wood, r);
+        branchA.transform.localRotation = Quaternion.Euler(0, 0, -58f);
+        GameObject branchB = VisualCylinder("BranchB", new Vector3(a.footprint_m[0] * 0.10f, a.height_m * 0.58f, 0), a.footprint_m[0] * 0.08f, a.footprint_m[0] * 0.48f, wood, r);
+        branchB.transform.localRotation = Quaternion.Euler(0, 0, 54f);
         Sphere("CanopyLow", Vector3.up * a.height_m * 0.67f, new Vector3(a.footprint_m[0] * 0.90f, a.height_m * 0.38f, a.footprint_m[1] * 0.90f), forest, r);
         Sphere("CanopyTop", new Vector3(-0.06f, a.height_m * 0.86f, 0.03f), new Vector3(a.footprint_m[0] * 0.62f, a.height_m * 0.30f, a.footprint_m[1] * 0.62f), forest, r);
         Sphere("CanopySideA", new Vector3(-0.23f, a.height_m * 0.66f, 0.05f), new Vector3(0.31f, 0.22f, 0.30f), forestLight, r);
         Sphere("CanopySideB", new Vector3(0.22f, a.height_m * 0.72f, -0.04f), new Vector3(0.26f, 0.20f, 0.25f), forestLight, r);
         Cube("ShrineBase", new Vector3(0, 0.07f, -a.footprint_m[1] * 0.40f), new Vector3(0.20f, 0.09f, 0.15f), stone, r);
-        Sphere("ShrineLantern", new Vector3(0, 0.22f, -a.footprint_m[1] * 0.40f), Vector3.one * 0.07f, lamp, r);
+        LanternFixture(r, "ShrineLantern", new Vector3(0, 0.22f, -a.footprint_m[1] * 0.40f), 0.07f, wood, lamp);
     }
 
     static void House(Transform parent, Anchor a, Vector3 p, Material wood, Material cream, Material roof, Material lamp, Material stone, Material moss, Material paper, bool lodge)
@@ -568,7 +597,7 @@ public static class WoodlandTabletopVillageSceneBuilder
         Cube("Doorstep", new Vector3(0, 0.035f, -d * 0.56f), new Vector3(w * 0.30f, 0.06f, 0.11f), stone, r);
         Cube("FlowerBox", new Vector3(-w * 0.24f, bh * 0.35f, -d * 0.54f), new Vector3(w * 0.22f, 0.05f, 0.07f), wood, r);
         Sphere("Planter", new Vector3(-w * 0.24f, bh * 0.43f, -d * 0.55f), new Vector3(w * 0.14f, 0.07f, 0.06f), moss, r);
-        Sphere("DoorLantern", new Vector3(-w * 0.16f, bh * 0.62f, -d * 0.55f), Vector3.one * Mathf.Max(0.035f, w * 0.07f), lamp, r);
+        LanternFixture(r, "DoorLantern", new Vector3(-w * 0.16f, bh * 0.62f, -d * 0.55f), Mathf.Max(0.05f, w * 0.085f), wood, lamp);
         Cube("DeliveryCrate", new Vector3(w * 0.35f, 0.10f, -d * 0.45f), new Vector3(w * 0.18f, 0.16f, d * 0.16f), wood, r);
         if (lodge)
         {
@@ -577,6 +606,8 @@ public static class WoodlandTabletopVillageSceneBuilder
             firewood.transform.localRotation = Quaternion.Euler(0, 0, 90);
         }
         Cube("VillageSign", new Vector3(0, bh * 0.83f, -d * 0.56f), new Vector3(w * 0.34f, 0.08f, 0.025f), paper, r);
+        VisualCube("VillageSignMarkA", new Vector3(-w * 0.08f, bh * 0.83f, -d * 0.578f), new Vector3(w * 0.10f, 0.012f, 0.008f), wood, r);
+        VisualCube("VillageSignMarkB", new Vector3(w * 0.08f, bh * 0.83f, -d * 0.578f), new Vector3(w * 0.07f, 0.012f, 0.008f), wood, r);
     }
 
     static void Bridge(Transform parent, Anchor a, Vector3 p, Material wood, Material lamp)
@@ -590,7 +621,7 @@ public static class WoodlandTabletopVillageSceneBuilder
         for (int side = -1; side <= 1; side += 2)
         {
             Cylinder("LanternPost_" + side, new Vector3(side * a.footprint_m[0] * 0.36f, a.height_m * 0.90f, 0), 0.025f, a.height_m * 0.80f, wood, r);
-            Sphere("BridgeLantern_" + side, new Vector3(side * a.footprint_m[0] * 0.36f, a.height_m * 1.30f, 0), Vector3.one * 0.06f, lamp, r);
+            LanternFixture(r, "BridgeLantern_" + side, new Vector3(side * a.footprint_m[0] * 0.36f, a.height_m * 1.30f, 0), 0.06f, wood, lamp);
         }
     }
 
@@ -601,8 +632,10 @@ public static class WoodlandTabletopVillageSceneBuilder
         for (int x = -1; x <= 1; x += 2) for (int z = -1; z <= 1; z += 2)
             Cube("Post_" + x + "_" + z, new Vector3(x * w * 0.43f, a.height_m * 0.57f, z * d * 0.42f), new Vector3(0.025f, a.height_m * 0.76f, 0.025f), wood, r);
         Cube("Canopy", Vector3.up * a.height_m * 0.91f, new Vector3(w * 1.08f, a.height_m * 0.08f, d * 1.10f), canopy, r);
-        Sphere("Lantern", new Vector3(0, a.height_m * 0.76f, -d * 0.46f), Vector3.one * a.height_m * 0.12f, lamp, r);
+        LanternFixture(r, "Lantern", new Vector3(0, a.height_m * 0.76f, -d * 0.46f), a.height_m * 0.13f, wood, lamp);
         Cube("MarketSign", new Vector3(0, a.height_m * 0.68f, -d * 0.52f), new Vector3(w * 0.52f, a.height_m * 0.18f, 0.025f), paper, r);
+        VisualCube("MarketSignMarkA", new Vector3(-w * 0.11f, a.height_m * 0.69f, -d * 0.538f), new Vector3(w * 0.16f, 0.012f, 0.008f), wood, r);
+        VisualCube("MarketSignMarkB", new Vector3(w * 0.12f, a.height_m * 0.69f, -d * 0.538f), new Vector3(w * 0.10f, 0.012f, 0.008f), wood, r);
         Cube("Crate", new Vector3(-w * 0.27f, a.height_m * 0.17f, -d * 0.57f), new Vector3(w * 0.26f, a.height_m * 0.25f, d * 0.28f), wood, r);
         Cylinder("MarketStone", new Vector3(w * 0.29f, 0.035f, d * 0.52f), 0.07f, 0.06f, stone, r);
     }
@@ -631,16 +664,18 @@ public static class WoodlandTabletopVillageSceneBuilder
     static void Lighting(Transform parent)
     {
         GameObject go = new GameObject("BakedSun"); go.transform.SetParent(parent, false); go.transform.rotation = Quaternion.Euler(38, -32, 0);
-        Light l = go.AddComponent<Light>(); l.type = LightType.Directional; l.color = new Color(1, 0.84f, 0.68f); l.intensity = 2.90f; l.shadows = LightShadows.Soft; l.lightmapBakeType = LightmapBakeType.Baked;
+        Light l = go.AddComponent<Light>(); l.type = LightType.Directional; l.color = new Color(1, 0.84f, 0.68f); l.intensity = 3.80f; l.shadows = LightShadows.Soft; l.lightmapBakeType = LightmapBakeType.Baked;
+        GameObject fillGo = new GameObject("BakedForestFill"); fillGo.transform.SetParent(parent, false); fillGo.transform.rotation = Quaternion.Euler(28, 142, 0);
+        Light fill = fillGo.AddComponent<Light>(); fill.type = LightType.Directional; fill.color = new Color(0.62f, 0.76f, 0.66f); fill.intensity = 0.75f; fill.shadows = LightShadows.None; fill.lightmapBakeType = LightmapBakeType.Baked;
         RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
-        RenderSettings.ambientSkyColor = new Color(0.58f, 0.67f, 0.63f); RenderSettings.ambientEquatorColor = new Color(0.42f, 0.48f, 0.42f); RenderSettings.ambientGroundColor = new Color(0.24f, 0.20f, 0.14f);
-        RenderSettings.ambientIntensity = 2.10f;
+        RenderSettings.ambientSkyColor = new Color(0.68f, 0.76f, 0.72f); RenderSettings.ambientEquatorColor = new Color(0.54f, 0.60f, 0.53f); RenderSettings.ambientGroundColor = new Color(0.36f, 0.31f, 0.23f);
+        RenderSettings.ambientIntensity = 2.65f;
         Material sky = SkyMaterial();
         RenderSettings.skybox = sky;
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.ExponentialSquared;
-        RenderSettings.fogColor = new Color(0.34f, 0.44f, 0.39f);
-        RenderSettings.fogDensity = 0.004f;
+        RenderSettings.fogColor = new Color(0.38f, 0.47f, 0.41f);
+        RenderSettings.fogDensity = 0.0025f;
         RenderSettings.sun = l;
         CreateLightProbes(parent);
         DynamicGI.UpdateEnvironment();
@@ -696,7 +731,7 @@ public static class WoodlandTabletopVillageSceneBuilder
         if (sky.HasProperty("_AtmosphereThickness")) sky.SetFloat("_AtmosphereThickness", 0.72f);
         if (sky.HasProperty("_SunSize")) sky.SetFloat("_SunSize", 0.035f);
         if (sky.HasProperty("_SunSizeConvergence")) sky.SetFloat("_SunSizeConvergence", 4f);
-        if (sky.HasProperty("_Exposure")) sky.SetFloat("_Exposure", 0.50f);
+        if (sky.HasProperty("_Exposure")) sky.SetFloat("_Exposure", 0.72f);
         EditorUtility.SetDirty(sky);
         return sky;
     }
@@ -705,8 +740,8 @@ public static class WoodlandTabletopVillageSceneBuilder
     {
         GameObject world = new GameObject("VRCWorld"); world.transform.SetParent(parent, false); VRCSceneDescriptor d = world.AddComponent<VRCSceneDescriptor>(); world.AddComponent<PipelineManager>();
         Transform spawn = Empty("SpawnPoint", parent); spawn.position = Pos(s.world_build.spawn.position_m) + Vector3.up * 0.02f; spawn.rotation = Quaternion.Euler(0, s.world_build.spawn.facing_deg, 0); d.spawns = new[] { spawn };
-        GameObject cameraGo = new GameObject("ReferenceCamera"); cameraGo.transform.SetParent(parent, false); Vector3 cameraPosition = Pos(s.world_build.hero_view.position_m); cameraPosition.z += 0.30f; cameraGo.transform.position = cameraPosition; Vector3 cameraTarget = Pos(s.world_build.hero_view.target_m); cameraTarget.y -= 0.22f; cameraGo.transform.LookAt(cameraTarget, Vector3.up);
-        Camera c = cameraGo.AddComponent<Camera>(); c.enabled = false; c.clearFlags = CameraClearFlags.Skybox; c.fieldOfView = 36; c.nearClipPlane = Mathf.Max(0.01f, s.runtime_budget.camera_near_clip_m); d.ReferenceCamera = cameraGo;
+        GameObject cameraGo = new GameObject("ReferenceCamera"); cameraGo.transform.SetParent(parent, false); Vector3 cameraPosition = Pos(s.world_build.hero_view.position_m); cameraPosition.y += 0.20f; cameraPosition.z += 0.08f; cameraGo.transform.position = cameraPosition; Vector3 cameraTarget = Pos(s.world_build.hero_view.target_m); cameraTarget.y -= 0.10f; cameraGo.transform.LookAt(cameraTarget, Vector3.up);
+        Camera c = cameraGo.AddComponent<Camera>(); c.enabled = false; c.clearFlags = CameraClearFlags.Skybox; c.fieldOfView = 36.5f; c.nearClipPlane = Mathf.Max(0.01f, s.runtime_budget.camera_near_clip_m); d.ReferenceCamera = cameraGo;
     }
 
     static Vector3 Pos(float[] xyz) { if (xyz == null || xyz.Length != 3) throw new InvalidDataException("Expected xyz vector"); return new Vector3(xyz[0], xyz[2], xyz[1]); }
