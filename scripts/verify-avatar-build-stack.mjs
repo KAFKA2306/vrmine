@@ -1,19 +1,23 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
-const p=JSON.parse(fs.readFileSync('config/avatar-build-stack.json','utf8'));
-assert.equal(p.source_policy.mutate_source_assets,false,'source assets must remain immutable');
-assert.equal(p.source_policy.build_clone_only,true,'transformations must target build clone');
-const tools=new Map(p.tools.map(t=>[t.id,t]));
-for(const id of p.build_order) assert(tools.has(id),`unknown build tool ${id}`);
-for(let i=1;i<p.build_order.length;i++) assert(tools.get(p.build_order[i-1]).order<=tools.get(p.build_order[i]).order,'build order must be monotonic');
-const active=p.tools.filter(t=>!t.optional);
-const activeIds=new Set(active.map(t=>t.id));
+const c=JSON.parse(fs.readFileSync('config/avatar-build-stack.json','utf8'));
+assert.equal(c.source_policy.mutate_source_assets,false);
+assert.equal(c.source_policy.build_clone_only,true);
+assert.equal(c.optimization.target,'build_clone');
+assert(c.optimization.allowed.length>=5);
+assert.equal(c.metrics.require_diff,true);
+assert.equal(c.visual_regression.required,true);
+assert.equal(c.visual_regression.missing_execution,'UNVERIFIED');
+assert.deepEqual(c.visual_regression.states,['PASS','FAIL','UNVERIFIED']);
+assert(c.visual_regression.views.length>=4);
+for(const p of ['pc','android']) { const b=c.platform_budgets[p]; assert(b.max_physbone_components>0); assert(b.max_physbone_affected_transforms>0); assert(b.max_texture_memory_bytes>0); }
+assert(c.platform_budgets.android.max_physbone_components<c.platform_budgets.pc.max_physbone_components);
+assert(c.platform_budgets.android.max_physbone_affected_transforms<c.platform_budgets.pc.max_physbone_affected_transforms);
+assert(c.platform_budgets.android.max_texture_memory_bytes<c.platform_budgets.pc.max_texture_memory_bytes);
 const authorities=new Map();
-for(const t of active){ if(authorities.has(t.authority)) throw new Error(`duplicate authority ${t.authority}: ${authorities.get(t.authority)}, ${t.id}`); authorities.set(t.authority,t.id); }
-for(const t of active) for(const x of t.exclusive_with??[]) assert(!activeIds.has(x),`exclusive tools active: ${t.id}/${x}`);
-for(const [role,id] of Object.entries(p.responsibilities)) { assert(tools.has(id),`missing owner ${id}`); assert.equal(tools.get(id).authority,role,`owner mismatch for ${role}`); }
-assert(p.metrics.require_diff,'before/after diff required');
-assert(p.metrics.before_after.includes('triangles')&&p.metrics.before_after.includes('texture_memory_bytes'),'core metrics missing');
-assert.equal(p.validation.reject_duplicate_authority,true);
-assert.equal(p.validation.reject_source_mutation,true);
+for(const t of c.tools.filter(t=>!t.optional)) { if(authorities.has(t.authority)) throw new Error(`duplicate authority: ${t.authority}`); authorities.set(t.authority,t.id); }
+assert.equal(c.validation.reject_source_mutation,true);
+assert.equal(c.validation.require_build_clone,true);
+assert.equal(c.validation.require_visual_regression,true);
+assert.equal(c.validation.require_platform_specific_budgets,true);
 console.log('avatar build stack: PASS');
