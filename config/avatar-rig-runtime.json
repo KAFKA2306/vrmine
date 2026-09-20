@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "rig": {
+    "required_humanoid_bones": ["hips", "spine", "chest", "neck", "head", "leftUpperArm", "leftLowerArm", "leftHand", "rightUpperArm", "rightLowerArm", "rightHand", "leftUpperLeg", "leftLowerLeg", "leftFoot", "rightUpperLeg", "rightLowerLeg", "rightFoot"],
+    "reject_zero_length_bones": true,
+    "reject_unweighted_vertices": true,
+    "weights": {"max_influences_per_vertex": 4, "sum_tolerance": 0.001, "reject_negative": true}
+  },
+  "expressions": {
+    "case": "lower_snake_case",
+    "required_visemes": ["sil", "pp", "ff", "th", "dd", "kk", "ch", "ss", "nn", "rr", "aa", "e", "ih", "oh", "ou"],
+    "reserved_prefixes": ["vrc_", "internal_"],
+    "custom_prefix": "expr_"
+  },
+  "physbone": {
+    "pc": {"max_components": 32, "max_affected_transforms": 256},
+    "android": {"max_components": 8, "max_affected_transforms": 64},
+    "reject_duplicate_roots": true,
+    "require_explicit_colliders": true
+  },
+  "contacts": {
+    "sender_prefix": "contact_send_",
+    "receiver_prefix": "contact_recv_",
+    "require_unique_parameter": true
+  },
+  "deformation_evidence": {
+    "authority": "unity_editor",
+    "artifact": "reports/avatar-deformation-evidence.json",
+    "required_poses": ["t_pose", "arm_raise", "elbow_bend", "knee_bend"],
+    "states": ["PASS", "FAIL", "UNVERIFIED"],
+    "missing_execution": "UNVERIFIED"
+  }
+}
