@@ -2,6 +2,7 @@
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { resolveProjectVersions } from "./resolve-agent-knowledge.mjs";
 
 const [specArg, outputArg] = process.argv.slice(2);
 if (!specArg) {
@@ -12,10 +13,8 @@ if (!specArg) {
 const root = process.cwd();
 const request = JSON.parse(execFileSync(process.execPath, ["scripts/compile-astra-build-request.mjs", specArg], { cwd: root, encoding: "utf8" }));
 const spec = JSON.parse(fs.readFileSync(path.resolve(root, specArg), "utf8"));
-const projectVersion = fs.readFileSync(path.join(root, "ProjectSettings/ProjectVersion.txt"), "utf8").match(/^m_EditorVersion: (.+)$/m)?.[1];
-const packages = JSON.parse(fs.readFileSync(path.join(root, "Packages/manifest.json"), "utf8")).dependencies;
+const projectVersions = resolveProjectVersions(root);
 const repositoryCommit = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
-if (!projectVersion) throw new Error("Unity version is missing from ProjectSettings/ProjectVersion.txt");
 if (!/^[0-9a-f]{40}$/.test(repositoryCommit)) throw new Error("repository HEAD is not an exact Git commit");
 if (!spec.license?.name || !spec.license?.provenance || !spec.license?.status) {
   throw new Error("canonical spec must declare license.name, license.provenance, and license.status");
@@ -23,12 +22,15 @@ if (!spec.license?.name || !spec.license?.provenance || !spec.license?.status) {
 
 const manifest = {
   $schema: "config/astra-toolchain-manifest.schema.json",
-  schema_version: 1,
+  schema_version: 2,
   kind: "astra_toolchain_manifest",
   source: {
     canonical_spec: request.source.canonical_spec,
     canonical_spec_sha256: request.source.sha256,
     repository_commit: repositoryCommit
+  },
+  generation: {
+    deterministic_seed: request.constraints.deterministic_seed
   },
   provenance: {
     generated_with: "gpt-6-astra",
@@ -57,8 +59,18 @@ const manifest = {
       exact_revision: null
     },
     {
+      name: "Blender",
+      version: projectVersions.blender,
+      role: "procedural_modeling",
+      control_mode: "code",
+      tier: "P0",
+      source: "Taskfile.yml",
+      license: "GPL-3.0-or-later",
+      exact_revision: null
+    },
+    {
       name: "Unity",
-      version: projectVersion,
+      version: projectVersions.unity,
       role: "production_runtime_verification",
       control_mode: "code",
       tier: "P0",
@@ -68,7 +80,7 @@ const manifest = {
     },
     {
       name: "VRChat SDK Worlds",
-      version: packages["com.vrchat.worlds"] ?? "UNVERIFIED",
+      version: projectVersions.vrchat_sdk,
       role: "vrchat_world_validation",
       control_mode: "code",
       tier: "P0",
