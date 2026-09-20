@@ -1,0 +1,17 @@
+name: Evidence ladder
+on:
+  pull_request:
+    paths:
+      - 'config/evidence-ladder.json'
+      - 'scripts/verify-evidence-ladder.mjs'
+      - '.github/workflows/evidence-ladder.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/verify-evidence-ladder.mjs
