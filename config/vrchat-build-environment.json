@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "production": {
+    "unity_version_source": "ProjectSettings/ProjectVersion.txt",
+    "toolchain_policy": "config/vrchat-toolchain.json",
+    "package_manifest": "Packages/manifest.json",
+    "vpm_lock": "Packages/vpm-manifest.json",
+    "dependency_resolution": "node scripts/verify-vpm.mjs",
+    "compile_and_sdk_validation": "node scripts/run-perspective-cage-unity.mjs"
+  },
+  "evidence": {
+    "vpm": ".artifacts/vpm-u1.json",
+    "ci_artifact": "vrchat-build-environment-u1"
+  },
+  "future_rnd": {
+    "unity_6_allowed_in_production": false,
+    "production_version_must_match_toolchain_policy": true
+  }
+}
