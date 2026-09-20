@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "default_production_tier": "P0",
   "one_responsibility_one_authority": true,
   "control_priority": [
@@ -9,6 +9,39 @@
     "unity_batchmode",
     "cua"
   ],
+  "backend_selection": {
+    "default": "blender_bpy",
+    "rules": [
+      {
+        "backend": "blender_bpy",
+        "tier": "P0",
+        "use_when": ["direct_mesh", "uv", "rig", "one_off_procedural_asset", "validation_repair"],
+        "authority": "git_managed_source"
+      },
+      {
+        "backend": "geometry_nodes",
+        "tier": "P0",
+        "use_when": ["repeated_structure", "parameterized_family", "architecture", "vegetation", "layout"],
+        "authority": "git_managed_node_graph_and_parameters"
+      },
+      {
+        "backend": "blender_mcp",
+        "tier": "P1",
+        "use_when": ["interactive_editor_operation_not_exposed_by_existing_code_path"],
+        "authority": "generated_artifact_and_canonical_verifier",
+        "requires": ["manifest_declaration", "additional_validator"]
+      },
+      {
+        "backend": "external_generator",
+        "tier": "P1",
+        "use_when": ["reference_to_mesh_requires_learned_generation"],
+        "authority": "common_external_mesh_contract",
+        "requires": ["raw_artifact_preserved", "source_url", "license", "exact_revision", "canonical_verifier"]
+      }
+    ],
+    "tie_breaker": ["P0", "code", "deterministic", "lowest_tool_count"],
+    "benchmark_issue": 431
+  },
   "tiers": {
     "P0": {
       "production_eligible": true,

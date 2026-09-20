@@ -37,6 +37,20 @@ assert.equal(first.tools.find((tool) => tool.name === "VRChat SDK Worlds")?.vers
 assert.deepEqual(Object.values(first.runtime).map((stage) => stage.status), Array(5).fill("UNVERIFIED"));
 assert.equal(assertProductionEligible(first, policy).status, "PASS");
 
+assert.equal(policy.schema_version, 2);
+assert.equal(policy.backend_selection.default, "blender_bpy");
+assert.equal(policy.backend_selection.benchmark_issue, 431);
+const backends = Object.fromEntries(policy.backend_selection.rules.map((rule) => [rule.backend, rule]));
+assert.equal(backends.blender_bpy.tier, "P0");
+assert.equal(backends.geometry_nodes.tier, "P0");
+assert.equal(backends.blender_mcp.tier, "P1");
+assert.equal(backends.external_generator.tier, "P1");
+assert.equal(backends.external_generator.authority, "common_external_mesh_contract");
+for (const requirement of ["raw_artifact_preserved", "source_url", "license", "exact_revision", "canonical_verifier"]) {
+  assert.ok(backends.external_generator.requires.includes(requirement), `external generator must require ${requirement}`);
+}
+assert.deepEqual(policy.backend_selection.tie_breaker, ["P0", "code", "deterministic", "lowest_tool_count"]);
+
 const p1 = structuredClone(first);
 p1.policy.tier = "P1";
 p1.tools.push({
