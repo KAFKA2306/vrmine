@@ -4,10 +4,10 @@
   "title": "VRMine Astra Toolchain Manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["$schema", "schema_version", "kind", "source", "provenance", "policy", "tools", "runtime"],
+  "required": ["$schema", "schema_version", "kind", "source", "generation", "provenance", "policy", "tools", "runtime"],
   "properties": {
     "$schema": { "const": "config/astra-toolchain-manifest.schema.json" },
-    "schema_version": { "const": 1 },
+    "schema_version": { "const": 2 },
     "kind": { "const": "astra_toolchain_manifest" },
     "source": {
       "type": "object",
@@ -17,6 +17,14 @@
         "canonical_spec": { "type": "string", "pattern": "^config/world-items/.+\\.json$" },
         "canonical_spec_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
         "repository_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+      }
+    },
+    "generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deterministic_seed"],
+      "properties": {
+        "deterministic_seed": { "type": "integer", "minimum": 0, "maximum": 4294967295 }
       }
     },
     "provenance": {
