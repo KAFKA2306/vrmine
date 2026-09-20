@@ -13,6 +13,7 @@ public static class WoodlandTabletopVillageSceneBuilder
     const string SpecPath = "config/world-design/generated/woodland-tabletop-village-v0.json";
     const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/WoodlandTabletopVillage.unity";
     const string MaterialFolder = "Assets/KafkaMade/VRMine/Materials/WoodlandTabletopVillage";
+    const string TextureFolder = "Assets/KafkaMade/VRMine/Textures/WoodlandTabletopVillage";
 
     [Serializable] class WorldSpec { public Spatial spatial_geometry; public RuntimeBudget runtime_budget; public WorldBuild world_build; public Atmosphere atmosphere; public Blockout blockout; }
     [Serializable] class Spatial { public float overall_width_m; public float overall_depth_m; public Zone[] zones; }
@@ -50,26 +51,33 @@ public static class WoodlandTabletopVillageSceneBuilder
         Material moss = Mat("Moss", new Color(0.20f, 0.30f, 0.18f), 0.98f);
         Material path = Mat("Path", new Color(0.38f, 0.29f, 0.19f), 0.98f);
         Material paper = Mat("Paper", new Color(0.78f, 0.68f, 0.48f), 0.98f);
-        SoftEmission(wood, 0.34f);
-        SoftEmission(forest, 0.26f);
-        SoftEmission(forestLight, 0.36f);
-        SoftEmission(cream, 0.18f);
-        SoftEmission(roof, 0.20f);
-        SoftEmission(stone, 0.14f);
-        SoftEmission(water, 0.16f);
-        SoftEmission(moss, 0.24f);
-        SoftEmission(path, 0.14f);
-        SoftEmission(paper, 0.10f);
+        Material mossWood = Mat("MossWoodAccent", new Color(0.52f, 0.42f, 0.26f), 0.92f);
+        ApplySurface(wood, "WoodTable/WoodTable_Diffuse_2K.jpg", "WoodTable/WoodTable_Normal_2K.jpg", "WoodTable/WoodTable_AO_2K.jpg", new Vector2(0.72f, 0.72f), new Color(0.90f, 0.76f, 0.58f), 0.26f);
+        ApplySurface(stone, "MossyRock/MossyRock_Diffuse_2K.jpg", "MossyRock/MossyRock_Normal_2K.jpg", "MossyRock/MossyRock_AO_2K.jpg", new Vector2(0.68f, 0.68f), new Color(0.70f, 0.72f, 0.66f), 0.28f);
+        ApplySurface(path, "ForestGround/ForestGround_Diffuse_2K.jpg", "ForestGround/ForestGround_Normal_2K.jpg", "ForestGround/ForestGround_AO_2K.jpg", new Vector2(0.56f, 0.56f), new Color(0.76f, 0.62f, 0.44f), 0.24f);
+        ApplySurface(mossWood, "MossWood/MossWood_Diffuse_2K.jpg", "MossWood/MossWood_Normal_2K.jpg", "MossWood/MossWood_AO_2K.jpg", new Vector2(0.72f, 0.72f), new Color(0.78f, 0.68f, 0.50f), 0.30f);
+        SoftEmission(wood, 0.26f);
+        SoftEmission(forest, 0.50f);
+        SoftEmission(forestLight, 0.66f);
+        SoftEmission(cream, 0.34f);
+        SoftEmission(roof, 0.40f);
+        SoftEmission(stone, 0.15f);
+        SoftEmission(water, 0.34f);
+        SoftEmission(moss, 0.42f);
+        SoftEmission(path, 0.12f);
+        SoftEmission(paper, 0.28f);
+        SoftEmission(mossWood, 0.10f);
 
         Room(root, spec, wall, wood);
         ForestBoundary(root, spec, wood, forest, forestLight, moss);
-        Tabletop(root, spec, wood, forest, forestLight, cream, roof, lamp, stone, water, moss, path, paper);
+        Tabletop(root, spec, wood, mossWood, forest, forestLight, cream, roof, lamp, stone, water, moss, path, paper);
         Seats(root, spec, wood, cream);
         ReadingNook(root, spec, wood, cream, lamp);
         Lighting(root);
         Descriptor(root, spec);
         EditorSceneManager.SaveScene(scene, ScenePath);
         ConfigureBakedLighting();
+        Lightmapping.Clear();
         if (!Lightmapping.Bake()) throw new InvalidOperationException("Woodland Tabletop Village lighting bake failed");
         EditorSceneManager.SaveScene(scene);
         AddScene(ScenePath);
@@ -153,7 +161,7 @@ public static class WoodlandTabletopVillageSceneBuilder
         VisualSphere("CanopyHigh", new Vector3(scale * 0.14f, scale * 1.28f, scale * 0.02f), new Vector3(scale * 0.52f, scale * 0.38f, scale * 0.55f), forestLight, tree);
     }
 
-    static void Tabletop(Transform parent, WorldSpec s, Material wood, Material forest, Material forestLight, Material cream, Material roof, Material lamp, Material stone, Material water, Material moss, Material path, Material paper)
+    static void Tabletop(Transform parent, WorldSpec s, Material wood, Material mossWood, Material forest, Material forestLight, Material cream, Material roof, Material lamp, Material stone, Material water, Material moss, Material path, Material paper)
     {
         Zone z = s.spatial_geometry.zones.FirstOrDefault(x => x.zone_id == "woodland_tabletop");
         if (z == null) throw new InvalidDataException("woodland_tabletop zone is required");
@@ -163,6 +171,7 @@ public static class WoodlandTabletopVillageSceneBuilder
         Cylinder("DioramaPedestal", new Vector3(0, centerY * 0.48f, 0), 0.72f, centerY * 0.92f, wood, table);
         Transform polish = Empty("VisualPolish", table);
         GroundDetails(polish, z.tabletop_height_m, stone, moss, path);
+        WoodlandAccents(polish, z.tabletop_height_m, wood, mossWood, forest, forestLight, cream, roof, stone, moss, lamp, paper, path, water);
         Transform village = Empty("VillageBlockout", table);
         foreach (Anchor a in s.blockout.anchors)
         {
@@ -216,6 +225,233 @@ public static class WoodlandTabletopVillageSceneBuilder
                 new Vector3(Mathf.Cos(angle) * radius, tabletopHeight + 0.02f, Mathf.Sin(angle) * radius),
                 new Vector3(0.16f, 0.035f, 0.10f), moss, mossRoot);
         }
+    }
+
+    static void WoodlandAccents(Transform parent, float tabletopHeight, Material wood, Material mossWood, Material forest, Material forestLight, Material cream, Material roof, Material stone, Material moss, Material lamp, Material paper, Material path, Material water)
+    {
+        Transform accents = Empty("WoodlandAccents", parent);
+
+        FernCluster(accents, "Fern_LeftRear", new Vector3(-0.96f, tabletopHeight + 0.025f, 0.58f), 0.95f, forestLight);
+        FernCluster(accents, "Fern_RightRear", new Vector3(0.94f, tabletopHeight + 0.025f, 0.70f), 0.86f, forest);
+        FernCluster(accents, "Fern_LeftFront", new Vector3(-0.98f, tabletopHeight + 0.025f, -0.62f), 0.74f, forest);
+        FernCluster(accents, "Fern_RightFront", new Vector3(0.92f, tabletopHeight + 0.025f, -0.76f), 0.68f, forestLight);
+
+        MushroomCluster(accents, "MushroomPatch_A", new Vector3(-0.38f, tabletopHeight + 0.02f, 0.38f), 0.90f, roof, cream);
+        MushroomCluster(accents, "MushroomPatch_B", new Vector3(0.46f, tabletopHeight + 0.02f, 0.88f), 0.72f, roof, cream);
+        MushroomCluster(accents, "MushroomPatch_C", new Vector3(0.96f, tabletopHeight + 0.02f, -0.18f), 0.60f, roof, cream);
+
+        Transform reeds = Empty("StreamReeds", accents);
+        float[] reedX = { -0.62f, -0.26f, 0.28f, 0.62f };
+        for (int i = 0; i < reedX.Length; i++)
+        {
+            Vector3 near = new Vector3(reedX[i], tabletopHeight + 0.025f, 0.59f + (i % 2) * 0.03f);
+            Vector3 far = new Vector3(reedX[i] + 0.04f, tabletopHeight + 0.025f, 0.86f - (i % 2) * 0.03f);
+            ReedCluster(reeds, "ReedNear_" + i, near, forestLight);
+            ReedCluster(reeds, "ReedFar_" + i, far, forest);
+        }
+
+        Transform fallenLog = Empty("FallenLog", accents);
+        fallenLog.position = new Vector3(-0.64f, tabletopHeight + 0.105f, 0.96f);
+         GameObject log = VisualCylinder("Log", Vector3.zero, 0.14f, 0.56f, mossWood, fallenLog);
+        log.transform.localRotation = Quaternion.Euler(0, 0, 90);
+        VisualSphere("LogMoss", new Vector3(0.18f, 0.08f, 0), new Vector3(0.16f, 0.035f, 0.09f), moss, fallenLog);
+
+        Transform stump = Empty("MossyStump", accents);
+        stump.position = new Vector3(-0.92f, tabletopHeight + 0.075f, 0.16f);
+         VisualCylinder("StumpWood", Vector3.zero, 0.18f, 0.15f, mossWood, stump);
+        VisualSphere("StumpMoss", new Vector3(0, 0.09f, 0), new Vector3(0.10f, 0.025f, 0.10f), moss, stump);
+
+        Transform flowers = Empty("WildflowerPatch", accents);
+        FlowerStem(flowers, "Flower_A", new Vector3(0.96f, tabletopHeight + 0.04f, -0.34f), 0.11f, forestLight, lamp);
+        FlowerStem(flowers, "Flower_B", new Vector3(1.02f, tabletopHeight + 0.04f, -0.44f), 0.09f, forest, roof);
+        FlowerStem(flowers, "Flower_C", new Vector3(0.88f, tabletopHeight + 0.04f, -0.40f), 0.08f, forestLight, cream);
+
+        VillageStoryTraces(accents, tabletopHeight, wood, cream, roof, paper, stone, lamp);
+        EnvironmentReadability(accents, tabletopHeight, wood, paper, stone, moss, path, water, forestLight);
+        ExhibitionPolish(accents, tabletopHeight, wood, stone, roof, cream, forestLight);
+    }
+
+    static void VillageStoryTraces(Transform parent, float tabletopHeight, Material wood, Material cream, Material roof, Material paper, Material stone, Material lamp)
+    {
+        Transform traces = Empty("VillageStoryTraces", parent);
+
+        Transform book = Empty("OpenBook", traces);
+        book.position = new Vector3(-0.70f, tabletopHeight + 0.18f, -0.40f);
+        GameObject leftPage = VisualCube("LeftPage", new Vector3(-0.045f, 0.015f, 0), new Vector3(0.085f, 0.018f, 0.12f), paper, book);
+        GameObject rightPage = VisualCube("RightPage", new Vector3(0.045f, 0.015f, 0), new Vector3(0.085f, 0.018f, 0.12f), paper, book);
+        leftPage.transform.localRotation = Quaternion.Euler(0, 0, -6f);
+        rightPage.transform.localRotation = Quaternion.Euler(0, 0, 6f);
+        VisualCube("BookSpine", new Vector3(0, 0, 0), new Vector3(0.025f, 0.012f, 0.12f), wood, book);
+
+        Transform mug = Empty("HalfFinishedMug", traces);
+        mug.position = new Vector3(-0.42f, tabletopHeight + 0.16f, -0.04f);
+        VisualCylinder("Cup", new Vector3(0, 0.035f, 0), 0.07f, 0.07f, cream, mug);
+        VisualSphere("Tea", new Vector3(0, 0.073f, 0), new Vector3(0.045f, 0.008f, 0.045f), lamp, mug);
+
+        Transform rack = Empty("DryingRack", traces);
+        rack.position = new Vector3(0.96f, tabletopHeight + 0.08f, 0.22f);
+        VisualCube("PostLeft", new Vector3(-0.14f, 0.15f, 0), new Vector3(0.025f, 0.30f, 0.025f), wood, rack);
+        VisualCube("PostRight", new Vector3(0.14f, 0.15f, 0), new Vector3(0.025f, 0.30f, 0.025f), wood, rack);
+        VisualCube("Rail", new Vector3(0, 0.27f, 0), new Vector3(0.31f, 0.025f, 0.025f), wood, rack);
+        VisualCube("DryingCloth", new Vector3(0.02f, 0.16f, -0.01f), new Vector3(0.18f, 0.16f, 0.012f), paper, rack);
+
+        Transform birdhouse = Empty("Birdhouse", traces);
+        birdhouse.position = new Vector3(0.10f, tabletopHeight + 0.72f, 0.18f);
+        VisualCube("Body", new Vector3(0, 0, 0), new Vector3(0.12f, 0.14f, 0.12f), wood, birdhouse);
+        GameObject roofA = VisualCube("RoofA", new Vector3(-0.028f, 0.085f, 0), new Vector3(0.09f, 0.025f, 0.15f), roof, birdhouse);
+        GameObject roofB = VisualCube("RoofB", new Vector3(0.028f, 0.085f, 0), new Vector3(0.09f, 0.025f, 0.15f), roof, birdhouse);
+        roofA.transform.localRotation = Quaternion.Euler(0, 0, 28f);
+        roofB.transform.localRotation = Quaternion.Euler(0, 0, -28f);
+        VisualSphere("Entrance", new Vector3(0, 0.01f, -0.064f), Vector3.one * 0.022f, lamp, birdhouse);
+
+        Transform toolbox = Empty("SmallToolbox", traces);
+        toolbox.position = new Vector3(-0.42f, tabletopHeight + 0.095f, 0.44f);
+        VisualCube("Box", new Vector3(0, 0.05f, 0), new Vector3(0.18f, 0.10f, 0.12f), wood, toolbox);
+        VisualCube("Lid", new Vector3(0, 0.11f, 0), new Vector3(0.19f, 0.025f, 0.13f), roof, toolbox);
+        VisualCube("Handle", new Vector3(0, 0.15f, 0), new Vector3(0.07f, 0.045f, 0.025f), wood, toolbox);
+
+        Transform pebbles = Empty("StreamPebbles", traces);
+        float[] pebbleX = { -0.68f, -0.42f, -0.10f, 0.22f, 0.52f, 0.74f };
+        for (int i = 0; i < pebbleX.Length; i++)
+        {
+            float z = 0.59f + (i % 2) * 0.28f;
+            VisualSphere("Pebble_" + i, new Vector3(pebbleX[i], tabletopHeight + 0.055f, z), new Vector3(0.075f, 0.045f, 0.055f), stone, pebbles);
+        }
+    }
+
+    static void EnvironmentReadability(Transform parent, float tabletopHeight, Material wood, Material paper, Material stone, Material moss, Material path, Material water, Material forestLight)
+    {
+        Transform readability = Empty("EnvironmentReadability", parent);
+
+        Transform sign = Empty("BridgeSignpost", readability);
+        sign.position = new Vector3(-0.64f, tabletopHeight + 0.06f, -0.94f);
+        VisualCylinder("Post", new Vector3(0, 0.12f, 0), 0.025f, 0.24f, wood, sign);
+        VisualCube("Board", new Vector3(0, 0.27f, 0), new Vector3(0.18f, 0.075f, 0.020f), paper, sign);
+        GameObject arrow = VisualCube("Arrow", new Vector3(0.02f, 0.27f, -0.014f), new Vector3(0.07f, 0.018f, 0.010f), path, sign);
+        arrow.transform.localRotation = Quaternion.Euler(0, 0, -8f);
+
+        Transform boulders = Empty("MossyBoulders", readability);
+        Vector3[] boulderPositions =
+        {
+            new Vector3(-0.92f, tabletopHeight + 0.08f, 0.72f),
+            new Vector3(0.88f, tabletopHeight + 0.07f, 0.72f),
+            new Vector3(-0.76f, tabletopHeight + 0.07f, 0.88f),
+            new Vector3(0.72f, tabletopHeight + 0.06f, 0.57f)
+        };
+        for (int i = 0; i < boulderPositions.Length; i++)
+        {
+            float scale = 0.12f + (i % 2) * 0.025f;
+            VisualSphere("Boulder_" + i, boulderPositions[i], new Vector3(scale, scale * 0.72f, scale * 0.85f), stone, boulders);
+            VisualSphere("BoulderMoss_" + i, boulderPositions[i] + Vector3.up * scale * 0.42f, new Vector3(scale * 0.55f, scale * 0.13f, scale * 0.48f), moss, boulders);
+        }
+
+        Transform leaves = Empty("LeafLitter", readability);
+        Vector3[] leafPositions =
+        {
+            new Vector3(-0.34f, tabletopHeight + 0.055f, -0.96f),
+            new Vector3(0.18f, tabletopHeight + 0.055f, -0.76f),
+            new Vector3(0.42f, tabletopHeight + 0.055f, -0.92f),
+            new Vector3(-0.56f, tabletopHeight + 0.055f, -0.62f),
+            new Vector3(0.68f, tabletopHeight + 0.055f, -0.58f),
+            new Vector3(-0.82f, tabletopHeight + 0.055f, -0.28f)
+        };
+        for (int i = 0; i < leafPositions.Length; i++)
+        {
+            GameObject leaf = VisualCube("Leaf_" + i, leafPositions[i], new Vector3(0.10f, 0.012f, 0.045f), i % 2 == 0 ? path : forestLight, leaves);
+            leaf.transform.localRotation = Quaternion.Euler(0, -18f + i * 23f, 0);
+        }
+
+        Transform ripples = Empty("StreamRipples", readability);
+        for (int i = 0; i < 3; i++)
+        {
+            GameObject ripple = VisualCube("Ripple_" + i, new Vector3(-0.42f + i * 0.42f, tabletopHeight + 0.021f, 0.72f), new Vector3(0.18f, 0.004f, 0.018f), water, ripples);
+            ripple.transform.localRotation = Quaternion.Euler(0, i % 2 == 0 ? -8f : 8f, 0);
+        }
+
+        Transform pot = Empty("ClayPot", readability);
+        pot.position = new Vector3(-0.92f, tabletopHeight + 0.04f, 0.18f);
+        VisualCylinder("Pot", new Vector3(0, 0.04f, 0), 0.11f, 0.08f, path, pot);
+        VisualSphere("Plant", new Vector3(0, 0.13f, 0), new Vector3(0.08f, 0.10f, 0.08f), forestLight, pot);
+    }
+
+    static void ExhibitionPolish(Transform parent, float tabletopHeight, Material wood, Material stone, Material roof, Material cream, Material forestLight)
+    {
+        Transform polish = Empty("ExhibitionPolish", parent);
+
+        Transform plaza = Empty("PlazaStoneRing", polish);
+        for (int i = 0; i < 8; i++)
+        {
+            float angle = Mathf.PI * 2f * i / 8f;
+            VisualCylinder("PlazaStone_" + i,
+                new Vector3(Mathf.Cos(angle) * 0.50f, tabletopHeight + 0.055f, Mathf.Sin(angle) * 0.50f),
+                0.085f, 0.035f, stone, plaza);
+        }
+
+        Transform bunting = Empty("FestivalBunting", polish);
+        for (int i = 0; i < 7; i++)
+        {
+            float t = i / 6f;
+            Vector3 position = Vector3.Lerp(
+                new Vector3(0.26f, tabletopHeight + 0.49f, -0.64f),
+                new Vector3(1.08f, tabletopHeight + 0.49f, -0.64f), t);
+            Material flagMaterial = i % 3 == 0 ? roof : (i % 3 == 1 ? cream : forestLight);
+            GameObject flag = VisualCube("Pennant_" + i, position, new Vector3(0.065f, 0.075f, 0.012f), flagMaterial, bunting);
+            flag.transform.localRotation = Quaternion.Euler(0, 0, i % 2 == 0 ? -10f : 10f);
+        }
+        VisualCube("BuntingCord", new Vector3(0.67f, tabletopHeight + 0.54f, -0.64f), new Vector3(0.42f, 0.012f, 0.012f), wood, bunting);
+
+        Transform warmPatches = Empty("WarmSunPatches", polish);
+        VisualSphere("SunPatch_A", new Vector3(-0.30f, tabletopHeight + 0.041f, -0.16f), new Vector3(0.18f, 0.012f, 0.11f), cream, warmPatches);
+        VisualSphere("SunPatch_B", new Vector3(0.33f, tabletopHeight + 0.041f, -0.05f), new Vector3(0.14f, 0.012f, 0.09f), cream, warmPatches);
+        VisualSphere("SunPatch_C", new Vector3(0.08f, tabletopHeight + 0.041f, 0.42f), new Vector3(0.12f, 0.012f, 0.08f), cream, warmPatches);
+    }
+
+    static void FernCluster(Transform parent, string name, Vector3 position, float scale, Material leaf)
+    {
+        Transform fern = Empty(name, parent);
+        fern.position = position;
+        for (int i = 0; i < 3; i++)
+        {
+            float offset = (i - 1) * 0.035f * scale;
+            GameObject blade = VisualCube("Blade_" + i, new Vector3(offset, 0.09f * scale, 0), new Vector3(0.025f * scale, 0.18f * scale, 0.06f * scale), leaf, fern);
+            blade.transform.localRotation = Quaternion.Euler(0, (i - 1) * 22f, (i - 1) * -18f);
+        }
+    }
+
+    static void MushroomCluster(Transform parent, string name, Vector3 position, float scale, Material cap, Material stem)
+    {
+        Transform patch = Empty(name, parent);
+        patch.position = position;
+        Mushroom(patch, "Mushroom_0", new Vector3(-0.06f * scale, 0, 0), scale * 0.72f, cap, stem);
+        Mushroom(patch, "Mushroom_1", new Vector3(0.08f * scale, 0, 0.04f * scale), scale * 0.46f, cap, stem);
+        Mushroom(patch, "Mushroom_2", new Vector3(0.02f * scale, 0, -0.08f * scale), scale * 0.34f, cap, stem);
+    }
+
+    static void Mushroom(Transform parent, string name, Vector3 position, float scale, Material cap, Material stem)
+    {
+        Transform mushroom = Empty(name, parent);
+        mushroom.localPosition = position;
+        VisualCylinder("Stem", new Vector3(0, scale * 0.08f, 0), scale * 0.10f, scale * 0.16f, stem, mushroom);
+        VisualSphere("Cap", new Vector3(0, scale * 0.19f, 0), new Vector3(scale * 0.25f, scale * 0.13f, scale * 0.25f), cap, mushroom);
+    }
+
+    static void ReedCluster(Transform parent, string name, Vector3 position, Material leaf)
+    {
+        Transform reeds = Empty(name, parent);
+        reeds.position = position;
+        for (int i = 0; i < 3; i++)
+        {
+            GameObject blade = VisualCube("Blade_" + i, new Vector3((i - 1) * 0.025f, 0.075f, 0), new Vector3(0.018f, 0.15f, 0.035f), leaf, reeds);
+            blade.transform.localRotation = Quaternion.Euler(0, (i - 1) * 18f, (i - 1) * -13f);
+        }
+    }
+
+    static void FlowerStem(Transform parent, string name, Vector3 position, float size, Material stem, Material flower)
+    {
+        Transform plant = Empty(name, parent);
+        plant.position = position;
+        VisualCylinder("Stem", new Vector3(0, size * 0.42f, 0), size * 0.035f, size * 0.84f, stem, plant);
+        VisualSphere("Bloom", new Vector3(0, size * 0.88f, 0), Vector3.one * size * 0.16f, flower, plant);
     }
 
     static void PhotoSpots(Transform parent, float tabletopHeight, Material stone, Material moss, Material lamp)
@@ -320,7 +556,15 @@ public static class WoodlandTabletopVillageSceneBuilder
         ra.transform.localRotation = Quaternion.Euler(0, 0, 28); rb.transform.localRotation = Quaternion.Euler(0, 0, -28);
         Cube("Door", new Vector3(0, bh * 0.32f, -d * 0.51f), new Vector3(w * 0.20f, bh * 0.52f, 0.025f), wood, r);
         Cube("WarmWindow", new Vector3(w * 0.27f, bh * 0.55f, -d * 0.515f), new Vector3(w * 0.18f, bh * 0.22f, 0.02f), lamp, r);
+        float windowY = bh * 0.55f;
+        float windowW = w * 0.18f;
+        float windowH = bh * 0.22f;
+        Cube("WindowFrameTop", new Vector3(w * 0.27f, windowY + windowH * 0.60f, -d * 0.53f), new Vector3(windowW + 0.035f, 0.025f, 0.025f), wood, r);
+        Cube("WindowFrameBottom", new Vector3(w * 0.27f, windowY - windowH * 0.60f, -d * 0.53f), new Vector3(windowW + 0.035f, 0.025f, 0.025f), wood, r);
+        Cube("WindowFrameLeft", new Vector3(w * 0.27f - windowW * 0.60f, windowY, -d * 0.53f), new Vector3(0.025f, windowH + 0.035f, 0.025f), wood, r);
+        Cube("WindowFrameRight", new Vector3(w * 0.27f + windowW * 0.60f, windowY, -d * 0.53f), new Vector3(0.025f, windowH + 0.035f, 0.025f), wood, r);
         Cube("WindowShutter", new Vector3(w * 0.08f, bh * 0.55f, -d * 0.525f), new Vector3(w * 0.05f, bh * 0.26f, 0.03f), wood, r);
+        Cube("DoorLintel", new Vector3(0, bh * 0.61f, -d * 0.53f), new Vector3(w * 0.24f, 0.03f, 0.025f), wood, r);
         Cube("Doorstep", new Vector3(0, 0.035f, -d * 0.56f), new Vector3(w * 0.30f, 0.06f, 0.11f), stone, r);
         Cube("FlowerBox", new Vector3(-w * 0.24f, bh * 0.35f, -d * 0.54f), new Vector3(w * 0.22f, 0.05f, 0.07f), wood, r);
         Sphere("Planter", new Vector3(-w * 0.24f, bh * 0.43f, -d * 0.55f), new Vector3(w * 0.14f, 0.07f, 0.06f), moss, r);
@@ -387,16 +631,16 @@ public static class WoodlandTabletopVillageSceneBuilder
     static void Lighting(Transform parent)
     {
         GameObject go = new GameObject("BakedSun"); go.transform.SetParent(parent, false); go.transform.rotation = Quaternion.Euler(38, -32, 0);
-        Light l = go.AddComponent<Light>(); l.type = LightType.Directional; l.color = new Color(1, 0.78f, 0.58f); l.intensity = 1.80f; l.shadows = LightShadows.Soft; l.lightmapBakeType = LightmapBakeType.Baked;
+        Light l = go.AddComponent<Light>(); l.type = LightType.Directional; l.color = new Color(1, 0.84f, 0.68f); l.intensity = 2.90f; l.shadows = LightShadows.Soft; l.lightmapBakeType = LightmapBakeType.Baked;
         RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
-        RenderSettings.ambientSkyColor = new Color(0.42f, 0.50f, 0.46f); RenderSettings.ambientEquatorColor = new Color(0.24f, 0.30f, 0.26f); RenderSettings.ambientGroundColor = new Color(0.13f, 0.11f, 0.08f);
-        RenderSettings.ambientIntensity = 1.30f;
+        RenderSettings.ambientSkyColor = new Color(0.58f, 0.67f, 0.63f); RenderSettings.ambientEquatorColor = new Color(0.42f, 0.48f, 0.42f); RenderSettings.ambientGroundColor = new Color(0.24f, 0.20f, 0.14f);
+        RenderSettings.ambientIntensity = 2.10f;
         Material sky = SkyMaterial();
         RenderSettings.skybox = sky;
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.ExponentialSquared;
-        RenderSettings.fogColor = new Color(0.30f, 0.40f, 0.35f);
-        RenderSettings.fogDensity = 0.006f;
+        RenderSettings.fogColor = new Color(0.34f, 0.44f, 0.39f);
+        RenderSettings.fogDensity = 0.004f;
         RenderSettings.sun = l;
         CreateLightProbes(parent);
         DynamicGI.UpdateEnvironment();
@@ -426,6 +670,16 @@ public static class WoodlandTabletopVillageSceneBuilder
         settings.autoGenerate = false;
         settings.bakedGI = true;
         settings.realtimeGI = false;
+        settings.lightmapResolution = 16f;
+        settings.lightmapMaxSize = 1024;
+        settings.lightmapPadding = 2;
+        settings.indirectResolution = 1f;
+        settings.directSampleCount = 32;
+        settings.indirectSampleCount = 64;
+        settings.environmentSampleCount = 32;
+        settings.maxBounces = 2;
+        settings.maxBounces = 2;
+        settings.prioritizeView = false;
         EditorUtility.SetDirty(settings);
     }
 
@@ -451,8 +705,8 @@ public static class WoodlandTabletopVillageSceneBuilder
     {
         GameObject world = new GameObject("VRCWorld"); world.transform.SetParent(parent, false); VRCSceneDescriptor d = world.AddComponent<VRCSceneDescriptor>(); world.AddComponent<PipelineManager>();
         Transform spawn = Empty("SpawnPoint", parent); spawn.position = Pos(s.world_build.spawn.position_m) + Vector3.up * 0.02f; spawn.rotation = Quaternion.Euler(0, s.world_build.spawn.facing_deg, 0); d.spawns = new[] { spawn };
-        GameObject cameraGo = new GameObject("ReferenceCamera"); cameraGo.transform.SetParent(parent, false); cameraGo.transform.position = Pos(s.world_build.hero_view.position_m); Face(cameraGo.transform, Pos(s.world_build.hero_view.target_m));
-        Camera c = cameraGo.AddComponent<Camera>(); c.enabled = false; c.clearFlags = CameraClearFlags.Skybox; c.fieldOfView = 46; c.nearClipPlane = Mathf.Max(0.01f, s.runtime_budget.camera_near_clip_m); d.ReferenceCamera = cameraGo;
+        GameObject cameraGo = new GameObject("ReferenceCamera"); cameraGo.transform.SetParent(parent, false); Vector3 cameraPosition = Pos(s.world_build.hero_view.position_m); cameraPosition.z += 0.30f; cameraGo.transform.position = cameraPosition; Vector3 cameraTarget = Pos(s.world_build.hero_view.target_m); cameraTarget.y -= 0.22f; cameraGo.transform.LookAt(cameraTarget, Vector3.up);
+        Camera c = cameraGo.AddComponent<Camera>(); c.enabled = false; c.clearFlags = CameraClearFlags.Skybox; c.fieldOfView = 36; c.nearClipPlane = Mathf.Max(0.01f, s.runtime_budget.camera_near_clip_m); d.ReferenceCamera = cameraGo;
     }
 
     static Vector3 Pos(float[] xyz) { if (xyz == null || xyz.Length != 3) throw new InvalidDataException("Expected xyz vector"); return new Vector3(xyz[0], xyz[2], xyz[1]); }
@@ -460,6 +714,7 @@ public static class WoodlandTabletopVillageSceneBuilder
     static GameObject Cube(string n, Vector3 p, Vector3 s, Material m, Transform parent) { GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cube); Setup(g, n, p, s, m, parent); return g; }
     static GameObject Cylinder(string n, Vector3 p, float dia, float h, Material m, Transform parent) { GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cylinder); Setup(g, n, p, new Vector3(dia, h / 2, dia), m, parent); return g; }
     static GameObject Sphere(string n, Vector3 p, Vector3 s, Material m, Transform parent) { GameObject g = GameObject.CreatePrimitive(PrimitiveType.Sphere); Setup(g, n, p, s, m, parent); return g; }
+    static GameObject VisualCube(string n, Vector3 p, Vector3 s, Material m, Transform parent) { GameObject g = Cube(n, p, s, m, parent); DisableCollider(g); return g; }
     static GameObject VisualCylinder(string n, Vector3 p, float dia, float h, Material m, Transform parent) { GameObject g = Cylinder(n, p, dia, h, m, parent); DisableCollider(g); return g; }
     static GameObject VisualSphere(string n, Vector3 p, Vector3 s, Material m, Transform parent) { GameObject g = Sphere(n, p, s, m, parent); DisableCollider(g); return g; }
     static void HideRenderer(GameObject g) { Renderer renderer = g.GetComponent<Renderer>(); if (renderer != null) renderer.enabled = false; }
@@ -476,8 +731,48 @@ public static class WoodlandTabletopVillageSceneBuilder
         string path = MaterialFolder + "/" + name + ".mat"; Material m = AssetDatabase.LoadAssetAtPath<Material>(path); Shader shader = Shader.Find("VRChat/Mobile/Standard Lite") ?? Shader.Find("Standard");
         if (m == null) { m = new Material(shader); AssetDatabase.CreateAsset(m, path); } else if (m.shader != shader) m.shader = shader;
         m.color = color; if (m.HasProperty("_Glossiness")) m.SetFloat("_Glossiness", 1 - roughness);
-        if (emission && m.HasProperty("_EmissionColor")) { m.EnableKeyword("_EMISSION"); m.SetColor("_EmissionColor", color * 1.85f); }
+        if (emission && m.HasProperty("_EmissionColor")) { m.EnableKeyword("_EMISSION"); m.SetColor("_EmissionColor", color * 1.10f); }
         EditorUtility.SetDirty(m); return m;
+    }
+
+    static void ApplySurface(Material material, string diffuseRelativePath, string normalRelativePath, string occlusionRelativePath, Vector2 tiling, Color tint, float bumpScale)
+    {
+        Texture2D diffuse = LoadTexture(diffuseRelativePath, TextureImporterType.Default, true);
+        Texture2D normal = LoadTexture(normalRelativePath, TextureImporterType.NormalMap, false);
+        Texture2D occlusion = LoadTexture(occlusionRelativePath, TextureImporterType.Default, false);
+        if (!material.HasProperty("_MainTex")) throw new InvalidOperationException("Woodland surface shader does not expose _MainTex: " + material.name);
+        material.SetTexture("_MainTex", diffuse);
+        material.SetTextureScale("_MainTex", tiling);
+        material.color = tint;
+        if (material.HasProperty("_BumpMap"))
+        {
+            material.SetTexture("_BumpMap", normal);
+            material.SetFloat("_BumpScale", bumpScale);
+            material.EnableKeyword("_NORMALMAP");
+        }
+        if (material.HasProperty("_OcclusionMap"))
+        {
+            material.SetTexture("_OcclusionMap", occlusion);
+            material.SetFloat("_OcclusionStrength", 0.72f);
+        }
+        EditorUtility.SetDirty(material);
+    }
+
+    static Texture2D LoadTexture(string relativePath, TextureImporterType type, bool srgb)
+    {
+        string path = TextureFolder + "/" + relativePath;
+        TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+        if (importer == null) throw new InvalidOperationException("Woodland texture importer is missing: " + path);
+        bool changed = importer.textureType != type || importer.sRGBTexture != srgb || importer.wrapMode != TextureWrapMode.Repeat || importer.filterMode != FilterMode.Bilinear || importer.anisoLevel != 2;
+        importer.textureType = type;
+        importer.sRGBTexture = srgb;
+        importer.wrapMode = TextureWrapMode.Repeat;
+        importer.filterMode = FilterMode.Bilinear;
+        importer.anisoLevel = 2;
+        if (changed) importer.SaveAndReimport();
+        Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        if (texture == null) throw new InvalidOperationException("Woodland texture could not be loaded: " + path);
+        return texture;
     }
 
     static void SoftEmission(Material material, float strength)

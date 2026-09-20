@@ -16,7 +16,8 @@ Material:
   - _ENABLE_GEOMETRIC_SPECULAR_AA
   - _GLOSSYREFLECTIONS_OFF
   - _SPECULARHIGHLIGHTS_OFF
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _NORMALMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -28,7 +29,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: b1d61191893492c4db8e7c872dcb7145, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -48,33 +49,33 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: c12c60ae933bd4946a29970fee34bf06, type: 3}
+        m_Scale: {x: 0.56, y: 0.56}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 3a8341a4d77b81e478167dd1a90b6293, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _Bicubic: 0
-    - _BumpScale: 1
+    - _BumpScale: 0.24
     - _DetailNormalMapScale: 1
     - _EnableGeometricSpecularAA: 1
     - _Glossiness: 0.01999998
     - _GlossyReflections: 0
     - _LightmapType: 0
     - _Metallic: 1
-    - _OcclusionStrength: 1
+    - _OcclusionStrength: 0.72
     - _SpecularAAScreenSpaceVariance: 0.1
     - _SpecularAAThreshold: 0.2
     - _SpecularHighlights: 0
     - _UVSec: 0
     m_Colors:
-    - _Color: {r: 0.38, g: 0.29, b: 0.19, a: 1}
-    - _EmissionColor: {r: 0.05319999, g: 0.040599994, b: 0.026599996, a: 0.14}
+    - _Color: {r: 0.76, g: 0.62, b: 0.44, a: 1}
+    - _EmissionColor: {r: 0.091199994, g: 0.0744, b: 0.052799996, a: 0.12}
   m_BuildTextureStacks: []
