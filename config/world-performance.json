@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "authority": "measured_profiler_evidence",
+  "metrics": ["cpu_frame_ms", "gpu_frame_ms", "draw_calls", "udon_frame_ms", "physbone_frame_ms", "skinned_meshes", "mirror_frame_ms", "probe_frame_ms", "occlusion_frame_ms", "network_sync_bytes_per_sec", "texture_memory_mb"],
+  "platforms": {
+    "pc": {"cpu_frame_ms_max": 11.1, "gpu_frame_ms_max": 11.1, "texture_memory_mb_max": 1024},
+    "android": {"cpu_frame_ms_max": 13.8, "gpu_frame_ms_max": 13.8, "texture_memory_mb_max": 512}
+  },
+  "baseline": {
+    "scene": "canonical_world",
+    "artifact": "reports/world-performance-baseline.json",
+    "required_samples": 120,
+    "missing_measurement": "UNVERIFIED"
+  },
+  "regression": {
+    "artifact": "reports/world-performance-regression.json",
+    "relative_tolerance": 0.10,
+    "states": ["PASS", "FAIL", "UNVERIFIED"],
+    "require_same_platform": true,
+    "require_exact_revision": true
+  },
+  "bottleneck": {
+    "separate_cpu_gpu": true,
+    "cpu_bound_when_cpu_over_gpu_ratio": 1.10,
+    "gpu_bound_when_gpu_over_cpu_ratio": 1.10
+  }
+}
