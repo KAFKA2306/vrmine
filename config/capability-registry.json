@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "authority": "issue-450",
+  "control_priority": ["deterministic_code", "explicit_api", "mcp", "external_generator", "cua", "manual"],
+  "capabilities": {
+    "procedural_mesh": {
+      "providers": [
+        {
+          "id": "blender_bpy",
+          "tier": "P0",
+          "asset_kinds": ["world_prop", "world_layout"],
+          "platforms": ["pc", "android"],
+          "control_mode": "deterministic_code",
+          "expected_artifacts": ["blend", "glb", "renders", "manifest"],
+          "verifier": "world-build:pilot",
+          "fallback": "geometry_nodes"
+        },
+        {
+          "id": "geometry_nodes",
+          "tier": "P0",
+          "asset_kinds": ["world_prop", "world_layout"],
+          "platforms": ["pc", "android"],
+          "control_mode": "deterministic_code",
+          "expected_artifacts": ["blend", "glb", "renders", "manifest"],
+          "verifier": "geometry-nodes-contract",
+          "fallback": null
+        }
+      ]
+    },
+    "rigged_mesh": {
+      "providers": [
+        {
+          "id": "astra_blender_rigged",
+          "tier": "P0",
+          "asset_kinds": ["rigged_asset", "avatar"],
+          "platforms": ["pc", "android"],
+          "control_mode": "deterministic_code",
+          "expected_artifacts": ["blend", "glb", "renders", "manifest"],
+          "verifier": "astra-rigged:build",
+          "fallback": null
+        }
+      ]
+    }
+  }
+}
