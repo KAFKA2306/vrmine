@@ -32,6 +32,28 @@ test('canonical Pilot B binds GENERATE to the existing reproducible rigged-asset
   assert.deepEqual(command.artifacts, {raw: [canonicalPilotB.glb]});
 });
 
+test('canonical Pilot B binds VALIDATE_STATIC to its independent Blender verifier', () => {
+  const current = state({
+    request: {kind: 'rigged_asset', concept: canonicalPilotB.concept},
+    artifacts: {raw: [canonicalPilotB.glb]}
+  });
+  const command = canonicalProductionAdapters(current).VALIDATE_STATIC({state: current});
+  assert.equal(command.command, 'blender');
+  assert.deepEqual(command.args, [
+    '-b', '--python-exit-code', '1', '--python', 'scripts/verify_astra_rigged_pilot.py', '--', canonicalPilotB.root
+  ]);
+});
+
+test('canonical Pilot B static verifier fails closed without its canonical GLB', () => {
+  for (const raw of [[], ['/tmp/untrusted.glb']]) {
+    const current = state({
+      request: {kind: 'rigged_asset', concept: canonicalPilotB.concept},
+      artifacts: {raw}
+    });
+    assert.equal(canonicalProductionAdapters(current).VALIDATE_STATIC({state: current}), null);
+  }
+});
+
 test('canonical pilot binds VALIDATE_STATIC to the independent Blender verifier', () => {
   const current = state();
   const adapter = canonicalProductionAdapters(current).VALIDATE_STATIC;
