@@ -5,10 +5,20 @@ import { canonicalProductionAdapters, canonicalPilot } from './production-adapte
 function state(overrides = {}) {
   return {
     request: {kind: 'world_prop', concept: 'cyber-alley-tea-nook'},
-    artifacts: {raw: ['.artifacts/world-builds/cyber-alley-tea-nook/cyber-alley-tea-nook.glb']},
+    artifacts: {raw: ['.artifacts/world-builds/cyber-alley-tea-nook/world.glb']},
     ...overrides
   };
 }
+
+test('canonical pilot binds GENERATE to the existing world build factory and declares its GLB', () => {
+  const command = canonicalProductionAdapters(state()).GENERATE;
+  assert.equal(command.command, 'blender');
+  assert.deepEqual(command.args, [
+    '-b', '--python-exit-code', '1', '--python', 'scripts/world_build_factory.py', '--',
+    canonicalPilot.plan, canonicalPilot.root
+  ]);
+  assert.deepEqual(command.artifacts, {raw: [canonicalPilot.glb]});
+});
 
 test('canonical pilot binds VALIDATE_STATIC to the independent Blender verifier', () => {
   const current = state();
