@@ -1,0 +1,42 @@
+name: Production router contract
+
+on:
+  pull_request:
+    paths:
+      - 'config/production-request.schema.json'
+      - 'config/capability-registry.json'
+      - 'scripts/route-production-request.mjs'
+      - 'scripts/production-router.test.mjs'
+      - '.github/workflows/production-router-contract.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'config/production-request.schema.json'
+      - 'config/capability-registry.json'
+      - 'scripts/route-production-request.mjs'
+      - 'scripts/production-router.test.mjs'
+      - '.github/workflows/production-router-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prove exact checkout
+        shell: bash
+        run: |
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+      - name: Syntax check router
+        run: node --check scripts/route-production-request.mjs
+      - name: Run focused router contract
+        run: node --test scripts/production-router.test.mjs
