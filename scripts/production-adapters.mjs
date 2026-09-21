@@ -12,6 +12,9 @@ const PILOT_RENDERS = [
   'view-retreat.png',
   'view-circulation.png'
 ];
+const PILOT_B_CONCEPT = 'astra-pilot-b';
+const PILOT_B_ROOT = '.artifacts/astra-pilot-b';
+const PILOT_B_GLB = `${PILOT_B_ROOT}/pilot-b.glb`;
 
 function conceptOf(state) {
   return state?.request?.concept ?? null;
@@ -22,6 +25,16 @@ function rawArtifact(state) {
 }
 
 export function canonicalProductionAdapters(state) {
+  if (state?.request?.kind === 'rigged_asset' && conceptOf(state) === PILOT_B_CONCEPT) {
+    return {
+      'GENERATE': {
+        command: 'blender',
+        args: ['-b', '--python-exit-code', '1', '--python', 'scripts/build_astra_rigged_pilot.py', '--', PILOT_B_ROOT],
+        artifacts: {raw: [PILOT_B_GLB]}
+      }
+    };
+  }
+
   if (state?.request?.kind !== 'world_prop' || conceptOf(state) !== PILOT_CONCEPT) return {};
 
   return {
@@ -63,4 +76,10 @@ export const canonicalPilot = Object.freeze({
   glb: PILOT_GLB,
   unityEvidence: PILOT_UNITY_EVIDENCE,
   renders: PILOT_RENDERS
+});
+
+export const canonicalPilotB = Object.freeze({
+  concept: PILOT_B_CONCEPT,
+  root: PILOT_B_ROOT,
+  glb: PILOT_B_GLB
 });
