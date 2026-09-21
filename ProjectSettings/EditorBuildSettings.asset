@@ -11,5 +11,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/KafkaMade/VRMine/Scenes/WoodlandTabletopVillage.unity
     guid: 4778b22d8a8a646479b993ac12cbceeb
+  - enabled: 1
+    path: Assets/KafkaMade/VRMine/Scenes/MinooRiverOsaka.unity
+    guid: 085330c19ef4e3d4b9c5d38732fbb1c4
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 19871b7defa8e494b906943abe098a12, type: 2}

@@ -1,0 +1,15 @@
+schema_version: 1
+artifacts:
+  - id: autophotogrammetry/minoo-river-osaka/splat
+    kind: gaussian-splat
+    format: ply
+    storage:
+      type: huggingface-bucket
+      bucket: k4fka/kafka-data-lake
+      path: autophotogrammetry/gaussian-splats/minoo-river-osaka/74a7700aa34d5458376c3cd2f20a7dc2d15edb4b7c500bc3971b734474638dd3.ply
+    size_bytes: 249424370
+    sha256: 74a7700aa34d5458376c3cd2f20a7dc2d15edb4b7c500bc3971b734474638dd3
+    provenance:
+      repository: KAFKA2306/AutoPhotogrammetry
+      revision: 22d6af82c155db3115ad3b2dcfebc42d267dba25
+      source_path: output/minoo-river-osaka/river-core-2fps/runs/splatfacto/20260919T090019Z-87bb4ee6/export/splat.ply

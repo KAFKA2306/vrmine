@@ -51,7 +51,12 @@ public static class GaussianSplatBatchImporter
     [MenuItem("VRMine/Import Registered Gaussian Splats")]
     public static void ImportRegistered()
     {
-        Registry registry = JsonUtility.FromJson<Registry>(File.ReadAllText(RegistryPath));
+        ImportConfigured(RegistryPath, ExhibitionConfigPath);
+    }
+
+    public static void ImportConfigured(string registryPath, string exhibitionConfigPath)
+    {
+        Registry registry = JsonUtility.FromJson<Registry>(File.ReadAllText(registryPath));
         if (registry == null || registry.environments == null || registry.environments.Length == 0)
             throw new InvalidDataException("Gaussian source registry is empty or invalid.");
         if (string.IsNullOrEmpty(registry.source_repository) || string.IsNullOrEmpty(registry.source_commit))
@@ -59,7 +64,7 @@ public static class GaussianSplatBatchImporter
         if (registry.renderers == null || string.IsNullOrEmpty(registry.renderers.unity_vrchat))
             throw new InvalidDataException("Gaussian source registry Unity renderer pin is missing.");
 
-        ExhibitionConfig exhibition = JsonUtility.FromJson<ExhibitionConfig>(File.ReadAllText(ExhibitionConfigPath));
+        ExhibitionConfig exhibition = JsonUtility.FromJson<ExhibitionConfig>(File.ReadAllText(exhibitionConfigPath));
         if (exhibition == null || string.IsNullOrEmpty(exhibition.renderer))
             throw new InvalidDataException("Gaussian exhibition renderer configuration is missing.");
         if (!string.Equals(exhibition.renderer, registry.renderers.unity_vrchat, StringComparison.Ordinal))

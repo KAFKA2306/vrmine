@@ -9,6 +9,11 @@ const modes = {
   sdk: 'GaussianExhibitionVerification.VerifySdkWorldBuilderBatch',
   performance: 'GaussianExhibitionVerification.VerifyPerformanceBatch',
   build: 'GaussianWorldBuildMeasurement.MeasureBatch',
+  'minoo-prepare': 'MinooRiverWorldPipeline.PrepareBatch',
+  'minoo-verify': 'MinooRiverWorldVerification.VerifyBatch',
+  'minoo-sdk': 'MinooRiverWorldVerification.VerifySdkWorldBuilderBatch',
+  'minoo-performance': 'MinooRiverWorldVerification.VerifyPerformanceBatch',
+  'minoo-build': 'MinooRiverWorldBuildMeasurement.MeasureBatch',
 };
 
 const mode = process.argv[2] ?? 'registered';
@@ -53,7 +58,7 @@ function unityArgs(executeMethod, logFile, { quit = true } = {}) {
   ];
 }
 
-const args = unityArgs(method, logPath, { quit: mode !== 'build' });
+const args = unityArgs(method, logPath, { quit: !['build', 'minoo-build'].includes(mode) });
 
 console.log(`Unity: ${unityPath}`);
 console.log(`Project: ${projectRoot}`);
@@ -106,6 +111,30 @@ if (mode === 'registered') {
   const marker = 'Gaussian SDK world builder validation completed without exception';
   if (!log.includes(marker)) throw new Error(`SDK verification exited 0 without the expected completion marker. See ${logPath}`);
   console.log('PASS: SDK world builder validation path completed without exception.');
+} else if (mode === 'minoo-verify') {
+  const evidencePath = path.join(evidenceDir, 'minoo-river-u2-evidence.json');
+  if (!fs.existsSync(evidencePath)) throw new Error(`Minoo verification exited 0 but evidence is missing: ${evidencePath}`);
+  const evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  if (evidence.status !== 'PASS') throw new Error(`Minoo verification evidence is not PASS: ${JSON.stringify(evidence)}`);
+  console.log(`PASS: Minoo River Unity verification. Evidence: ${evidencePath}`);
+} else if (mode === 'minoo-sdk') {
+  const marker = 'Minoo River SDK world builder validation completed without exception';
+  if (!log.includes(marker)) throw new Error(`Minoo SDK verification exited 0 without the expected completion marker. See ${logPath}`);
+  console.log('PASS: Minoo River SDK world builder validation path completed without exception.');
+} else if (mode === 'minoo-performance') {
+  const evidencePath = path.join(evidenceDir, 'minoo-river-performance-evidence.json');
+  if (!fs.existsSync(evidencePath)) throw new Error(`Minoo performance verification exited 0 but evidence is missing: ${evidencePath}`);
+  const evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  if (evidence.status !== 'MEASURED_LOCAL_WORLD') throw new Error(`Minoo performance evidence is incomplete: ${JSON.stringify(evidence)}`);
+  console.log(`PASS: Minoo River performance evidence. Evidence: ${evidencePath}`);
+} else if (mode === 'minoo-build') {
+  const evidencePath = path.join(evidenceDir, 'minoo-river-build-evidence.json');
+  if (!fs.existsSync(evidencePath)) throw new Error(`Minoo build measurement exited 0 but evidence is missing: ${evidencePath}`);
+  const evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+  if (evidence.status !== 'MEASURED_BUILD_COMPLETE' || !Number.isSafeInteger(evidence.bundleBytes) || evidence.bundleBytes <= 0 || !/^[0-9a-f]{64}$/.test(evidence.sha256 ?? '')) {
+    throw new Error(`Minoo build evidence is incomplete: ${JSON.stringify(evidence)}`);
+  }
+  console.log(`PASS: Minoo River world bundle measured at ${evidence.bundleBytes} bytes, sha256=${evidence.sha256}. Evidence: ${evidencePath}`);
 } else if (mode === 'final') {
   const marker = 'Gaussian exhibition verification PASS';
   if (!log.includes(marker)) throw new Error(`Final verification exited 0 without the expected PASS marker. See ${logPath}`);

@@ -46,6 +46,7 @@ tasks:
       - node scripts/verify-gaussian-fixtures.mjs
       - node scripts/verify-gaussian-exhibition.mjs
       - node scripts/verify-gaussian-video-playlist.mjs
+      - node scripts/verify-minoo-river-world.mjs
       - node scripts/verify-vpm.mjs
 
   rig:check:
@@ -167,6 +168,55 @@ tasks:
     desc: Run the strict final 20-exhibit Unity verification; fails closed until final inputs are complete
     cmds:
       - node scripts/run-gaussian-unity.mjs final
+
+  minoo:contracts:
+    desc: Validate the Minoo River standalone world config, provenance and local-world pipeline contracts
+    cmds:
+      - node scripts/verify-minoo-river-world.mjs
+
+  minoo:stage-local:
+    desc: Stage the explicitly selected local Minoo River PLY; requires VRMINE_MINOO_PLY
+    cmds:
+      - node scripts/stage-minoo-source.mjs
+
+  minoo:prepare-local:
+    desc: Materialize the pinned Gaussian renderer, stage the local Minoo PLY, import it and build the standalone scene
+    deps: [gaussian:renderer, minoo:stage-local]
+    cmds:
+      - node scripts/run-gaussian-unity.mjs minoo-prepare
+
+  minoo:verify-u2:
+    desc: Run the standalone Minoo River Unity scene verification
+    deps: [minoo:prepare-local]
+    cmds:
+      - node scripts/run-gaussian-unity.mjs minoo-verify
+
+  minoo:verify-sdk:
+    desc: Exercise the canonical VRChat SDK world-builder validation path for Minoo River
+    deps: [minoo:prepare-local]
+    cmds:
+      - node scripts/run-gaussian-unity.mjs minoo-sdk
+
+  minoo:measure:
+    desc: Collect standalone Minoo River source/import/scene size evidence in Unity
+    deps: [minoo:prepare-local]
+    cmds:
+      - node scripts/run-gaussian-unity.mjs minoo-performance
+
+  minoo:build:
+    desc: Measure the standalone Minoo River VRChat world bundle through the SDK world builder
+    deps: [minoo:prepare-local]
+    cmds:
+      - node scripts/run-gaussian-unity.mjs minoo-build
+
+  minoo:release-candidate:
+    desc: Run Minoo River scene, SDK, performance and bundle gates in order
+    deps: [minoo:prepare-local]
+    cmds:
+      - node scripts/run-gaussian-unity.mjs minoo-verify
+      - node scripts/run-gaussian-unity.mjs minoo-sdk
+      - node scripts/run-gaussian-unity.mjs minoo-performance
+      - node scripts/run-gaussian-unity.mjs minoo-build
 
   vpm:check:
     desc: Run VPM resolve and drift verification

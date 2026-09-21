@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "world_id": "minoo-river-osaka",
+  "world_mode": "single-world",
+  "scene_path": "Assets/KafkaMade/VRMine/Scenes/MinooRiverOsaka.unity",
+  "source_registry": "config/gaussian-worlds/minoo-river-osaka-sources.json",
+  "canonical_platform": "windows",
+  "renderer": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa",
+  "target_extent_m": 1.0,
+  "presentation_scale_multiplier": 5.0,
+  "show_title_sign": false,
+  "layout": {
+    "floor_size_x_m": 30.0,
+    "floor_size_z_m": 30.0,
+    "boundary_height_m": 2.5,
+    "boundary_thickness_m": 0.2
+  },
+  "materials": {
+    "ground": "Assets/KafkaMade/VRMine/Materials/WoodlandTabletopVillage/Stone.mat",
+    "water": "Assets/KafkaMade/VRMine/Materials/WoodlandTabletopVillage/Water.mat"
+  },
+  "reference_camera": {
+    "field_of_view": 55.0,
+    "x": 0.0,
+    "y": 1.8,
+    "z": -4.0,
+    "pitch": -5.0,
+    "yaw": 12.0
+  },
+  "spawn": {
+    "x": 0.0,
+    "y": 1.6,
+    "z": -4.0,
+    "yaw": 12.0
+  },
+  "import_overrides": [
+    {
+      "id": "minoo-river-osaka",
+      "crop": {
+        "enabled": true,
+        "center": {"x": 0.1, "y": 0.4, "z": 0.1},
+        "size": {"x": 3.0, "y": 4.0, "z": 3.0},
+        "padding": 0.25
+      },
+      "alignment": {
+        "enabled": true,
+        "mode": "horizon",
+        "scope": "coordinate_basis_only",
+        "physicalUpStatus": "review_required",
+        "authority": "artifact-set-basis-contract",
+        "rotation": {"x": 0.7071067811865476, "y": 0.0, "z": 0.0, "w": 0.7071067811865476},
+        "pivot": {"x": 0.0, "y": 0.0, "z": 0.0}
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": 2,
+  "source_repository": "KAFKA2306/AutoPhotogrammetry",
+  "source_commit": "22d6af82c155db3115ad3b2dcfebc42d267dba25",
+  "source_worktree_status": "dirty-at-registration",
+  "source_catalog": "sources/videos.json",
+  "renderers": {
+    "unity_vrchat": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa"
+  },
+  "environments": [
+    {
+      "id": "minoo-river-osaka",
+      "display_index": 1,
+      "type": "gaussian-splat",
+      "format": "ply",
+      "presentation_target_extent_m": 1.0,
+      "upstream": {"video_id": "minoo-river-osaka"},
+      "source": {
+        "path": "output/minoo-river-osaka/river-core-2fps/runs/splatfacto/20260919T090019Z-87bb4ee6/export/splat.ply",
+        "artifact_id": "autophotogrammetry/minoo-river-osaka/splat",
+        "artifact_manifest": "config/gaussian-worlds/minoo-river-osaka-artifacts.yaml",
+        "size_bytes": 249424370,
+        "sha256": "74a7700aa34d5458376c3cd2f20a7dc2d15edb4b7c500bc3971b734474638dd3"
+      },
+      "orientation_evidence": {
+        "status": "accepted",
+        "scope": "coordinate_basis_only",
+        "physical_up_status": "review_required",
+        "consumer_rotation_xyzw": [0.7071067811865476, 0.0, 0.0, 0.7071067811865476]
+      },
+      "targets": {
+        "vrchat_pc": {"status": "UNVERIFIED", "renderer": "unity_vrchat"},
+        "vrchat_android": {"status": "UNVERIFIED", "renderer": "unity_vrchat"}
+      }
+    }
+  ]
+}
