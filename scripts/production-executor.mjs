@@ -1,44 +1,24 @@
 import { spawnSync } from 'node:child_process';
 import { applyStageResult, nextRunnableStage, saveRun } from './production-run-state.mjs';
 
-const stageCommands = {
-  SPEC: () => ({command: process.execPath, args: ['--version']}),
-  GENERATE: (stage) => stage.provider === 'blender_bpy'
-    ? {command: 'task', args: ['world-build:pilot']}
-    : stage.provider === 'astra_blender_rigged'
-      ? {command: 'task', args: ['astra-rigged:build']}
-      : null,
-  VALIDATE_STATIC: (stage, state) => state.plan.capability === 'procedural_mesh'
-    ? {command: 'task', args: ['world-build:pilot']}
-    : state.plan.capability === 'rigged_mesh'
-      ? {command: 'task', args: ['astra-rigged:build']}
-      : null,
-  UNITY_IMPORT: (_stage, state) => state.plan.capability === 'procedural_mesh'
-    ? {command: 'task', args: ['world-build:verify-u2']}
-    : state.plan.capability === 'rigged_mesh'
-      ? {command: 'task', args: ['astra-rigged:verify-u2']}
-      : null,
-  PLATFORM_VERIFY: (_stage, state) => state.plan.capability === 'procedural_mesh'
-    ? {command: 'task', args: ['world-build:verify-u2']}
-    : state.plan.capability === 'rigged_mesh'
-      ? {command: 'task', args: ['astra-rigged:verify-u2']}
-      : null
-};
-
-export function commandForStage(state, stage = nextRunnableStage(state)) {
+export function commandForStage(state, stage = nextRunnableStage(state), adapters = {}) {
   if (!stage) return null;
-  return stageCommands[stage.stage]?.(stage, state) ?? null;
+  if (stage.stage === 'SPEC') return {command: process.execPath, args: ['--version']};
+  const key = stage.provider ? `${stage.stage}:${stage.provider}` : stage.stage;
+  const adapter = adapters[key] ?? adapters[stage.stage];
+  return typeof adapter === 'function' ? adapter({state, stage}) : adapter ?? null;
 }
 
 export function executeNextStage(state, options = {}) {
   const stage = nextRunnableStage(state);
   if (!stage) return {state, stage: null, executed: false};
-  const command = commandForStage(state, stage);
+  const command = commandForStage(state, stage, options.adapters);
   if (!command) {
     applyStageResult(state, stage.stage, {
       status: 'BLOCKED',
-      evidence: [`executor:no-command:${stage.stage}:${stage.provider ?? 'none'}`]
+      evidence: [`executor:no-adapter:${stage.stage}:${stage.provider ?? 'none'}`]
     });
+    if (options.runRoot) saveRun(options.runRoot, state);
     return {state, stage: stage.stage, executed: false};
   }
 
@@ -46,7 +26,7 @@ export function executeNextStage(state, options = {}) {
   const result = runner(command);
   const status = result.status === 0 ? 'PASS' : 'BLOCKED';
   const evidence = [`executor:${command.command} ${command.args.join(' ')}:exit=${result.status ?? 'null'}`];
-  applyStageResult(state, stage.stage, {status, evidence});
+  applyStageResult(state, stage.stage, {status, evidence, artifacts: result.artifacts});
   if (options.runRoot) saveRun(options.runRoot, state);
   return {state, stage: stage.stage, executed: true, command, exit_code: result.status};
 }
