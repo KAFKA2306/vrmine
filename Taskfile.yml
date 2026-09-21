@@ -27,6 +27,7 @@ tasks:
       - node scripts/test-astra-visual-repair-loop.mjs
       - node scripts/astra-context.test.mjs
       - node scripts/astra-toolchain-manifest.test.mjs
+      - node --test scripts/knowledge-intake.test.mjs
       - node scripts/verify-astra-platform-budgets.mjs
       - node scripts/verify-quality-gates.mjs
       - node scripts/verify-factory-timing.mjs
@@ -104,6 +105,13 @@ tasks:
     deps: [world-build:pilot]
     cmds:
       - node scripts/run-world-build-unity.mjs .artifacts/world-builds/cyber-alley-tea-nook
+
+  knowledge:intake:
+    desc: Convert creation-method notes into deduplicated CLAIMED knowledge events
+    cmds:
+      - node scripts/knowledge-intake.mjs --input "{{.INPUT}}" --output "{{.OUTPUT | default ".artifacts/knowledge-intake"}}"
+    requires:
+      vars: [INPUT]
 
   merge:check:
     desc: PR Merge Gate — run repository checks that may decide integration into main
