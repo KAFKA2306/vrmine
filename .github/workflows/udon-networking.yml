@@ -1,0 +1,26 @@
+name: Udon networking
+
+on:
+  pull_request:
+    paths:
+      - 'config/udon-networking.json'
+      - 'scripts/verify-udon-networking.mjs'
+      - 'tests/fixtures/udon/**'
+      - '.github/workflows/udon-networking.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'config/udon-networking.json'
+      - 'scripts/verify-udon-networking.mjs'
+      - 'tests/fixtures/udon/**'
+      - '.github/workflows/udon-networking.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/verify-udon-networking.mjs

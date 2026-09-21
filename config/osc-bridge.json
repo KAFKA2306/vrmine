@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "transport": {
+    "protocol": "udp",
+    "oscquery_optional": true,
+    "external_device_required": false,
+    "reconnect": { "initial_ms": 250, "max_ms": 8000, "multiplier": 2 }
+  },
+  "namespace": {
+    "root": "/avatar/parameters",
+    "parameter_pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$",
+    "reserved_prefixes": ["VRCEmote", "Viseme"]
+  },
+  "flow": {
+    "bidirectional": true,
+    "max_messages_per_second": 60,
+    "smoothing": { "method": "ema", "alpha": 0.25 }
+  },
+  "adapters": {
+    "vrchat_osc": { "required": true, "role": "canonical_runtime_boundary" },
+    "oscquery": { "required": false, "role": "discovery" },
+    "vrcosc": { "required": false, "role": "external_adapter" },
+    "vrcft": { "required": false, "role": "tracking_adapter" },
+    "python_osc": { "required": false, "role": "automation_adapter" },
+    "steamvr": { "required": false, "role": "device_adapter" },
+    "arduino": { "required": false, "role": "device_adapter" },
+    "eeg": { "required": false, "role": "device_adapter" }
+  },
+  "states": ["CONNECTED", "BACKOFF", "DISCONNECTED", "UNVERIFIED"]
+}

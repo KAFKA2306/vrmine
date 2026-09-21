@@ -1,0 +1,31 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const c=JSON.parse(fs.readFileSync('config/avatar-rig-runtime.json','utf8'));
+const unique=(xs)=>new Set(xs).size===xs.length;
+assert.equal(c.schema_version,1);
+assert(unique(c.rig.required_humanoid_bones),'humanoid bones must be unique');
+for(const bone of ['hips','head','leftHand','rightHand','leftFoot','rightFoot']) assert(c.rig.required_humanoid_bones.includes(bone),`required humanoid bone missing: ${bone}`);
+assert.equal(c.rig.reject_zero_length_bones,true);
+assert.equal(c.rig.reject_unweighted_vertices,true);
+assert(c.rig.weights.max_influences_per_vertex>0 && c.rig.weights.max_influences_per_vertex<=4,'weight influence budget must be 1..4');
+assert(c.rig.weights.sum_tolerance>0 && c.rig.weights.sum_tolerance<=0.01,'weight sum tolerance too loose');
+assert.equal(c.rig.weights.reject_negative,true);
+assert.equal(c.expressions.case,'lower_snake_case');
+assert.equal(c.expressions.custom_prefix,'expr_');
+assert(unique(c.expressions.required_visemes),'viseme names must be unique');
+assert.equal(c.expressions.required_visemes.length,15,'VRChat viseme contract must contain 15 shapes');
+for(const p of c.expressions.reserved_prefixes) assert(!c.expressions.custom_prefix.startsWith(p),'custom expression prefix collides with reserved prefix');
+for(const platform of ['pc','android']) {
+  const b=c.physbone[platform];
+  assert(b.max_components>0 && b.max_affected_transforms>0,`${platform} PhysBone budget must be positive`);
+}
+assert(c.physbone.android.max_components<=c.physbone.pc.max_components,'Android component budget cannot exceed PC');
+assert(c.physbone.android.max_affected_transforms<=c.physbone.pc.max_affected_transforms,'Android transform budget cannot exceed PC');
+assert.equal(c.physbone.reject_duplicate_roots,true);
+assert.equal(c.contacts.require_unique_parameter,true);
+assert.notEqual(c.contacts.sender_prefix,c.contacts.receiver_prefix);
+assert.equal(c.deformation_evidence.authority,'unity_editor');
+assert(c.deformation_evidence.required_poses.length>=4,'deformation evidence needs representative poses');
+assert.deepEqual(c.deformation_evidence.states,['PASS','FAIL','UNVERIFIED']);
+assert.equal(c.deformation_evidence.missing_execution,'UNVERIFIED');
+console.log('avatar rig runtime: PASS');

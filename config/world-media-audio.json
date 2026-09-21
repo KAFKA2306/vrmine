@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "authority": "world_media_audio",
+  "player": {
+    "abstraction": "IVRMineMediaSource",
+    "production_provider": "VideoTXL",
+    "optional_providers": ["ProTV", "VizVid"],
+    "single_playback_authority": true,
+    "source_kinds": ["url", "playlist", "stream"],
+    "external_streaming": {
+      "provider": "WebRTC",
+      "production_required": false,
+      "state_without_runtime_evidence": "UNVERIFIED"
+    }
+  },
+  "spatial_audio": {
+    "component": "VRC_SpatialAudioSource",
+    "presets": {
+      "voice_near": {"near_m": 1.0, "far_m": 12.0, "volumetric_radius_m": 0.0},
+      "media_room": {"near_m": 2.0, "far_m": 25.0, "volumetric_radius_m": 1.0},
+      "ambient_zone": {"near_m": 3.0, "far_m": 40.0, "volumetric_radius_m": 3.0}
+    },
+    "reverb": {"allowed": true, "require_zone_scope": true},
+    "unity_audio_filters": {"allowed": true, "require_platform_verification": true}
+  },
+  "audiolink": {
+    "optional": true,
+    "binding": "runtime_discovery",
+    "rebind_events": ["OnEnable", "OnPlayerRestored", "OnVideoReady"],
+    "missing_binding": "UNVERIFIED",
+    "silent_fallback": false
+  },
+  "editor_test": {
+    "path": "Assets/KafkaMade/VRMine/Editor/WorldMediaAudioContractTests.cs",
+    "required_cases": ["source_switch", "spatial_preset", "audiolink_rebind", "missing_optional_provider"]
+  },
+  "platforms": {
+    "pc": {"latency_target_ms": 250, "streaming": "SUPPORTED", "audiolink": "SUPPORTED"},
+    "android": {"latency_target_ms": 400, "streaming": "UNVERIFIED", "audiolink": "CONDITIONAL"}
+  },
+  "evidence": {
+    "states": ["PASS", "FAIL", "UNVERIFIED"],
+    "missing_measurement": "UNVERIFIED",
+    "tool_success_is_not_runtime_success": true
+  }
+}

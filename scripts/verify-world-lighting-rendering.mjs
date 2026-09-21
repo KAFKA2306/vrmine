@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+const p='config/world-lighting-rendering.json';
+const c=JSON.parse(fs.readFileSync(p,'utf8'));
+const fail=(m)=>{console.error(`FAIL: ${m}`);process.exitCode=1};
+if(c.schema_version!==1) fail('schema_version must be 1');
+const prod=c.production?.features||{};
+for(const k of ['baked_lighting','reflection_probe','occlusion_culling','vrc_mirror']) if(!prod[k]?.allowed) fail(`${k} must be production-supported`);
+const p3=new Set(c.future_rnd?.features||[]);
+for(const k of ['apv','gpu_resident_drawer','render_graph','stp']) if(!p3.has(k)) fail(`${k} must be isolated in future_rnd`);
+if(c.future_rnd?.production_pass_eligible!==false) fail('future_rnd must not satisfy production PASS');
+for(const platform of ['pc','android']) if(!c.platforms?.[platform]?.mirror) fail(`${platform} mirror budget missing`);
+if((c.platforms?.android?.mirror?.max_active??1)!==0) fail('Android mirror budget must disable active mirrors');
+if(!c.benchmark_scene?.required_samples?.includes('mirror_surface')) fail('benchmark mirror sample missing');
+if(c.benchmark_scene?.evidence_state_without_execution!=='UNVERIFIED') fail('unexecuted benchmark must remain UNVERIFIED');
+if(!c.validation?.reject_multiple_active_mirrors || !c.validation?.reject_platform_budget_violation) fail('mirror/platform validators must be enabled');
+if(!process.exitCode) console.log('PASS: world lighting/rendering contract');

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "color_space": {
+    "base_color": "sRGB",
+    "emission": "sRGB",
+    "normal": "Linear",
+    "roughness": "Linear",
+    "metallic": "Linear",
+    "occlusion": "Linear"
+  },
+  "atlas": {
+    "minimum_padding_px": 8,
+    "minimum_dilation_px": 8
+  },
+  "platforms": {
+    "pc": {
+      "normal_compression": "BC5",
+      "max_texture_dimension": 8192,
+      "memory_budget_mib": 256
+    },
+    "android": {
+      "normal_compression": "ASTC_6x6",
+      "max_texture_dimension": 2048,
+      "memory_budget_mib": 64
+    }
+  },
+  "shader_fallback": {
+    "lilToon": {"pc": "lilToon", "android": "VRChat/Mobile/Toon Lit"},
+    "Poiyomi": {"pc": "Poiyomi", "android": "VRChat/Mobile/Toon Lit"},
+    "VRChat/Mobile/Toon Lit": {"pc": "VRChat/Mobile/Toon Lit", "android": "VRChat/Mobile/Toon Lit"}
+  }
+}

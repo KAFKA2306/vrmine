@@ -1,0 +1,28 @@
+name: Evidence ladder
+on:
+  pull_request:
+    paths:
+      - 'config/evidence-ladder.json'
+      - 'scripts/verify-evidence-ladder.mjs'
+      - 'scripts/run-evidence-ladder-sample.mjs'
+      - 'scripts/verify-evidence-run.mjs'
+      - '.github/workflows/evidence-ladder.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/verify-evidence-ladder.mjs
+      - run: node scripts/run-evidence-ladder-sample.mjs
+      - run: node scripts/verify-evidence-run.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: evidence-ladder-${{ env.EXACT_HEAD }}
+          path: artifacts/evidence-ladder/sample/
+          if-no-files-found: error

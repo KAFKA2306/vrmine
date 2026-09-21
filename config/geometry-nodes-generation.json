@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "authority": "geometry_nodes_generation",
+  "generator": {
+    "backend": "geometry_nodes",
+    "tier": "P0",
+    "source_required": true,
+    "deterministic_seed_required": true,
+    "seed_range": [0, 4294967295]
+  },
+  "shared_material": {
+    "required": true,
+    "strategy": "shared_material_or_trim_sheet"
+  },
+  "collision": {
+    "proxy_required": true,
+    "separate_from_render_mesh": true
+  },
+  "unity_import": {
+    "preset": "canonical_glb_consumer",
+    "verification_task": "glb:verify-u2"
+  },
+  "categories": {
+    "architecture": {
+      "seed": 449001,
+      "exposed_parameters": ["width_m", "depth_m", "height_m", "module_count"]
+    },
+    "furniture": {
+      "seed": 449002,
+      "exposed_parameters": ["width_m", "depth_m", "height_m", "variant_count"]
+    },
+    "vegetation": {
+      "seed": 449003,
+      "exposed_parameters": ["height_m", "crown_radius_m", "branch_density", "variant_count"]
+    }
+  },
+  "artifact_contract": {
+    "required": ["procedural_source", "parameters", "blend", "glb", "collision_proxy", "manifest", "render_evidence"],
+    "runtime_without_evidence": "UNVERIFIED"
+  }
+}

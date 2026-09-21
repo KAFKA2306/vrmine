@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "production": {
+    "unity_authority": "ProjectSettings/ProjectVersion.txt",
+    "features": {
+      "baked_lighting": {"tier":"P0","allowed":true},
+      "reflection_probe": {"tier":"P0","allowed":true},
+      "occlusion_culling": {"tier":"P0","allowed":true},
+      "vrc_mirror": {"tier":"P0","allowed":true},
+      "bakery": {"tier":"P1","allowed":true,"optional":true},
+      "vrc_light_volumes": {"tier":"P1","allowed":true,"optional":true}
+    }
+  },
+  "future_rnd": {
+    "production_pass_eligible": false,
+    "features": ["apv","gpu_resident_drawer","render_graph","stp"]
+  },
+  "platforms": {
+    "pc": {"mirror":{"max_active":1,"max_resolution":2048},"occlusion":{"required_for_large_static_scenes":true}},
+    "android": {"mirror":{"max_active":0,"max_resolution":0},"occlusion":{"required_for_large_static_scenes":true}}
+  },
+  "benchmark_scene": {
+    "id":"lighting_rendering_baseline",
+    "required_samples":["baked_static","reflection_probe","occlusion_cell","mirror_surface"],
+    "evidence_state_without_execution":"UNVERIFIED"
+  },
+  "validation": {
+    "reject_future_rnd_in_production":true,
+    "reject_platform_budget_violation":true,
+    "reject_multiple_active_mirrors":true,
+    "missing_measurement":"UNVERIFIED"
+  }
+}

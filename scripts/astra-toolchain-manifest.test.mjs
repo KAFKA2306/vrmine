@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { assertProductionEligible } from "./assert-astra-production-eligibility.mjs";
+import { resolveProjectVersions } from "./resolve-agent-knowledge.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const spec = "config/world-items/cafe-bar-stool-01.json";
@@ -11,15 +12,16 @@ const first = compile();
 const second = compile();
 const request = JSON.parse(execFileSync(process.execPath, ["scripts/compile-astra-build-request.mjs", spec], { cwd: root, encoding: "utf8" }));
 const canonicalSpec = JSON.parse(fs.readFileSync(path.join(root, spec), "utf8"));
-const unityVersion = fs.readFileSync(path.join(root, "ProjectSettings/ProjectVersion.txt"), "utf8").match(/^m_EditorVersion: (.+)$/m)[1];
-const sdkVersion = JSON.parse(fs.readFileSync(path.join(root, "Packages/manifest.json"), "utf8")).dependencies["com.vrchat.worlds"];
+const projectVersions = resolveProjectVersions(root);
 const head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
 const policy = JSON.parse(fs.readFileSync(path.join(root, "config/astra-toolchain-policy.json"), "utf8"));
 
 assert.deepEqual(first, second, "toolchain manifest must be deterministic for an exact HEAD");
 assert.equal(first.$schema, "config/astra-toolchain-manifest.schema.json");
+assert.equal(first.schema_version, 2);
 assert.equal(first.source.canonical_spec_sha256, request.source.sha256);
 assert.equal(first.source.repository_commit, head);
+assert.equal(first.generation.deterministic_seed, request.constraints.deterministic_seed);
 assert.deepEqual(first.provenance, {
   generated_with: "gpt-6-astra",
   generation_method: "procedural",
@@ -32,10 +34,26 @@ assert.deepEqual(first.provenance, {
 assert.equal(first.policy.tier, "P0");
 assert.deepEqual(first.policy.control_priority, request.toolchain_policy.control_priority);
 assert.equal(first.policy.experimental, false);
-assert.equal(first.tools.find((tool) => tool.name === "Unity")?.version, unityVersion);
-assert.equal(first.tools.find((tool) => tool.name === "VRChat SDK Worlds")?.version, sdkVersion);
+assert.equal(first.tools.find((tool) => tool.name === "Blender")?.version, projectVersions.blender);
+assert.equal(first.tools.find((tool) => tool.name === "Blender")?.source, "Taskfile.yml");
+assert.equal(first.tools.find((tool) => tool.name === "Unity")?.version, projectVersions.unity);
+assert.equal(first.tools.find((tool) => tool.name === "VRChat SDK Worlds")?.version, projectVersions.vrchat_sdk);
 assert.deepEqual(Object.values(first.runtime).map((stage) => stage.status), Array(5).fill("UNVERIFIED"));
 assert.equal(assertProductionEligible(first, policy).status, "PASS");
+
+assert.equal(policy.schema_version, 2);
+assert.equal(policy.backend_selection.default, "blender_bpy");
+assert.equal(policy.backend_selection.benchmark_issue, 431);
+const backends = Object.fromEntries(policy.backend_selection.rules.map((rule) => [rule.backend, rule]));
+assert.equal(backends.blender_bpy.tier, "P0");
+assert.equal(backends.geometry_nodes.tier, "P0");
+assert.equal(backends.blender_mcp.tier, "P1");
+assert.equal(backends.external_generator.tier, "P1");
+assert.equal(backends.external_generator.authority, "common_external_mesh_contract");
+for (const requirement of ["raw_artifact_preserved", "source_url", "license", "exact_revision", "canonical_verifier"]) {
+  assert.ok(backends.external_generator.requires.includes(requirement), `external generator must require ${requirement}`);
+}
+assert.deepEqual(policy.backend_selection.tie_breaker, ["P0", "code", "deterministic", "lowest_tool_count"]);
 
 const p1 = structuredClone(first);
 p1.policy.tier = "P1";

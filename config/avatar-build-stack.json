@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "source_policy": {"mutate_source_assets": false, "build_clone_only": true, "rollback": "discard_build_clone"},
+  "tools": [
+    {"id":"ndmf","role":"build_orchestration","order":10,"authority":"pipeline"},
+    {"id":"modular-avatar","role":"avatar_composition","order":20,"authority":"composition"},
+    {"id":"avatar-optimizer","role":"optimization","order":30,"authority":"optimization"},
+    {"id":"vrcfury","role":"optional_feature_composition","order":20,"authority":"composition","optional":true},
+    {"id":"mochifitter","role":"optional_clothing_fit","order":15,"authority":"clothing_fit","optional":true},
+    {"id":"d4rk-avatar-optimizer","role":"alternative_optimization","order":30,"authority":"optimization","optional":true,"exclusive_with":["avatar-optimizer"]}
+  ],
+  "responsibilities": {"pipeline":"ndmf","composition":"modular-avatar","optimization":"avatar-optimizer","clothing_fit":"mochifitter"},
+  "build_order":["ndmf","mochifitter","modular-avatar","avatar-optimizer"],
+  "optimization": {"allowed":["remove_unused_bones","remove_unused_blendshapes","remove_unused_curves","merge_meshes","merge_materials","resize_textures","normalize_physbones"],"target":"build_clone"},
+  "metrics": {"before_after":["triangles","vertices","materials","skinned_meshes","bones","blendshapes","physbone_components","texture_memory_bytes"],"artifact":"reports/avatar-build-metrics.json","require_diff":true},
+  "visual_regression": {"required":true,"authority":"render_comparison","artifact":"reports/avatar-visual-regression.json","views":["front","rear","left","right"],"states":["PASS","FAIL","UNVERIFIED"],"missing_execution":"UNVERIFIED"},
+  "platform_budgets": {
+    "pc":{"max_physbone_components":32,"max_physbone_affected_transforms":256,"max_texture_memory_bytes":268435456},
+    "android":{"max_physbone_components":8,"max_physbone_affected_transforms":64,"max_texture_memory_bytes":67108864}
+  },
+  "validation": {"reject_duplicate_authority":true,"reject_source_mutation":true,"require_before_after_metrics":true,"require_build_clone":true,"require_visual_regression":true,"require_platform_specific_budgets":true}
+}
