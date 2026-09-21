@@ -4,6 +4,7 @@ const PILOT_CONCEPT = 'cyber-alley-tea-nook';
 const PILOT_ROOT = '.artifacts/world-builds/cyber-alley-tea-nook';
 const PILOT_PLAN = `${PILOT_ROOT}/build-plan.json`;
 const PILOT_GLB = `${PILOT_ROOT}/world.glb`;
+const PILOT_UNITY_EVIDENCE = `${PILOT_ROOT}/unity-evidence/glb-consumer-evidence.json`;
 const PILOT_RENDERS = [
   'view-hero.png',
   'view-top.png',
@@ -42,6 +43,15 @@ export function canonicalProductionAdapters(state) {
     'RENDER': {
       command: process.execPath,
       args: ['scripts/verify-production-renders.mjs', PILOT_ROOT, ...PILOT_RENDERS]
+    },
+    'UNITY_IMPORT': ({state: current}) => {
+      const glb = rawArtifact(current);
+      if (glb !== PILOT_GLB) return null;
+      return {
+        command: process.execPath,
+        args: ['scripts/run-world-build-unity.mjs', PILOT_ROOT],
+        artifacts: {unity: [PILOT_UNITY_EVIDENCE]}
+      };
     }
   };
 }
@@ -51,5 +61,6 @@ export const canonicalPilot = Object.freeze({
   root: PILOT_ROOT,
   plan: PILOT_PLAN,
   glb: PILOT_GLB,
+  unityEvidence: PILOT_UNITY_EVIDENCE,
   renders: PILOT_RENDERS
 });

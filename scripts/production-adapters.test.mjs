@@ -41,13 +41,25 @@ test('canonical pilot binds RENDER to independent non-empty evidence verificatio
   ]);
 });
 
+test('canonical pilot binds UNITY_IMPORT to the existing Unity 2022 GLB consumer verifier', () => {
+  const current = state();
+  const command = canonicalProductionAdapters(current).UNITY_IMPORT({state: current});
+  assert.equal(command.command, process.execPath);
+  assert.deepEqual(command.args, ['scripts/run-world-build-unity.mjs', canonicalPilot.root]);
+  assert.deepEqual(command.artifacts, {unity: [canonicalPilot.unityEvidence]});
+});
+
 test('adapter fails closed for an unrelated concept or missing canonical GLB evidence', () => {
   assert.deepEqual(canonicalProductionAdapters(state({request: {kind: 'world_prop', concept: 'other'}})), {});
   const current = state({artifacts: {raw: []}});
-  assert.equal(canonicalProductionAdapters(current).VALIDATE_STATIC({state: current}), null);
+  const adapters = canonicalProductionAdapters(current);
+  assert.equal(adapters.VALIDATE_STATIC({state: current}), null);
+  assert.equal(adapters.UNITY_IMPORT({state: current}), null);
 });
 
 test('adapter rejects a GLB outside the canonical pilot artifact root', () => {
   const current = state({artifacts: {raw: ['/tmp/untrusted.glb']}});
-  assert.equal(canonicalProductionAdapters(current).VALIDATE_STATIC({state: current}), null);
+  const adapters = canonicalProductionAdapters(current);
+  assert.equal(adapters.VALIDATE_STATIC({state: current}), null);
+  assert.equal(adapters.UNITY_IMPORT({state: current}), null);
 });
