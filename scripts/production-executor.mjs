@@ -1,4 +1,5 @@
 import { spawnSync } from 'node:child_process';
+import { canonicalProductionAdapters } from './production-adapters.mjs';
 import { applyRepairResult, applyStageResult, nextRunnableStage, saveRun } from './production-run-state.mjs';
 
 const VERDICTS = new Set(['PASS', 'REPAIRABLE', 'BLOCKED']);
@@ -30,7 +31,8 @@ export function executeNextStage(state, options = {}) {
   const stage = nextRunnableStage(state);
   if (!stage) return {state, stage: null, executed: false};
   const repairing = stage.status === 'REPAIRABLE';
-  const command = commandForStage(state, stage, options.adapters);
+  const adapters = {...canonicalProductionAdapters(state), ...(options.adapters ?? {})};
+  const command = commandForStage(state, stage, adapters);
   if (!command) {
     if (repairing) {
       applyRepairResult(state, stage.stage, {status: 1, evidence: [`repair:no-adapter:${stage.stage}`]}, options.maxRepairAttempts ?? 2);
