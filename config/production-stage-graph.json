@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "authority": "issue-450",
+  "evidence_states": ["UNVERIFIED", "PASS", "REPAIRABLE", "BLOCKED"],
+  "graphs": {
+    "world_prop": [
+      {"stage":"SPEC","requires":[],"outputs":["request","plan"]},
+      {"stage":"GENERATE","requires":["SPEC"],"outputs":["raw"]},
+      {"stage":"VALIDATE_STATIC","requires":["GENERATE"],"outputs":["geometry_report"]},
+      {"stage":"RENDER","requires":["VALIDATE_STATIC"],"outputs":["renders"]},
+      {"stage":"UNITY_IMPORT","requires":["RENDER"],"outputs":["unity_import"]},
+      {"stage":"PLATFORM_VERIFY","requires":["UNITY_IMPORT"],"outputs":["platform_report"]}
+    ],
+    "world_layout": [
+      {"stage":"SPEC","requires":[],"outputs":["request","plan"]},
+      {"stage":"GENERATE","requires":["SPEC"],"outputs":["raw"]},
+      {"stage":"VALIDATE_STATIC","requires":["GENERATE"],"outputs":["geometry_report"]},
+      {"stage":"RENDER","requires":["VALIDATE_STATIC"],"outputs":["renders"]},
+      {"stage":"UNITY_IMPORT","requires":["RENDER"],"outputs":["unity_import"]},
+      {"stage":"PLATFORM_VERIFY","requires":["UNITY_IMPORT"],"outputs":["platform_report"]}
+    ],
+    "rigged_asset": [
+      {"stage":"SPEC","requires":[],"outputs":["request","plan"]},
+      {"stage":"GENERATE","requires":["SPEC"],"outputs":["raw"]},
+      {"stage":"NORMALIZE","requires":["GENERATE"],"outputs":["normalized"]},
+      {"stage":"VALIDATE_STATIC","requires":["NORMALIZE"],"outputs":["rig_report"]},
+      {"stage":"RENDER","requires":["VALIDATE_STATIC"],"outputs":["renders"]},
+      {"stage":"UNITY_IMPORT","requires":["RENDER"],"outputs":["unity_import"]},
+      {"stage":"PLATFORM_VERIFY","requires":["UNITY_IMPORT"],"outputs":["platform_report"]}
+    ],
+    "avatar": [
+      {"stage":"SPEC","requires":[],"outputs":["request","plan"]},
+      {"stage":"GENERATE","requires":["SPEC"],"outputs":["raw"]},
+      {"stage":"NORMALIZE","requires":["GENERATE"],"outputs":["normalized"]},
+      {"stage":"VALIDATE_STATIC","requires":["NORMALIZE"],"outputs":["rig_report"]},
+      {"stage":"RENDER","requires":["VALIDATE_STATIC"],"outputs":["renders"]},
+      {"stage":"UNITY_IMPORT","requires":["RENDER"],"outputs":["unity_import"]},
+      {"stage":"PLATFORM_VERIFY","requires":["UNITY_IMPORT"],"outputs":["platform_report"]}
+    ]
+  }
+}
