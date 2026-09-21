@@ -27,6 +27,12 @@ export function classifyStageResult(result) {
   return result?.status === 0 ? 'PASS' : 'BLOCKED';
 }
 
+function runCommand(spec) {
+  const result = spawnSync(spec.command, spec.args, {encoding: 'utf8'});
+  if (result.status === 0 && spec.artifacts) result.artifacts = spec.artifacts;
+  return result;
+}
+
 export function executeNextStage(state, options = {}) {
   const stage = nextRunnableStage(state);
   if (!stage) return {state, stage: null, executed: false};
@@ -46,7 +52,7 @@ export function executeNextStage(state, options = {}) {
     return {state, stage: stage.stage, executed: false, repair: repairing};
   }
 
-  const runner = options.runner ?? ((spec) => spawnSync(spec.command, spec.args, {encoding: 'utf8'}));
+  const runner = options.runner ?? runCommand;
   const result = runner(command);
   const evidence = [
     `${repairing ? 'repair' : 'executor'}:${command.command} ${command.args.join(' ')}:exit=${result.status ?? 'null'}`,
