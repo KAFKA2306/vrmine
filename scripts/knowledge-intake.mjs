@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const TYPE_RULES = [
   ["failure", /fail|failure|error|破綻|失敗|不具合|バグ|問題|クラッシュ|ジッター|貫通|めり込み/i],
@@ -116,7 +117,7 @@ async function main() {
   process.stdout.write(JSON.stringify({ output, ...summarize(events) }, null, 2) + "\n");
 }
 
-if (import.meta.url === `file://${process.argv[1]?.replaceAll("\\", "/")}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   main().catch(error => {
     console.error(error.message);
     process.exitCode = 1;
