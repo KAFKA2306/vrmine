@@ -41,16 +41,22 @@ assert.equal(first.tools.find((tool) => tool.name === "VRChat SDK Worlds")?.vers
 assert.deepEqual(Object.values(first.runtime).map((stage) => stage.status), Array(5).fill("UNVERIFIED"));
 assert.equal(assertProductionEligible(first, policy).status, "PASS");
 
-assert.equal(policy.schema_version, 2);
+assert.equal(policy.schema_version, 3);
 assert.equal(policy.backend_selection.default, "blender_bpy");
-assert.equal(policy.backend_selection.benchmark_issue, 431);
+assert.deepEqual(policy.backend_selection.benchmark, {
+  authority_issue: 431,
+  status: "UNVERIFIED",
+  recommended_backend: null,
+  promotion_rule: "external_generator_requires_verified_benchmark_recommendation",
+  fallback_while_unverified: "blender_bpy"
+});
 const backends = Object.fromEntries(policy.backend_selection.rules.map((rule) => [rule.backend, rule]));
 assert.equal(backends.blender_bpy.tier, "P0");
 assert.equal(backends.geometry_nodes.tier, "P0");
 assert.equal(backends.blender_mcp.tier, "P1");
 assert.equal(backends.external_generator.tier, "P1");
 assert.equal(backends.external_generator.authority, "common_external_mesh_contract");
-for (const requirement of ["raw_artifact_preserved", "source_url", "license", "exact_revision", "canonical_verifier"]) {
+for (const requirement of ["raw_artifact_preserved", "source_url", "license", "exact_revision", "canonical_verifier", "verified_benchmark_recommendation"]) {
   assert.ok(backends.external_generator.requires.includes(requirement), `external generator must require ${requirement}`);
 }
 assert.deepEqual(policy.backend_selection.tie_breaker, ["P0", "code", "deterministic", "lowest_tool_count"]);
@@ -67,11 +73,15 @@ p1.tools.push({
   license: "commercial-use-permitted",
   exact_revision: "asset-sha256:0123456789abcdef"
 });
-assert.equal(assertProductionEligible(p1, policy).status, "PASS");
+assert.throws(() => assertProductionEligible(p1, policy), /requires a VERIFIED #431 benchmark recommendation/);
+const verifiedPolicy = structuredClone(policy);
+verifiedPolicy.backend_selection.benchmark.status = "VERIFIED";
+verifiedPolicy.backend_selection.benchmark.recommended_backend = "external-mesh-generator";
+assert.equal(assertProductionEligible(p1, verifiedPolicy).status, "PASS");
 for (const field of ["source", "license", "exact_revision"]) {
   const invalid = structuredClone(p1);
   invalid.tools.at(-1)[field] = null;
-  assert.throws(() => assertProductionEligible(invalid, policy), /requires source, license, and exact_revision provenance/);
+  assert.throws(() => assertProductionEligible(invalid, verifiedPolicy), /requires source, license, and exact_revision provenance/);
 }
 
 const experimental = structuredClone(first);

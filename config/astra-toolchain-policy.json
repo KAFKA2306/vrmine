@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "default_production_tier": "P0",
   "one_responsibility_one_authority": true,
   "control_priority": [
@@ -36,11 +36,17 @@
         "tier": "P1",
         "use_when": ["reference_to_mesh_requires_learned_generation"],
         "authority": "common_external_mesh_contract",
-        "requires": ["raw_artifact_preserved", "source_url", "license", "exact_revision", "canonical_verifier"]
+        "requires": ["raw_artifact_preserved", "source_url", "license", "exact_revision", "canonical_verifier", "verified_benchmark_recommendation"]
       }
     ],
     "tie_breaker": ["P0", "code", "deterministic", "lowest_tool_count"],
-    "benchmark_issue": 431
+    "benchmark": {
+      "authority_issue": 431,
+      "status": "UNVERIFIED",
+      "recommended_backend": null,
+      "promotion_rule": "external_generator_requires_verified_benchmark_recommendation",
+      "fallback_while_unverified": "blender_bpy"
+    }
   },
   "tiers": {
     "P0": {

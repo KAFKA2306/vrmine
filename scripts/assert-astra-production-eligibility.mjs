@@ -26,6 +26,12 @@ export function assertProductionEligible(manifest, policy = JSON.parse(fs.readFi
     if (!tool.source || !tool.license || !tool.exact_revision) {
       throw new Error(`production blocked: P1 tool ${tool.name ?? "unnamed"} requires source, license, and exact_revision provenance`);
     }
+    if (tool.role === "mesh_generation") {
+      const benchmark = policy.backend_selection?.benchmark;
+      if (benchmark?.status !== "VERIFIED" || benchmark.recommended_backend !== tool.name) {
+        throw new Error(`production blocked: external mesh backend ${tool.name ?? "unnamed"} requires a VERIFIED #${benchmark?.authority_issue ?? "?"} benchmark recommendation`);
+      }
+    }
   }
   if (!tierPolicy.production_eligible) throw new Error(`production blocked: ${tier} is not production eligible`);
   return { status: "PASS", tier, production_eligible: true };
