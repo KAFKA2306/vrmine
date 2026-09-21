@@ -13,6 +13,7 @@ on:
       - 'scripts/production-executor.mjs'
       - 'scripts/production-adapters.mjs'
       - 'scripts/verify-production-renders.mjs'
+      - 'scripts/verify-production-renders.test.mjs'
       - 'scripts/production-router.test.mjs'
       - 'scripts/production-planner.test.mjs'
       - 'scripts/production-run-state.test.mjs'
@@ -32,6 +33,7 @@ on:
       - 'scripts/production-executor.mjs'
       - 'scripts/production-adapters.mjs'
       - 'scripts/verify-production-renders.mjs'
+      - 'scripts/verify-production-renders.test.mjs'
       - 'scripts/production-router.test.mjs'
       - 'scripts/production-planner.test.mjs'
       - 'scripts/production-run-state.test.mjs'
@@ -67,4 +69,4 @@ jobs:
           node --check scripts/production-adapters.mjs
           node --check scripts/verify-production-renders.mjs
       - name: Run focused orchestrator contracts
-        run: node --test scripts/production-router.test.mjs scripts/production-planner.test.mjs scripts/production-run-state.test.mjs scripts/production-executor.test.mjs scripts/production-adapters.test.mjs
+        run: node --test scripts/production-router.test.mjs scripts/production-planner.test.mjs scripts/production-run-state.test.mjs scripts/production-executor.test.mjs scripts/production-adapters.test.mjs scripts/verify-production-renders.test.mjs
