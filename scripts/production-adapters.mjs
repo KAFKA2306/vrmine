@@ -3,6 +3,13 @@ import path from 'node:path';
 const PILOT_CONCEPT = 'cyber-alley-tea-nook';
 const PILOT_ROOT = '.artifacts/world-builds/cyber-alley-tea-nook';
 const PILOT_PLAN = `${PILOT_ROOT}/build-plan.json`;
+const PILOT_RENDERS = [
+  'view-hero.png',
+  'view-top.png',
+  'view-social-core.png',
+  'view-retreat.png',
+  'view-circulation.png'
+];
 
 function conceptOf(state) {
   return state?.request?.concept ?? null;
@@ -25,8 +32,17 @@ export function canonicalProductionAdapters(state) {
         command: 'blender',
         args: ['-b', '--python-exit-code', '1', '--python', 'scripts/verify_world_build.py', '--', PILOT_PLAN, PILOT_ROOT]
       };
+    },
+    'RENDER': {
+      command: process.execPath,
+      args: ['scripts/verify-production-renders.mjs', PILOT_ROOT, ...PILOT_RENDERS]
     }
   };
 }
 
-export const canonicalPilot = Object.freeze({concept: PILOT_CONCEPT, root: PILOT_ROOT, plan: PILOT_PLAN});
+export const canonicalPilot = Object.freeze({
+  concept: PILOT_CONCEPT,
+  root: PILOT_ROOT,
+  plan: PILOT_PLAN,
+  renders: PILOT_RENDERS
+});
