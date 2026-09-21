@@ -6,10 +6,13 @@ on:
       - 'config/production-request.schema.json'
       - 'config/capability-registry.json'
       - 'config/production-stage-graph.json'
+      - 'config/production-run-state.schema.json'
       - 'scripts/route-production-request.mjs'
       - 'scripts/plan-production-request.mjs'
+      - 'scripts/production-run-state.mjs'
       - 'scripts/production-router.test.mjs'
       - 'scripts/production-planner.test.mjs'
+      - 'scripts/production-run-state.test.mjs'
       - '.github/workflows/production-router-contract.yml'
   push:
     branches: [main]
@@ -17,10 +20,13 @@ on:
       - 'config/production-request.schema.json'
       - 'config/capability-registry.json'
       - 'config/production-stage-graph.json'
+      - 'config/production-run-state.schema.json'
       - 'scripts/route-production-request.mjs'
       - 'scripts/plan-production-request.mjs'
+      - 'scripts/production-run-state.mjs'
       - 'scripts/production-router.test.mjs'
       - 'scripts/production-planner.test.mjs'
+      - 'scripts/production-run-state.test.mjs'
       - '.github/workflows/production-router-contract.yml'
 
 permissions:
@@ -46,5 +52,6 @@ jobs:
         run: |
           node --check scripts/route-production-request.mjs
           node --check scripts/plan-production-request.mjs
+          node --check scripts/production-run-state.mjs
       - name: Run focused orchestrator contracts
-        run: node --test scripts/production-router.test.mjs scripts/production-planner.test.mjs
+        run: node --test scripts/production-router.test.mjs scripts/production-planner.test.mjs scripts/production-run-state.test.mjs
