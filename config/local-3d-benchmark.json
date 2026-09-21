@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "authority_issue": 431,
+  "status": "UNVERIFIED",
+  "reference_set": [
+    {"id":"furniture-chair","category":"furniture","traits":["hard-surface","symmetry"]},
+    {"id":"plant-potted","category":"plant","traits":["thin-structures","organic"]},
+    {"id":"foodware-teapot","category":"foodware","traits":["thin-structures","multiple-parts"]},
+    {"id":"industrial-valve","category":"industrial","traits":["hard-surface","multiple-parts"]},
+    {"id":"japanese-lantern","category":"japanese-street","traits":["thin-structures","material-boundaries"]},
+    {"id":"asymmetric-bag","category":"asymmetric","traits":["asymmetry","soft-surface"]},
+    {"id":"bicycle-rack","category":"thin-structure","traits":["thin-structures","negative-space"]},
+    {"id":"desk-set","category":"multipart","traits":["multiple-parts","semantic-parts"]}
+  ],
+  "backends": {
+    "triposr":{"availability":"CANDIDATE","required_metrics":true},
+    "hunyuan3d-2.1":{"availability":"CANDIDATE","required_metrics":true},
+    "trellis.2":{"availability":"CANDIDATE","required_metrics":true},
+    "pixal3d":{"availability":"CANDIDATE","required_metrics":true},
+    "kaininja":{"availability":"UNAVAILABLE","required_metrics":false,"evidence_required":true}
+  },
+  "required_artifacts":["input","raw","processed","renders","metrics.json","manifest.json"],
+  "required_metrics":["geometry.reference_fidelity","geometry.non_manifold","geometry.degenerate_faces","geometry.triangles","production.uv","production.pbr_channels","production.semantic_parts","runtime.peak_vram_mb","runtime.elapsed_sec"],
+  "required_provenance":["backend","model_version","commit","seed","local","license","source_url"],
+  "gpu_profiles":[{"name":"rtx-5070-ti","vram_gb":16,"purpose":"practical-path"},{"name":"rtx-6000-ada","vram_gb":48,"purpose":"quality-ceiling"}],
+  "promotion":{"minimum_compared_backends":3,"requires_unity_verification":true,"recommended_backend":null,"rule":"recommend only from VERIFIED benchmark evidence"}
+}
