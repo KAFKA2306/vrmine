@@ -5,16 +5,22 @@ on:
     paths:
       - 'config/production-request.schema.json'
       - 'config/capability-registry.json'
+      - 'config/production-stage-graph.json'
       - 'scripts/route-production-request.mjs'
+      - 'scripts/plan-production-request.mjs'
       - 'scripts/production-router.test.mjs'
+      - 'scripts/production-planner.test.mjs'
       - '.github/workflows/production-router-contract.yml'
   push:
     branches: [main]
     paths:
       - 'config/production-request.schema.json'
       - 'config/capability-registry.json'
+      - 'config/production-stage-graph.json'
       - 'scripts/route-production-request.mjs'
+      - 'scripts/plan-production-request.mjs'
       - 'scripts/production-router.test.mjs'
+      - 'scripts/production-planner.test.mjs'
       - '.github/workflows/production-router-contract.yml'
 
 permissions:
@@ -36,7 +42,9 @@ jobs:
           expected='${{ github.event.pull_request.head.sha || github.sha }}'
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$expected"
-      - name: Syntax check router
-        run: node --check scripts/route-production-request.mjs
-      - name: Run focused router contract
-        run: node --test scripts/production-router.test.mjs
+      - name: Syntax check orchestrator control plane
+        run: |
+          node --check scripts/route-production-request.mjs
+          node --check scripts/plan-production-request.mjs
+      - name: Run focused orchestrator contracts
+        run: node --test scripts/production-router.test.mjs scripts/production-planner.test.mjs
