@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_schema": "config/knowledge-event.schema.json",
+  "states": ["CLAIMED", "REPRODUCED", "VERIFIED", "REJECTED", "PRODUCTION"],
+  "promotion": {
+    "CLAIMED_to_REPRODUCED": ["repository_owned_reproduction"],
+    "REPRODUCED_to_VERIFIED": ["same_verifier_before_after", "no_unrelated_regression"],
+    "VERIFIED_to_PRODUCTION": ["production_contract_compatible", "provenance_complete"]
+  },
+  "routing": {
+    "KAFKA2306/vrmine": ["vrchat", "unity", "blender", "geometry", "udon", "world", "shader", "lighting", "network"],
+    "KAFKA2306/AutoPhotogrammetry": ["photogrammetry", "gaussian", "splat", "colmap", "reconstruction", "nerfstudio", "camera pose"],
+    "KAFKA2306/avatars2509": ["avatar", "outfit", "physbone", "blendshape", "animator", "ndmf", "modular avatar", "mochifitter", "vrcfury"]
+  },
+  "issue_policy": {
+    "one_issue_per_source_row": false,
+    "require_actionable": true,
+    "require_reproducible": true,
+    "dedupe_before_issue": true
+  },
+  "numeric_claims": {
+    "source_values_are_measurements": false,
+    "require_local_reproduction": true
+  }
+}
