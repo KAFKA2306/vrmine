@@ -16,7 +16,7 @@ export function createRunState(runId, request, registry, stageGraph) {
     plan,
     artifacts: Object.fromEntries(buckets.map((name) => [name, []])),
     stages: plan.stages.map(({index, stage, status, expected_outputs, provider}) => ({
-      index, stage, status, attempts: 0, expected_outputs, evidence: [], provider: provider ?? null
+      index, stage, status, attempts: 0, repair_attempts: 0, expected_outputs, evidence: [], provider: provider ?? null
     })),
     evidence: 'UNVERIFIED'
   };
@@ -31,6 +31,29 @@ export function nextRunnableStage(state) {
     return ready ? stage : null;
   }
   return null;
+}
+
+export function refreshEvidence(state) {
+  state.evidence = state.stages.every((item) => item.status === 'PASS') ? 'PASS' :
+    state.stages.some((item) => item.status === 'BLOCKED') ? 'BLOCKED' :
+    state.stages.some((item) => item.status === 'REPAIRABLE') ? 'REPAIRABLE' : 'UNVERIFIED';
+  return state.evidence;
+}
+
+export function applyRepairResult(state, stageName, result, maxAttempts = 2) {
+  const stage = state.stages.find((item) => item.stage === stageName);
+  if (!stage || stage.status !== 'REPAIRABLE') throw new Error(`stage is not repairable: ${stageName}`);
+  if (!Array.isArray(result.evidence) || result.evidence.length === 0) throw new Error('repair result requires evidence');
+  stage.repair_attempts = (stage.repair_attempts ?? 0) + 1;
+  stage.evidence.push(...result.evidence);
+  for (const [bucket, entries] of Object.entries(result.artifacts ?? {})) {
+    if (!buckets.includes(bucket) || !Array.isArray(entries)) throw new Error(`invalid artifact bucket: ${bucket}`);
+    state.artifacts[bucket].push(...entries);
+  }
+  if (result.status === 0) stage.status = 'UNVERIFIED';
+  else if (stage.repair_attempts >= maxAttempts) stage.status = 'BLOCKED';
+  refreshEvidence(state);
+  return state;
 }
 
 export function applyStageResult(state, stageName, result) {
@@ -55,9 +78,7 @@ export function applyStageResult(state, stageName, result) {
     state.plan.provider = state.plan.fallback;
     state.plan.fallback = null;
   }
-  state.evidence = state.stages.every((item) => item.status === 'PASS') ? 'PASS' :
-    state.stages.some((item) => item.status === 'BLOCKED') ? 'BLOCKED' :
-    state.stages.some((item) => item.status === 'REPAIRABLE') ? 'REPAIRABLE' : 'UNVERIFIED';
+  refreshEvidence(state);
   return state;
 }
 
