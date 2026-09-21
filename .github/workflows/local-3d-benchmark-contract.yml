@@ -1,0 +1,24 @@
+name: Local 3D benchmark contract
+
+on:
+  pull_request:
+    paths:
+      - 'config/local-3d-benchmark.json'
+      - 'scripts/verify-local-3d-benchmark.mjs'
+      - '.github/workflows/local-3d-benchmark-contract.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'config/local-3d-benchmark.json'
+      - 'scripts/verify-local-3d-benchmark.mjs'
+      - '.github/workflows/local-3d-benchmark-contract.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/verify-local-3d-benchmark.mjs
