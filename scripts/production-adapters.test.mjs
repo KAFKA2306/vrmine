@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { canonicalProductionAdapters, canonicalPilot } from './production-adapters.mjs';
+import { canonicalProductionAdapters, canonicalPilot, canonicalPilotB } from './production-adapters.mjs';
 
 function state(overrides = {}) {
   return {
@@ -18,6 +18,18 @@ test('canonical pilot binds GENERATE to the existing world build factory and dec
     canonicalPilot.plan, canonicalPilot.root
   ]);
   assert.deepEqual(command.artifacts, {raw: [canonicalPilot.glb]});
+});
+
+test('canonical Pilot B binds GENERATE to the existing reproducible rigged-asset builder', () => {
+  const command = canonicalProductionAdapters(state({
+    request: {kind: 'rigged_asset', concept: canonicalPilotB.concept},
+    artifacts: {raw: []}
+  })).GENERATE;
+  assert.equal(command.command, 'blender');
+  assert.deepEqual(command.args, [
+    '-b', '--python-exit-code', '1', '--python', 'scripts/build_astra_rigged_pilot.py', '--', canonicalPilotB.root
+  ]);
+  assert.deepEqual(command.artifacts, {raw: [canonicalPilotB.glb]});
 });
 
 test('canonical pilot binds VALIDATE_STATIC to the independent Blender verifier', () => {
@@ -51,6 +63,7 @@ test('canonical pilot binds UNITY_IMPORT to the existing Unity 2022 GLB consumer
 
 test('adapter fails closed for an unrelated concept or missing canonical GLB evidence', () => {
   assert.deepEqual(canonicalProductionAdapters(state({request: {kind: 'world_prop', concept: 'other'}})), {});
+  assert.deepEqual(canonicalProductionAdapters(state({request: {kind: 'rigged_asset', concept: 'other'}})), {});
   const current = state({artifacts: {raw: []}});
   const adapters = canonicalProductionAdapters(current);
   assert.equal(adapters.VALIDATE_STATIC({state: current}), null);
