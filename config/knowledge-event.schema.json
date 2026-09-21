@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KAFKA2306/vrmine/config/knowledge-event.schema.json",
+  "title": "Creation Knowledge Event",
+  "type": "object",
+  "required": ["schema_version", "id", "source", "claim", "applies_to", "evidence", "promotion"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^ke_[a-f0-9]{16}$"},
+    "source": {
+      "type": "object",
+      "required": ["kind", "ref", "line"],
+      "properties": {
+        "kind": {"type": "string"},
+        "ref": {"type": "string"},
+        "line": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": true
+    },
+    "claim": {
+      "type": "object",
+      "required": ["type", "statement", "tags"],
+      "properties": {
+        "type": {"enum": ["capability", "technique", "pattern", "constraint", "metric", "failure", "repair", "distribution"]},
+        "statement": {"type": "string", "minLength": 1},
+        "tags": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "applies_to": {
+      "type": "object",
+      "required": ["repositories"],
+      "properties": {
+        "repositories": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["status", "numeric_claim_present", "requires_local_reproduction"],
+      "properties": {
+        "status": {"enum": ["CLAIMED", "REPRODUCED", "VERIFIED", "REJECTED", "PRODUCTION"]},
+        "numeric_claim_present": {"type": "boolean"},
+        "requires_local_reproduction": {"type": "boolean"}
+      }
+    },
+    "promotion": {
+      "type": "object",
+      "required": ["target"],
+      "properties": {
+        "target": {"enum": ["candidate", "experimental", "production"]}
+      }
+    }
+  },
+  "additionalProperties": true
+}
