@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 import { createRunState, nextRunnableStage } from './production-run-state.mjs';
-import { classifyStageResult, executeNextStage } from './production-executor.mjs';
+import { classifyStageResult, executeNextStage, executeUntilBlocked } from './production-executor.mjs';
 
 const read = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 const registry = read('config/capability-registry.json');
@@ -82,6 +82,48 @@ test('independent verifier can classify a successful process as REPAIRABLE', () 
   assert.equal(state.stages[2].status, 'REPAIRABLE');
   assert.equal(state.evidence, 'REPAIRABLE');
   assert.ok(state.stages[2].evidence.includes('geometry:non-manifold=2'));
+});
+
+test('repair success reruns the same verifier and can advance to PASS', () => {
+  const state = createRunState('executor-006', request, registry, graph);
+  advanceToStatic(state);
+  let verifierCalls = 0;
+  const adapters = {
+    VALIDATE_STATIC: {command: 'geometry-verifier', args: []},
+    'REPAIR:VALIDATE_STATIC': {command: 'geometry-repair', args: []}
+  };
+  const runner = (command) => {
+    if (command.command === 'geometry-repair') return {status: 0, evidence: ['repair:merged-by-distance']};
+    verifierCalls += 1;
+    return verifierCalls === 1
+      ? {status: 0, verdict: 'REPAIRABLE', evidence: ['geometry:non-manifold=2']}
+      : {status: 0, verdict: 'PASS', evidence: ['geometry:non-manifold=0']};
+  };
+  executeNextStage(state, {adapters, runner});
+  executeNextStage(state, {adapters, runner});
+  assert.equal(state.stages[2].status, 'UNVERIFIED');
+  assert.equal(state.stages[2].repair_attempts, 1);
+  executeNextStage(state, {adapters, runner});
+  assert.equal(state.stages[2].status, 'PASS');
+  assert.ok(state.stages[2].evidence.includes('repair:merged-by-distance'));
+});
+
+test('repair failures stop at the configured attempt limit', () => {
+  const state = createRunState('executor-007', request, registry, graph);
+  advanceToStatic(state);
+  executeNextStage(state, {
+    adapters: {VALIDATE_STATIC: {command: 'geometry-verifier', args: []}},
+    runner: () => ({status: 0, verdict: 'REPAIRABLE', evidence: ['geometry:non-manifold=2']})
+  });
+  const result = executeUntilBlocked(state, {
+    adapters: {'REPAIR:VALIDATE_STATIC': {command: 'geometry-repair', args: []}},
+    runner: () => ({status: 3}),
+    maxRepairAttempts: 2
+  });
+  assert.equal(state.stages[2].repair_attempts, 2);
+  assert.equal(state.stages[2].status, 'BLOCKED');
+  assert.equal(state.evidence, 'BLOCKED');
+  assert.equal(result.executed.length, 2);
 });
 
 test('verifier PASS requires a successful process exit', () => {
