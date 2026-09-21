@@ -44,13 +44,26 @@ test('canonical Pilot B binds VALIDATE_STATIC to its independent Blender verifie
   ]);
 });
 
-test('canonical Pilot B static verifier fails closed without its canonical GLB', () => {
+test('canonical Pilot B binds UNITY_IMPORT to its existing Unity GLB consumer verifier', () => {
+  const current = state({
+    request: {kind: 'rigged_asset', concept: canonicalPilotB.concept},
+    artifacts: {raw: [canonicalPilotB.glb]}
+  });
+  const command = canonicalProductionAdapters(current).UNITY_IMPORT({state: current});
+  assert.equal(command.command, process.execPath);
+  assert.deepEqual(command.args, ['scripts/run-astra-rigged-pilot-unity.mjs', canonicalPilotB.root]);
+  assert.deepEqual(command.artifacts, {unity: [canonicalPilotB.unityEvidence]});
+});
+
+test('canonical Pilot B verifier adapters fail closed without its canonical GLB', () => {
   for (const raw of [[], ['/tmp/untrusted.glb']]) {
     const current = state({
       request: {kind: 'rigged_asset', concept: canonicalPilotB.concept},
       artifacts: {raw}
     });
-    assert.equal(canonicalProductionAdapters(current).VALIDATE_STATIC({state: current}), null);
+    const adapters = canonicalProductionAdapters(current);
+    assert.equal(adapters.VALIDATE_STATIC({state: current}), null);
+    assert.equal(adapters.UNITY_IMPORT({state: current}), null);
   }
 });
 
