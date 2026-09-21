@@ -31,6 +31,13 @@ export function canonicalProductionAdapters(state) {
         command: 'blender',
         args: ['-b', '--python-exit-code', '1', '--python', 'scripts/build_astra_rigged_pilot.py', '--', PILOT_B_ROOT],
         artifacts: {raw: [PILOT_B_GLB]}
+      },
+      'VALIDATE_STATIC': ({state: current}) => {
+        if (rawArtifact(current) !== PILOT_B_GLB) return null;
+        return {
+          command: 'blender',
+          args: ['-b', '--python-exit-code', '1', '--python', 'scripts/verify_astra_rigged_pilot.py', '--', PILOT_B_ROOT]
+        };
       }
     };
   }
