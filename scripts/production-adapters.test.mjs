@@ -56,6 +56,17 @@ test('canonical Pilot B binds VALIDATE_STATIC to its independent Blender verifie
   ]);
 });
 
+test('canonical Pilot B binds RENDER to the generated six-view evidence verifier', () => {
+  const current = pilotBState();
+  const command = canonicalProductionAdapters(current).RENDER({state: current});
+  assert.equal(command.command, process.execPath);
+  assert.deepEqual(command.args, ['scripts/verify-production-renders.mjs', canonicalPilotB.root, ...canonicalPilotB.renders]);
+  assert.deepEqual(command.artifacts, {renders: canonicalPilotB.renders.map((name) => `${canonicalPilotB.root}/${name}`)});
+  assert.deepEqual(canonicalPilotB.renders, [
+    'front_3_4.png', 'rear_3_4.png', 'left_side.png', 'right_side.png', 'top_overview.png', 'geometry_diagnostic.png'
+  ]);
+});
+
 test('canonical Pilot B binds UNITY_IMPORT to its existing Unity GLB consumer verifier', () => {
   const current = pilotBState();
   const command = canonicalProductionAdapters(current).UNITY_IMPORT({state: current});
@@ -75,6 +86,7 @@ test('canonical Pilot B adapters fail closed without canonical stage artifacts',
     const adapters = canonicalProductionAdapters(current);
     if (artifacts.raw[0] !== canonicalPilotB.glb) assert.equal(adapters.NORMALIZE({state: current}), null);
     assert.equal(adapters.VALIDATE_STATIC({state: current}), null);
+    assert.equal(adapters.RENDER({state: current}), null);
     assert.equal(adapters.UNITY_IMPORT({state: current}), null);
   }
 });
@@ -118,7 +130,7 @@ test('adapter fails closed for an unrelated concept or missing canonical GLB evi
 });
 
 test('adapter rejects a GLB outside the canonical pilot artifact root', () => {
-  const current = state({artifacts: {raw: ['/tmp/untrusted.glb']}});
+  const current = state({artifacts: {raw: ['/tmp/untrusted.glb']});
   const adapters = canonicalProductionAdapters(current);
   assert.equal(adapters.VALIDATE_STATIC({state: current}), null);
   assert.equal(adapters.UNITY_IMPORT({state: current}), null);
