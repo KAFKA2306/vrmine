@@ -33,7 +33,7 @@ test('canonical Pilot B binds GENERATE to the existing reproducible rigged-asset
   assert.deepEqual(command.artifacts, {raw: [canonicalPilotB.glb]});
 });
 
-test('canonical Pilot B snapshots raw GLB into a distinct normalized artifact', () => {
+test('canonical Pilot B snapshots raw GLB into a distinct normalized artifact with before/after evidence', () => {
   const current = pilotBState({raw: [canonicalPilotB.glb]});
   const command = canonicalProductionAdapters(current).NORMALIZE({state: current});
   assert.equal(command.command, process.execPath);
@@ -41,7 +41,10 @@ test('canonical Pilot B snapshots raw GLB into a distinct normalized artifact', 
     'scripts/normalize-production-artifact.mjs', canonicalPilotB.root, canonicalPilotB.glb, canonicalPilotB.normalizedGlb
   ]);
   assert.notEqual(canonicalPilotB.glb, canonicalPilotB.normalizedGlb);
-  assert.deepEqual(command.artifacts, {normalized: [canonicalPilotB.normalizedGlb]});
+  assert.deepEqual(command.artifacts, {
+    normalized: [canonicalPilotB.normalizedGlb],
+    evidence: [canonicalPilotB.normalizationEvidence]
+  });
 });
 
 test('canonical Pilot B binds VALIDATE_STATIC to its independent Blender verifier', () => {
