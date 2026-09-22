@@ -10,6 +10,10 @@ function state(overrides = {}) {
   };
 }
 
+function pilotBState(artifacts = {raw: [canonicalPilotB.glb], normalized: [canonicalPilotB.normalizedGlb]}) {
+  return state({request: {kind: 'rigged_asset', concept: canonicalPilotB.concept}, artifacts});
+}
+
 test('canonical pilot binds GENERATE to the existing world build factory and declares its GLB', () => {
   const command = canonicalProductionAdapters(state()).GENERATE;
   assert.equal(command.command, 'blender');
@@ -21,10 +25,7 @@ test('canonical pilot binds GENERATE to the existing world build factory and dec
 });
 
 test('canonical Pilot B binds GENERATE to the existing reproducible rigged-asset builder', () => {
-  const command = canonicalProductionAdapters(state({
-    request: {kind: 'rigged_asset', concept: canonicalPilotB.concept},
-    artifacts: {raw: []}
-  })).GENERATE;
+  const command = canonicalProductionAdapters(pilotBState({raw: []})).GENERATE;
   assert.equal(command.command, 'blender');
   assert.deepEqual(command.args, [
     '-b', '--python-exit-code', '1', '--python', 'scripts/build_astra_rigged_pilot.py', '--', canonicalPilotB.root
@@ -32,11 +33,19 @@ test('canonical Pilot B binds GENERATE to the existing reproducible rigged-asset
   assert.deepEqual(command.artifacts, {raw: [canonicalPilotB.glb]});
 });
 
+test('canonical Pilot B snapshots raw GLB into a distinct normalized artifact', () => {
+  const current = pilotBState({raw: [canonicalPilotB.glb]});
+  const command = canonicalProductionAdapters(current).NORMALIZE({state: current});
+  assert.equal(command.command, process.execPath);
+  assert.deepEqual(command.args, [
+    'scripts/normalize-production-artifact.mjs', canonicalPilotB.root, canonicalPilotB.glb, canonicalPilotB.normalizedGlb
+  ]);
+  assert.notEqual(canonicalPilotB.glb, canonicalPilotB.normalizedGlb);
+  assert.deepEqual(command.artifacts, {normalized: [canonicalPilotB.normalizedGlb]});
+});
+
 test('canonical Pilot B binds VALIDATE_STATIC to its independent Blender verifier', () => {
-  const current = state({
-    request: {kind: 'rigged_asset', concept: canonicalPilotB.concept},
-    artifacts: {raw: [canonicalPilotB.glb]}
-  });
+  const current = pilotBState();
   const command = canonicalProductionAdapters(current).VALIDATE_STATIC({state: current});
   assert.equal(command.command, 'blender');
   assert.deepEqual(command.args, [
@@ -45,23 +54,23 @@ test('canonical Pilot B binds VALIDATE_STATIC to its independent Blender verifie
 });
 
 test('canonical Pilot B binds UNITY_IMPORT to its existing Unity GLB consumer verifier', () => {
-  const current = state({
-    request: {kind: 'rigged_asset', concept: canonicalPilotB.concept},
-    artifacts: {raw: [canonicalPilotB.glb]}
-  });
+  const current = pilotBState();
   const command = canonicalProductionAdapters(current).UNITY_IMPORT({state: current});
   assert.equal(command.command, process.execPath);
   assert.deepEqual(command.args, ['scripts/run-astra-rigged-pilot-unity.mjs', canonicalPilotB.root]);
   assert.deepEqual(command.artifacts, {unity: [canonicalPilotB.unityEvidence]});
 });
 
-test('canonical Pilot B verifier adapters fail closed without its canonical GLB', () => {
-  for (const raw of [[], ['/tmp/untrusted.glb']]) {
-    const current = state({
-      request: {kind: 'rigged_asset', concept: canonicalPilotB.concept},
-      artifacts: {raw}
-    });
+test('canonical Pilot B adapters fail closed without canonical stage artifacts', () => {
+  for (const artifacts of [
+    {raw: []},
+    {raw: ['/tmp/untrusted.glb']},
+    {raw: [canonicalPilotB.glb], normalized: []},
+    {raw: [canonicalPilotB.glb], normalized: ['/tmp/untrusted.glb']}
+  ]) {
+    const current = pilotBState(artifacts);
     const adapters = canonicalProductionAdapters(current);
+    if (artifacts.raw[0] !== canonicalPilotB.glb) assert.equal(adapters.NORMALIZE({state: current}), null);
     assert.equal(adapters.VALIDATE_STATIC({state: current}), null);
     assert.equal(adapters.UNITY_IMPORT({state: current}), null);
   }
