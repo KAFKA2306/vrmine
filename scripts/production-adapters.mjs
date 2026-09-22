@@ -18,6 +18,14 @@ const PILOT_B_GLB = `${PILOT_B_ROOT}/pilot-b.glb`;
 const PILOT_B_NORMALIZED_GLB = `${PILOT_B_ROOT}/normalized/pilot-b.glb`;
 const PILOT_B_NORMALIZATION_EVIDENCE = `${PILOT_B_NORMALIZED_GLB}.normalization.json`;
 const PILOT_B_UNITY_EVIDENCE = `${PILOT_B_ROOT}/unity-evidence/glb-consumer-evidence.json`;
+const PILOT_B_RENDERS = [
+  'front_3_4.png',
+  'rear_3_4.png',
+  'left_side.png',
+  'right_side.png',
+  'top_overview.png',
+  'geometry_diagnostic.png'
+];
 
 function conceptOf(state) {
   return state?.request?.concept ?? null;
@@ -52,6 +60,14 @@ export function canonicalProductionAdapters(state) {
         return {
           command: 'blender',
           args: ['-b', '--python-exit-code', '1', '--python', 'scripts/verify_astra_rigged_pilot.py', '--', PILOT_B_ROOT]
+        };
+      },
+      'RENDER': ({state: current}) => {
+        if (rawArtifact(current) !== PILOT_B_GLB || normalizedArtifact(current) !== PILOT_B_NORMALIZED_GLB) return null;
+        return {
+          command: process.execPath,
+          args: ['scripts/verify-production-renders.mjs', PILOT_B_ROOT, ...PILOT_B_RENDERS],
+          artifacts: {renders: PILOT_B_RENDERS.map((name) => `${PILOT_B_ROOT}/${name}`)}
         };
       },
       'UNITY_IMPORT': ({state: current}) => {
@@ -114,5 +130,6 @@ export const canonicalPilotB = Object.freeze({
   glb: PILOT_B_GLB,
   normalizedGlb: PILOT_B_NORMALIZED_GLB,
   normalizationEvidence: PILOT_B_NORMALIZATION_EVIDENCE,
-  unityEvidence: PILOT_B_UNITY_EVIDENCE
+  unityEvidence: PILOT_B_UNITY_EVIDENCE,
+  renders: PILOT_B_RENDERS
 });
