@@ -16,6 +16,7 @@ const PILOT_B_CONCEPT = 'astra-pilot-b';
 const PILOT_B_ROOT = '.artifacts/astra-pilot-b';
 const PILOT_B_GLB = `${PILOT_B_ROOT}/pilot-b.glb`;
 const PILOT_B_NORMALIZED_GLB = `${PILOT_B_ROOT}/normalized/pilot-b.glb`;
+const PILOT_B_NORMALIZATION_EVIDENCE = `${PILOT_B_NORMALIZED_GLB}.normalization.json`;
 const PILOT_B_UNITY_EVIDENCE = `${PILOT_B_ROOT}/unity-evidence/glb-consumer-evidence.json`;
 
 function conceptOf(state) {
@@ -43,7 +44,7 @@ export function canonicalProductionAdapters(state) {
         return {
           command: process.execPath,
           args: ['scripts/normalize-production-artifact.mjs', PILOT_B_ROOT, PILOT_B_GLB, PILOT_B_NORMALIZED_GLB],
-          artifacts: {normalized: [PILOT_B_NORMALIZED_GLB]}
+          artifacts: {normalized: [PILOT_B_NORMALIZED_GLB], evidence: [PILOT_B_NORMALIZATION_EVIDENCE]}
         };
       },
       'VALIDATE_STATIC': ({state: current}) => {
@@ -112,5 +113,6 @@ export const canonicalPilotB = Object.freeze({
   root: PILOT_B_ROOT,
   glb: PILOT_B_GLB,
   normalizedGlb: PILOT_B_NORMALIZED_GLB,
+  normalizationEvidence: PILOT_B_NORMALIZATION_EVIDENCE,
   unityEvidence: PILOT_B_UNITY_EVIDENCE
 });
