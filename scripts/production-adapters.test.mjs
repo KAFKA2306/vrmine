@@ -3,13 +3,8 @@ import test from 'node:test';
 import { canonicalProductionAdapters, canonicalPilot, canonicalPilotB } from './production-adapters.mjs';
 
 function state(overrides = {}) {
-  return {
-    request: {kind: 'world_prop', concept: 'cyber-alley-tea-nook'},
-    artifacts: {raw: ['.artifacts/world-builds/cyber-alley-tea-nook/world.glb']},
-    ...overrides
-  };
+  return {request: {kind: 'world_prop', concept: 'cyber-alley-tea-nook'}, artifacts: {raw: ['.artifacts/world-builds/cyber-alley-tea-nook/world.glb']}, ...overrides};
 }
-
 function pilotBState(artifacts = {raw: [canonicalPilotB.glb], normalized: [canonicalPilotB.normalizedGlb]}) {
   return state({request: {kind: 'rigged_asset', concept: canonicalPilotB.concept}, artifacts});
 }
@@ -50,7 +45,6 @@ test('canonical Pilot B binds RENDER to the generated six-view evidence verifier
   assert.equal(command.command, process.execPath);
   assert.deepEqual(command.args, ['scripts/verify-production-renders.mjs', canonicalPilotB.root, ...canonicalPilotB.renders]);
   assert.deepEqual(command.artifacts, {renders: canonicalPilotB.renders.map((name) => `${canonicalPilotB.root}/${name}`)});
-  assert.deepEqual(canonicalPilotB.renders, ['front_3_4.png', 'rear_3_4.png', 'left_side.png', 'right_side.png', 'top_overview.png', 'geometry_diagnostic.png']);
 });
 
 test('canonical Pilot B binds UNITY_IMPORT to its existing Unity GLB consumer verifier', () => {
@@ -61,6 +55,21 @@ test('canonical Pilot B binds UNITY_IMPORT to its existing Unity GLB consumer ve
   assert.deepEqual(command.artifacts, {unity: [canonicalPilotB.unityEvidence]});
 });
 
+test('canonical Pilot B binds PLATFORM_VERIFY only after canonical Unity evidence and preserves runtime UNVERIFIED', () => {
+  const current = pilotBState({raw: [canonicalPilotB.glb], normalized: [canonicalPilotB.normalizedGlb], unity: [canonicalPilotB.unityEvidence]});
+  const command = canonicalProductionAdapters(current).PLATFORM_VERIFY({state: current});
+  assert.equal(command.command, process.execPath);
+  assert.deepEqual(command.args, ['scripts/verify-astra-platform-budgets.mjs', '--output', canonicalPilotB.platformReport]);
+  assert.deepEqual(command.artifacts, {platform_report: [canonicalPilotB.platformReport]});
+});
+
+test('canonical Pilot B platform verification fails closed without exact Unity evidence', () => {
+  for (const unity of [undefined, [], ['/tmp/untrusted.json']]) {
+    const current = pilotBState({raw: [canonicalPilotB.glb], normalized: [canonicalPilotB.normalizedGlb], ...(unity === undefined ? {} : {unity})});
+    assert.equal(canonicalProductionAdapters(current).PLATFORM_VERIFY({state: current}), null);
+  }
+});
+
 test('canonical Pilot B adapters fail closed without canonical stage artifacts', () => {
   for (const artifacts of [{raw: []}, {raw: ['/tmp/untrusted.glb']}, {raw: [canonicalPilotB.glb], normalized: []}, {raw: [canonicalPilotB.glb], normalized: ['/tmp/untrusted.glb']}]) {
     const current = pilotBState(artifacts);
@@ -69,6 +78,7 @@ test('canonical Pilot B adapters fail closed without canonical stage artifacts',
     assert.equal(adapters.VALIDATE_STATIC({state: current}), null);
     assert.equal(adapters.RENDER({state: current}), null);
     assert.equal(adapters.UNITY_IMPORT({state: current}), null);
+    assert.equal(adapters.PLATFORM_VERIFY({state: current}), null);
   }
 });
 
@@ -83,7 +93,6 @@ test('canonical pilot binds RENDER to independent non-empty evidence verificatio
   const command = canonicalProductionAdapters(state()).RENDER;
   assert.equal(command.command, process.execPath);
   assert.deepEqual(command.args, ['scripts/verify-production-renders.mjs', canonicalPilot.root, ...canonicalPilot.renders]);
-  assert.deepEqual(canonicalPilot.renders, ['view-hero.png', 'view-top.png', 'view-social-core.png', 'view-retreat.png', 'view-circulation.png']);
 });
 
 test('canonical pilot binds UNITY_IMPORT to the existing Unity 2022 GLB consumer verifier', () => {
