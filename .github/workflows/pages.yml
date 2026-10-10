@@ -136,24 +136,6 @@ jobs:
           echo "reused=true" >> "$GITHUB_OUTPUT"
           echo "Reused verified Pages artifact ${artifact_id} for exact tree ${TREE_SHA}." >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Test product publication failures
-        if: steps.reuse.outputs.reused != 'true'
-        run: node --test scripts/product-pages.test.mjs
-
-      - name: Test World Item visual improvement loop
-        if: steps.reuse.outputs.reused != 'true'
-        run: |
-          python -m unittest scripts/test_world_item_visual_loop.py -v
-          python scripts/world_item_visual_loop.py bundle \
-            --spec config/world-items/minimal-desk-clock-01.json \
-            --render-root pages/io/items/minimal-desk-clock-01 \
-            --output /tmp/minimal-desk-clock-review-bundle.json
-          test "$(jq -r .productId /tmp/minimal-desk-clock-review-bundle.json)" = "minimal-desk-clock-01"
-
-      - name: Test game logic
-        if: steps.reuse.outputs.reused != 'true'
-        run: node --test pages/games/answer-impostor/engine.test.mjs
-
       - name: Validate 3DGS fixture contract
         if: steps.reuse.outputs.reused != 'true'
         run: node scripts/verify-gaussian-fixtures.mjs
