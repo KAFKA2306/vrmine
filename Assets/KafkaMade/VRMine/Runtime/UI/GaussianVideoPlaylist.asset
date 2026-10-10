@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: GaussianVideoPlaylist
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: e9ceb95d53eebe64a8270c90a32c5fcc, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: bc068d32a3822214ab6303a9bd485194, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 5d4f1769af474bca89fa0ca8fb645f82, type: 3}
