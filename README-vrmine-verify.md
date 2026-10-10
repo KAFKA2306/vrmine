@@ -15,13 +15,7 @@ and PlayMode checks, plus the optional Unity bridge probe when configured. VPM
 runs before Unity and Blender; a failed or unverified required upstream gate
 stops downstream work. `vrmine verify --full` selects the complete configured
 surface. `vrmine verify --clean` starts a fresh isolated run while preserving
-prior evidence; cleanup is maintenance-only.
+prior evidence.
 
 The verifier validates the local Unity/VRChat SDK toolchain and bridge state. It
 does not publish or upload a world to VRChat.
-
-`powershell -NoProfile -File scripts/vrmine-maintenance.ps1` is a dry-run
-report for old terminal runs. A separately scheduled maintenance job may pass
-`-Apply`; it can remove only runs that are old enough, owned by this verifier,
-Git-clean, and not held by a live process. Normal verification never invokes
-physical cleanup.
