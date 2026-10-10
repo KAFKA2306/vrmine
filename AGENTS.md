@@ -1,6 +1,8 @@
 # VRMine Agent Contract
 
-current GitHub `main` is the integration base. Machine-readable owners define policy, implementation defines behavior for an exact revision, and CI / production are evidence only for the exact revision they tested or deployed.
+This file governs work in the VRMine repository. User-level instructions provide defaults; repository and deeper-directory instructions take precedence when they are more specific.
+
+The current GitHub `main` branch is the integration base. Machine-readable owners define policy, implementation defines behavior for an exact revision, and CI / production are evidence only for the exact revision they tested or deployed.
 
 ## Canonical paths
 
@@ -25,6 +27,9 @@ current GitHub `main` is the integration base. Machine-readable owners define po
 - Public Pagesはproduct surfaceとし、engineering status dashboardにしない。内部進捗、CI/release gate、Issue/PR識別子、repository構造、machine-readable stateは、ユーザー操作や安全に直接必要な場合を除き公開説明文へ重複させない。
 - silent fallbackや根拠のないdefaultで失敗を隠さない。
 - Unityのserialized referenceとtracked `.meta` を意図せず変更しない。
+- 作業開始前に既存の変更と対象範囲を確認し、要求と無関係な変更を上書き・削除しない。
+- 変更は要求されたsurfaceに限定し、既存の実装・設定・検証経路を再利用する。
+- `git reset --hard`、`git clean`、worktreeの削除、再利用中の検証資源の破壊的なcleanupは通常の作業で行わない。
 
 ## Knowledge selection
 
