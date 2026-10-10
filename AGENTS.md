@@ -13,7 +13,6 @@ current GitHub `main` is the integration base. Machine-readable owners define po
 - Automation / verification: `scripts/`
 - Commands: `Taskfile.yml`
 - Verification / release policy: `config/quality-gates.json`
-- Verification worktree lifecycle: `config/verification-worktree-policy.json`
 - Agent knowledge authority: `config/agent-knowledge.json`
 
 ## Rules
@@ -41,4 +40,3 @@ Use the existing generation path and preserve the direct render evidence it prod
 
 Use the smallest `Taskfile.yml` command for the changed surface and the verifier selected by `config/quality-gates.json`. Tie CI, main read-back, production, Unity, and VRChat claims to the exact revision that produced the evidence; never infer an unobserved runtime result.
 
-Verification retry and worktree recovery must follow `config/verification-worktree-policy.json`. A normal run must not delete, reset, clean, or reuse an existing partial, failed, or stale verification worktree. Allocate a fresh detached worktree for every retry, record stale resources without mutating them, and continue. Destructive cleanup belongs to the separate maintenance path and must not block a normal run or create a human-approval dependency when a fresh isolated run can proceed.

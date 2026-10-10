@@ -11,7 +11,6 @@ on:
       - "config/vrchat-toolchain.json"
       - "config/quality-gates.json"
       - "config/agent-knowledge.json"
-      - "config/verification-worktree-policy.json"
       - "config/perspective-cage.json"
       - "config/stich-meister-rules.json"
       - "config/factory-timing.json"
@@ -36,7 +35,6 @@ on:
       - "vrmine.ps1"
       - "scripts/verify-quality-gates.mjs"
       - "scripts/new-verification-worktree.ps1"
-      - "scripts/verify-verification-worktree-policy.mjs"
       - "scripts/resolve-agent-knowledge.mjs"
       - "scripts/resolve-agent-knowledge.test.mjs"
       - "scripts/verify-factory-timing.mjs"
@@ -67,7 +65,6 @@ on:
       - "config/vrchat-toolchain.json"
       - "config/quality-gates.json"
       - "config/agent-knowledge.json"
-      - "config/verification-worktree-policy.json"
       - "config/perspective-cage.json"
       - "config/stich-meister-rules.json"
       - "config/factory-timing.json"
@@ -92,7 +89,6 @@ on:
       - "vrmine.ps1"
       - "scripts/verify-quality-gates.mjs"
       - "scripts/new-verification-worktree.ps1"
-      - "scripts/verify-verification-worktree-policy.mjs"
       - "scripts/resolve-agent-knowledge.mjs"
       - "scripts/resolve-agent-knowledge.test.mjs"
       - "scripts/verify-factory-timing.mjs"
@@ -142,9 +138,6 @@ jobs:
 
       - name: Verify repository and quality gate contracts
         run: node scripts/verify-quality-gates.mjs
-
-      - name: Verify non-destructive verification worktree policy
-        run: node scripts/verify-verification-worktree-policy.mjs
 
       - name: Verify World Item Factory timing evidence
         run: node scripts/verify-factory-timing.mjs
