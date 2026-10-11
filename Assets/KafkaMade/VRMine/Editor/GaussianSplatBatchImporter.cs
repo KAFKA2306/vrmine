@@ -27,7 +27,6 @@ public static class GaussianSplatBatchImporter
     [Serializable] sealed class SourceEntry { public string path; public long size_bytes; public string sha256; }
     [Serializable] sealed class ExhibitionConfig
     {
-        public string renderer;
         public float target_extent_m;
         public GaussianImportOverride[] import_overrides;
     }
@@ -65,10 +64,8 @@ public static class GaussianSplatBatchImporter
             throw new InvalidDataException("Gaussian source registry Unity renderer pin is missing.");
 
         ExhibitionConfig exhibition = JsonUtility.FromJson<ExhibitionConfig>(File.ReadAllText(exhibitionConfigPath));
-        if (exhibition == null || string.IsNullOrEmpty(exhibition.renderer))
-            throw new InvalidDataException("Gaussian exhibition renderer configuration is missing.");
-        if (!string.Equals(exhibition.renderer, registry.renderers.unity_vrchat, StringComparison.Ordinal))
-            throw new InvalidDataException("Gaussian exhibition renderer does not match the canonical source registry renderer.");
+        if (exhibition == null)
+            throw new InvalidDataException("Gaussian exhibition configuration is missing.");
         if (float.IsNaN(exhibition.target_extent_m) || float.IsInfinity(exhibition.target_extent_m) || exhibition.target_extent_m <= 0f)
             throw new InvalidDataException("Gaussian exhibition target_extent_m must be a positive finite value.");
 
@@ -152,7 +149,7 @@ public static class GaussianSplatBatchImporter
                 source_path = environment.source.path,
                 source_size_bytes = environment.source.size_bytes,
                 source_sha256 = environment.source.sha256,
-                renderer = exhibition.renderer,
+                renderer = registry.renderers.unity_vrchat,
                 import_method = importerType.FullName + ".ImportLODToPrefab",
                 chunk_size = chunkSize,
                 import_options_json = importOptionsJson,

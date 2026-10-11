@@ -1,10 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseRendererPin } from './gaussian-renderer-pin.mjs';
 
-const PINNED_RENDERER = 'MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa';
-const PINNED_RENDERER_REVISION = 'f96c0117cba518ff84d059d36f16909b873e23aa';
-const EXPECTED_CONSUMER = 'MichaelMoroz/VRChatGaussianSplatting';
 const EXPECTED_MODE = 'horizon_alignment_pre_y_reflection';
 const EXPECTED_POST_TRANSFORM = 'reflect-y';
 const EXPECTED_REPRESENTATION_FIELDS = new Set(['position', 'gaussian_rotation', 'spherical_harmonics']);
@@ -32,11 +30,11 @@ function quaternion(values, label) {
   return { x: values[0], y: values[1], z: values[2], w: values[3] };
 }
 
-function validateConsumerApplication(id, consumer) {
-  if (!consumer || consumer.consumer !== EXPECTED_CONSUMER) {
+function validateConsumerApplication(id, consumer, pin) {
+  if (!consumer || consumer.consumer !== pin.repository) {
     throw new Error(`${id}: unsupported orientation consumer`);
   }
-  if (consumer.revision !== PINNED_RENDERER_REVISION) {
+  if (consumer.revision !== pin.revision) {
     throw new Error(`${id}: orientation was derived for a different renderer revision`);
   }
   if (consumer.mode !== EXPECTED_MODE || consumer.mandatory_post_transform !== EXPECTED_POST_TRANSFORM) {
@@ -50,7 +48,7 @@ function validateConsumerApplication(id, consumer) {
   }
 }
 
-function validateBasisContract(registry, contract) {
+function validateBasisContract(registry, contract, pin) {
   if (!contract) return;
   if (contract.schema_version !== 1 || contract.status !== 'accepted') {
     throw new Error('Gaussian artifact-set basis contract must be schema v1 and accepted');
@@ -81,7 +79,7 @@ function validateBasisContract(registry, contract) {
   if (contract.physical_up?.status !== 'review_required') {
     throw new Error('Coordinate-basis-only contract must keep physical_up review_required');
   }
-  validateConsumerApplication('artifact-set basis contract', contract.consumer_application);
+  validateConsumerApplication('artifact-set basis contract', contract.consumer_application, pin);
 }
 
 function orientationFromBasisContract(source, contract) {
@@ -108,7 +106,7 @@ function resolveOrientation(source, basisContract) {
   return { orientation: null, authority: null };
 }
 
-function validateBasisOrientation(id, source, orientation) {
+function validateBasisOrientation(id, source, orientation, pin) {
   if (orientation.schema_version !== 2) {
     throw new Error(`${id}: unsupported orientation schema; v2 basis/physical-up split is required`);
   }
@@ -143,7 +141,7 @@ function validateBasisOrientation(id, source, orientation) {
     throw new Error(`${id}: accepted physical_up cannot be hidden behind coordinate_basis_only scope`);
   }
 
-  validateConsumerApplication(id, orientation.consumer_application);
+  validateConsumerApplication(id, orientation.consumer_application, pin);
   return null;
 }
 
@@ -158,10 +156,8 @@ export function compileProducerOrientation(
   if (!exhibition || !Array.isArray(exhibition.import_overrides)) {
     throw new Error('Gaussian exhibition import_overrides are missing');
   }
-  if (exhibition.renderer !== PINNED_RENDERER) {
-    throw new Error(`Unexpected Gaussian renderer: ${exhibition.renderer}`);
-  }
-  validateBasisContract(registry, basisContract);
+  const pin = parseRendererPin(registry.renderers?.unity_vrchat);
+  validateBasisContract(registry, basisContract, pin);
 
   const existing = new Map(exhibition.import_overrides.map((entry) => [entry.id, entry]));
   const compiled = [];
@@ -180,7 +176,7 @@ export function compileProducerOrientation(
       unresolved.push({ id, reason: 'orientation metadata missing and no explicit artifact-set basis contract applies' });
       continue;
     }
-    const unresolvedReason = validateBasisOrientation(id, source, orientation);
+    const unresolvedReason = validateBasisOrientation(id, source, orientation, pin);
     if (unresolvedReason) {
       unresolved.push({ id, reason: unresolvedReason });
       continue;

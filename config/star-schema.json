@@ -39,6 +39,7 @@
         { "source_key": "verification_scripts", "label": "Verification scripts", "path": "scripts/" },
         { "source_key": "project_version", "label": "Project version", "path": "ProjectSettings/ProjectVersion.txt" },
         { "source_key": "package_manifest", "label": "Package manifest", "path": "Packages/manifest.json" },
+        { "source_key": "gaussian_splat_registry", "label": "Gaussian splat source registry", "path": "config/gaussian-splats.json" },
         { "source_key": "minoo_world_config", "label": "World config", "path": "config/gaussian-worlds/minoo-river-osaka.json" },
         { "source_key": "minoo_source_registry", "label": "Source registry", "path": "config/gaussian-worlds/minoo-river-osaka-sources.json" },
         { "source_key": "minoo_artifact_manifest", "label": "Artifact manifest", "path": "config/gaussian-worlds/minoo-river-osaka-artifacts.yaml" },
@@ -92,8 +93,8 @@
         {
           "section_key": "runtime",
           "metric_key": "gaussian_splat_renderer",
-          "source_key": "minoo_world_config",
-          "read": { "json": ["renderer"] }
+          "source_key": "gaussian_splat_registry",
+          "read": { "json": ["renderers", "unity_vrchat"] }
         },
         {
           "section_key": "minoo",

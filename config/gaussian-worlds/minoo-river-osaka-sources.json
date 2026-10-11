@@ -4,9 +4,6 @@
   "source_commit": "22d6af82c155db3115ad3b2dcfebc42d267dba25",
   "source_worktree_status": "dirty-at-registration",
   "source_catalog": "sources/videos.json",
-  "renderers": {
-    "unity_vrchat": "MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa"
-  },
   "environments": [
     {
       "id": "minoo-river-osaka",
