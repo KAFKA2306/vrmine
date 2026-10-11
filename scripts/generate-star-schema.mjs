@@ -17,6 +17,9 @@ const assertColumns = (row, columns, label) => {
   const actual = Object.keys(row).sort().join(',');
   const expected = [...columns].sort().join(',');
   if (actual !== expected) fail(`${label}: row columns [${actual}] must equal [${expected}]`);
+  for (const column of columns) {
+    if (row[column] === null || row[column] === undefined || row[column] === '') fail(`${label}: ${column} must not be empty`);
+  }
 };
 
 const taskKeys = () => {
