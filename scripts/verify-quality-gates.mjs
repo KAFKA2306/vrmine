@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
@@ -150,7 +151,13 @@ if (rules.lower_evidence_may_be_promoted_to_actual_client_pass !== false) {
 for (const relativePath of ['README.md', 'AGENTS.md', 'Taskfile.yml', 'config/quality-gates.json']) {
   if (!fs.existsSync(path.join(root, relativePath))) fail(`missing canonical file: ${relativePath}`);
 }
-if (fs.existsSync(path.join(root, 'docs'))) fail('docs/ must not duplicate canonical documentation');
+// Compare git's tracked names case-sensitively: on case-insensitive filesystems
+// fs.existsSync('docs') matches the tracked 'Docs/' directory.
+const trackedFiles = execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' })
+  .split('\0');
+if (trackedFiles.some((file) => file.startsWith('docs/'))) {
+  fail('docs/ must not duplicate canonical documentation');
+}
 
 const canonicalProductionUrl = 'https://kafka2306.github.io/vrmine/';
 const catalogUrl = 'https://kafka2306.github.io/vrmine/io/';
