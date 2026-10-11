@@ -24,7 +24,8 @@ assert.equal(Object.hasOwn(exhibition, 'final_expected_exhibits'), false, 'exhib
 assert.equal(exhibition.canonical_platform, 'windows');
 assert.equal(exhibition.source_registry, 'config/gaussian-splats.json');
 assert.equal(exhibition.basis_contract, 'config/gaussian-basis-contract.json');
-assert.equal(exhibition.renderer, sources.renderers.unity_vrchat, 'scene renderer must match the canonical source registry');
+assert.equal(exhibition.renderer, undefined, 'renderer pin has one authority in config/gaussian-splats.json renderers.unity_vrchat');
+assert.match(sources.renderers.unity_vrchat, /^MichaelMoroz\/VRChatGaussianSplatting@[0-9a-f]{40}$/, 'source registry must pin the Unity renderer by full commit');
 assert.equal((artifactManifestSource.match(/^  - id:/gm) ?? []).length, sources.environments.length, 'artifact manifest must cover every registered source');
 assert.match(artifactManifestSource, /bucket: k4fka\/kafka-data-lake/, 'Gaussian artifacts must use the canonical shared Storage Bucket');
 assert.equal(exhibition.target_extent_m, 1, 'exhibits target an approximately 1 m normalized extent');

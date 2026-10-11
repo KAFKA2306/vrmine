@@ -27,7 +27,6 @@ public static class MinooRiverWorldBuilder
         public string scene_path;
         public string source_registry;
         public string canonical_platform;
-        public string renderer;
         public float target_extent_m;
         public float presentation_scale_multiplier;
         public bool show_title_sign;
@@ -170,8 +169,8 @@ public static class MinooRiverWorldBuilder
             throw new InvalidDataException("Minoo River scene path is not canonical: " + config.scene_path);
         if (config.canonical_platform != "windows")
             throw new InvalidDataException("Minoo River world currently targets Windows only.");
-        if (string.IsNullOrEmpty(config.source_registry) || string.IsNullOrEmpty(config.renderer))
-            throw new InvalidDataException("Minoo River source registry or renderer is missing.");
+        if (string.IsNullOrEmpty(config.source_registry))
+            throw new InvalidDataException("Minoo River source registry is missing.");
         if (!FinitePositive(config.target_extent_m) || !FinitePositive(config.presentation_scale_multiplier))
             throw new InvalidDataException("Minoo River extent and presentation scale must be positive finite values.");
         if (config.layout == null || !FinitePositive(config.layout.floor_size_x_m) || !FinitePositive(config.layout.floor_size_z_m) ||

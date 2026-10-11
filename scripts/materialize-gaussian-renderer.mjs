@@ -1,9 +1,11 @@
 import { access, cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
+import { parseRendererPin } from './gaussian-renderer-pin.mjs';
 
-const REPOSITORY = 'https://github.com/MichaelMoroz/VRChatGaussianSplatting.git';
-const REVISION = 'f96c0117cba518ff84d059d36f16909b873e23aa';
+const pin = parseRendererPin(JSON.parse(await readFile(new URL('../config/gaussian-splats.json', import.meta.url), 'utf8')).renderers?.unity_vrchat);
+const REPOSITORY = `https://github.com/${pin.repository}.git`;
+const REVISION = pin.revision;
 const CACHE = path.resolve('Library/VRMine/VRChatGaussianSplatting');
 const DESTINATION = path.resolve('Assets/VRChatGaussianSplatting');
 const PATHS = ['Editor', 'RTPool', 'RadixSort', 'Resources', 'Scripts', 'Shaders'];
