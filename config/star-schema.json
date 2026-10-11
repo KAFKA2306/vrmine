@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "authority": "Single source of truth for generated documents and ledgers. Edit this file and regenerate with node scripts/generate-star-schema.mjs; generated views are never edited by hand.",
+  "dimensions": {
+    "dim_section": {
+      "grain": "one heading of a generated view",
+      "key": "section_key",
+      "columns": ["section_key", "heading"],
+      "rows": [
+        { "section_key": "runtime", "heading": "Runtime and packages" },
+        { "section_key": "surfaces", "heading": "Canonical project surfaces" },
+        { "section_key": "minoo", "heading": "Minoo River Osaka standalone world" },
+        { "section_key": "verification", "heading": "Verification entry points" }
+      ]
+    },
+    "dim_metric": {
+      "grain": "one named value that a canonical source defines",
+      "key": "metric_key",
+      "columns": ["metric_key", "label"],
+      "rows": [
+        { "metric_key": "unity_editor_version", "label": "Unity" },
+        { "metric_key": "vrchat_worlds_sdk_version", "label": "VRChat Worlds SDK" },
+        { "metric_key": "unity_mcp_revision", "label": "Unity MCP (com.tunasync.unity-mcp) revision" },
+        { "metric_key": "gaussian_splat_renderer", "label": "Gaussian splat renderer" },
+        { "metric_key": "minoo_canonical_platform", "label": "Canonical platform" },
+        { "metric_key": "minoo_target_extent_m", "label": "Target extent (m)" },
+        { "metric_key": "minoo_presentation_scale_multiplier", "label": "Presentation scale multiplier" }
+      ]
+    },
+    "dim_source": {
+      "grain": "one canonical file or directory in the repository",
+      "key": "source_key",
+      "columns": ["source_key", "label", "path"],
+      "verify": { "kind": "path_exists", "column": "path" },
+      "rows": [
+        { "source_key": "unity_assets", "label": "Unity assets", "path": "Assets/KafkaMade/VRMine/" },
+        { "source_key": "world_configs", "label": "World configs", "path": "config/gaussian-worlds/" },
+        { "source_key": "commands", "label": "Commands", "path": "Taskfile.yml" },
+        { "source_key": "verification_scripts", "label": "Verification scripts", "path": "scripts/" },
+        { "source_key": "project_version", "label": "Project version", "path": "ProjectSettings/ProjectVersion.txt" },
+        { "source_key": "package_manifest", "label": "Package manifest", "path": "Packages/manifest.json" },
+        { "source_key": "minoo_world_config", "label": "World config", "path": "config/gaussian-worlds/minoo-river-osaka.json" },
+        { "source_key": "minoo_source_registry", "label": "Source registry", "path": "config/gaussian-worlds/minoo-river-osaka-sources.json" },
+        { "source_key": "minoo_artifact_manifest", "label": "Artifact manifest", "path": "config/gaussian-worlds/minoo-river-osaka-artifacts.yaml" },
+        { "source_key": "minoo_scene", "label": "Scene", "path": "Assets/KafkaMade/VRMine/Scenes/MinooRiverOsaka.unity" },
+        { "source_key": "minoo_prefab", "label": "Imported prefab", "path": "Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/minoo-river-osaka.prefab" }
+      ]
+    },
+    "dim_task": {
+      "grain": "one Taskfile task",
+      "key": "task_key",
+      "columns": ["task_key"],
+      "verify": { "kind": "taskfile_task", "column": "task_key" },
+      "rows": [
+        { "task_key": "minoo:contracts" },
+        { "task_key": "minoo:stage-local" },
+        { "task_key": "minoo:prepare-local" },
+        { "task_key": "minoo:verify-u2" },
+        { "task_key": "minoo:verify-sdk" },
+        { "task_key": "minoo:measure" },
+        { "task_key": "minoo:build" },
+        { "task_key": "minoo:release-candidate" }
+      ]
+    }
+  },
+  "facts": {
+    "fct_source_value": {
+      "grain": "one value read from one canonical source, shown in one section",
+      "columns": ["section_key", "metric_key", "source_key", "read"],
+      "foreign_keys": { "section_key": "dim_section", "metric_key": "dim_metric", "source_key": "dim_source" },
+      "natural_key": ["section_key", "metric_key"],
+      "line": "- {metric.label}: `{value}`",
+      "rows": [
+        {
+          "section_key": "runtime",
+          "metric_key": "unity_editor_version",
+          "source_key": "project_version",
+          "read": { "pattern": "^m_EditorVersion: (\\S+)" }
+        },
+        {
+          "section_key": "runtime",
+          "metric_key": "vrchat_worlds_sdk_version",
+          "source_key": "package_manifest",
+          "read": { "json": ["dependencies", "com.vrchat.worlds"] }
+        },
+        {
+          "section_key": "runtime",
+          "metric_key": "unity_mcp_revision",
+          "source_key": "package_manifest",
+          "read": { "json": ["dependencies", "com.tunasync.unity-mcp"], "pattern": "#([0-9a-f]{40})$" }
+        },
+        {
+          "section_key": "runtime",
+          "metric_key": "gaussian_splat_renderer",
+          "source_key": "minoo_world_config",
+          "read": { "json": ["renderer"] }
+        },
+        {
+          "section_key": "minoo",
+          "metric_key": "minoo_canonical_platform",
+          "source_key": "minoo_world_config",
+          "read": { "json": ["canonical_platform"] }
+        },
+        {
+          "section_key": "minoo",
+          "metric_key": "minoo_target_extent_m",
+          "source_key": "minoo_world_config",
+          "read": { "json": ["target_extent_m"] }
+        },
+        {
+          "section_key": "minoo",
+          "metric_key": "minoo_presentation_scale_multiplier",
+          "source_key": "minoo_world_config",
+          "read": { "json": ["presentation_scale_multiplier"] }
+        }
+      ]
+    },
+    "fct_path": {
+      "grain": "one canonical source path listed in one section",
+      "columns": ["section_key", "source_key"],
+      "foreign_keys": { "section_key": "dim_section", "source_key": "dim_source" },
+      "natural_key": ["section_key", "source_key"],
+      "line": "- {source.label}: `{source.path}`",
+      "rows": [
+        { "section_key": "surfaces", "source_key": "unity_assets" },
+        { "section_key": "surfaces", "source_key": "world_configs" },
+        { "section_key": "surfaces", "source_key": "commands" },
+        { "section_key": "surfaces", "source_key": "verification_scripts" },
+        { "section_key": "surfaces", "source_key": "project_version" },
+        { "section_key": "minoo", "source_key": "minoo_world_config" },
+        { "section_key": "minoo", "source_key": "minoo_source_registry" },
+        { "section_key": "minoo", "source_key": "minoo_artifact_manifest" },
+        { "section_key": "minoo", "source_key": "minoo_scene" },
+        { "section_key": "minoo", "source_key": "minoo_prefab" }
+      ]
+    },
+    "fct_task_reference": {
+      "grain": "one Taskfile command listed as a verification entry point",
+      "columns": ["section_key", "task_key"],
+      "foreign_keys": { "section_key": "dim_section", "task_key": "dim_task" },
+      "natural_key": ["section_key", "task_key"],
+      "line": "- `task {task.task_key}`",
+      "rows": [
+        { "section_key": "verification", "task_key": "minoo:contracts" },
+        { "section_key": "verification", "task_key": "minoo:stage-local" },
+        { "section_key": "verification", "task_key": "minoo:prepare-local" },
+        { "section_key": "verification", "task_key": "minoo:verify-u2" },
+        { "section_key": "verification", "task_key": "minoo:verify-sdk" },
+        { "section_key": "verification", "task_key": "minoo:measure" },
+        { "section_key": "verification", "task_key": "minoo:build" },
+        { "section_key": "verification", "task_key": "minoo:release-candidate" }
+      ]
+    },
+    "fct_statement": {
+      "grain": "one declared statement that has no machine-readable source",
+      "columns": ["section_key", "text"],
+      "foreign_keys": { "section_key": "dim_section" },
+      "natural_key": ["section_key", "text"],
+      "line": "- {text}",
+      "rows": [
+        { "section_key": "runtime", "text": "Render pipeline: Built-in Render Pipeline" },
+        { "section_key": "runtime", "text": "World authoring: VRChat SDK world components and UdonSharp" },
+        { "section_key": "minoo", "text": "Scene topology: one Gaussian splat object, one Gaussian renderer, one VRC scene descriptor, one PipelineManager, one spawn point, one reference camera" },
+        { "section_key": "minoo", "text": "Local source materialization: `VRMINE_MINOO_PLY` is required by `task minoo:stage-local`; there is no silent source fallback" },
+        { "section_key": "verification", "text": "VRChat publication requires authenticated VRChat SDK state and a deliberate upload action. A local SDK build is not evidence of a published world. Android/Quest performance and public artifact hosting require separate evidence." }
+      ]
+    }
+  },
+  "views": [
+    {
+      "output": "Docs/AI/UnityProjectContext.md",
+      "title": "VRMine Unity project context",
+      "sections": ["runtime", "surfaces", "minoo", "verification"],
+      "fact_tables": ["fct_path", "fct_source_value", "fct_task_reference", "fct_statement"]
+    }
+  ]
+}
