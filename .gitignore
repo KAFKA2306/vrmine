@@ -86,3 +86,6 @@ Packages/packages-lock.json
 !/Packages/vpm-manifest.json
 # *.png
 !/Packages/com.vrmine.bootstrap/
+
+# Unity temp cache (local output)
+/Assets/Temp/
