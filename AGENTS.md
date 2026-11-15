@@ -27,6 +27,13 @@ current GitHub `main` is the integration base. Machine-readable owners define po
 - silent fallbackや根拠のないdefaultで失敗を隠さない。
 - Unityのserialized referenceとtracked `.meta` を意図せず変更しない。
 
+## リポジトリ運用
+
+- 常設ブランチは `main` 一本とする。変更は最新の `main` から作った作業ブランチで進め、確認できた差分をPRで統合する。統合後に `main` を読み戻し、PRの最終コミットを `archive/pr-<番号>` タグで保存してから、その作業ブランチを削除する。
+- Issueには成果物、完了条件、検証方法を書く。既存Issueに同じ作業があればそこへ追記する。実装Issueは統合と検証の証拠を残して閉じる。自律完了に必要な権限・実機・判断が不足した実装Issueは、停止理由と再開条件を記録して閉じる。
+- Gitには手順、設定、生成を再実行できるソース、Unityが参照する配布用アセットと対応する `.meta` を置く。試作、生成キャッシュ、実機ログは対応する実行領域か成果物ストアに置く。確認結果は対象コミット、成果物の識別子、証拠へのリンクで辿れるようにする。
+- CIの役割はシークレット検査、Actions安全性、Pagesのビルドと配信とする。
+
 ## Knowledge selection
 
 `config/agent-knowledge.json` owns knowledge precedence and version-source selection. Resolve the current project versions from their canonical files before using version-sensitive Unity, VRChat SDK, Blender, official documentation, or specialized Skills. Project facts outrank external guidance; specialized Skills and general knowledge are advisory only. Reject or explicitly mark guidance incompatible when its declared minimum or exact version does not match the pinned project state. Do not copy pinned version values into this prose.
