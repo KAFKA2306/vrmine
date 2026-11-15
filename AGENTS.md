@@ -41,6 +41,11 @@ Use the existing generation path and preserve the direct render evidence it prod
 
 Use the smallest `Taskfile.yml` command for the changed surface and the verifier selected by `config/quality-gates.json`. Tie CI, main read-back, production, Unity, and VRChat claims to the exact revision that produced the evidence; never infer an unobserved runtime result.
 
+## Interactive effect evaluation
+
+- Express each acceptance case as player action, visible state change, observation with unit, and evidence. Replay the normal input path. Pair the creator’s control with the measured change it should produce.
+- Keep the runner reusable across effects and keep cases, thresholds, and reference captures in effect-specific definitions. Before using a changed scorer, check a known-good case, representative defects, and missing evidence. Evaluate proposed changes on separately versioned cases held back from authoring.
+
 ## Outcome-first task interpretation (Altitude / Depth / Range / Speed)
 
 - **Altitude:** Interpret a task as a verifiable user outcome, not only the named intermediate step. Infer the smallest justified acceptance criteria from the request and current repository state; do not silently expand scope or override explicit instructions.
