@@ -1,3 +1,0 @@
-https://vpm.nadena.dev/vpm.json
-https://vcc.vrcfury.com/
-https://lilxyzw.github.io/vpm-repos/vpm.json

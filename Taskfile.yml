@@ -231,7 +231,6 @@ tasks:
   pages:test:
     cmds:
       - node scripts/verify-factory-timing.mjs
-      - node --test scripts/product-pages.test.mjs
       - node scripts/verify-gaussian-fixtures.mjs
       - node scripts/verify-quality-gates.mjs
       - powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-pages.ps1

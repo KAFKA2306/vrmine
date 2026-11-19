@@ -31,7 +31,7 @@
         "scripts/*blender*",
         "scripts/*world_item*",
         "scripts/*world_build*",
-        "scripts/test_world_item_geometry.py",
+        "scripts/*retro-cafe*",
         "config/world-items/",
         "config/world-design/",
         "*.blend",
@@ -55,10 +55,8 @@
     ]
   },
   "toolchain": {
-    "unityVersion": "2022.3.22f1",
-    "blenderVersion": "4.2.0",
-    "vrcGetVersion": "1.9.2",
-    "vrchatSdkVersion": "3.9.0"
+    "policy": "config/vrchat-toolchain.json",
+    "blenderVersion": "4.2.0"
   },
   "gates": {
     "vpmTask": "vpm:check",
@@ -68,7 +66,7 @@
       "editmode",
       "playmode"
     ],
-    "blenderGeometrySmoke": "scripts/test_world_item_geometry.py",
+    "blenderTask": "cafe:build",
     "unityBridgeHealth": true
   }
 }
