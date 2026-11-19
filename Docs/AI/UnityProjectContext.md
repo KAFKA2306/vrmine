@@ -6,6 +6,8 @@
 
 - Unity: `2022.3.22f1`
 - VRChat Worlds SDK: `3.9.0`
+- vrc-get: `1.9.2`
+- Blender: `4.2`
 - Unity MCP (com.tunasync.unity-mcp) revision: `50597089589137c5186f5badbde1d72f5d335243`
 - Gaussian splat renderer: `MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa`
 - Render pipeline: Built-in Render Pipeline
@@ -14,9 +16,17 @@
 ## Canonical project surfaces
 
 - Unity assets: `Assets/KafkaMade/VRMine/`
-- World configs: `config/gaussian-worlds/`
+- Public pages: `pages/`
+- 3D item specs: `config/world-items/`
+- World design specs: `config/world-design/`
+- Gaussian world configs: `config/gaussian-worlds/`
+- Unity packages: `Packages/`
 - Commands: `Taskfile.yml`
 - Verification scripts: `scripts/`
+- Verification and release policy: `config/quality-gates.json`
+- Agent knowledge authority: `config/agent-knowledge.json`
+- Star schema SSOT: `config/star-schema.json`
+- VRChat toolchain pin: `config/vrchat-toolchain.json`
 - Project version: `ProjectSettings/ProjectVersion.txt`
 
 ## Minoo River Osaka standalone world
@@ -34,6 +44,13 @@
 
 ## Verification entry points
 
+- `task check`
+- `task merge:check`
+- `task ledger:check`
+- `task vpm:check`
+- `task world-design:check`
+- `task pages:test`
+- `task cafe:build`
 - `task minoo:contracts`
 - `task minoo:stage-local`
 - `task minoo:prepare-local`

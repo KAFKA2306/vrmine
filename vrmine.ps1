@@ -614,9 +614,9 @@ try {
   $surface = [ordered]@{
     static = $true
     vpm = $true
-    blender = ($Full -or (Match-ChangedPath $changedFiles @('Taskfile.yml', 'scripts/*blender', 'scripts/*world_item', 'scripts/*world_build', 'scripts/test_world_item_geometry.py', 'config/world-items/', 'config/world-design/', '*.blend', '*.fbx', '*.glb', '*.obj')))
-    unity = ($Full -or (Match-ChangedPath $changedFiles @('Assets/', 'Packages/', 'ProjectSettings/', 'scripts/*unity', '*.cs', '*.unity', '*.prefab', '*.asset')))
-    bridge = ($Full -or (Match-ChangedPath $changedFiles @('Packages/manifest.json', 'ProjectSettings/', 'Assets/', 'scripts/*unity')))
+    blender = ($Full -or (Match-ChangedPath $changedFiles ([string[]]@($config.verification.onChange.blender))))
+    unity = ($Full -or (Match-ChangedPath $changedFiles ([string[]]@($config.verification.onChange.unity))))
+    bridge = ($Full -or (Match-ChangedPath $changedFiles ([string[]]@($config.verification.onChange.bridge))))
   }
   Add-Step 'surface-detection' 'PASS' (([ordered]@{ full = [bool]$Full; selected = $surface; changedFiles = $changedFiles } | ConvertTo-Json -Compress)) $true 'vrmine-request.json' 0
   $markers = @('Assets', 'Packages\manifest.json', 'ProjectSettings\ProjectVersion.txt', 'config\vrmine-request.json') | Where-Object { Test-Path -LiteralPath (Join-Path $worktree $_) }
@@ -637,8 +637,14 @@ try {
   $staticDetail = "markers=$($markers.Count)/4; missingIgnore=$($missingIgnore -join ','); secretFiles=$($secretHits -join ',')"
   Add-Step 'static-checks' $(if ($staticOk) { 'PASS' } else { 'FAIL' }) $staticDetail $true 'git' $(if ($staticOk) { 0 } else { 1 })
   if (-not $staticOk) { Stop-Verification 'Static repository hygiene checks failed' 'FAIL' }
+  $toolchainPolicyRel = if ($config.toolchain.policy) { [string]$config.toolchain.policy } else { 'config/vrchat-toolchain.json' }
+  $toolchainPolicyPath = Join-Path $worktree $toolchainPolicyRel
+  if (-not (Test-Path -LiteralPath $toolchainPolicyPath -PathType Leaf)) { Stop-Verification "Toolchain policy is missing: $toolchainPolicyPath" 'UNVERIFIED' }
+  $toolchainPolicy = Read-JsonFile $toolchainPolicyPath
   $projectUnityVersion = Get-UnityProjectVersion $worktree
-  $expectedUnityVersion = [string]$config.toolchain.unityVersion
+  $expectedUnityVersion = [string]$toolchainPolicy.unityVersion
+  $expectedVrcGetVersion = [string]$toolchainPolicy.vrcGet.version
+  $expectedVrchatSdkVersion = [string]$toolchainPolicy.vrchatSdkVersion
   if ($projectUnityVersion -ne $expectedUnityVersion) { Add-Step 'unity-project-version' 'FAIL' "expected=$expectedUnityVersion actual=$projectUnityVersion" $true 'ProjectSettings/ProjectVersion.txt' 1; Stop-Verification 'Unity project version is not the pinned version' 'FAIL' }
   Add-Step 'unity-project-version' 'PASS' $projectUnityVersion $true 'ProjectSettings/ProjectVersion.txt' 0
   Materialize-Tools
@@ -667,9 +673,9 @@ try {
   if (-not $taskPath) { [void]$toolUnverified.Add('task') }
   if (-not $uvPath) { [void]$toolUnverified.Add('uv') }
   if ($surface.vpm -and (-not $vrcVersionProbe -or $vrcVersionProbe.exitCode -ne 0)) { [void]$toolUnverified.Add('vrc-get') }
-  if ($vrcVersionProbe -and $vrcVersionProbe.text -notmatch [regex]::Escape([string]$config.toolchain.vrcGetVersion)) { [void]$toolFailures.Add('vrc-get version') }
+  if ($vrcVersionProbe -and $vrcVersionProbe.text -notmatch [regex]::Escape($expectedVrcGetVersion)) { [void]$toolFailures.Add('vrc-get version') }
   if (-not $pythonPath -or -not (Test-Path -LiteralPath $pythonPath -PathType Leaf)) { [void]$toolUnverified.Add('python') }
-  if ($surface.unity -and -not $unityPath) { [void]$toolUnverified.Add('Unity 2022.3.22f1') }
+  if ($surface.unity -and -not $unityPath) { [void]$toolUnverified.Add("Unity $expectedUnityVersion") }
   $blenderVersionProbe = $null
   if ($surface.blender) {
     if (-not $blenderPath) { [void]$toolUnverified.Add("Blender $($config.toolchain.blenderVersion)") }
@@ -711,7 +717,7 @@ try {
     if ($vpmRun.code -eq 0 -and (Test-Path -LiteralPath $vpmProducer -PathType Leaf)) {
       try {
         $vpmEvidence = Read-JsonFile $vpmProducer
-        $vpmValid = ([string]$vpmEvidence.unityVersion -eq $expectedUnityVersion -and [string]$vpmEvidence.vrchatSdkTarget -eq [string]$config.toolchain.vrchatSdkVersion -and [int]$vpmEvidence.resolve.status -eq 0 -and [int]$vpmEvidence.outdated.status -eq 0 -and [string]$vpmEvidence.canonicalHashes.before.manifest -eq [string]$vpmEvidence.canonicalHashes.after.manifest -and [string]$vpmEvidence.canonicalHashes.before.vpmManifest -eq [string]$vpmEvidence.canonicalHashes.after.vpmManifest)
+        $vpmValid = ([string]$vpmEvidence.unityVersion -eq $expectedUnityVersion -and [string]$vpmEvidence.vrchatSdkTarget -eq $expectedVrchatSdkVersion -and [int]$vpmEvidence.resolve.status -eq 0 -and [int]$vpmEvidence.outdated.status -eq 0 -and [string]$vpmEvidence.canonicalHashes.before.manifest -eq [string]$vpmEvidence.canonicalHashes.after.manifest -and [string]$vpmEvidence.canonicalHashes.before.vpmManifest -eq [string]$vpmEvidence.canonicalHashes.after.vpmManifest)
         if (-not $vpmValid) { $vpmDetail += '; producer evidence fields are incomplete or inconsistent' }
       } catch { $vpmDetail += "; producer evidence is unreadable: $($_.Exception.Message)" }
     } elseif ($vpmRun.code -eq 0) { $vpmDetail += '; producer evidence is missing' }
@@ -735,14 +741,15 @@ try {
   }
   if ($surface.blender) {
     if ($NoBlender) { Stop-Verification 'Required Blender verification was disabled' 'UNVERIFIED' }
-    $blenderScript = Join-Path $worktree ([string]$config.gates.blenderGeometrySmoke)
-    $blenderRun = Invoke-Logged 'blender-geometry-smoke' $blenderPath @('-b', '--python-exit-code', '1', '--python', $blenderScript) $worktree
+    $blenderTask = [string]$config.gates.blenderTask
+    if (-not $blenderTask) { Stop-Verification 'Blender gate task is not configured in config/vrmine-request.json' 'UNVERIFIED' }
+    $blenderRun = Invoke-Logged 'blender-gate' $taskPath @($blenderTask) $worktree
     $blenderErrors = @(Test-BlenderLogForErrors $blenderRun.log)
     $blenderStatus = if ($blenderRun.code -eq 0 -and $blenderErrors.Count -eq 0) { 'PASS' } elseif ($blenderRun.code -eq 127) { 'UNVERIFIED' } else { 'FAIL' }
-    $blenderEvidencePath = Add-EvidenceRecord 'blender-geometry-smoke' $blenderStatus "blender -b --python-exit-code 1 --python $blenderScript" $blenderRun.code $blenderRun.log $null ([ordered]@{ version = [string]$blenderVersionProbe['version']; errors = $blenderErrors })
-    Add-Step 'blender-geometry-smoke' $blenderStatus "version=$([string]$blenderVersionProbe['version']); exit=$($blenderRun.code); errors=$($blenderErrors.Count)" $true $blenderPath $blenderRun.code $blenderRun.log $blenderEvidencePath
+    $blenderEvidencePath = Add-EvidenceRecord 'blender-gate' $blenderStatus "task $blenderTask" $blenderRun.code $blenderRun.log $null ([ordered]@{ version = [string]$blenderVersionProbe['version']; errors = $blenderErrors })
+    Add-Step 'blender-gate' $blenderStatus "version=$([string]$blenderVersionProbe['version']); exit=$($blenderRun.code); errors=$($blenderErrors.Count)" $true $taskPath $blenderRun.code $blenderRun.log $blenderEvidencePath
     if ($blenderStatus -ne 'PASS') { Stop-Verification 'Blender batchmode verification failed' $(if ($blenderStatus -eq 'FAIL') { 'FAIL' } else { 'UNVERIFIED' }) }
-  } else { Add-Step 'blender-geometry-smoke' 'PASS' 'not selected by request manifest surface detection' $false $null 0 }
+  } else { Add-Step 'blender-gate' 'PASS' 'not selected by request manifest surface detection' $false $null 0 }
   if ($surface.unity) {
     if ($NoUnity) { Stop-Verification 'Required Unity verification was disabled' 'UNVERIFIED' }
     $compileLog = Join-Path $state 'logs\unity-compile-editor.log'
