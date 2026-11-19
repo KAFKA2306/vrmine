@@ -8,7 +8,7 @@
 - VRChat Worlds SDK: `3.9.0`
 - vrc-get: `1.9.2`
 - Blender: `4.2`
-- Unity MCP (com.tunasync.unity-mcp) revision: `50597089589137c5186f5badbde1d72f5d335243`
+- Unity MCP (com.tunasync.unity-mcp) revision: `2a2cae188d2f01d261bcf97306fe19ff37b57107`
 - Gaussian splat renderer: `MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa`
 - Render pipeline: Built-in Render Pipeline
 - World authoring: VRChat SDK world components and UdonSharp
