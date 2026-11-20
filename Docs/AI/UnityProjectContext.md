@@ -15,6 +15,7 @@
 
 ## Canonical project surfaces
 
+- Mission and deliverables: `MISSION.md`
 - Unity assets: `Assets/KafkaMade/VRMine/`
 - Public pages: `pages/`
 - 3D item specs: `config/world-items/`
