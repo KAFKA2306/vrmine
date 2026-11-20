@@ -33,7 +33,6 @@ for(const html of [gallery,view]) {
   assert.match(html, /href="\.\.\/">Home<\/a>/);
   assert.match(html, /href="\.\.\/#games">ゲーム一覧<\/a>/);
   assert.match(html, /href="\.\/" aria-current="page">3D素材<\/a>/);
-  assert.match(html, /href="\.\.\/organizers\/">イベント主催者向け<\/a>/);
 }
 assert.match(view, /aria-label="パンくず"/);
 assert.match(view, /id="product-name"/);

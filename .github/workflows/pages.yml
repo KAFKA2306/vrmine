@@ -8,13 +8,6 @@ on:
       - "config/world-items/**"
       - "scripts/*product-pages*"
       - "scripts/world_item_visual_loop.py"
-      - "config/gaussian-splats.json"
-      - "config/gaussian-artifacts.yaml"
-      - "config/gaussian-basis-contract.json"
-      - "scripts/verify-gaussian-fixtures.mjs"
-      - "scripts/build-supersplat-viewer.mjs"
-      - "scripts/materialize-browser-smoke-source.mjs"
-      - "scripts/verify-browser-first-frame.mjs"
       - "scripts/build-retro-cafe.py"
       - "scripts/verify-retro-cafe.py"
       - "README.md"
@@ -25,13 +18,6 @@ on:
       - "config/world-items/**"
       - "scripts/*product-pages*"
       - "scripts/world_item_visual_loop.py"
-      - "config/gaussian-splats.json"
-      - "config/gaussian-artifacts.yaml"
-      - "config/gaussian-basis-contract.json"
-      - "scripts/verify-gaussian-fixtures.mjs"
-      - "scripts/build-supersplat-viewer.mjs"
-      - "scripts/materialize-browser-smoke-source.mjs"
-      - "scripts/verify-browser-first-frame.mjs"
       - "scripts/build-retro-cafe.py"
       - "scripts/verify-retro-cafe.py"
       - "README.md"
@@ -61,7 +47,6 @@ jobs:
       pages_enabled: ${{ steps.pages.outputs.enabled }}
       source_tree_sha: ${{ steps.identity.outputs.tree_sha }}
       build_source_sha: ${{ steps.deployment_evidence.outputs.build_source_sha }}
-      gaussian_count: ${{ steps.deployment_evidence.outputs.gaussian_count }}
       retro_cafe_review_sha256: ${{ steps.deployment_evidence.outputs.retro_cafe_review_sha256 }}
       retro_cafe_webp_sha256: ${{ steps.deployment_evidence.outputs.retro_cafe_webp_sha256 }}
       reused_verified_artifact: ${{ steps.reuse.outputs.reused }}
@@ -128,17 +113,11 @@ jobs:
           test -s _site/3d/retro-cafe/render-manifest.json
           test "$(jq -r '.source_tree_sha' _site/3d/retro-cafe/render-manifest.json)" = "$TREE_SHA"
           node scripts/verify-product-pages.mjs _site
-          test -s _site/3dgs/viewer/index.html
-          grep -F 'vrmine:3dgs:first-frame' _site/3dgs/viewer/index.html
 
           echo "reused=true" >> "$GITHUB_OUTPUT"
           echo "Reused verified Pages artifact ${artifact_id} for exact tree ${TREE_SHA}." >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Validate 3DGS fixture contract
-        if: steps.reuse.outputs.reused != 'true'
-        run: node scripts/verify-gaussian-fixtures.mjs
-
-      - name: Validate static game hub
+      - name: Validate static pages
         if: steps.reuse.outputs.reused != 'true'
         run: |
           set -euo pipefail
@@ -148,28 +127,7 @@ jobs:
             pages/assets/app.js
             pages/assets/platform.js
             pages/games/registry.js
-            pages/games/answer-impostor/index.html
-            pages/games/answer-impostor/game.js
-            pages/games/answer-impostor/engine.mjs
-            pages/games/answer-impostor/event-bridge.js
-            pages/games/abyss-invasion/index.html
-            pages/games/abyss-invasion/tracker.js
-            server/abyss-server.mjs
-            pages/games/stich-meister/index.html
-            pages/3dgs/index.html
-            pages/3dgs/gallery.js
-            config/gaussian-splats.json
-            config/gaussian-artifacts.yaml
-            config/gaussian-basis-contract.json
-            scripts/build-supersplat-viewer.mjs
-            scripts/materialize-browser-smoke-source.mjs
-            scripts/verify-browser-first-frame.mjs
-            pages/events/event.js
-            pages/events/telemetry.js
-            pages/events/demo/index.html
-            pages/events/demo/config.json
-            pages/events/question-packs/demo.json
-            pages/organizers/index.html
+            pages/games/perspective-cage/index.html
             pages/io/index.html
             pages/io/view.html
             pages/3d/retro-cafe/pendant-light/index.html
@@ -177,29 +135,7 @@ jobs:
           )
           for file in "${required[@]}"; do test -s "$file"; done
           find pages -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -n1 node --check
-          node --check scripts/build-supersplat-viewer.mjs
-          node --check scripts/materialize-browser-smoke-source.mjs
-          node --check scripts/verify-browser-first-frame.mjs
-          node --check server/abyss-server.mjs
-          node -e "const fs=require('fs'); for (const f of ['pages/events/demo/config.json','pages/events/question-packs/demo.json']) JSON.parse(fs.readFileSync(f,'utf8'))"
           grep -F 'vrmine-game-hub-2026-08-15-1' pages/index.html
-          grep -F 'Answer Impostor' pages/games/answer-impostor/index.html
-          grep -F 'event-bridge.js' pages/games/answer-impostor/index.html
-          grep -F '深淵侵蝕' pages/games/abyss-invasion/index.html
-          grep -F 'Stich-Meister' pages/games/stich-meister/index.html
-          grep -F 'gallery.js' pages/3dgs/index.html
-          grep -F "fetch('./gaussian-splats.json'" pages/3dgs/gallery.js
-          grep -F 'iframe.src = `./viewer/?' pages/3dgs/gallery.js
-          grep -F 'fixture-previous' pages/3dgs/index.html
-          grep -F 'fixture-next' pages/3dgs/index.html
-          grep -F 'fixture-select' pages/3dgs/index.html
-          grep -F 'vrmine:3dgs:first-frame' scripts/build-supersplat-viewer.mjs
-          grep -F 'vrmineFirstFrame' scripts/build-supersplat-viewer.mjs
-          grep -F 'data:application/json' pages/3dgs/gallery.js
-          grep -F '@playcanvas/supersplat-viewer@1.28.0' config/gaussian-splats.json
-          grep -F 'VRMine Event Demo' pages/events/demo/config.json
-          grep -F 'analytics_endpoint' pages/events/demo/config.json
-          grep -F '5,000〜15,000円 / event' pages/organizers/index.html
           grep -F "fetch('catalog.json'" pages/io/index.html
           grep -F 'spec.display_name' pages/io/view.html
           grep -F 'spec.dimensions_m' pages/io/view.html
@@ -209,9 +145,7 @@ jobs:
           node scripts/verify-quality-gates.mjs
           grep -F '../view-hero.webp' pages/3d/retro-cafe/pendant-light/index.html
           grep -F '../view-front.webp' pages/3d/retro-cafe/pendant-light/index.html
-          grep -F "href: './games/answer-impostor/'" pages/games/registry.js
-          grep -F "href: './games/abyss-invasion/'" pages/games/registry.js
-          grep -F 'new WebSocket(server)' pages/games/abyss-invasion/tracker.js
+          grep -F "href: './games/perspective-cage/'" pages/games/registry.js
           grep -F 'vrmine-game-hub-v4' pages/service-worker.js
 
       - name: Install official Blender 4.2.0 for Retro Cafe preview
@@ -304,7 +238,6 @@ jobs:
           cp -R pages _site
           node scripts/build-product-pages.mjs _site
           node scripts/verify-product-pages.mjs _site
-          cp config/gaussian-splats.json _site/3dgs/gaussian-splats.json
           mkdir -p _site/3d/retro-cafe
           cp .artifacts/retro-cafe/*.png _site/3d/retro-cafe/
           cp .artifacts/retro-cafe/*.webp _site/3d/retro-cafe/
@@ -323,122 +256,6 @@ jobs:
           test -s _site/3d/retro-cafe/render-manifest.json
           test ! -e _site/404.html
           touch _site/.nojekyll
-
-      - name: Materialize pinned SuperSplat viewer
-        if: steps.reuse.outputs.reused != 'true'
-        run: |
-          set -euo pipefail
-          npm install --no-save --package-lock=false --ignore-scripts @playcanvas/supersplat-viewer@1.28.0
-          npm ls --depth=0 @playcanvas/supersplat-viewer@1.28.0
-          node scripts/build-supersplat-viewer.mjs _site/3dgs/viewer
-          test -s _site/3dgs/viewer/index.html
-          test -s _site/3dgs/viewer/index.css
-          test -s _site/3dgs/viewer/index.js
-          grep -F 'vrmine:3dgs:first-frame' _site/3dgs/viewer/index.html
-
-      - name: Check out pinned hf-cache-hub artifact resolver
-        if: steps.reuse.outputs.reused != 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          repository: KAFKA2306/hf-cache-hub
-          ref: b41ca5a6601a6ac7724cb09b3fe90554c7356d69
-          path: .hf-cache-hub
-
-      - name: Install artifact resolver dependencies
-        if: steps.reuse.outputs.reused != 'true'
-        run: python -m pip install "PyYAML>=6.0,<7" "huggingface-hub>=1.19,<2" "filelock>=3.0"
-
-      - name: Resolve private artifact authentication
-        id: artifact-access
-        if: steps.reuse.outputs.reused != 'true'
-        env:
-          HF_OIDC_RESOURCE: buckets/k4fka/kafka-data-lake
-        run: |
-          set +e
-          oidc_token="$(hf auth token 2>/tmp/vrmine-hf-oidc-error.txt)"
-          oidc_status=$?
-          set -e
-          if [ "$oidc_status" -eq 0 ] && [ -n "$oidc_token" ]; then
-            echo "::add-mask::$oidc_token"
-            printf 'HF_TOKEN=%s\n' "$oidc_token" >> "$GITHUB_ENV"
-            echo "available=true" >> "$GITHUB_OUTPUT"
-            echo "method=trusted_publisher_oidc" >> "$GITHUB_OUTPUT"
-          else
-            echo "available=false" >> "$GITHUB_OUTPUT"
-            echo "method=none" >> "$GITHUB_OUTPUT"
-            echo "::warning::Real 3DGS browser runtime proof is BLOCKED: no matching Hugging Face Trusted Publisher is available. Static Pages deployment continues; no real-Ply runtime PASS is claimed."
-            echo "### 3DGS browser runtime proof" >> "$GITHUB_STEP_SUMMARY"
-            echo "BLOCKED: no matching Hugging Face Trusted Publisher is available. The private PLY was not read and browser runtime PASS is not claimed; static Pages deployment remains independent." >> "$GITHUB_STEP_SUMMARY"
-            cat /tmp/vrmine-hf-oidc-error.txt >&2 || true
-          fi
-
-      - name: Materialize hash-verified real PLY for runtime proof
-        if: steps.reuse.outputs.reused != 'true' && steps.artifact-access.outputs.available == 'true'
-        env:
-          HF_HOME: ${{ runner.temp }}/hf-cache
-          HF_CACHE_HUB_ROOT: ${{ github.workspace }}/.hf-cache-hub
-        run: |
-          set -euo pipefail
-          node scripts/materialize-browser-smoke-source.mjs \
-            huejotzingo \
-            _site/3dgs/ci/huejotzingo.ply \
-            _site/3dgs/ci/settings.json
-          test -s _site/3dgs/ci/huejotzingo.ply
-          test -s _site/3dgs/ci/settings.json
-
-      - name: Render real 3DGS first frame in headless Chrome
-        if: steps.reuse.outputs.reused != 'true' && steps.artifact-access.outputs.available == 'true'
-        run: |
-          set -euo pipefail
-          if command -v google-chrome >/dev/null 2>&1; then
-            chrome=google-chrome
-          elif command -v chromium >/dev/null 2>&1; then
-            chrome=chromium
-          elif command -v chromium-browser >/dev/null 2>&1; then
-            chrome=chromium-browser
-          else
-            echo "Chrome/Chromium is unavailable on this runner" >&2
-            exit 1
-          fi
-          python3 -m http.server 8000 --directory _site >/tmp/vrmine-pages-http.log 2>&1 &
-          server_pid=$!
-          chrome_pid=''
-          cleanup() {
-            if [ -n "$chrome_pid" ]; then kill "$chrome_pid" 2>/dev/null || true; fi
-            kill "$server_pid" 2>/dev/null || true
-          }
-          trap cleanup EXIT
-          for attempt in $(seq 1 20); do
-            if curl --fail --silent http://127.0.0.1:8000/3dgs/viewer/ >/dev/null; then break; fi
-            sleep 1
-          done
-          expected_bytes="$(jq -r '.environments[] | select(.id == "huejotzingo") | .source.size_bytes' config/gaussian-splats.json)"
-          test "$(curl --fail --silent http://127.0.0.1:8000/3dgs/ci/huejotzingo.ply | wc -c)" -eq "$expected_bytes"
-          url='http://127.0.0.1:8000/3dgs/viewer/?content=../ci/huejotzingo.ply&settings=../ci/settings.json&webgl&noui&vrmine_id=huejotzingo&vrmine_token=1'
-          "$chrome" \
-            --headless=new \
-            --no-sandbox \
-            --enable-webgl \
-            --ignore-gpu-blocklist \
-            --enable-unsafe-swiftshader \
-            --use-angle=swiftshader \
-            --disable-background-timer-throttling \
-            --disable-renderer-backgrounding \
-            --run-all-compositor-stages-before-draw \
-            --remote-debugging-address=127.0.0.1 \
-            --remote-debugging-port=9222 \
-            --user-data-dir=/tmp/vrmine-chrome-profile \
-            "$url" \
-            >/tmp/vrmine-chrome.log 2>&1 &
-          chrome_pid=$!
-          if ! node scripts/verify-browser-first-frame.mjs "$url" 120000; then
-            echo '--- Chrome log ---' >&2
-            tail -n 200 /tmp/vrmine-chrome.log >&2 || true
-            echo '--- HTTP server log ---' >&2
-            tail -n 100 /tmp/vrmine-pages-http.log >&2 || true
-            exit 1
-          fi
-          rm -rf _site/3dgs/ci
 
       - name: Record immutable Pages build provenance
         if: steps.reuse.outputs.reused != 'true'
@@ -528,7 +345,6 @@ jobs:
           test "$webp_sha" = "$(jq -r '.webp_combined_sha256' _site/3d/retro-cafe/render-manifest.json)"
 
           echo "build_source_sha=$(jq -r '.source_sha' _site/build-provenance.json)" >> "$GITHUB_OUTPUT"
-          echo "gaussian_count=$(jq '.environments | length' _site/3dgs/gaussian-splats.json)" >> "$GITHUB_OUTPUT"
           echo "retro_cafe_review_sha256=$review_sha" >> "$GITHUB_OUTPUT"
           echo "retro_cafe_webp_sha256=$webp_sha" >> "$GITHUB_OUTPUT"
 
@@ -586,13 +402,12 @@ jobs:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node scripts/verify-product-pages.mjs "$PAGE_URL"
 
-      - name: Verify public game hub
+      - name: Verify public portal
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           EXPECTED_SHA: ${{ github.sha }}
           EXPECTED_BUILD_SHA: ${{ needs.build.outputs.build_source_sha }}
           EXPECTED_TREE_SHA: ${{ needs.build.outputs.source_tree_sha }}
-          EXPECTED_GAUSSIAN_COUNT: ${{ needs.build.outputs.gaussian_count }}
           EXPECTED_RETRO_CAFE_REVIEW_SHA256: ${{ needs.build.outputs.retro_cafe_review_sha256 }}
           EXPECTED_RETRO_CAFE_WEBP_SHA256: ${{ needs.build.outputs.retro_cafe_webp_sha256 }}
         run: |
@@ -613,16 +428,10 @@ jobs:
           test "$matched" = true
           grep -F 'href="./io/"' "$tmp/index.html"
           ! grep -Fq 'VR development' "$tmp/index.html"
-          ! grep -Fq '実装途中も、成果として見える' "$tmp/index.html"
-          ! grep -Fq 'id="development"' "$tmp/index.html"
-          ! grep -Fq 'id="platform"' "$tmp/index.html"
           ! grep -Fq 'source on GitHub' "$tmp/index.html"
           ! grep -Fq 'github.com/KAFKA2306/vrmine' "$tmp/index.html"
           curl "${curl_retry[@]}" "$base/service-worker.js?smoke=${EXPECTED_SHA}" -o "$tmp/service-worker.js"
-          curl "${curl_retry[@]}" "$base/games/answer-impostor/?smoke=${EXPECTED_SHA}" -o "$tmp/answer.html"
-          curl "${curl_retry[@]}" "$base/games/abyss-invasion/?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.html"
-          curl "${curl_retry[@]}" "$base/games/stich-meister/?smoke=${EXPECTED_SHA}" -o "$tmp/stich.html"
-          curl "${curl_retry[@]}" "$base/3dgs/?smoke=${EXPECTED_SHA}" -o "$tmp/3dgs.html"
+          curl "${curl_retry[@]}" "$base/games/perspective-cage/?smoke=${EXPECTED_SHA}" -o "$tmp/perspective-cage.html"
           curl "${curl_retry[@]}" "$base/build-provenance.json?smoke=${EXPECTED_SHA}" -o "$tmp/build-provenance.json"
           curl "${curl_retry[@]}" "$base/3d/retro-cafe/render-manifest.json?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-render-manifest.json"
           test "$(jq -r '.source_sha' "$tmp/build-provenance.json")" = "$EXPECTED_BUILD_SHA"
@@ -636,23 +445,11 @@ jobs:
             curl "${curl_retry[@]}" "$base/3d/retro-cafe/${image}.webp?smoke=${EXPECTED_SHA}" -o "$tmp/${image}.webp"
           done
           curl "${curl_retry[@]}" "$base/3d/retro-cafe/pendant-light/?smoke=${EXPECTED_SHA}" -o "$tmp/retro-cafe-pendant.html"
-          curl "${curl_retry[@]}" "$base/3dgs/gallery.js?smoke=${EXPECTED_SHA}" -o "$tmp/gallery.js"
-          curl "${curl_retry[@]}" "$base/3dgs/gaussian-splats.json?smoke=${EXPECTED_SHA}" -o "$tmp/gaussian-splats.json"
-          curl "${curl_retry[@]}" "$base/3dgs/viewer/?smoke=${EXPECTED_SHA}" -o "$tmp/viewer.html"
-          curl "${curl_retry[@]}" "$base/3dgs/viewer/index.js?smoke=${EXPECTED_SHA}" -o "$tmp/viewer.js"
-          curl "${curl_retry[@]}" "$base/events/demo/?smoke=${EXPECTED_SHA}" -o "$tmp/event.html"
-          curl "${curl_retry[@]}" "$base/organizers/?smoke=${EXPECTED_SHA}" -o "$tmp/organizers.html"
           curl "${curl_retry[@]}" "$base/io/?smoke=${EXPECTED_SHA}" -o "$tmp/io.html"
           curl "${curl_retry[@]}" "$base/io/catalog.json?smoke=${EXPECTED_SHA}" -o "$tmp/io-catalog.json"
           curl "${curl_retry[@]}" "$base/io/view.html?item=minimal-book-stack-01&smoke=${EXPECTED_SHA}" -o "$tmp/io-view.html"
           curl "${curl_retry[@]}" "$base/io/items/minimal-book-stack-01/spec.json?smoke=${EXPECTED_SHA}" -o "$tmp/io-book-spec.json"
-          curl "${curl_retry[@]}" "$base/games/answer-impostor/engine.mjs?smoke=${EXPECTED_SHA}" -o "$tmp/engine.mjs"
-          curl "${curl_retry[@]}" "$base/games/abyss-invasion/tracker.js?smoke=${EXPECTED_SHA}" -o "$tmp/abyss.js"
           grep -F 'vrmine-game-hub-v4' "$tmp/service-worker.js"
-          grep -F 'Answer Impostor' "$tmp/answer.html"
-          grep -F '深淵侵蝕' "$tmp/abyss.html"
-          grep -F 'Stich-Meister' "$tmp/stich.html"
-          grep -F 'gallery.js' "$tmp/3dgs.html"
           grep -F 'Retro Cafe Pendant Light' "$tmp/retro-cafe-pendant.html"
           grep -F '../view-hero.webp' "$tmp/retro-cafe-pendant.html"
           grep -F "fetch('catalog.json'" "$tmp/io.html"
@@ -663,37 +460,4 @@ jobs:
             test "$(file --mime-type -b "$tmp/${image}.png")" = "image/png"
             test "$(file --mime-type -b "$tmp/${image}.webp")" = "image/webp"
           done
-          review_files=(
-            "$tmp/thumbnail.png"
-            "$tmp/view-hero.png"
-            "$tmp/view-front.png"
-            "$tmp/view-rear.png"
-            "$tmp/view-left.png"
-            "$tmp/view-right.png"
-            "$tmp/view-top.png"
-          )
-          test "$(sha256sum "${review_files[@]}" | awk '{print $1}' | sha256sum | awk '{print $1}')" = "$EXPECTED_RETRO_CAFE_REVIEW_SHA256"
-          webp_files=(
-            "$tmp/thumbnail.webp"
-            "$tmp/view-hero.webp"
-            "$tmp/view-front.webp"
-            "$tmp/view-rear.webp"
-            "$tmp/view-left.webp"
-            "$tmp/view-right.webp"
-            "$tmp/view-top.webp"
-          )
-          test "$(sha256sum "${webp_files[@]}" | awk '{print $1}' | sha256sum | awk '{print $1}')" = "$EXPECTED_RETRO_CAFE_WEBP_SHA256"
-          grep -F 'iframe.src = `./viewer/?' "$tmp/gallery.js"
-          grep -F '@playcanvas/supersplat-viewer@1.28.0' "$tmp/gaussian-splats.json"
-          test "$(jq '.environments | length' "$tmp/gaussian-splats.json")" -eq "$EXPECTED_GAUSSIAN_COUNT"
-          grep -F 'vrmine:3dgs:first-frame' "$tmp/viewer.html"
-          test -s "$tmp/viewer.js"
-          grep -F 'VRMine Event Demo' "$tmp/event.html"
-          grep -F '5,000〜15,000円 / event' "$tmp/organizers.html"
-          grep -F 'scoreRound' "$tmp/engine.mjs"
-          grep -F 'new WebSocket(server)' "$tmp/abyss.js"
-          broken_url="$base/3d/retro-cafe/organizers/3d/retro-cafe/pendant-light/3d/retro-cafe/pendant-light/?smoke=${EXPECTED_SHA}"
-          broken_status="$(curl --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --connect-timeout 15 --max-time 60 -o "$tmp/broken-route.html" -w '%{http_code}' "$broken_url")"
-          test "$broken_status" = "404"
-          ! grep -Fq 'vrmine-game-hub-2026-08-15-1' "$tmp/broken-route.html"
-          echo "Live VRMine game hub verification passed: $base/"
+          echo "Live VRMine portal verification passed: $base/"

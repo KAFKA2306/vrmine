@@ -9,7 +9,6 @@
 - vrc-get: `1.9.2`
 - Blender: `4.2`
 - Unity MCP (com.tunasync.unity-mcp) revision: `2a2cae188d2f01d261bcf97306fe19ff37b57107`
-- Gaussian splat renderer: `MichaelMoroz/VRChatGaussianSplatting@f96c0117cba518ff84d059d36f16909b873e23aa`
 - Render pipeline: Built-in Render Pipeline
 - World authoring: VRChat SDK world components and UdonSharp
 
@@ -20,7 +19,6 @@
 - Public pages: `pages/`
 - 3D item specs: `config/world-items/`
 - World design specs: `config/world-design/`
-- Gaussian world configs: `config/gaussian-worlds/`
 - Unity packages: `Packages/`
 - Commands: `Taskfile.yml`
 - Verification scripts: `scripts/`
@@ -38,19 +36,6 @@
 - Quest max bundle size (MB): `28`
 - Realtime lights: `0`
 
-## Minoo River Osaka standalone world
-
-- World config: `config/gaussian-worlds/minoo-river-osaka.json`
-- Source registry: `config/gaussian-worlds/minoo-river-osaka-sources.json`
-- Artifact manifest: `config/gaussian-worlds/minoo-river-osaka-artifacts.yaml`
-- Scene: `Assets/KafkaMade/VRMine/Scenes/MinooRiverOsaka.unity`
-- Imported prefab: `Assets/KafkaMade/VRMine/GaussianSplatting/Prefabs/minoo-river-osaka.prefab`
-- Canonical platform: `windows`
-- Target extent (m): `1`
-- Presentation scale multiplier: `5`
-- Scene topology: one Gaussian splat object, one Gaussian renderer, one VRC scene descriptor, one PipelineManager, one spawn point, one reference camera
-- Local source materialization: `VRMINE_MINOO_PLY` is required by `task minoo:stage-local`; there is no silent source fallback
-
 ## Verification entry points
 
 - `task check`
@@ -64,12 +49,4 @@
 - `task agent:tick`
 - `task agent:status`
 - `task cafe:build`
-- `task minoo:contracts`
-- `task minoo:stage-local`
-- `task minoo:prepare-local`
-- `task minoo:verify-u2`
-- `task minoo:verify-sdk`
-- `task minoo:measure`
-- `task minoo:build`
-- `task minoo:release-candidate`
-- VRChat publication requires authenticated VRChat SDK state and a deliberate upload action. A local SDK build is not evidence of a published world. Android/Quest performance and public artifact hosting require separate evidence.
+- VRChat publication requires authenticated VRChat SDK state and a deliberate upload action. A local SDK build is not evidence of a published world. Both PC and Quest (Android) actual-client evidence are required for release completion.

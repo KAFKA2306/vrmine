@@ -9,15 +9,8 @@ const assets = [
   './assets/app.js',
   './assets/platform.js',
   './games/registry.js',
-  './games/stich-meister/',
-  './games/stich-meister/index.html',
-  './games/answer-impostor/',
-  './games/answer-impostor/index.html',
-  './games/answer-impostor/game.js',
-  './games/answer-impostor/engine.mjs',
-  './games/abyss-invasion/',
-  './games/abyss-invasion/index.html',
-  './games/abyss-invasion/tracker.js'
+  './games/perspective-cage/',
+  './games/perspective-cage/index.html'
 ].map((path) => new URL(path, scope).href);
 
 self.addEventListener('install', (event) => {

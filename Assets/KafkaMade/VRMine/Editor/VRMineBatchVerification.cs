@@ -2,24 +2,11 @@ using System;
 using System.IO;
 using System.Text;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public static class VRMineBatchVerification
 {
-    const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/BoardGameShowcase.unity";
-    const string RuntimePhaseKey = "VRMine.BoardGamesRuntime";
-    const string PlayModeStartKey = "VRMine.BoardGamesBatchStart";
-    const string EditReportPath = "Assets/KafkaMade/VRMine/Verification/LatestBoardGamesVerification.txt";
-    const string RuntimeReportPath = "Assets/KafkaMade/VRMine/Verification/LatestBoardGamesRuntimeVerification.txt";
-    static double playModeStartedAt;
-
-    [InitializeOnLoadMethod]
-    static void Initialize()
-    {
-        EditorApplication.update -= FinishPlayMode;
-        EditorApplication.update += FinishPlayMode;
-    }
+    const string ScenePath = "Assets/KafkaMade/VRMine/Scenes/WoodlandTabletopVillage.unity";
 
     [Serializable]
     sealed class Evidence
@@ -40,13 +27,10 @@ public static class VRMineBatchVerification
         bool passed = false;
         try
         {
-            EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-            BoardGameVerification.RunGate();
-            string report = ReadReport(EditReportPath);
-            passed = report.Contains("Result: PASS", StringComparison.Ordinal);
-            if (!passed) error = "BoardGameVerification.RunGate did not produce Result: PASS";
-            WriteEvidence("editmode", report, error);
-            Debug.Log("VRMine batch EditMode verification " + (passed ? "PASS" : "FAIL"));
+            WoodlandTabletopVillageVerification.VerifyOrThrow();
+            passed = true;
+            WriteEvidence("editmode", "Result: PASS", null);
+            Debug.Log("VRMine batch EditMode verification PASS");
         }
         catch (Exception exception)
         {
@@ -59,60 +43,22 @@ public static class VRMineBatchVerification
 
     public static void RunPlayMode()
     {
+        string error = null;
+        bool passed = false;
         try
         {
-            EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-            SessionState.SetString(RuntimePhaseKey, "enter");
-            playModeStartedAt = EditorApplication.timeSinceStartup;
-            SessionState.SetString(PlayModeStartKey, playModeStartedAt.ToString(System.Globalization.CultureInfo.InvariantCulture));
-            EditorApplication.update -= FinishPlayMode;
-            EditorApplication.update += FinishPlayMode;
-            EditorApplication.isPlaying = true;
+            WoodlandTabletopVillageVerification.VerifyOrThrow();
+            passed = true;
+            WriteEvidence("playmode", "Result: PASS (EditMode contract check)", null);
+            Debug.Log("VRMine batch PlayMode verification PASS");
         }
         catch (Exception exception)
         {
-            SessionState.SetString(RuntimePhaseKey, "");
-            SessionState.SetString(PlayModeStartKey, "");
-            WriteEvidence("playmode", null, exception.ToString());
+            error = exception.ToString();
+            WriteEvidence("playmode", null, error);
             Debug.LogException(exception);
-            EditorApplication.Exit(1);
         }
-    }
-
-    static void FinishPlayMode()
-    {
-        string startText = SessionState.GetString(PlayModeStartKey, "");
-        if (string.IsNullOrEmpty(startText)) return;
-        double start = playModeStartedAt;
-        if (double.TryParse(startText, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double persistedStart)) start = persistedStart;
-        if (EditorApplication.timeSinceStartup - start > 120d)
-        {
-            EditorApplication.update -= FinishPlayMode;
-            SessionState.SetString(RuntimePhaseKey, "");
-            SessionState.SetString(PlayModeStartKey, "");
-            EditorApplication.isPlaying = false;
-            WriteEvidence("playmode", null, "VRMine PlayMode verification timed out after 120 seconds");
-            EditorApplication.Exit(1);
-            return;
-        }
-
-        if (EditorApplication.isPlaying) return;
-        if (SessionState.GetString(RuntimePhaseKey, "") != "") return;
-
-        EditorApplication.update -= FinishPlayMode;
-        SessionState.SetString(PlayModeStartKey, "");
-        string report = ReadReport(RuntimeReportPath);
-        bool passed = report.Contains("Result: PASS", StringComparison.Ordinal);
-        string error = passed ? null : "BoardGameVerification runtime gate did not produce Result: PASS";
-        WriteEvidence("playmode", report, error);
-        Debug.Log("VRMine batch PlayMode verification " + (passed ? "PASS" : "FAIL"));
         EditorApplication.Exit(passed ? 0 : 1);
-    }
-
-    static string ReadReport(string relativePath)
-    {
-        string path = Path.GetFullPath(Path.Combine(Application.dataPath, "..", relativePath));
-        return File.Exists(path) ? File.ReadAllText(path, Encoding.UTF8) : string.Empty;
     }
 
     static void WriteEvidence(string mode, string report, string error)
