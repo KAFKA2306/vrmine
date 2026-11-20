@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "agent_id": "vrmine-always-on",
+  "branch": "main",
+  "schedule": {
+    "scheduler": "windows-task-scheduler",
+    "task_name": "\\VRMine-AlwaysOn-Agent",
+    "interval_minutes": 30,
+    "active_window_jst": {
+      "start_hour": 7,
+      "end_hour": 24
+    },
+    "max_llm_runs_per_tick": 1,
+    "execution_time_limit_minutes": 10
+  },
+  "state": {
+    "env_override": "VRMINE_AGENT_STATE_DIR",
+    "default_dir": ".artifacts/always-on-agent",
+    "work_ledger": "work-ledger.json",
+    "question_ledger": "question-ledger.json",
+    "lock_file": "runner.lock",
+    "runs_dir": "runs"
+  },
+  "llm_cli": {
+    "command": "agy",
+    "model": "gemini-4-neon-high",
+    "output_format": "json",
+    "print_timeout": "5m",
+    "only_invoke_on_delta": true
+  },
+  "safety_boundaries": {
+    "single_branch_only": true,
+    "forbid_worktrees": true,
+    "human_only_operations": [
+      "tools/arm-vrc-upload.bat",
+      "vrc_upload",
+      "hf auth login",
+      "unity-hub-license-signin"
+    ]
+  }
+}

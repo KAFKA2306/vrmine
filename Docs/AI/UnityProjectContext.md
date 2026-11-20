@@ -26,6 +26,7 @@
 - Verification scripts: `scripts/`
 - Verification and release policy: `config/quality-gates.json`
 - Agent knowledge authority: `config/agent-knowledge.json`
+- Always-on agent config: `config/always-on-agent.json`
 - Star schema SSOT: `config/star-schema.json`
 - VRChat toolchain pin: `config/vrchat-toolchain.json`
 - Project version: `ProjectSettings/ProjectVersion.txt`
@@ -51,6 +52,9 @@
 - `task vpm:check`
 - `task world-design:check`
 - `task pages:test`
+- `task agent:verify`
+- `task agent:tick`
+- `task agent:status`
 - `task cafe:build`
 - `task minoo:contracts`
 - `task minoo:stage-local`

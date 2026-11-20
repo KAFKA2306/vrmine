@@ -51,6 +51,7 @@ tasks:
       - node scripts/verify-gaussian-exhibition.mjs
       - node scripts/verify-gaussian-video-playlist.mjs
       - node scripts/verify-minoo-river-world.mjs
+      - node scripts/verify-always-on-agent.mjs
       - node scripts/verify-vpm.mjs
 
   astra-rigged:build:
@@ -238,3 +239,28 @@ tasks:
   abyss:server:
     cmds:
       - bun server/abyss-server.mjs
+
+  agent:status:
+    desc: Show the Kafstyler always-on agent work ledger, human question ledger, and schedule metrics
+    cmds:
+      - node scripts/always-on-agent.mjs status
+
+  agent:tick:
+    desc: Run one single-writer locked always-on agent tick (deterministic probes first, LLM only on delta)
+    cmds:
+      - node scripts/always-on-agent.mjs tick
+
+  agent:verify:
+    desc: Run all Kafstyler always-on agent benchmark and question-ledger acceptance tests
+    cmds:
+      - node scripts/verify-always-on-agent.mjs
+
+  agent:install-schedule:
+    desc: Register the Windows Task Scheduler recurring job for the VRMine always-on agent and read it back
+    cmds:
+      - node scripts/always-on-agent.mjs install-schedule
+
+  agent:uninstall-schedule:
+    desc: Unregister the Windows Task Scheduler recurring job for the VRMine always-on agent
+    cmds:
+      - node scripts/always-on-agent.mjs uninstall-schedule
