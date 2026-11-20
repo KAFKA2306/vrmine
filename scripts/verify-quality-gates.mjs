@@ -41,12 +41,14 @@ const expectedReleaseCandidateRequired = [
 const expectedProductReleaseRequired = [
   'release_candidate_gate_pass',
   'actual_client_single_player_clear',
+  'actual_quest_client_clear',
   'wrong_input_recovery',
   'reset_and_replay',
   'two_client_public_state_sync',
   'late_join_reconstruction',
   'owner_transition_recovery',
   'playthrough_duration_recorded',
+  'quest_performance_measured_on_actual_client',
   'runtime_evidence_tied_to_exact_commit',
 ];
 expectExactArray(policy.pr_merge_gate?.required, expectedMergeRequired, 'PR merge required gates');
