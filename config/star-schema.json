@@ -9,6 +9,7 @@
       "rows": [
         { "section_key": "runtime", "heading": "Runtime and packages" },
         { "section_key": "surfaces", "heading": "Canonical project surfaces" },
+        { "section_key": "courtyard", "heading": "Flagship world: Tactile Rain and Fabric Courtyard" },
         { "section_key": "minoo", "heading": "Minoo River Osaka standalone world" },
         { "section_key": "verification", "heading": "Verification entry points" }
       ]
@@ -24,6 +25,9 @@
         { "metric_key": "blender_version", "label": "Blender" },
         { "metric_key": "unity_mcp_revision", "label": "Unity MCP (com.tunasync.unity-mcp) revision" },
         { "metric_key": "gaussian_splat_renderer", "label": "Gaussian splat renderer" },
+        { "metric_key": "courtyard_platform_target", "label": "Target platform" },
+        { "metric_key": "courtyard_max_size_quest_mb", "label": "Quest max bundle size (MB)" },
+        { "metric_key": "courtyard_realtime_light_count", "label": "Realtime lights" },
         { "metric_key": "minoo_canonical_platform", "label": "Canonical platform" },
         { "metric_key": "minoo_target_extent_m", "label": "Target extent (m)" },
         { "metric_key": "minoo_presentation_scale_multiplier", "label": "Presentation scale multiplier" }
@@ -40,6 +44,7 @@
         { "source_key": "public_pages", "label": "Public pages", "path": "pages/" },
         { "source_key": "world_items", "label": "3D item specs", "path": "config/world-items/" },
         { "source_key": "world_design", "label": "World design specs", "path": "config/world-design/" },
+        { "source_key": "courtyard_spec", "label": "Flagship courtyard spec", "path": "config/world-design/generated/rain-fabric-courtyard-v0.json" },
         { "source_key": "world_configs", "label": "Gaussian world configs", "path": "config/gaussian-worlds/" },
         { "source_key": "unity_packages", "label": "Unity packages", "path": "Packages/" },
         { "source_key": "commands", "label": "Commands", "path": "Taskfile.yml" },
@@ -70,6 +75,7 @@
         { "task_key": "ledger:check" },
         { "task_key": "vpm:check" },
         { "task_key": "world-design:check" },
+        { "task_key": "courtyard:contracts" },
         { "task_key": "pages:test" },
         { "task_key": "agent:verify" },
         { "task_key": "agent:tick" },
@@ -131,6 +137,24 @@
           "read": { "json": ["renderers", "unity_vrchat"] }
         },
         {
+          "section_key": "courtyard",
+          "metric_key": "courtyard_platform_target",
+          "source_key": "courtyard_spec",
+          "read": { "json": ["meta", "platform_target"] }
+        },
+        {
+          "section_key": "courtyard",
+          "metric_key": "courtyard_max_size_quest_mb",
+          "source_key": "courtyard_spec",
+          "read": { "json": ["runtime_budget", "max_size_quest_mb"] }
+        },
+        {
+          "section_key": "courtyard",
+          "metric_key": "courtyard_realtime_light_count",
+          "source_key": "courtyard_spec",
+          "read": { "json": ["runtime_budget", "realtime_light_count"] }
+        },
+        {
           "section_key": "minoo",
           "metric_key": "minoo_canonical_platform",
           "source_key": "minoo_world_config",
@@ -172,6 +196,7 @@
         { "section_key": "surfaces", "source_key": "star_schema" },
         { "section_key": "surfaces", "source_key": "vrchat_toolchain" },
         { "section_key": "surfaces", "source_key": "project_version" },
+        { "section_key": "courtyard", "source_key": "courtyard_spec" },
         { "section_key": "minoo", "source_key": "minoo_world_config" },
         { "section_key": "minoo", "source_key": "minoo_source_registry" },
         { "section_key": "minoo", "source_key": "minoo_artifact_manifest" },
@@ -191,6 +216,7 @@
         { "section_key": "verification", "task_key": "ledger:check" },
         { "section_key": "verification", "task_key": "vpm:check" },
         { "section_key": "verification", "task_key": "world-design:check" },
+        { "section_key": "verification", "task_key": "courtyard:contracts" },
         { "section_key": "verification", "task_key": "pages:test" },
         { "section_key": "verification", "task_key": "agent:verify" },
         { "section_key": "verification", "task_key": "agent:tick" },
@@ -225,7 +251,7 @@
     {
       "output": "Docs/AI/UnityProjectContext.md",
       "title": "VRMine Unity project context",
-      "sections": ["runtime", "surfaces", "minoo", "verification"],
+      "sections": ["runtime", "surfaces", "courtyard", "minoo", "verification"],
       "fact_tables": ["fct_path", "fct_source_value", "fct_task_reference", "fct_statement"]
     }
   ]

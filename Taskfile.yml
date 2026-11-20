@@ -51,6 +51,7 @@ tasks:
       - node scripts/verify-gaussian-exhibition.mjs
       - node scripts/verify-gaussian-video-playlist.mjs
       - node scripts/verify-minoo-river-world.mjs
+      - node scripts/verify-courtyard-contracts.mjs
       - node scripts/verify-always-on-agent.mjs
       - node scripts/verify-vpm.mjs
 
@@ -72,6 +73,11 @@ tasks:
     cmds:
       - node scripts/verify-world-design.mjs
       - node scripts/world-design-to-blender-plan.mjs config/world-design/generated/cyber-alley-tea-nook.json
+
+  courtyard:contracts:
+    desc: Validate flagship Tactile Rain & Fabric Courtyard spec, Quest-first budgets, SDK 3.9.0 static bans, and benchmark definitions
+    cmds:
+      - node scripts/verify-courtyard-contracts.mjs
 
   woodland:modules:
     desc: Manufacture and verify the seven anchor modules for Woodland Tabletop Village with Blender 4.2

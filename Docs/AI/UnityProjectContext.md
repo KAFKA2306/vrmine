@@ -31,6 +31,13 @@
 - VRChat toolchain pin: `config/vrchat-toolchain.json`
 - Project version: `ProjectSettings/ProjectVersion.txt`
 
+## Flagship world: Tactile Rain and Fabric Courtyard
+
+- Flagship courtyard spec: `config/world-design/generated/rain-fabric-courtyard-v0.json`
+- Target platform: `CROSS_PLATFORM_QUEST`
+- Quest max bundle size (MB): `28`
+- Realtime lights: `0`
+
 ## Minoo River Osaka standalone world
 
 - World config: `config/gaussian-worlds/minoo-river-osaka.json`
@@ -51,6 +58,7 @@
 - `task ledger:check`
 - `task vpm:check`
 - `task world-design:check`
+- `task courtyard:contracts`
 - `task pages:test`
 - `task agent:verify`
 - `task agent:tick`

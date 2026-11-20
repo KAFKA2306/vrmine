@@ -1,0 +1,291 @@
+{
+  "meta": {
+    "spec_version": "1.1.0",
+    "world_id": "rain-fabric-courtyard-v0",
+    "theme_name": "軒下の雨と布と光の庭",
+    "concept_pillar": "quest-first-tactile-playbox",
+    "primary_intents": [
+      "social",
+      "home",
+      "other"
+    ],
+    "capacity_target": 8,
+    "platform_target": "CROSS_PLATFORM_QUEST",
+    "zero_text_discovery": true,
+    "first_touch_target_sec": 10
+  },
+  "spatial_geometry": {
+    "overall_width_m": 7.5,
+    "overall_depth_m": 8.5,
+    "corridor_clearance_m": 1.1,
+    "door_height_m": 2.0,
+    "door_width_m": 0.9,
+    "furniture_scale_factor": 0.95,
+    "zones": [
+      {
+        "zone_id": "engawa_eaves",
+        "width_m": 7.5,
+        "depth_m": 3.4,
+        "height_m": 2.15
+      },
+      {
+        "zone_id": "rain_courtyard",
+        "width_m": 7.5,
+        "depth_m": 5.1,
+        "height_m": 3.2
+      },
+      {
+        "zone_id": "quiet_retreat_alcove",
+        "width_m": 2.2,
+        "depth_m": 2.0,
+        "height_m": 2.15
+      }
+    ]
+  },
+  "social_clusters": {
+    "primary_core": {
+      "core_type": "eaves_tactile_courtyard",
+      "core_diameter_m": 1.8,
+      "max_face_distance_m": 1.8,
+      "table_height_m": 0.45,
+      "seat_spacing_m": 0.95,
+      "seat_count": 4
+    }
+  },
+  "retreat_protocol": {
+    "visual_shield_angle_deg": 105,
+    "acoustic_attenuation_db": -18,
+    "affordance_components": [
+      "engawa_cushion",
+      "local_dimming",
+      "auto_on_low_mirror"
+    ],
+    "functional_self_sufficiency": true
+  },
+  "optical_lighting": {
+    "aperture_ratio_percent": 22,
+    "sunlight_patch_ratio_percent": 8,
+    "seating_direct_sunlight_ratio_percent": 0,
+    "seating_zone_lighting": "WARM_INDIRECT",
+    "key_light_color_temperature_k": 4800,
+    "fill_light_color_temperature_k": 3200,
+    "tpu_allocation": {
+      "avatar_contact_surfaces": 48,
+      "interior_walls": 24,
+      "exterior_background": 8
+    }
+  },
+  "media_governance": {
+    "video_player_mode": "NONE",
+    "text_signage_count": 0
+  },
+  "runtime_budget": {
+    "max_size_pc_mb": 35,
+    "max_size_quest_mb": 28,
+    "realtime_light_count": 0,
+    "max_triangles_quest": 60000,
+    "target_draw_calls_quest": 50,
+    "max_draw_calls_quest": 80,
+    "max_materials_quest": 15,
+    "max_manual_sync_bytes": 40,
+    "max_concurrent_audio_voices": 8,
+    "post_processing_on_quest": false,
+    "camera_near_clip_m": 0.01,
+    "background_max_distance_m": 120
+  },
+  "world_build": {
+    "ceiling_height_m": 2.15,
+    "spawn": {
+      "position_m": [0, -2.4, 0],
+      "facing_deg": 0,
+      "buffer_radius_m": 1.0
+    },
+    "social_core": {
+      "center_m": [0, -0.4, 0.45],
+      "seat_count": 4,
+      "seat_radius_m": 1.2,
+      "table_asset_id": "courtyard-water-basin-01",
+      "seat_asset_id": "engawa-seat-cushion-01"
+    },
+    "retreat": {
+      "zone_id": "quiet_retreat_alcove",
+      "center_m": [-2.5, -1.5, 0],
+      "seat_count": 1,
+      "seat_asset_id": "engawa-seat-cushion-01"
+    },
+    "activity_anchor": {
+      "kind": "tactile_eaves_playbox",
+      "position_m": [0, 0.2, 0.85],
+      "approach_clearance_m": 1.0
+    },
+    "hero_view": {
+      "position_m": [0, -2.6, 1.45],
+      "target_m": [0, 0.3, 0.9]
+    },
+    "circulation": {
+      "waypoints_m": [
+        [0, -2.4, 0],
+        [0, -1.2, 0],
+        [0, -0.4, 0],
+        [1.4, -0.4, 0],
+        [-1.4, -0.4, 0],
+        [-2.5, -1.5, 0]
+      ],
+      "minimum_clearance_m": 1.1
+    }
+  },
+  "sdk_compatibility": {
+    "target_unity_version": "2022.3.22f1",
+    "target_vrchat_sdk_version": "3.9.0",
+    "render_pipeline": "Built-in",
+    "forbidden_apis": [
+      "VRCPhysBone",
+      "VRCContactReceiver",
+      "VRCContactSender",
+      "OnPhysBoneGrabbed",
+      "OnContactEnter",
+      "VRCTween",
+      "WorldQualitySettings",
+      "VRCBillboard",
+      "VRCVelocityTracker",
+      "VRCPlacementZone",
+      "UnityEngine.Cloth",
+      "EventTiming.FixedUpdate",
+      "EventTiming.PostLateUpdate",
+      "AutoHold.AutoDetect"
+    ],
+    "required_layers": {
+      "environment": 11,
+      "pickup": 13
+    }
+  },
+  "tactile_toys": [
+    {
+      "id": "wet_linen_curtain",
+      "label": "濡れ麻ののれん幕",
+      "count": 3,
+      "affordance": "pinch_pull_release_weighted_hem",
+      "sdk39_mechanism": "VRC_Pickup + VRC_ObjectSync (ForceKinematicOnRemote) + GPU vertex shader VRMine/QuestFabricWind",
+      "sync_mode": "object_sync_handle_only",
+      "max_anchor_deviation_m": 0.9,
+      "return_to_rest_sec": 1.5,
+      "haptics": { "duration_sec": 0.06, "amplitude": 0.25, "frequency_hz": 45 },
+      "duo_resonance": "pulling two curtains together connects light ribbon and drops chimes into basin"
+    },
+    {
+      "id": "rain_bead_strings",
+      "label": "軒雫の鎖樋ストリング",
+      "count": 4,
+      "affordance": "hand_sweep_or_interact_rain_beads",
+      "sdk39_mechanism": "VRCPlayerApi.GetTrackingData(LeftHand/RightHand) velocity + Desktop Interact + NetworkCallable(Others)",
+      "sync_mode": "manual_event_only",
+      "sync_bytes": 0,
+      "scale_notes": ["D", "E", "F#", "A", "B"],
+      "haptics": { "duration_sec": 0.025, "amplitude": 0.55, "frequency_hz": 180 },
+      "duo_resonance": "second player pluck within 1.5s snaps to fifth/octave harmony and triggers interference ripples"
+    },
+    {
+      "id": "water_glass_louvers",
+      "label": "水紋ガラスの光パネル",
+      "count": 2,
+      "affordance": "tilt_and_filter_light_caustics",
+      "sdk39_mechanism": "16-step discrete tilt + single-pass additive VRMine/QuestCausticsDecal (0 realtime lights)",
+      "sync_mode": "manual",
+      "sync_bytes": 3,
+      "haptics": { "duration_sec": 0.03, "amplitude": 0.35, "frequency_hz": 110 },
+      "duo_resonance": "overlapping both caustics over basin center shifts ambiance to after-rain halo"
+    },
+    {
+      "id": "suikinkutsu_water_basin",
+      "label": "水琴窟の波紋水盤",
+      "count": 1,
+      "stone_count": 3,
+      "affordance": "touch_water_or_drop_pebbles",
+      "sdk39_mechanism": "4-point analytic ripple shader VRMine/QuestWaterRipple (no GrabPass/DepthTexture) + VRC_Pickup pebbles",
+      "sync_mode": "manual_director",
+      "sync_bytes": 12,
+      "resonance_window_sec": 3.0,
+      "resonance_duration_sec": 8.0,
+      "haptics": { "duration_sec": 0.12, "amplitude": 0.45, "frequency_hz": 75 },
+      "duo_resonance": "2+ systems or 2+ players active within 3s triggers 8s synchronized courtyard resonance"
+    }
+  ],
+  "benchmarks": [
+    {
+      "id": "BM-01",
+      "name": "zero_text_10s_discovery",
+      "player_action": "Enter spawn with zero text signage and reach out to any of the 4 toys",
+      "visible_state_change": "Immediate vertex/particle/caustics/ripple response with spatial audio and haptics",
+      "metrics": {
+        "time_to_first_tactile_response_sec_max": 10.0,
+        "local_feedback_latency_ms_max": 50,
+        "text_signage_count_exact": 0
+      },
+      "required_evidence": ["pc_client_capture", "quest_client_capture"]
+    },
+    {
+      "id": "BM-02",
+      "name": "wrong_input_recovery_and_auto_return",
+      "player_action": "Pull curtain weight beyond 1.5m and release; throw pebbles outside courtyard bounds",
+      "visible_state_change": "Weight clamps within 0.9m and smoothly returns to rest; pebbles auto-respawn",
+      "metrics": {
+        "max_anchor_deviation_m_max": 0.95,
+        "return_to_rest_sec_max": 2.0,
+        "residual_offset_m_max": 0.02,
+        "stone_respawn_sec_max": 1.0
+      },
+      "required_evidence": ["clientsim_log", "pc_client_capture", "quest_client_capture"]
+    },
+    {
+      "id": "BM-03",
+      "name": "duo_resonance_late_join_and_owner_transfer",
+      "player_action": "Player A pulls curtain, Player B plucks rain beads within 1.5s, Player C late-joins during resonance, Player A leaves, Player B tilts louver",
+      "visible_state_change": "8s resonance triggers for A/B, C reconstructs mood/angle with 0 phantom past SFX, B's post-leave change syncs to C",
+      "metrics": {
+        "sync_convergence_ms_max": 500,
+        "late_join_state_mismatch_exact": 0,
+        "late_join_phantom_sfx_exact": 0,
+        "manual_payload_bytes_max": 40
+      },
+      "required_evidence": ["two_plus_one_client_log", "two_plus_one_client_capture"]
+    },
+    {
+      "id": "BM-04",
+      "name": "quest_standalone_budget_and_performance",
+      "player_action": "Stay 5 minutes in engawa_eaves on standalone Quest operating all 4 toys and triggering resonance",
+      "visible_state_change": "No pink shaders, no stereo eye mismatch, no audio clipping",
+      "metrics": {
+        "quest_bundle_size_mb_max": 28,
+        "total_triangles_max": 60000,
+        "draw_calls_max": 80,
+        "realtime_lights_exact": 0,
+        "quest_fps_avg_min": 72,
+        "quest_frame_time_p95_ms_max": 14.5
+      },
+      "required_evidence": ["courtyard_measure_quest_json", "quest_perf_capture"]
+    },
+    {
+      "id": "BM-05",
+      "name": "sdk39_and_contract_regression_gate",
+      "player_action": "Run task check and Unity/SDK verification on exact commit",
+      "visible_state_change": "Zero compile errors, zero missing refs, zero SDK blocking issues, zero SDK 3.10-only APIs",
+      "metrics": {
+        "compile_errors_exact": 0,
+        "missing_refs_exact": 0,
+        "sdk_blocking_validations_exact": 0,
+        "sdk_310_only_api_hits_exact": 0,
+        "bare_audio_sources_exact": 0
+      },
+      "required_evidence": ["task_check_log", "unity_sdk_verify_json"]
+    }
+  ],
+  "provenance": {
+    "authority": "MISSION.md",
+    "derived_from": [
+      "MISSION.md",
+      "config/world-design/engineering-rules.json",
+      "config/world-design/world-design-spec.schema.json",
+      "config/quality-gates.json"
+    ]
+  }
+}
