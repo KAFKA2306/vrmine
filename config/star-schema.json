@@ -35,6 +35,7 @@
       "columns": ["source_key", "label", "path"],
       "verify": { "kind": "path_exists", "column": "path" },
       "rows": [
+        { "source_key": "mission", "label": "Mission and deliverables", "path": "MISSION.md" },
         { "source_key": "unity_assets", "label": "Unity assets", "path": "Assets/KafkaMade/VRMine/" },
         { "source_key": "public_pages", "label": "Public pages", "path": "pages/" },
         { "source_key": "world_items", "label": "3D item specs", "path": "config/world-items/" },
@@ -152,6 +153,7 @@
       "natural_key": ["section_key", "source_key"],
       "line": "- {source.label}: `{source.path}`",
       "rows": [
+        { "section_key": "surfaces", "source_key": "mission" },
         { "section_key": "surfaces", "source_key": "unity_assets" },
         { "section_key": "surfaces", "source_key": "public_pages" },
         { "section_key": "surfaces", "source_key": "world_items" },

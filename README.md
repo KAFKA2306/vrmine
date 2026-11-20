@@ -24,6 +24,7 @@ VRChat向けワールド素材、ワールド設計、関連インタラクテ�
 
 ## Start here
 
+- ミッションと主成果物: [`MISSION.md`](MISSION.md)
 - 開発・agentルールとcanonical path: [`AGENTS.md`](AGENTS.md)
 - 実行可能なcommand: [`Taskfile.yml`](Taskfile.yml)
 - merge / release gate: [`config/quality-gates.json`](config/quality-gates.json)
